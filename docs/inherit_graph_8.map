@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classtatami_1_1DelayedBinaryIsometricArithmetic.html" title="Delayed binary isometric arithmetic." alt="" coords="5,5,205,46"/>
+<area shape="rect" id="Node000000" href="$classtatami_1_1DelayedBinaryIsometricOperationHelper.html" title="Helper operation interface for DelayedBinaryIsometricOperation." alt="" coords="5,85,205,141"/>
+<area shape="rect" id="Node000001" href="$classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html" title="Helper for delayed binary isometric arithmetic." alt="" coords="253,5,482,61"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="212,78,273,59,274,64,214,83"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1DelayedBinaryIsometricBooleanHelper.html" title="Helper for delayed binary isometric boolean operations." alt="" coords="259,85,476,141"/>
+<area shape="poly" id="edge2_Node000000_Node000002" title=" " alt="" coords="220,110,258,110,258,116,220,116"/>
+<area shape="rect" id="Node000003" href="$structtatami_1_1DelayedBinaryIsometricCompareHelper.html" title="Helper for delayed binary isometric comparisons." alt="" coords="256,165,478,221"/>
+<area shape="poly" id="edge3_Node000000_Node000003" title=" " alt="" coords="214,144,274,162,273,167,212,149"/>
 </map>

@@ -98,48 +98,48 @@
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arithmetic__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricArithmetic</class>
+    <class kind="class">tatami::DelayedBinaryIsometricArithmeticHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>unary_2arithmetic__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricArithmeticScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricArithmeticVector</class>
+    <class kind="class">tatami::DelayedUnaryIsometricArithmeticScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricArithmeticVectorHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2boolean__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedBinaryIsometricBoolean</class>
+    <class kind="struct">tatami::DelayedBinaryIsometricBooleanHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>unary_2boolean__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanCast</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanNotHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanCastHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanVectorHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2compare__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedBinaryIsometricCompare</class>
+    <class kind="struct">tatami::DelayedBinaryIsometricCompareHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>unary_2compare__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricCompareScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCompareVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompare</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCompareScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCompareVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompareHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -150,59 +150,57 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>helper_interface.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>binary_2helper__interface_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperationHelper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>helper_interface.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>unary_2helper__interface_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>math_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>math__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricAbs</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSign</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLog</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSqrt</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCeiling</class>
-    <class kind="class">tatami::DelayedUnaryIsometricFloor</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTrunc</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLog1p</class>
-    <class kind="class">tatami::DelayedUnaryIsometricRound</class>
-    <class kind="class">tatami::DelayedUnaryIsometricExp</class>
-    <class kind="class">tatami::DelayedUnaryIsometricExpm1</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAcos</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAcosh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAsin</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAsinh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAtan</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAtanh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCos</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCosh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSin</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSinh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTan</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTanh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricGamma</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLgamma</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>mock_helpers.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>binary_2mock__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricMockBasic</class>
-    <class kind="class">tatami::DelayedBinaryIsometricMockAdvanced</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>mock_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>unary_2mock__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricMockBasic</class>
-    <class kind="class">tatami::DelayedUnaryIsometricMockAdvanced</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAbsHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSignHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLogHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSqrtHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCeilingHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricFloorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTruncHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLog1pHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricRoundHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricExpHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricExpm1Helper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAcosHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAcoshHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAsinHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAsinhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAtanHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAtanhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCosHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCoshHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSinHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSinhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTanHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTanhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricGammaHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLgammaHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>substitute_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>substitute__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSubstituteVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstitute</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSubstituteVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstituteHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -938,117 +936,219 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedBinaryIsometricArithmetic</name>
-    <filename>classtatami_1_1DelayedBinaryIsometricArithmetic.html</filename>
+    <name>tatami::DelayedBinaryIsometricArithmeticHelper</name>
+    <filename>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</filename>
     <templarg>ArithmeticOperation op_</templarg>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedBinaryIsometricBoolean</name>
-    <filename>structtatami_1_1DelayedBinaryIsometricBoolean.html</filename>
-    <templarg>BooleanOperation op_</templarg>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedBinaryIsometricCompare</name>
-    <filename>structtatami_1_1DelayedBinaryIsometricCompare.html</filename>
-    <templarg>CompareOperation op_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedBinaryIsometricMockAdvanced</name>
-    <filename>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</filename>
-    <member kind="function">
-      <type>OutputValue_</type>
-      <name>fill</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>abaadca55c467c14f7bcc3c100788c59b</anchor>
-      <arglist>(bool row, Index_ i) const</arglist>
-    </member>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>affe8f8bb0a012e8b5cbe94c0119b304b</anchor>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a17ffb4618be1a0b7a9f3787c6498de77</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>adcfab3a4cb10a89a842a1cbc30935d88</anchor>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a065484dc333c31a950bf52f74913f54b</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>ad2dcc2934324bdcbbaa894448da0f9ef</anchor>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a35e830040ed2a2cc69af23c3ed099540</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a460c92223fd0f55a402ff4504146e61f</anchor>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>ac0bddf42c45ac3b67b22579cc9e08a04</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a08111074efd786173a8de0ea7b1681ff</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>ac1e24871344496496d22c4387527ed59</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a39021fb69f98fb03d9616fde8bf5c4b5</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>ad8ae4c115469a23ba7ce2d66b51509c6</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>sparse</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>aee13c5385038d2c78afd4b1042bcdf74</anchor>
-      <arglist>(bool row, Index_ i, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *output_value, Index_ *output_index, bool report_value, bool report_index) const</arglist>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a50916145a69c54a606bd978cf1a2bee4</anchor>
+      <arglist>(bool, Index_, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *value_buffer, Index_ *index_buffer, bool needs_value, bool needs_index) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a9cc8760f73087b4a7709ec866a6e05ae</anchor>
+      <arglist>(bool, Index_) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>is_sparse</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>ae7393c72485df23ab188a3c67cf970d6</anchor>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>aa36ab571e1e3f350354e8b0f97e86823</anchor>
       <arglist>() const</arglist>
     </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>is_basic</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a2ca2a93a291efa4af6e19782ea16dea9</anchor>
-      <arglist></arglist>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedBinaryIsometricBooleanHelper</name>
+    <filename>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</filename>
+    <templarg>BooleanOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>a018e062f9502757475c8b9f5f3f6ecff</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>aa86c06a1bdbc79042e641dea30c7f8e2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>afbde6fe4632172c00c242ee64ea59752</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>a1752c2a93561c332da379e266ac26249</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>a86090bd536e8098860e1ed87a00b8345</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>a73a6afde717caf876af65267eeaa364c</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>sparse</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>ab525b2622f00cf9392a8d87fee36b3f8</anchor>
+      <arglist>(bool, Index_, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *value_buffer, Index_ *index_buffer, bool needs_value, bool needs_index) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>ad9f0b1b843847c8ad835baa549740269</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>a7afb53bdf0a10934e2e27d140f847823</anchor>
+      <arglist>() const</arglist>
     </member>
   </compound>
-  <compound kind="class">
-    <name>tatami::DelayedBinaryIsometricMockBasic</name>
-    <filename>classtatami_1_1DelayedBinaryIsometricMockBasic.html</filename>
+  <compound kind="struct">
+    <name>tatami::DelayedBinaryIsometricCompareHelper</name>
+    <filename>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</filename>
+    <templarg>CompareOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>aa0c1bee671047c4e2146556c639af0b8</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a9912d3762af38af25a9ac24f9d5fb921</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a1e4f4e15e90eee06d31eb35afcbfc778</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a2ad37ae3f73fca6bea3e44778e643ca8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>ae5b6fec1056cf82dc25ce3c369ddec14</anchor>
+      <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>a0df00c5bbc3dceddb3d373e491d4e63e</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a0b12595e12724feb9776834522941229</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>is_basic</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>a106cb2d03c2ab7fa0a6a2a7d10c5e0ea</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>af6c753084c7b39b18c429ca5cdc9e472</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>sparse</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>abd741e389477dc1f8ba4196a2535176a</anchor>
+      <arglist>(bool, Index_, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *value_buffer, Index_ *index_buffer, bool needs_value, bool needs_index) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>ae11ed16f50fa1830c16fb1ffbfd3a23e</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a8b6eee392b4396f529eae93b1d159eb5</anchor>
+      <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -1063,8 +1163,8 @@
       <type></type>
       <name>DelayedBinaryIsometricOperation</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>acb207fd44b597d1e6f9e9a3e019fd110</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; right, Operation_ operation)</arglist>
+      <anchor>af6cb0f1a05a0274035ebeb25e8523163</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; right, std::shared_ptr&lt; const Operation_ &gt; operation)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -1198,6 +1298,76 @@
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
       <anchor>ae8b44f5ab122512fd0e450f589a99ecc</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedBinaryIsometricOperationHelper</name>
+    <filename>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function" virtualness="pure">
+      <type>virtual OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a9f75c3d4dcce970e34c407f03d91c318</anchor>
+      <arglist>(bool row, Index_ i) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>ae7c3339f8e04edecfe22bd787475dd04</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a4fa5a07e0f51354e33e884870c1b16ce</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a21228693dde483130089a425a7fb4f7e</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>af515ba90e7c96d5091b1a478fbb9ea13</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>aebc75a3a95cef0bf13f93875f001bd43</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a6980856c142504d6cea946f2d92c7362</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual Index_</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a2715fa12671a4c8fbe5caa092db60957</anchor>
+      <arglist>(bool row, Index_ i, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *output_value, Index_ *output_index, bool report_value, bool report_index) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>ac894879c4fb4f6a8a6edb13236468613</anchor>
+      <arglist>() const =0</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2355,307 +2525,1863 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAbs</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAbs.html</filename>
+    <name>tatami::DelayedUnaryIsometricAbsHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAcos</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAcos.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAcosh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAcosh.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricArithmeticScalar</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html</filename>
-    <templarg>ArithmeticOperation op_</templarg>
-    <templarg>bool right_</templarg>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Scalar_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricArithmeticScalar</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html</anchorfile>
-      <anchor>abeff0d039b6cd0d8fb0b2e7659519137</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricArithmeticVector</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricArithmeticVector.html</filename>
-    <templarg>ArithmeticOperation op_</templarg>
-    <templarg>bool right_</templarg>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Vector_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricArithmeticVector</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVector.html</anchorfile>
-      <anchor>a76af8282437f1a62253b87bc3a1d6bc3</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAsin</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAsin.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAsinh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAsinh.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAtan</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAtan.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricAtanh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricAtanh.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricBooleanCast</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricBooleanCast.html</filename>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricBooleanNot</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricBooleanNot.html</filename>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricBooleanScalar</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricBooleanScalar.html</filename>
-    <templarg>BooleanOperation op_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricBooleanScalar</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalar.html</anchorfile>
-      <anchor>a2bb0d7f728f8999aebdc9bb5011f36df</anchor>
-      <arglist>(bool scalar)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricBooleanVector</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricBooleanVector.html</filename>
-    <templarg>BooleanOperation op_</templarg>
-    <templarg>typename Vector_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricBooleanVector</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVector.html</anchorfile>
-      <anchor>a189c3ab566cdbd18e574b109fbab836d</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricCeiling</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricCeiling.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricCompareScalar</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricCompareScalar.html</filename>
-    <templarg>CompareOperation op_</templarg>
-    <templarg>typename InputValue_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricCompareScalar</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalar.html</anchorfile>
-      <anchor>a6d323ae142e00b2f5c8b4f7bb9c78e76</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricCompareVector</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricCompareVector.html</filename>
-    <templarg>CompareOperation op_</templarg>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Vector_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricCompareVector</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVector.html</anchorfile>
-      <anchor>af207974d771116019a6ededf70b9e6e2</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricCos</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricCos.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricCosh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricCosh.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricExp</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricExp.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricExpm1</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricExpm1.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricFloor</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricFloor.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricGamma</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricGamma.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricLgamma</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricLgamma.html</filename>
-    <templarg>typename InputValue_</templarg>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricLog</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricLog.html</filename>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Base_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog.html</anchorfile>
-      <anchor>a362f9996f038589821ee038bebf3bbc9</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog.html</anchorfile>
-      <anchor>a7135b94641e45e560be4f6ea8c03b078</anchor>
-      <arglist>(Base_ base)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricLog1p</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricLog1p.html</filename>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Base_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog1p</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1p.html</anchorfile>
-      <anchor>afa97fb7d9b8c1874e3980e9e743e8bd0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog1p</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1p.html</anchorfile>
-      <anchor>a9cccbcfaf7e345ddcec1de6adba1a855</anchor>
-      <arglist>(Base_ base)</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricMockAdvanced</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</filename>
-    <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a09a1f20f737d635148079185c0121271</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a979faba017a5f0a4b6e8803d82455fdc</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>sparse</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>ac8ea600da94f5e0f8789f3bb2fe5ac81</anchor>
-      <arglist>(bool row, Index_ i, Index_ num, const InputValue_ *input_value, const Index_ *index, OutputValue_ *output_value) const</arglist>
-    </member>
-    <member kind="function">
-      <type>OutputValue_</type>
-      <name>fill</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a38c7d1aa30f41981075ba593e297fa1e</anchor>
-      <arglist>(bool row, Index_ i) const</arglist>
-    </member>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>aecaacba2933b651a7332bb0606f8285f</anchor>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>ae35ed52026e73b43bb47a79d6ac38858</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a4e6f6dc2ce03c242813f56c7e3f12e84</anchor>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a7874be4d81275cdf5b7e2b3b4de5ce60</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a007536cd7ed1abc5411ba1e3526e200a</anchor>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a88c07f0d70adc9a05591e01771b2e219</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a975c8c1eb8914048d2c03586241240a3</anchor>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a67163d6139579b2e9c05607ba8b8ca41</anchor>
       <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a3cba56a2ac4eaf459a5fd407a549b538</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a5760ae344447ed64545475b4f8bc21a6</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>is_sparse</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a909893bf9fda253bd08d0e0db298b3c4</anchor>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a2e9db0fecd627387c3499baf69ed6a48</anchor>
       <arglist>() const</arglist>
     </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>is_basic</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a2f82879f68e6672d7c33d0d3afdf831a</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a52803cc32e7e717c2a2177dcf60344d9</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAbsHelper.html</anchorfile>
+      <anchor>a4360cbc07b5ffc5fc3a1f6db4919f70d</anchor>
+      <arglist>(bool, Index_) const</arglist>
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricMockBasic</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricMockBasic.html</filename>
+    <name>tatami::DelayedUnaryIsometricAcosHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockBasic.html</anchorfile>
-      <anchor>aee2c692632174b845c5ca96f276888a9</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>ab4252045058d132d37af2f352417b19c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>a0259604c753a5d4ff1290a4fffe95c4f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>a4bfe36656c0a638db0cddaa08cdf29b7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>afa880f4057cdde422cbc667b32d8b3d9</anchor>
+      <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockBasic.html</anchorfile>
-      <anchor>a7ac8e2adc3de52eee68e6a6d2cdb69fd</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>a38d5376e2c0999e87c1b2c4d4a263ba8</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
     </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>is_basic</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockBasic.html</anchorfile>
-      <anchor>af5af229c77cd59875fe2cd3f31079c45</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>ae0258655176ff589b56db3ffcfeea9f5</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>aae65aa293a101e7ec6b0f276d244a23e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>afe006cdc3b329f0d9e8ad2ff851fafcb</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcosHelper.html</anchorfile>
+      <anchor>a647b3f85f55457ee2672efdab1842998</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricAcoshHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>ad7a9fd57a3a0215e9003bd2f263e98ce</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>ae4f5879f3efc57b869dfee65ce6fefe2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a6fec35d8318272b35fbc8a3ed0355e5a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a43e6c8ade08eaad7d0ebd8d591914bd4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a38a2923dc83ef232330d94ebd99448a6</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a7f4975d9cf00acfbe971765b6e66226e</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a5007c782c7c4c376201819ed3fe3a025</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a111d8e609bf36fe1e7b5326923707401</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAcoshHelper.html</anchorfile>
+      <anchor>a7efe083ce947e9529fb1c96ea86ec3e5</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricArithmeticScalarHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</filename>
+    <templarg>ArithmeticOperation op_</templarg>
+    <templarg>bool right_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Scalar_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricArithmeticScalarHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a5cbbdf8605cb97ff8028ec24d7517a4a</anchor>
+      <arglist>(Scalar_ scalar)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a0a6ca10ce60124711ac91a3b07fda31a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>aac85d99c86e333be7d0b1c8d5384e4f7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a394b224928dfe1922508e2170116e40c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>afef6811ba7d13dffd0c287bac694366a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>aa56be5826bb6afc426058a73ce69b3f1</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>aa1bc3af32322883c2a4d880b9fc384d3</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a876fb2638ca31d698e5f04029b8233ea</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a0dd9e339f479d90e705b514cbd44af82</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html</anchorfile>
+      <anchor>a1b06d14fc6164212729b9962c0a17f9b</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricArithmeticVectorHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</filename>
+    <templarg>ArithmeticOperation op_</templarg>
+    <templarg>bool right_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Vector_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricArithmeticVectorHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a71bb2ffcb48c56684888459d152e52ed</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>ae171bf80aeb53be54ef55b06c7e928f0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a7964c8a42baab65b7fe98d85ed7caeee</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a6d80610895155fe2ffe9ec078c13cb50</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a4cb7fd7d3e1728a89d4aadecbb697146</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a22008da1ea9bb4a3f0df39d0e6c3bb7e</anchor>
+      <arglist>(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a08107be4db368727032c827913856842</anchor>
+      <arglist>(bool row, Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a1e6ad68d23d0cf7e7ee0c097c9b0d022</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>a6c9e404a1f1568d0537bdaf738d74841</anchor>
+      <arglist>(bool row, Index_ idx, Index_ number, const InputValue_ *input_value, const Index_ *index, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVectorHelper.html</anchorfile>
+      <anchor>aac84f35ace713c822c5fc0e69ec96c33</anchor>
+      <arglist>(bool row, Index_ idx) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricAsinHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>a03aa29ee4a27bc660a31849b4b56e7ea</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>a95363a2c321a5ed2d047e853c4f63e1a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>af48a4f9cf569b6579a563e944d799175</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>ac5a7b377eab7449aaab44f8b4a2b4f51</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>a5695ee83695b0ef6d2b98cd43aababc9</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>af4a609d0c5e98a38624ac973b2effcfe</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>ae09d85dc5378782f0d8948ab9fb47ece</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>a4a263725308a58b09f03dbc89fcdd95a</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinHelper.html</anchorfile>
+      <anchor>a652b320a14a218c42454f6074bded7de</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricAsinhHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>add3b28a53cb403fe721e5a45d96d2206</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>adbe0a062b38b93688b2d113726143940</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>af6055daee66748e95f3f75b0366016eb</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>a97e3fe9ad75d03fd3d2891932bd633ca</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>aa611f671a9610739d6857b2d2e4f1836</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>a1f17c3bf4d93070c5fb3cba851f939af</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>aa5f95260dfd3f639ee3d4d90eb2fa995</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>a70d6e66a98ee50fd0742758908169e71</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAsinhHelper.html</anchorfile>
+      <anchor>ad6159cf42cfdbcb5c770166e6255bb20</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricAtanHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a4e8578fc5b942605f0fd99f77bdec667</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>ac7346035d46c566239f96bf63553edb0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a938e3fa501521fbfe09e990d92408031</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a06dd37e149c8d8ec8f905f94c68a4120</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a3eb63d826764336a65459df8b20663ae</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a1cdca1d3bf451eaa541aa6866b653332</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>aaafc33ef25dbd8f347147e9730061116</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>ac890449ba7884fbdfca2179b82da15f5</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanHelper.html</anchorfile>
+      <anchor>a2392f43fd44a8dc5075890b3d788a0a7</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricAtanhHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a486d2942d54d2f36d5ddbd5badde2f1b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a9ae2f72a5927d587bbbe3de97c4fa991</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>ae3362810f43a19892bab19ca0c057ae6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a2fe8093164f594003d7c6bb33f58b0a1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>ac684a520a64dd11eb2c041ec957d8795</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a5f6bd747d5048b59d7324923b05e7c47</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a69269b196348cd710b66bee5c91ad7e9</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>aa872c6392b872f88e605bf174f440410</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricAtanhHelper.html</anchorfile>
+      <anchor>a65a3c4bb78bbd08cce752766570a18de</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricBooleanCastHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a2053e8a1d744a5386114c13b2d388a71</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a79246f775984d31f5fd0f3823a3ebfff</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a0c07c46b1de61eeb4a57c22730a7164f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a397a740a005d5a48741d4382d38a897a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>af2bd39aecb11603ef80277c09f1d39d3</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a6fc816e3e8ac5be0a86bc1d7d646f500</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>afd1206ae782e2ce8fcddef834bbf8c6b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>aef6b764b9444de4da188e4e0190f5901</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanCastHelper.html</anchorfile>
+      <anchor>a4c1020805da61c9754702758e51701cd</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricBooleanNotHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a8b0d3ac2ad1a91f76af21e1d91ab54f6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>adf123b000b1c0b97931b5386fd46d3c3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a0a12a87bd113c33c7cb583a73cf9e2cd</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a6f918b44f42fd87844525b9a95979039</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a7bfff0060d097ef4fc2de734ed101fb5</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>afbc952f3432187017c07a2bea6e61188</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a48bada84004fa7a496b9bc3b3421b86a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>acf59ab17cbe20c7d2f67de2826996107</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html</anchorfile>
+      <anchor>a44f17cdf8260ff722b4f9eb9c080d677</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricBooleanScalarHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</filename>
+    <templarg>BooleanOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricBooleanScalarHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>aabf26eece7dfd5cc3b61b56046a626aa</anchor>
+      <arglist>(bool scalar)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>ab5d9170b16e649873340c8cc9bbd2c5a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a09e557a1a8930ee5bc8f5493ca6d0a93</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>ac6ef1f6446c4723193a630e6a5ee855e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a08bbe231ee8b77e920df32f8051436a6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a2c27b5eaf14a71b4b3011117be666146</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>ae1b560d33aaa71096e51002a4243fa65</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a781e187f6d4c551e6c1067488b4e2328</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a84b2e8773e431255b6d3bd82a3a7b088</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanScalarHelper.html</anchorfile>
+      <anchor>a3224297ff8ec6de1486c08360269a94e</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricBooleanVectorHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</filename>
+    <templarg>BooleanOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Vector_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricBooleanVectorHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a61aa30a53d8badf75c42fafbbbd1ce1a</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a384c94cdb642ee253f57fff8ac4bf744</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>aa16ee3429f029b61b1801b45abb90658</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a0ecd9d9a5f30abfca556eceae5e7e9a5</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>ad981d5580466517a578ae46eee07c2a1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a01679fb34567a58d5217e88caffabe15</anchor>
+      <arglist>(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a7da8daf215f67f39ea090b36293b91c3</anchor>
+      <arglist>(bool row, Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a0dfa9e80939c313a9e6f3fc01e9ef399</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a9afb96ee58c6b5e641731ebbced53a94</anchor>
+      <arglist>(bool row, Index_ idx, Index_ number, const InputValue_ *input_value, const Index_ *index, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html</anchorfile>
+      <anchor>a96feb37bbb292be0ebbde279d3dd16eb</anchor>
+      <arglist>(bool row, Index_ idx) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCeilingHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>a712a2256bc6c091de72f3adf3ea2c45d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>ae6949d2e50bbc0e8c2b3d8f562cb1815</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>a72e05b0bac83180e51517a4ec5b5bb4d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>a89c66487d0dde48e0a96291275be85b2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>ade1dbb86424eeb850da1b128a2b68713</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>ad5e754e8f5a51aa245c525485f98e370</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>aa017021aebe7fabda71bb8ade8491fc8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>ac3cf99152656bb382d956bc4e4730c8b</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCeilingHelper.html</anchorfile>
+      <anchor>a18385bb30c39dd8be352ae2397d9b3d8</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCompareScalarHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</filename>
+    <templarg>CompareOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Scalar_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricCompareScalarHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a3794b80e543e1a5e31a467bf33879ee9</anchor>
+      <arglist>(Scalar_ scalar)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a01c161e62fe26d111a8a526c3ac5ca5a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a5f1f4f224adb5bbc4b2e3f8b32990074</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a811e6357837f026c430ee781ad14cc00</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>ae2261ded1ad136bf733aeccfc8dd8d4a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a06f853c2ead03cb20c5689d1db1fa1c1</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a645dc6d9452aba3ede7fbb1690f7af00</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a785b9f7efc39d56f563bf22fba1e95e3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>a2936f4f17949cdccf74e492f00f64a67</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html</anchorfile>
+      <anchor>aa12d33f897391567a33b2ada15f21730</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCompareVectorHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</filename>
+    <templarg>CompareOperation op_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Vector_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricCompareVectorHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>ae4c593203b6d32aa880e6d2593f57d5e</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a76bdf026d0411b75b7851483c65df375</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a2debd08a181be12929e9353c3043f2e6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>acbf95e3521d2194edc9e134ae7b0c818</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a70ee97d6c94a22fcb8f42be4fe7813ed</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a8f7c2c98f19956fc4c69458985d89e65</anchor>
+      <arglist>(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a8fef571f499a18bb207753b7dbf87717</anchor>
+      <arglist>(bool row, Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a55b61eeb20c827714b0f5f9c1d6ef78a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>a5f1e81225d9d3d2a2602689ebc54ef90</anchor>
+      <arglist>(bool row, Index_ idx, Index_ number, const InputValue_ *input_value, const Index_ *indices, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVectorHelper.html</anchorfile>
+      <anchor>ab5d2deae0f5f6a66cf1a7df7a977abc6</anchor>
+      <arglist>(bool row, Index_ idx) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCosHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCosHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a4eabe09a87e23d79c10d2ebee87464b3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>accdad3eb380d230e765f791145253108</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a201f2d87ac53b3adf7fa14420ec5fa89</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a73a3ddc8ff06f6c19f5428b1da39c5eb</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a9f74a53764cf9bd1e922fe54d0a3298a</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>ac32d4edbd2777627d23a6bdd6e913442</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a6702a18b271f846c9707794d5a11905c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>a09c2aabc646eff1215c33c5a564e40b8</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCosHelper.html</anchorfile>
+      <anchor>ad96ef63496b4d78a1d646e78d19bf90e</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCoshHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a499d65ee663777231970cdbac9e111ab</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a24c1a829a31d7f68954f8a6ca9fc8518</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a69b2ba8beb28cc18e8aee7bac24e68b3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>aa8228aa1d6ea1842e794e74e964a4dc8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a9dd400cb913156da52ab5f3b692597fa</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a94f930c606486e7ed97b1ea05b5dae1d</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a28aba7828b44085498198defb2ea1c6d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>a9b8df5ffc4442f5df67468183d8c70a5</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCoshHelper.html</anchorfile>
+      <anchor>aa933aa2f46df9691e4e04df901ba80ec</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricExpHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricExpHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>a278310574f32771b2f4292a3869212fc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>ac2473937c13727c5fe91af2626bde09b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>a256c30d4fbb195cfc52f12a21f2e5662</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>acf1b6748849840ef331ce791018b5cc1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>aa52dd8dc3bb1ac1aad897d38c40a0e8e</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>ab07576c81e891579c02cd108e56ef85a</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>aaac37b4f37a87f199a733e10eb9dd9dc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>aea07b0192f10bd53fff94fa47794ff49</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpHelper.html</anchorfile>
+      <anchor>a169efd769f36c932b5d75588045ea859</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricExpm1Helper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a016a71125d8914fff1d7a40398d25d68</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>aa45e174d4c0de7088808beb1fa15ff77</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>afc358ef4a73ac4926dcb114cb9ad9b10</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a3f4cadaa24f6440948b8bfd2d372c3d3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a12e20cfc883d57f3bb8bfaf6171ec591</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a3afd1f336441a0fa0bfada713a9cc705</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a1bd75c4971ca20d9bd7b352440cb4e61</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>ab98a37eb991b7669f4eff118036aeefa</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
+      <anchor>a7663bc8c78fa465d45ae2b511e73030f</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricFloorHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>a36860520191c76dfd96be943451c4aef</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>a7d79d8763b486e9fdd5a4c9911348496</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>af20d0dc72b783ffb0df7c58f639d0bce</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>aa3b1bdf7bb518a52bc1e08080479d171</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>ad689fd2bb39bab468948e4c8a077e84a</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>a72d95b1ca91536b1026971a758885567</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>abd6893272a1aed557fac08a68d33d7e4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>a4a47129f66586cee21a4cc0e8fbcdc97</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFloorHelper.html</anchorfile>
+      <anchor>a9c5d5fd6fc29bdb6910895e73def73b7</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricGammaHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a9992998041c23dd38e096e59a62bcb5e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a2d038e4421f2c810876890c80b3243c7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a454fb5126d1cadc64fe8e31c80305e87</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a854c2800de18c2a0af37364a8cc72303</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>ab8792e160b8aadbda987d92a9cedef70</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a1ebd61e6fb152e20f0b95209cf0f5b1a</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>ac4fb17ac62bfb4cea559b786c4460808</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>a61e6b543972c6668c7957afbe60d1a76</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricGammaHelper.html</anchorfile>
+      <anchor>ac3cf55308f8fe882982e0617f906ebec</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricLgammaHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>ad1a0e0e49152c751991d81676bb4d808</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>aff5b788c2608848763bf28e4967f6267</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>acc3c5b891ceed00104dcf801389f5ca0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>ab1c1c29f4907e82e9deb8bb2f3bb2e06</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>a0d013b9072ec3b5b8dfa44b0de85bbdc</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>a815b1d756066bf02ca2388e03fbccab7</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>a2ca6686b82c2066a3d9f01ccd03ccd6d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>a26dffe80f4a5ca8c762f3d730d9e1bf4</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLgammaHelper.html</anchorfile>
+      <anchor>a66df85accdcd535acd462a143cd3801d</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricLog1pHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Base_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricLog1pHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a1033abecd623ee12b173138214253fd5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricLog1pHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>ad70270c9fa2126ca5ed11e5f503ea2d2</anchor>
+      <arglist>(Base_ base)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>adbb4a848e1de9170ce03870361218d08</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a9533c1e653311855237df5ef00fd7162</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a5a6677e580601f082ee50b8913787e2c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>aaa7b77df35faaf753cf050e0095d5074</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a4670d2309b3c2987ce98d1e39da4e490</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a29beaffde5b23c68bc34310098662c8e</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>a8e033368817076dd8f2d82d08c001875</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>adcf20ea4da087823ffa4a72e807f6d99</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
+      <anchor>ac9201acffab29c5ce37534137d524fbb</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricLogHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricLogHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Base_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricLogHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>aff0c56657895211b6dd9970983ab1e5d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricLogHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a05ab1af95c9c2eeed74efdb0fc8c6b56</anchor>
+      <arglist>(Base_ base)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a78b6a22ca6e060f203fd15676b7f672f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a2c98f26393f64e3e9bf7db6875dd57a1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a317ec1ae86ff624376390d54e2336b3c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a63cc36a98ce5e429d7ce45a18ec880e1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a3449485c4cb08cfcb759ec377ba65949</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>a04141b38d59a96edf6f153bd52862e96</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>aac963f8d1b44c467440b60e73e6fdd44</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>ac99bc66320f9d1b0ff2f590a97eea572</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
+      <anchor>aa1ef69f4a84f64e123c237aac3eb7215</anchor>
+      <arglist>(bool, Index_) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2670,8 +4396,8 @@
       <type></type>
       <name>DelayedUnaryIsometricOperation</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricOperation.html</anchorfile>
-      <anchor>a2605987878c2897ddf2a92056630b717</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; matrix, Operation_ operation)</arglist>
+      <anchor>a7d1c32cd488b258922343387de4b384c</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; matrix, std::shared_ptr&lt; const Operation_ &gt; operation)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -2808,92 +4534,963 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricRound</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricRound.html</filename>
+    <name>tatami::DelayedUnaryIsometricOperationHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a67469fa0530bc86b737eb5d69d5cb2dd</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a7dad19db3c553c550bca9f381626a386</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a682767d6decb6584b3bd7d2700a162e7</anchor>
+      <arglist>(bool row, Index_ i, Index_ num, const InputValue_ *input_value, const Index_ *index, OutputValue_ *output_value) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a545f431c53f329988d8e495e90851888</anchor>
+      <arglist>(bool row, Index_ i) const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>af76ea67625d1bda2238a931678da1b37</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a5bfefbca29262790c0524333b591dbd5</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a06e8b4eed53f15fdfad871c143663f96</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>af4e8ae40f835a624e778598fbd59769d</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a58cb635f41b38778363361b240b681c8</anchor>
+      <arglist>() const =0</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSign</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSign.html</filename>
+    <name>tatami::DelayedUnaryIsometricRoundHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a286e0da3d85c339c4f0fbc4babbef156</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a76b03b87ab87529326d4361200e4adf7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a4b39f3b1838baa3a0f185eab6977c3f4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>acbd5d106dcd140e7aa3bb62090ca2bae</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a0001ae6ad63c0dadf4f87823c75c877e</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a3f83cb00babf8edb55f49a5c1ab757cc</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>abd530f6c95df968247d74c3a2f4bf6e4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a87e1b20ad10b3376c939bdfdeb32b01d</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricRoundHelper.html</anchorfile>
+      <anchor>a6ff49768720e9a250d6d38d47a0bb8eb</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSin</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSin.html</filename>
+    <name>tatami::DelayedUnaryIsometricSignHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSignHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>a586dd02bb4689442de635be903478d82</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>af65f02750d3d1ba58bf4cb77eeb23ff4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>abf7350d0fd19495ef1a92ab85a7d150c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>ab7a7bb348a11725dd08ce9e5421ab8e8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>a3cae46ec87aa7116cd2a874e45f0f93e</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>af5e7873a511684a5a3fcad49746a32d5</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>a43198c78116330f1d3864dcf329acd0e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>a759be13aaba969132b79b40ae437e2a2</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSignHelper.html</anchorfile>
+      <anchor>a3a22877389b3998a81fc1a582f7c2408</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSinh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSinh.html</filename>
+    <name>tatami::DelayedUnaryIsometricSinHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSinHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a8e403237ecbb66af3157d125ec50a35e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a0476037e44e85c9b419c24f9307cf6ad</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>afb661c65ec7a5bce24faa221c5d077a2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a4c7d56850a652a5070e6d1cb05794b6a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a8050e3ddae4289bd67e1c539b0f4fb90</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>ac2843cb1489a87dbf35f27fdbe22ae73</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>ad52973f8db7dbfa5ab55ed5006a5a2e2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a7a7b69557d8762318a117e212dba433b</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinHelper.html</anchorfile>
+      <anchor>a4faaa20bbf490491896b8e39a815cd9c</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSpecialCompare</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSpecialCompare.html</filename>
+    <name>tatami::DelayedUnaryIsometricSinhHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>a4faea992067812d1412bafdf505c937e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>a4950e8156b07ed3ec42c92e234e8911b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>acf712dc03e6589db1c0b5b5b2c5679fb</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>ad3a8198c705e9e70938c8314a36f8470</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>aa59ffda4acd2148503c0e32ce2120250</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>a79b6e4add3f16ed8f1406cecea2c745f</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>a2cfdf4d68b960643af8ad1b83e273998</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>ab456eb9334f308eb474a7e6c6478b014</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSinhHelper.html</anchorfile>
+      <anchor>ab0fe27573a8d87b44021b3bfc26e415e</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricSpecialCompareHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</filename>
     <templarg>SpecialCompareOperation op_</templarg>
     <templarg>bool pass_</templarg>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricSpecialCompareHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>ac2590639138e686d4635e442eb21f05f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a5500a8c64291974e32ba27d7d821980f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a6c998eb462f09fc059ca3a1b8c87ccf4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a8b196e66304be1c9221ae47b9edd2c27</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a27d13893a55e1b4dfc560878df080596</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>ac1a4959b3537664a150a886f8865a8a2</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a52aae7db7bcc72ab7de23d2f1f57ff3e</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>a2d465be3251fd8c9a0c7c94208df3426</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>ad0f7ecf5f93cb2c47c2ce5db7bf2b576</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialCompareHelper.html</anchorfile>
+      <anchor>ae35e8406d38f91173e92e918ad1a2608</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSpecialSubstitute</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSpecialSubstitute.html</filename>
+    <name>tatami::DelayedUnaryIsometricSpecialSubstituteHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</filename>
     <templarg>SpecialCompareOperation op_</templarg>
     <templarg>bool pass_</templarg>
-    <templarg>typename Value_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
-      <name>DelayedUnaryIsometricSpecialSubstitute</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstitute.html</anchorfile>
-      <anchor>a9f66f9d3b36171263ecc97dc2ff65624</anchor>
-      <arglist>(Value_ substitute)</arglist>
+      <name>DelayedUnaryIsometricSpecialSubstituteHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>abc69636c30b79700701aa10a6c4c3ea5</anchor>
+      <arglist>(OutputValue_ substitute)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>aa1782fc11f67ee82e10cce7c3510f8bd</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>a7f134096ff174a287f03bc618bd2bc01</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>aeb8e454e44b461f092ac39c55cc41850</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>abd378b8aff04a3db6d1deca7cd465cac</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>a79988d670ee72f184ddf17a080a745a6</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>ae2de51c95ce397f2d8bf9ed8aa80deb4</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>ad28b6379c0f817eb9b8230acd26c366b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>ac035276bcc1ada441f0ba5620659e814</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstituteHelper.html</anchorfile>
+      <anchor>af87eab6c1179cdbc79aa07bd6fcc6d7a</anchor>
+      <arglist>(bool, Index_) const</arglist>
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSqrt</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSqrt.html</filename>
+    <name>tatami::DelayedUnaryIsometricSqrtHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>af399d8b5c782ca7c6c5be65a87d772fa</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>a752bdc719f1c86e43ece147fca95864a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>a5b1e379ce8c3d7a81cc8a2a2232dfd05</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>ac095435724ecd2a41d398e98214d9ef1</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>aa9058b22b4ea0403e016da3ad3e7ee52</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>a4d46e783fb4a647f32c5124c6fff1612</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>aaf7afcfb380c4af4561a6ce905ca04bf</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>abf0da565dc55de59934d75a7025d99df</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSqrtHelper.html</anchorfile>
+      <anchor>a2c891f02cde2c94e97bba0e886527a6d</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSubstituteScalar</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSubstituteScalar.html</filename>
+    <name>tatami::DelayedUnaryIsometricSubstituteScalarHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</filename>
     <templarg>CompareOperation op_</templarg>
-    <templarg>typename Value_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Scalar_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
-      <name>DelayedUnaryIsometricSubstituteScalar</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalar.html</anchorfile>
-      <anchor>a1502475a236d3e1aee0d550d49d970c7</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
+      <name>DelayedUnaryIsometricSubstituteScalarHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a48cfcc737616bf98a72e1d402d75c2df</anchor>
+      <arglist>(Scalar_ compared, OutputValue_ substitute)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>aff863e11d82e639bd11b925fd345f0dd</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>ab32d511d2d6128dbba686145a47016b8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a9cb8f13d58a2d2228dd03b612f70fbcc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a1b99b051021c33d191dd2bd66a479c3c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>acb629f2bac24e9e44ca46bd93f1dacf3</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a6b4f7f57707ecbf1e8e169bc5e002973</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a3a4a27f2a17927264af676e24a283dda</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a5bffbec54ec75d6dbfa23052da71b420</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input_value, const Index_ *, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalarHelper.html</anchorfile>
+      <anchor>a7acd5539a8eb0053464ef85d34ba64d2</anchor>
+      <arglist>(bool, Index_) const</arglist>
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricSubstituteVector</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricSubstituteVector.html</filename>
+    <name>tatami::DelayedUnaryIsometricSubstituteVectorHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</filename>
     <templarg>CompareOperation op_</templarg>
-    <templarg>typename Value_</templarg>
-    <templarg>typename Vector_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename ComparedVector_</templarg>
+    <templarg>typename SubstituteVector_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
-      <name>DelayedUnaryIsometricSubstituteVector</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVector.html</anchorfile>
-      <anchor>a3b1ba5609426cf194dfc5e2ac3fc5c20</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
+      <name>DelayedUnaryIsometricSubstituteVectorHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>a4f1d016818d1f3b4d0edc8fc44d44a7e</anchor>
+      <arglist>(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>a18514dda6c07fefe200f3b7e9d64483f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>af901d8b3dbab69df806126a5b83441c3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>af8462543bbf78a57c53551d5df03b24b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>afa0fc7e79721f31184073bb0ee00ae62</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>adf156f4dbcb225500be61e7fd1a4d028</anchor>
+      <arglist>(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>a5633bcd5ecb1ffe2be44a12b536bf698</anchor>
+      <arglist>(bool row, Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>a16db622a7a44d14983f4668a67f2ea13</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>aebf03735b8dd85361d80636730a888d5</anchor>
+      <arglist>(bool row, Index_ idx, Index_ number, const InputValue_ *input_value, const Index_ *indices, OutputValue_ *output_value) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html</anchorfile>
+      <anchor>ae2fb1891621cdcd8eb6fd56d72184536</anchor>
+      <arglist>(bool row, Index_ idx) const</arglist>
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricTan</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricTan.html</filename>
+    <name>tatami::DelayedUnaryIsometricTanHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricTanHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a375c38f6587550ad60c0d4cd97eddc64</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a405a3e4c60457edb3bf1880558f0adfc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a8b55792c048fd0af358ae19d5725763a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a6d879fc1414f170c24e17e4688b6b097</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a23ef303511909d0bd1027b93e16a9c92</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a5992515fa4158bf018f70176fbcd06ce</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>a1729feb84ad3718c6c6eab45f20bfb25</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>afe45c8df4e2a2a37bcd672399880c5a0</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanHelper.html</anchorfile>
+      <anchor>aac21899214d5d8627ec738583b74d132</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricTanh</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricTanh.html</filename>
+    <name>tatami::DelayedUnaryIsometricTanhHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>afda2b9d68fb4cdf97d15fb048196f2f6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>a63dcd7f44890177150caa2c637a75d6e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>a3e9a7c37ac7c3bbb10284a28464ac105</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>a03cd7f5bfff4c00e62e3761fb9878cc3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>aad1f1542c81454c1a85748db3c1ed3da</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>a8c58fb52cd3901d4b4a822db8d70b993</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>af85c432b76bd57fbf2fb8789662f698b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>a23998707c1f0afb9809c4ade26ad2eab</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTanhHelper.html</anchorfile>
+      <anchor>aaa0f58af1e9c4ef3a3b7ead3fc73202a</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricTrunc</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricTrunc.html</filename>
+    <name>tatami::DelayedUnaryIsometricTruncHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>a092e94c31fe0e29afec628157b30b248</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>ac2f8dc3d3632346854d3b3ef945d8c40</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>a5c869f9adc51a92254eb25d12bd685b7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>aa38615e6a2d4a962e8d9c31abd385c43</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>a73ad5d5f95c2a7367b5731f41ed29d21</anchor>
+      <arglist>(bool, Index_, Index_, Index_ length, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>a5ac19e2560e5c6b1d119f479609c2b80</anchor>
+      <arglist>(bool, Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>af01091f5f6449d8bc960c6bd7c86751e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>a365a6a70f9646ea10aeefe7b5705b407</anchor>
+      <arglist>(bool, Index_, Index_ number, const InputValue_ *input, const Index_ *, OutputValue_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricTruncHelper.html</anchorfile>
+      <anchor>ae8d40aacd1a8a73e4be127ef5da8446f</anchor>
+      <arglist>(bool, Index_) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>tatami::DenseColumnMatrix</name>
@@ -4506,12 +7103,11 @@
     <class kind="struct">tatami::ConvertToDenseOptions</class>
     <class kind="struct">tatami::ConvertToFragmentedSparseOptions</class>
     <class kind="struct">tatami::CountCompressedSparseNonZerosOptions</class>
-    <class kind="class">tatami::DelayedBinaryIsometricArithmetic</class>
-    <class kind="struct">tatami::DelayedBinaryIsometricBoolean</class>
-    <class kind="struct">tatami::DelayedBinaryIsometricCompare</class>
-    <class kind="class">tatami::DelayedBinaryIsometricMockAdvanced</class>
-    <class kind="class">tatami::DelayedBinaryIsometricMockBasic</class>
+    <class kind="class">tatami::DelayedBinaryIsometricArithmeticHelper</class>
+    <class kind="struct">tatami::DelayedBinaryIsometricBooleanHelper</class>
+    <class kind="struct">tatami::DelayedBinaryIsometricCompareHelper</class>
     <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
+    <class kind="class">tatami::DelayedBinaryIsometricOperationHelper</class>
     <class kind="class">tatami::DelayedBind</class>
     <class kind="class">tatami::DelayedCast</class>
     <class kind="class">tatami::DelayedSubset</class>
@@ -4520,46 +7116,45 @@
     <class kind="class">tatami::DelayedSubsetSortedUnique</class>
     <class kind="class">tatami::DelayedSubsetUnique</class>
     <class kind="class">tatami::DelayedTranspose</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAbs</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAcos</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAcosh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricArithmeticScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricArithmeticVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAsin</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAsinh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAtan</class>
-    <class kind="class">tatami::DelayedUnaryIsometricAtanh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanCast</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCeiling</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCompareScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCompareVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCos</class>
-    <class kind="class">tatami::DelayedUnaryIsometricCosh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricExp</class>
-    <class kind="class">tatami::DelayedUnaryIsometricExpm1</class>
-    <class kind="class">tatami::DelayedUnaryIsometricFloor</class>
-    <class kind="class">tatami::DelayedUnaryIsometricGamma</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLgamma</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLog</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLog1p</class>
-    <class kind="class">tatami::DelayedUnaryIsometricMockAdvanced</class>
-    <class kind="class">tatami::DelayedUnaryIsometricMockBasic</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAbsHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAcosHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAcoshHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricArithmeticScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricArithmeticVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAsinHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAsinhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAtanHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricAtanhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanCastHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanNotHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCeilingHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCompareScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCompareVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCosHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCoshHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricExpHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricExpm1Helper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricFloorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricGammaHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLgammaHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLog1pHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricLogHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
-    <class kind="class">tatami::DelayedUnaryIsometricRound</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSign</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSin</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSinh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompare</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstitute</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSqrt</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricSubstituteVector</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTan</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTanh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricTrunc</class>
+    <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricRoundHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSignHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSinHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSinhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompareHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstituteHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSqrtHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalarHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSubstituteVectorHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTanHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTanhHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricTruncHelper</class>
     <class kind="class">tatami::DenseColumnMatrix</class>
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="class">tatami::DenseRowMatrix</class>
@@ -4614,6 +7209,489 @@
       <name>NumericMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ae0438743ada096f37f307404851849ff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricAddHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a57425b6548448b71576c04f16f4dc38d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricSubtractHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a0ea7ab7eb80b65e7bc275ae6974dbe91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricMultiplyHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5cae360a45009c024535d56ba44df5e9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7cc6e39d79401f8c36df9275c5516987</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricPowerHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af5bc59578440745268c68b309dd9148b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricModuloHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8aec21138d1d3fcd94d58c3c97bc2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricArithmeticHelper&lt; ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricIntegerDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a739a793b946dc62804ae15b550006ecf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricBooleanHelper&lt; BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricBooleanEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a273c375113ac8a41d70dcb96b34a8f70</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricBooleanHelper&lt; BooleanOperation::AND, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricBooleanAndHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abb2bedfee72494dd676f535b6e646944</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricBooleanHelper&lt; BooleanOperation::OR, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricBooleanOrHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afcffb4b3b4ca704f3c70ca1982b94b5b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricBooleanHelper&lt; BooleanOperation::XOR, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricBooleanXorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a6065e08151681689b5023badb803f100</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8301bb5bced53cf6f9fc880724621536</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricGreaterThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a575089ae32a21531432a27594a04ccd7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricLessThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae03a1f8ae5f3b551ff6b613c6b99d178</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricGreaterThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aa7b7253051f5faf636fc2ebde7d495ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricLessThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8dc2cbf8430b064492cba8bdbe7c89aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedBinaryIsometricCompareHelper&lt; CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedBinaryIsometricNotEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a83d6ad9e461ce20731c532061e09e617</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::ADD, true, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricAddScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af2292212afeb290e4dff7f36aa054fb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::SUBTRACT, right_, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubtractScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af4809abe02f2d2f90ee7404f42b7b777</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::MULTIPLY, true, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricMultiplyScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab49c318a02237b845b6aaea33b894242</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab56ef7076f6972dc24e450811a624906</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::POWER, right_, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricPowerScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a464a72a2ccd0355d064c2778afbe732b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::MODULO, right_, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricModuloScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a15002f7fff6e73aa829f87b9f4fad7b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticScalarHelper&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricIntegerDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aadb6226285e0eafc99868c686d2ff6bf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::ADD, true, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricAddVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aecdb1b3448ed9bcb6dc7328f96c0e0a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::SUBTRACT, right_, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubtractVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a78329812c3ab5ada1be83f590a96c18a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::MULTIPLY, true, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricMultiplyVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51e2b0461234d6bf0c9240a8a2777b8a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a9dbcd076270f137cbfff8f5af613ba49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::POWER, right_, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricPowerVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7ba14f9ea3d6c7b8fb98b34d54aafb59</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::MODULO, right_, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricModuloVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afaf1c8702a170bf686bda7f50a1d55f8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricArithmeticVectorHelper&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricIntegerDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4c4ac3cd66fe866bb94e7692f717ce51</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanScalarHelper&lt; BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a61040dd1b833692e48a53a79015a26d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanScalarHelper&lt; BooleanOperation::AND, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanAndScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a80d8f7239498a6631bc728518d2c4d60</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanScalarHelper&lt; BooleanOperation::OR, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanOrScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ace6a6321e96323e7cc3ee2c6bbe7de53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanScalarHelper&lt; BooleanOperation::XOR, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanXorScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2803fa1c9ae921fcf7901b7e16723217</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanVectorHelper&lt; BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2d2da6aa028f9f9b761ad014d3d6e8af</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanVectorHelper&lt; BooleanOperation::AND, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanAndVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a82f179809ea91935f94c319ecf687138</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanVectorHelper&lt; BooleanOperation::OR, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanOrVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a00469f0584ca17dc3e6292f4aad4ef50</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricBooleanVectorHelper&lt; BooleanOperation::XOR, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricBooleanXorVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8497a6e6a96766aa03d0f3de4f502726</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5dc54c092d0ed88020a588e968b6aa87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricGreaterThanScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af60ad4ee3808aae10ddd24031ad6f781</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricLessThanScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8b19844aaf36539c53436d80ea83c0d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricGreaterThanOrEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8c5c19886f4873a8cd84f0cb250c7923</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricLessThanOrEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abf8e15999b164083daf19f4b9405f38f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareScalarHelper&lt; CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricNotEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a9c56245791d6fc70a5b70d4a67cda390</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a28256a85f8fb04234807b89672a4902e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricGreaterThanVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a57a3bdf1378f20d210367c69c0c60462</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricLessThanVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af4cd0eaa035a836cad4ef992ad11d3f1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricGreaterThanOrEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aea3e5df8ef9e30e0bb33157a54dbb017</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricLessThanOrEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad6bc075ad032f1fae7a55bcb0c838d28</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricCompareVectorHelper&lt; CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, Vector_ &gt;</type>
+      <name>DelayedUnaryIsometricNotEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4e91a967f132fa20cea6838ad7a18ecc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialCompareHelper&lt; SpecialCompareOperation::ISNAN, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricIsnanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af819a1749116a16befe9c6941683acab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialCompareHelper&lt; SpecialCompareOperation::ISINF, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricIsinfHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aada7b7f5b035cc60a27600ac893bda98</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialCompareHelper&lt; SpecialCompareOperation::ISFINITE, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricIsfiniteHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a16e742490eb4b0300c915d47fd98e398</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a98a5e88bdd28d9bda030d8bf20ce0d2e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteGreaterThanScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad240d87978cdf3d57b65c9f25f4c7700</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteLessThanScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a67195ce7793682b9698dfdbba0ae0396</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4079ceca160d5eeca88e1c015b741691</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteLessThanOrEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>adbe06f2445eea2bac346285bac40ba81</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteScalarHelper&lt; CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, Scalar_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteNotEqualScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad14b2d50ec74c5c326298f55dd2e20f5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac43c2a731fa3de6cd038a6965f81577b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteGreaterThanVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad9c262b66d87bb7e9033d619cdcf169b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteLessThanVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a136ddc464e7c3ca5c0cb161074eb2e4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteGreaterThanOrEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aacdc6e163e4777518dd881d5e97c566f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteLessThanOrEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a217608866f96365bd9370c9f09fb242c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSubstituteVectorHelper&lt; CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteNotEqualVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abf285b6e52c66ec11445d6a69a6bdd50</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialSubstituteHelper&lt; SpecialCompareOperation::ISNAN, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteIsnanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af20c8766117c8e362b4d7cffb1d4b9e9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialSubstituteHelper&lt; SpecialCompareOperation::ISINF, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteIsinfHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7fc2988a433b39c29c4eda6348e023bc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricSpecialSubstituteHelper&lt; SpecialCompareOperation::ISFINITE, pass_, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricSubstituteIsfiniteHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>add55c44e96392e7c562ac87fce83f11d</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -4722,510 +7800,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a86be7b06c9d13b25f9ff04eed87430a7</anchor>
       <arglist>(const Input_ *input, size_t nrow, size_t ncol, Output_ *output)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::ADD &gt;</type>
-      <name>make_DelayedBinaryIsometricAdd</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a389ebbcd018702d2922b795c08721e78</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::SUBTRACT &gt;</type>
-      <name>make_DelayedBinaryIsometricSubtract</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3647a1ae34a5e8a47b28631da1032fc9</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::MULTIPLY &gt;</type>
-      <name>make_DelayedBinaryIsometricMultiply</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a01370b082642ae6c745ff9bb1600a87f</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::DIVIDE &gt;</type>
-      <name>make_DelayedBinaryIsometricDivide</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a42d4e17808d85624398f7f25ee36e635</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::POWER &gt;</type>
-      <name>make_DelayedBinaryIsometricPower</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1ed3cf4520b14ba2e85cf4afb32a1fdc</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::MODULO &gt;</type>
-      <name>make_DelayedBinaryIsometricModulo</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a20f8a13127f659c6362d53aa51ed33d8</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricArithmetic&lt; ArithmeticOperation::INTEGER_DIVIDE &gt;</type>
-      <name>make_DelayedBinaryIsometricIntegerDivide</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae63d9c1ef029246b216b8a5af33b84ca</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricBoolean&lt; BooleanOperation::EQUAL &gt;</type>
-      <name>make_DelayedBinaryIsometricBooleanEqual</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae8e1b122c59a6aca0b21574915b4b1e9</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricBoolean&lt; BooleanOperation::AND &gt;</type>
-      <name>make_DelayedBinaryIsometricBooleanAnd</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a57cbe03c715d9da7a0f1698a1f13b3b3</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricBoolean&lt; BooleanOperation::OR &gt;</type>
-      <name>make_DelayedBinaryIsometricBooleanOr</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6e16348dab1840e17a24cb06c1dcf2f3</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricBoolean&lt; BooleanOperation::XOR &gt;</type>
-      <name>make_DelayedBinaryIsometricBooleanXor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa8fe42dacf113b2da94054a4f299ff56</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::EQUAL &gt;</type>
-      <name>make_DelayedBinaryIsometricEqual</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af9ec8327dccb9be90b71dae9e41b18e0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::GREATER_THAN &gt;</type>
-      <name>make_DelayedBinaryIsometricGreaterThan</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a597a537c6e5a4bfa351e467a84d1da81</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::LESS_THAN &gt;</type>
-      <name>make_DelayedBinaryIsometricLessThan</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3cc3de58c455cfacd1c119b702995f34</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::GREATER_THAN_OR_EQUAL &gt;</type>
-      <name>make_DelayedBinaryIsometricGreaterThanOrEqual</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>adcfd223eeb93f13826a8e06b73b474b2</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::LESS_THAN_OR_EQUAL &gt;</type>
-      <name>make_DelayedBinaryIsometricLessThanOrEqual</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6b8d86c223bd5cb4f9d3b98485215bcc</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryIsometricCompare&lt; CompareOperation::NOT_EQUAL &gt;</type>
-      <name>make_DelayedBinaryIsometricNotEqual</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9b63c28c67d2ec406da35b7db6900879</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; OutputValue_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBinaryIsometricOperation</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad75250f5b086a69c2d9f0edc7bc0b26b</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; right, Operation_ op)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::ADD, true, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricAddScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad01457d379debb3db2613ecb9df8316f</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::SUBTRACT, right_, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubtractScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af07d7933d0c241538874bd1111f25b0c</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::MULTIPLY, true, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricMultiplyScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac3a41952679942c301ca014e88f24d4a</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::DIVIDE, right_, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricDivideScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a79ee0c65c8185ba2da929a7166cf3afe</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::POWER, right_, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricPowerScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac6add530e6659ffd8347c41a00145754</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::MODULO, right_, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricModuloScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a923fa6598ca3c15de1ad22770d7e57e9</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Scalar_ &gt;</type>
-      <name>make_DelayedUnaryIsometricIntegerDivideScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a93ede92a92f04bc3cba00e757a7c76a3</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::ADD, true, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricAddVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a89ba0e047f78f1f6736e99af01175d08</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::SUBTRACT, right_, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubtractVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae04a89253591265e5dfdeb736d7736e4</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MULTIPLY, true, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricMultiplyVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad5f10fab490951d8ea9a6cff5e9dfea5</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::DIVIDE, right_, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricDivideVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4a652f625832bc7f2830eddc7369634a</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::POWER, right_, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricPowerVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a734eccb6121b6d018c431651d54ad146</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MODULO, right_, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricModuloVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac0c9d8feef1eaeebeff4c4e3d1f4af8f</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricIntegerDivideVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac5a6e8445a71606ce80e6741a36e6fd8</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanNot</type>
-      <name>make_DelayedUnaryIsometricBooleanNot</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a903e5ae4540777aeacfb0178ac4f8aac</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanScalar&lt; BooleanOperation::AND &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanAndScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a33cb992320bf02b04abc364bda96236b</anchor>
-      <arglist>(bool scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanScalar&lt; BooleanOperation::OR &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanOrScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5217ab83500651fbadd29960a12717e4</anchor>
-      <arglist>(bool scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanScalar&lt; BooleanOperation::XOR &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanXorScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aad1d71458318c276b9eb517085468291</anchor>
-      <arglist>(bool scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanScalar&lt; BooleanOperation::EQUAL &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9531a951864544d30e69962792ff4eb8</anchor>
-      <arglist>(bool scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::AND, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanAndVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab16dd5595a8c717671ffaa1874a82183</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::OR, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanOrVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a38349aa7f5b0d127039fb4a0e875fc88</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::XOR, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanXorVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a792a5d736087c619ede48c38edecd4e3</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::EQUAL, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricBooleanEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a70c548b744fc5df8cbf4b4dfde2c8f3c</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::EQUAL, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa74741489b477f1a69d53a3c18c78a7b</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricGreaterThanScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a983e14506dc8cf04295e92004c6b5c45</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricLessThanScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a12ab6ad85c62223b39cdc3de21bef2e5</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricGreaterThanOrEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a7e7d7094d9684b053a203c5d00cdbf25</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricLessThanOrEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae674f4bc700c58d7a70f4e883e424198</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::NOT_EQUAL, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricNotEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4fc5bc6de16e4bdd33a7e776f0df0dcc</anchor>
-      <arglist>(InputValue_ scalar)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::EQUAL, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a74cc635c8a64c607d3059ee2928f27bc</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricGreaterThanVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afa23e61b494d984a071aaff63b52b378</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricLessThanVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2c3b9e1efdea505210a867916331e9f3</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN_OR_EQUAL, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricGreaterThanOrEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae6ec71c086f23e2e15166fb55154686b</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN_OR_EQUAL, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricLessThanOrEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad592a6164ae40e0ff6555ce0eeaac63a</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::NOT_EQUAL, InputValue_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricNotEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2b643d84e2e356a6dfe472c2f374537a</anchor>
-      <arglist>(Vector_ vector, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISNAN, pass_, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricIsnan</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6637de329390c622128024fc2f6d35b7</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISINF, pass_, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricIsinf</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2e7b274bc022093c27942ca569ec3630</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISFINITE, pass_, InputValue_ &gt;</type>
-      <name>make_DelayedUnaryIsometricIsfinite</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a349d487e245d6082d5131d2f84b74071</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; OutputValue_, Index_ &gt; &gt;</type>
-      <name>make_DelayedUnaryIsometricOperation</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6f23962ec258c833d2c28a8d19e12807</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; matrix, Operation_ operation)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::EQUAL, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2f4611e96f639b004ffaa1c17c435070</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteGreaterThanScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3ef464e027eeb29e2f82963520c26b0b</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteLessThanScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a00d5b011082a2a524f8e9611d07f87a7</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac10a97c1ec31e3a60d68da0a3f544603</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab9bb7e872341073b579ab59f99870f23</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::NOT_EQUAL, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteNotEqualScalar</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4b9f40dd430934d2693a21d09954b103</anchor>
-      <arglist>(Value_ compared, Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::EQUAL, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a90cd5051271fda51be03670848e17bf4</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::GREATER_THAN, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteGreaterThanVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a60163836a688ca8b662affec5f3ac92b</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::LESS_THAN, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteLessThanVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0a478db711543357f581bbe2d241421f</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>adf046b4ba48222d084a4a1cd84b560c7</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteLessThanOrEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a11f450e1cbcd4fbd7427dc5d15392cc4</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::NOT_EQUAL, Value_, Vector_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteNotEqualVector</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad65490ea8c0ee4d29af2d51d10ba23ca</anchor>
-      <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISNAN, pass_, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteIsnan</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a42ceae1b11636c213088c6d923fad313</anchor>
-      <arglist>(Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISINF, pass_, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteIsinf</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9d5ab6b324705fb16662933815c589c9</anchor>
-      <arglist>(Value_ substitute)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISFINITE, pass_, Value_ &gt;</type>
-      <name>make_DelayedUnaryIsometricSubstituteIsfinite</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a87a1194718021bcd4b97a6c420ffbdfa</anchor>
-      <arglist>(Value_ substitute)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; ValueOut_, IndexOut_ &gt; &gt;</type>

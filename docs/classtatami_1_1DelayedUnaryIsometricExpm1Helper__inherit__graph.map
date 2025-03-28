@@ -1,0 +1,5 @@
+<map id="tatami::DelayedUnaryIsometricExpm1Helper&lt; OutputValue_, InputValue_, Index_ &gt;" name="tatami::DelayedUnaryIsometricExpm1Helper&lt; OutputValue_, InputValue_, Index_ &gt;">
+<area shape="rect" id="Node000001" title="Helper for delayed calculation of the exponential function of each matrix entry minus 1." alt="" coords="252,5,449,61"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedUnaryIsometricOperationHelper.html" title="Helper operation interface for DelayedUnaryIsometricOperation." alt="" coords="5,5,204,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,30,251,30,251,36,219,36"/>
+</map>

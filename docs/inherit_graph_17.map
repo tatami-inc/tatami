@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classtatami_1_1DelayedUnaryIsometricArithmeticVector.html" title="Delayed unary isometric vector arithmetic." alt="" coords="5,5,203,61"/>
+<area shape="rect" id="Node000000" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,53,187,94"/>
+<area shape="rect" id="Node000001" href="$classtatami_1_1DelayedBinaryIsometricOperation.html" title="Delayed isometric operations on two matrices." alt="" coords="235,5,454,61"/>
+<area shape="poly" id="edge41_Node000000_Node000001" title=" " alt="" coords="202,53,234,48,235,53,202,59"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix." alt="" coords="235,85,454,141"/>
+<area shape="poly" id="edge42_Node000000_Node000002" title=" " alt="" coords="202,88,235,93,234,98,202,93"/>
 </map>

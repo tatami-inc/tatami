@@ -124,8 +124,8 @@ Collaboration diagram for tatami::DelayedBinaryIsometricOperation&lt; OutputValu
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acb207fd44b597d1e6f9e9a3e019fd110" id="r_acb207fd44b597d1e6f9e9a3e019fd110"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb207fd44b597d1e6f9e9a3e019fd110">DelayedBinaryIsometricOperation</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; InputValue_, Index_ &gt; &gt; right, Operation_ operation)</td></tr>
-<tr class="separator:acb207fd44b597d1e6f9e9a3e019fd110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6cb0f1a05a0274035ebeb25e8523163" id="r_af6cb0f1a05a0274035ebeb25e8523163"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af6cb0f1a05a0274035ebeb25e8523163">DelayedBinaryIsometricOperation</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; InputValue_, Index_ &gt; &gt; right, std::shared_ptr&lt; const Operation_ &gt; operation)</td></tr>
+<tr class="separator:af6cb0f1a05a0274035ebeb25e8523163"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc4cba94974832694ff11675f771de6d" id="r_adc4cba94974832694ff11675f771de6d"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc4cba94974832694ff11675f771de6d">nrow</a> () const</td></tr>
 <tr class="separator:adc4cba94974832694ff11675f771de6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81b9b53c0aadc6023e299e09591f678d" id="r_a81b9b53c0aadc6023e299e09591f678d"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81b9b53c0aadc6023e299e09591f678d">ncol</a> () const</td></tr>
@@ -303,7 +303,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a7575110444f4b58efcf0fb1a1060541c inherit pub_types_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename OutputValue_, typename InputValue_, typename Index_, class Operation_&gt;<br />
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename OutputValue_, typename InputValue_, typename Index_, class Operation_ = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt;<br />
 class tatami::DelayedBinaryIsometricOperation&lt; OutputValue_, InputValue_, Index_, Operation_ &gt;</div><p>Delayed isometric operations on two matrices. </p>
 <p>Implements any operation that takes two matrices of the same shape and returns another matrix of that shape. Each entry of the output matrix is a function of the corresponding values in the two input matrices. This operation is "delayed" in that it is only evaluated during data extraction, e.g., with <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code> or friends.</p>
 <p>This class is inspired by the <code>DelayedNaryIsoOp</code> class in the <b>DelayedArray</b> Bioconductor package.</p>
@@ -312,18 +312,18 @@ class tatami::DelayedBinaryIsometricOperation&lt; OutputValue_, InputValue_, Ind
     <tr><td class="paramname">OutputValue_</td><td>Type of the result of the operation. This is the type of the value of the output matrix. </td></tr>
     <tr><td class="paramname">InputValue_</td><td>Type of the value of the input matrices, to use in the operation. This may or may not be the same as <code>OutputValue_</code>, depending on the methods available in <code>Operation_</code>. </td></tr>
     <tr><td class="paramname">Index_</td><td>Type of index value. </td></tr>
-    <tr><td class="paramname">Operation_</td><td>Helper class implementing the operation. This should implement the same methods as <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockBasic.html" title="Basic mock operation for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricMockBasic</a></code> or <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html" title="Advanced mock operation for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricMockAdvanced</a></code>, depending on whether it can take advantage of matrix sparsity. </td></tr>
+    <tr><td class="paramname">Operation_</td><td>Helper class implementing the operation, providing the same methods as <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html" title="Helper operation interface for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricOperationHelper</a></code>. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="acb207fd44b597d1e6f9e9a3e019fd110" name="acb207fd44b597d1e6f9e9a3e019fd110"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb207fd44b597d1e6f9e9a3e019fd110">&#9670;&#160;</a></span>DelayedBinaryIsometricOperation()</h2>
+<a id="af6cb0f1a05a0274035ebeb25e8523163" name="af6cb0f1a05a0274035ebeb25e8523163"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af6cb0f1a05a0274035ebeb25e8523163">&#9670;&#160;</a></span>DelayedBinaryIsometricOperation()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -341,7 +341,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Operation_</td>          <td class="paramname"><span class="paramname"><em>operation</em></span>&#160;)</td>
+          <td class="paramtype">std::shared_ptr&lt; const Operation_ &gt;</td>          <td class="paramname"><span class="paramname"><em>operation</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -354,7 +354,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
   <table class="params">
     <tr><td class="paramname">left</td><td>Pointer to the left matrix. </td></tr>
     <tr><td class="paramname">right</td><td>Pointer to the right matrix. </td></tr>
-    <tr><td class="paramname">operation</td><td>Instance of the functor class. </td></tr>
+    <tr><td class="paramname">operation</td><td>Pointer to an instance of the helper class. </td></tr>
   </table>
   </dd>
 </dl>
@@ -368,7 +368,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -398,7 +398,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -428,7 +428,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -459,7 +459,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -490,7 +490,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -520,7 +520,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -551,7 +551,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -588,7 +588,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -629,7 +629,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -682,7 +682,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -729,7 +729,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -770,7 +770,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -823,7 +823,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -870,7 +870,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -917,7 +917,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -976,7 +976,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1029,7 +1029,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1076,7 +1076,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1135,7 +1135,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_ &gt; </div>
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , class Operation_  = DelayedBinaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

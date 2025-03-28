@@ -111,8 +111,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>};</div>
 </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;CompareOperation op_, <span class="keyword">typename</span> Value_&gt;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keywordtype">bool</span> delayed_compare(Value_ val, Value_ scalar) {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;CompareOperation op_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Scalar_&gt;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keywordtype">bool</span> delayed_compare(Value_ val, Scalar_ scalar) {</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(op_ == CompareOperation::EQUAL) {</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keywordflow">return</span> val == scalar;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(op_ == CompareOperation::GREATER_THAN) {</div>

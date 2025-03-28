@@ -93,20 +93,20 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">compare_helpers.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Helper classes for binary comparison operations.  
+<p>Helper class for binary comparison operations.  
 <a href="#details">More...</a></p>
 
 <p><a href="binary_2compare__helpers_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">tatami::DelayedBinaryIsometricCompare&lt; op_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed binary isometric comparison.  <a href="structtatami_1_1DelayedBinaryIsometricCompare.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">tatami::DelayedBinaryIsometricCompareHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed binary isometric comparisons.  <a href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -115,23 +115,29 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:af9ec8327dccb9be90b71dae9e41b18e0" id="r_af9ec8327dccb9be90b71dae9e41b18e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af9ec8327dccb9be90b71dae9e41b18e0">tatami::make_DelayedBinaryIsometricEqual</a> ()</td></tr>
-<tr class="separator:af9ec8327dccb9be90b71dae9e41b18e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a597a537c6e5a4bfa351e467a84d1da81" id="r_a597a537c6e5a4bfa351e467a84d1da81"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::GREATER_THAN &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a597a537c6e5a4bfa351e467a84d1da81">tatami::make_DelayedBinaryIsometricGreaterThan</a> ()</td></tr>
-<tr class="separator:a597a537c6e5a4bfa351e467a84d1da81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cc3de58c455cfacd1c119b702995f34" id="r_a3cc3de58c455cfacd1c119b702995f34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::LESS_THAN &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3cc3de58c455cfacd1c119b702995f34">tatami::make_DelayedBinaryIsometricLessThan</a> ()</td></tr>
-<tr class="separator:a3cc3de58c455cfacd1c119b702995f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcfd223eeb93f13826a8e06b73b474b2" id="r_adcfd223eeb93f13826a8e06b73b474b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::GREATER_THAN_OR_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#adcfd223eeb93f13826a8e06b73b474b2">tatami::make_DelayedBinaryIsometricGreaterThanOrEqual</a> ()</td></tr>
-<tr class="separator:adcfd223eeb93f13826a8e06b73b474b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b8d86c223bd5cb4f9d3b98485215bcc" id="r_a6b8d86c223bd5cb4f9d3b98485215bcc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::LESS_THAN_OR_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6b8d86c223bd5cb4f9d3b98485215bcc">tatami::make_DelayedBinaryIsometricLessThanOrEqual</a> ()</td></tr>
-<tr class="separator:a6b8d86c223bd5cb4f9d3b98485215bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b63c28c67d2ec406da35b7db6900879" id="r_a9b63c28c67d2ec406da35b7db6900879"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricCompare.html">DelayedBinaryIsometricCompare</a>&lt; CompareOperation::NOT_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a9b63c28c67d2ec406da35b7db6900879">tatami::make_DelayedBinaryIsometricNotEqual</a> ()</td></tr>
-<tr class="separator:a9b63c28c67d2ec406da35b7db6900879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a8301bb5bced53cf6f9fc880724621536" id="r_a8301bb5bced53cf6f9fc880724621536"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a8301bb5bced53cf6f9fc880724621536"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8301bb5bced53cf6f9fc880724621536">tatami::DelayedBinaryIsometricEqualHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::EQUAL, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a8301bb5bced53cf6f9fc880724621536"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a575089ae32a21531432a27594a04ccd7" id="r_a575089ae32a21531432a27594a04ccd7"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a575089ae32a21531432a27594a04ccd7"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a575089ae32a21531432a27594a04ccd7">tatami::DelayedBinaryIsometricGreaterThanHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a575089ae32a21531432a27594a04ccd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae03a1f8ae5f3b551ff6b613c6b99d178" id="r_ae03a1f8ae5f3b551ff6b613c6b99d178"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ae03a1f8ae5f3b551ff6b613c6b99d178"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae03a1f8ae5f3b551ff6b613c6b99d178">tatami::DelayedBinaryIsometricLessThanHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:ae03a1f8ae5f3b551ff6b613c6b99d178"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b7253051f5faf636fc2ebde7d495ea" id="r_aa7b7253051f5faf636fc2ebde7d495ea"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:aa7b7253051f5faf636fc2ebde7d495ea"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa7b7253051f5faf636fc2ebde7d495ea">tatami::DelayedBinaryIsometricGreaterThanOrEqualHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:aa7b7253051f5faf636fc2ebde7d495ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dc2cbf8430b064492cba8bdbe7c89aa" id="r_a8dc2cbf8430b064492cba8bdbe7c89aa"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a8dc2cbf8430b064492cba8bdbe7c89aa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8dc2cbf8430b064492cba8bdbe7c89aa">tatami::DelayedBinaryIsometricLessThanOrEqualHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a8dc2cbf8430b064492cba8bdbe7c89aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83d6ad9e461ce20731c532061e09e617" id="r_a83d6ad9e461ce20731c532061e09e617"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a83d6ad9e461ce20731c532061e09e617"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a83d6ad9e461ce20731c532061e09e617">tatami::DelayedBinaryIsometricNotEqualHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html">DelayedBinaryIsometricCompareHelper</a>&lt;CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a83d6ad9e461ce20731c532061e09e617"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Helper classes for binary comparison operations. </p>
+<div class="textblock"><p>Helper class for binary comparison operations. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

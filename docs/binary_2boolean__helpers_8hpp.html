@@ -93,20 +93,20 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">boolean_helpers.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Helper classes for binary boolean operations.  
+<p>Helper class for binary boolean operations.  
 <a href="#details">More...</a></p>
 
 <p><a href="binary_2boolean__helpers_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBoolean.html">tatami::DelayedBinaryIsometricBoolean&lt; op_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed binary isometric boolean operations.  <a href="structtatami_1_1DelayedBinaryIsometricBoolean.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html">tatami::DelayedBinaryIsometricBooleanHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed binary isometric boolean operations.  <a href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -115,19 +115,23 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ae8e1b122c59a6aca0b21574915b4b1e9" id="r_ae8e1b122c59a6aca0b21574915b4b1e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBoolean.html">DelayedBinaryIsometricBoolean</a>&lt; BooleanOperation::EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae8e1b122c59a6aca0b21574915b4b1e9">tatami::make_DelayedBinaryIsometricBooleanEqual</a> ()</td></tr>
-<tr class="separator:ae8e1b122c59a6aca0b21574915b4b1e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57cbe03c715d9da7a0f1698a1f13b3b3" id="r_a57cbe03c715d9da7a0f1698a1f13b3b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBoolean.html">DelayedBinaryIsometricBoolean</a>&lt; BooleanOperation::AND &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a57cbe03c715d9da7a0f1698a1f13b3b3">tatami::make_DelayedBinaryIsometricBooleanAnd</a> ()</td></tr>
-<tr class="separator:a57cbe03c715d9da7a0f1698a1f13b3b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e16348dab1840e17a24cb06c1dcf2f3" id="r_a6e16348dab1840e17a24cb06c1dcf2f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBoolean.html">DelayedBinaryIsometricBoolean</a>&lt; BooleanOperation::OR &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6e16348dab1840e17a24cb06c1dcf2f3">tatami::make_DelayedBinaryIsometricBooleanOr</a> ()</td></tr>
-<tr class="separator:a6e16348dab1840e17a24cb06c1dcf2f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8fe42dacf113b2da94054a4f299ff56" id="r_aa8fe42dacf113b2da94054a4f299ff56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryIsometricBoolean.html">DelayedBinaryIsometricBoolean</a>&lt; BooleanOperation::XOR &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa8fe42dacf113b2da94054a4f299ff56">tatami::make_DelayedBinaryIsometricBooleanXor</a> ()</td></tr>
-<tr class="separator:aa8fe42dacf113b2da94054a4f299ff56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a273c375113ac8a41d70dcb96b34a8f70" id="r_a273c375113ac8a41d70dcb96b34a8f70"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a273c375113ac8a41d70dcb96b34a8f70"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a273c375113ac8a41d70dcb96b34a8f70">tatami::DelayedBinaryIsometricBooleanEqualHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html">DelayedBinaryIsometricBooleanHelper</a>&lt;BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a273c375113ac8a41d70dcb96b34a8f70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb2bedfee72494dd676f535b6e646944" id="r_abb2bedfee72494dd676f535b6e646944"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:abb2bedfee72494dd676f535b6e646944"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#abb2bedfee72494dd676f535b6e646944">tatami::DelayedBinaryIsometricBooleanAndHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html">DelayedBinaryIsometricBooleanHelper</a>&lt;BooleanOperation::AND, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:abb2bedfee72494dd676f535b6e646944"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcffb4b3b4ca704f3c70ca1982b94b5b" id="r_afcffb4b3b4ca704f3c70ca1982b94b5b"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:afcffb4b3b4ca704f3c70ca1982b94b5b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afcffb4b3b4ca704f3c70ca1982b94b5b">tatami::DelayedBinaryIsometricBooleanOrHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html">DelayedBinaryIsometricBooleanHelper</a>&lt;BooleanOperation::OR, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:afcffb4b3b4ca704f3c70ca1982b94b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6065e08151681689b5023badb803f100" id="r_a6065e08151681689b5023badb803f100"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a6065e08151681689b5023badb803f100"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6065e08151681689b5023badb803f100">tatami::DelayedBinaryIsometricBooleanXorHelper</a> = <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html">DelayedBinaryIsometricBooleanHelper</a>&lt;BooleanOperation::XOR, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a6065e08151681689b5023badb803f100"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Helper classes for binary boolean operations. </p>
+<div class="textblock"><p>Helper class for binary boolean operations. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
