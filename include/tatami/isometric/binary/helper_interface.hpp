@@ -25,6 +25,20 @@ template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedBinaryIsometricOperationHelper {
 public:
     /**
+     * @cond
+     */
+    DelayedBinaryIsometricOperationHelper() = default;
+    DelayedBinaryIsometricOperationHelper(const DelayedBinaryIsometricOperationHelper&) = default;
+    DelayedBinaryIsometricOperationHelper& operator=(const DelayedBinaryIsometricOperationHelper&) = default;
+    DelayedBinaryIsometricOperationHelper(DelayedBinaryIsometricOperationHelper&&) = default;
+    DelayedBinaryIsometricOperationHelper& operator=(DelayedBinaryIsometricOperationHelper&&) = default;
+    virtual ~DelayedBinaryIsometricOperationHelper() = default;
+    /**
+     * @endcond
+     */
+
+public:
+    /**
      * @param row Whether `i` refers to the row or column index.
      * @param i The index of the row (if `row = true`) or column (otherwise) containing the zeros.
      * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),

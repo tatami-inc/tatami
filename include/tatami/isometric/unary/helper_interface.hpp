@@ -26,6 +26,20 @@ template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricOperationHelper {
 public:
     /**
+     * @cond
+     */
+    DelayedUnaryIsometricOperationHelper() = default;
+    DelayedUnaryIsometricOperationHelper(const DelayedUnaryIsometricOperationHelper&) = default;
+    DelayedUnaryIsometricOperationHelper& operator=(const DelayedUnaryIsometricOperationHelper&) = default;
+    DelayedUnaryIsometricOperationHelper(DelayedUnaryIsometricOperationHelper&&) = default;
+    DelayedUnaryIsometricOperationHelper& operator=(DelayedUnaryIsometricOperationHelper&&) = default;
+    virtual ~DelayedUnaryIsometricOperationHelper() = default;
+    /**
+     * @endcond
+     */
+
+public:
+    /**
      * This method accepts a contiguous block of an element of the target dimension from the underlying matrix (`input`),
      * applies the operation to each value, and stores the result in another array of different type (`output`).
      *
