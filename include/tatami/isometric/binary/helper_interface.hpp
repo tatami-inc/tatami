@@ -2,6 +2,7 @@
 #define TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_HELPER_INTERFACE_H
 
 #include <vector>
+#include <optional>
 #include "../../base/SparseRange.hpp"
 
 /** 
@@ -183,6 +184,18 @@ public:
      * @return Whether this operation preserves sparsity.
      */
     virtual bool is_sparse() const = 0;
+
+    /**
+     * @return Expected number of rows in the matrix to which this operation is to be applied (i.e., the underlying matrix in the `DelayedUnaryIsometricOperation` constructor).
+     * If no value is returned, the matrix may have any number of rows.
+     */
+    virtual std::optional<Index_> nrow() const = 0; 
+
+    /**
+     * @return Expected number of columns in the matrix to which this operation is to be applied (i.e., the underlying matrix in the `DelayedUnaryIsometricOperation` constructor).
+     * If no value is returned, the matrix may have any number of columns.
+     */
+    virtual std::optional<Index_> ncol() const = 0; 
 };
 
 }

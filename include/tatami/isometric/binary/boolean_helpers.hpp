@@ -103,6 +103,15 @@ public:
     bool is_sparse() const {
         return known_sparse;
     }
+
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
 };
 
 /**

@@ -106,6 +106,15 @@ public:
             op_ == ArithmeticOperation::MULTIPLY
         );
     }
+
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
 };
 
 /**

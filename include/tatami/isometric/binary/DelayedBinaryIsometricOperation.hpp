@@ -551,6 +551,15 @@ public:
             throw std::runtime_error("shape of the left and right matrices should be the same");
         }
 
+        auto expected_rows = my_operation->nrow();
+        if (expected_rows.has_value() && *expected_rows != my_left->nrow()) {
+            throw std::runtime_error("number of matrix rows is not consistent with those expected by 'operation'");
+        }
+        auto expected_cols = my_operation->ncol();
+        if (expected_cols.has_value() && *expected_cols != my_left->ncol()) {
+            throw std::runtime_error("number of matrix columns is not consistent with those expected by 'operation'");
+        }
+
         my_prefer_rows_proportion = (my_left->prefer_rows_proportion() + my_right->prefer_rows_proportion()) / 2;
 
         if (my_operation->is_sparse()) {

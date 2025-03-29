@@ -75,11 +75,12 @@ TEST(DelayedBinaryIsometricOperation, MixedSparse) {
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 class BinaryMockDerived : public tatami::DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
-    BinaryMockDerived(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true) : 
-        my_sparse(sparse), my_zero_row(zero_row), my_zero_col(zero_col), my_non_zero_row(non_zero_row), my_non_zero_col(non_zero_col) {}
+    BinaryMockDerived(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true, std::optional<Index_> nrow = std::nullopt, std::optional<Index_> ncol = std::nullopt) : 
+        my_sparse(sparse), my_zero_row(zero_row), my_zero_col(zero_col), my_non_zero_row(non_zero_row), my_non_zero_col(non_zero_col), my_nrow(nrow), my_ncol(ncol) {}
 
 private:
     bool my_sparse, my_zero_row, my_zero_col, my_non_zero_row, my_non_zero_col;
+    std::optional<Index_> my_nrow, my_ncol;
 
 public:
     bool is_sparse() const { return my_sparse; }
@@ -87,6 +88,8 @@ public:
     bool zero_depends_on_column() const { return my_zero_col; }
     bool non_zero_depends_on_row() const { return my_non_zero_row; }
     bool non_zero_depends_on_column() const { return my_non_zero_col; }
+    std::optional<Index_> nrow() const { return my_nrow; }
+    std::optional<Index_> ncol() const { return my_ncol; }
 
 public:
     OutputValue_ fill(bool, int) const {
@@ -265,3 +268,30 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false)  // oracle usage
     )
 );
+
+TEST(DelayedBinaryIsometricOperation, DimMismatch) {
+    auto dense = std::make_shared<tatami::DenseMatrix<double, int, std::vector<double> > >(10, 20, std::vector<double>(200), true);
+
+    // No error when both match up.
+    std::make_shared<tatami::DelayedBinaryIsometricOperation<double, double, int> >(
+        dense,
+        dense,
+        std::make_shared<BinaryMockDerived<> >(false, false, false, false, false, std::optional<int>{ 10 }, std::optional<int>{ 20 })
+    );
+
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedBinaryIsometricOperation<double, double, int> >(
+            dense,
+            dense,
+            std::make_shared<BinaryMockDerived<> >(false, false, false, false, false, std::nullopt, std::optional<int>{ 10 })
+        );
+    }, "number of matrix columns");
+
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedBinaryIsometricOperation<double, double, int> >(
+            dense,
+            dense,
+            std::make_shared<BinaryMockDerived<> >(false, false, false, false, false, std::optional<int>{ 5 }, std::nullopt) 
+        );
+    }, "number of matrix rows");
+}
