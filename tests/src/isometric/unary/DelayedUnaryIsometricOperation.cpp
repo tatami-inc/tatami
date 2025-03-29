@@ -6,27 +6,11 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
-#include "tatami/isometric/unary/arithmetic_helpers.hpp"
 #include "tatami/isometric/unary/helper_interface.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
-
-TEST(DelayedUnaryIsometricOperation, BackCompatibility) {
-    int nrow = 23, ncol = 42;
-    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
-
-    auto vec = std::vector<double>(nrow);
-    auto mat = tatami::make_DelayedUnaryIsometricOperation(dense, std::make_shared<tatami::DelayedUnaryIsometricAddScalarHelper<double, double, int, double> >(2.0));
-    EXPECT_EQ(mat->nrow(), nrow);
-    EXPECT_EQ(mat->ncol(), ncol);
-
-    std::shared_ptr<const tatami::NumericMatrix> cdense(dense);
-    auto cmat = tatami::make_DelayedUnaryIsometricOperation(cdense, std::make_shared<const tatami::DelayedUnaryIsometricAddScalarHelper<double, double, int, double> >(2.0));
-    EXPECT_EQ(cmat->nrow(), nrow);
-    EXPECT_EQ(cmat->ncol(), ncol);
-}
 
 struct UnaryMockParams {
     UnaryMockParams(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true) :
@@ -61,18 +45,20 @@ template<typename OutputValue_ = double, typename InputValue_ = double, typename
 class UnaryMock : public tatami::DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     UnaryMock() = default;
-    UnaryMock(UnaryMockParams params) : my_params(params) {}
+    UnaryMock(UnaryMockParams params) : UnaryMock(std::move(params), std::nullopt, std::nullopt) {}
+    UnaryMock(UnaryMockParams params, std::optional<Index_> nrow, std::optional<Index_> ncol) : my_params(std::move(params)), my_nrow(nrow), my_ncol(ncol) {}
 
 private:
     UnaryMockParams my_params;
+    std::optional<Index_> my_nrow, my_ncol;
 
 public:
     std::optional<Index_> nrow() const {
-        return std::nullopt;
+        return my_nrow;
     }
 
     std::optional<Index_> ncol() const {
-        return std::nullopt;
+        return my_ncol;
     }
 
 public:
@@ -126,6 +112,45 @@ public:
         }
     }
 };
+
+TEST(DelayedUnaryIsometricOperation, BackCompatibility) {
+    int nrow = 23, ncol = 42;
+    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
+
+    auto vec = std::vector<double>(nrow);
+    auto mat = tatami::make_DelayedUnaryIsometricOperation(dense, std::make_shared<UnaryMock<> >());
+    EXPECT_EQ(mat->nrow(), nrow);
+    EXPECT_EQ(mat->ncol(), ncol);
+
+    std::shared_ptr<const tatami::NumericMatrix> cdense(dense);
+    auto cmat = tatami::make_DelayedUnaryIsometricOperation(cdense, std::make_shared<const UnaryMock<> >());
+    EXPECT_EQ(cmat->nrow(), nrow);
+    EXPECT_EQ(cmat->ncol(), ncol);
+}
+
+TEST(DelayedUnaryIsometricOperation, HelperDimMismatch) {
+    auto dense = std::make_shared<tatami::DenseMatrix<double, int, std::vector<double> > >(10, 20, std::vector<double>(200), true);
+
+    // Matches don't cause errors.
+    std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
+        dense,
+        std::make_shared<UnaryMock<> >(UnaryMockParams(), std::optional<int>{ 10 }, std::optional<int>{ 20 })
+    );
+
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
+            dense,
+            std::make_shared<UnaryMock<> >(UnaryMockParams(), std::nullopt, std::optional<int>{ 10 })
+        );
+    }, "number of columns");
+
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
+            dense,
+            std::make_shared<UnaryMock<> >(UnaryMockParams(), std::optional<int>{ 5 }, std::nullopt)
+        );
+    }, "number of rows");
+}
 
 TEST(DelayedUnaryIsometricOperation, DependsChecks) {
     auto optr = std::make_shared<const tatami::ConsecutiveOracle<int> >(10, 20);
@@ -307,19 +332,3 @@ INSTANTIATE_TEST_SUITE_P(
         )
     )
 );
-
-TEST(DelayedUnaryIsometricOperation, DimMismatch) {
-    auto dense = std::make_shared<tatami::DenseMatrix<double, int, std::vector<double> > >(10, 20, std::vector<double>(200), true);
-    tatami_test::throws_error([&]{
-        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
-            dense,
-            std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<double, double, int, std::vector<double> > >(std::vector<double>(10), false)
-        );
-    }, "number of columns");
-    tatami_test::throws_error([&]{
-        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
-            dense,
-            std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<double, double, int, std::vector<double> > >(std::vector<double>(20), true)
-        );
-    }, "number of rows");
-}
