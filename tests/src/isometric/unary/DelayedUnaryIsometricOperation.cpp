@@ -28,14 +28,43 @@ TEST(DelayedUnaryIsometricOperation, BackCompatibility) {
     EXPECT_EQ(cmat->ncol(), ncol);
 }
 
+struct UnaryMockParams {
+    UnaryMockParams(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true) :
+        sparse(sparse), zero_row(zero_row), zero_col(zero_col), non_zero_row(non_zero_row), non_zero_col(non_zero_col) {}
+    bool sparse, zero_row, zero_col, non_zero_row, non_zero_col;
+};
+
+template<typename Index_, typename Value_>
+static Value_ mock_operation(Index_ row, Index_ col, Value_ val, const UnaryMockParams& optype) {
+    if (val == 0) {
+        if (!optype.sparse) {
+            if (optype.zero_row) {
+                val += row;
+            }
+            if (optype.zero_col) {
+                val += col * 13;
+            }
+        }
+        return val;
+    } else {
+        if (optype.non_zero_row) {
+            val += row;
+        }
+        if (optype.non_zero_col) {
+            val += col * 13;
+        }
+        return val;
+    }
+}
+
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-class UnaryMockDerived : public tatami::DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+class UnaryMock : public tatami::DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
-    UnaryMockDerived(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true) : 
-        my_sparse(sparse), my_zero_row(zero_row), my_zero_col(zero_col), my_non_zero_row(non_zero_row), my_non_zero_col(non_zero_col) {}
+    UnaryMock() = default;
+    UnaryMock(UnaryMockParams params) : my_params(params) {}
 
 private:
-    bool my_sparse, my_zero_row, my_zero_col, my_non_zero_row, my_non_zero_col;
+    UnaryMockParams my_params;
 
 public:
     std::optional<Index_> nrow() const {
@@ -47,27 +76,54 @@ public:
     }
 
 public:
-    bool is_sparse() const { return my_sparse; }
-    bool zero_depends_on_row() const { return my_zero_row; }
-    bool zero_depends_on_column() const { return my_zero_col; }
-    bool non_zero_depends_on_row() const { return my_non_zero_row; }
-    bool non_zero_depends_on_column() const { return my_non_zero_col; }
+    bool is_sparse() const { return my_params.sparse; }
+    bool zero_depends_on_row() const { return my_params.zero_row; }
+    bool zero_depends_on_column() const { return my_params.zero_col; }
+    bool non_zero_depends_on_row() const { return my_params.non_zero_row; }
+    bool non_zero_depends_on_column() const { return my_params.non_zero_col; }
 
 public:
-    OutputValue_ fill(bool, int) const {
-        return 0;
+    OutputValue_ fill(bool row, int i) const {
+        return mock_operation<Index_, InputValue_>(
+            row ? i : 0,
+            row ? 0 : i,
+            0,
+            my_params
+        );
     }
 
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_*, OutputValue_* output_buffer) const {
-        std::fill_n(output_buffer, length, 0);
+    void dense(bool row, Index_ i, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        for (Index_ s = 0; s < length; ++s) {
+            output[s] = mock_operation(
+                row ? i : s + start,
+                row ? s + start : i,
+                input[s],
+                my_params
+            );
+        }
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_*, OutputValue_* output_buffer) const {
-        std::fill_n(output_buffer, indices.size(), 0);
+    void dense(bool row, Index_ i, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        for (Index_ s = 0, end = indices.size(); s < end; ++s) {
+            output[s] = mock_operation(
+                row ? i : indices[s],
+                row ? indices[s] : i,
+                input[s],
+                my_params
+            );
+        }
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_*, const Index_*, OutputValue_* output_buffer) const {
-        std::fill_n(output_buffer, number, 0);
+    void sparse(bool row, Index_ i, Index_ number, const InputValue_* input_value, const Index_* indices, OutputValue_* output_value) const {
+        for (Index_ s = 0; s < number; ++s) {
+            Index_ curindex = ((!row && non_zero_depends_on_row()) || (row && non_zero_depends_on_column())) ? indices[s] : 0; // as non-target indices might not be extracted.
+            output_value[s] = mock_operation(
+                row ? i : curindex,
+                row ? curindex : i,
+                input_value[s],
+                my_params
+            );
+        }
     }
 };
 
@@ -76,22 +132,22 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
 
     { 
         // Check that the oracle is correctly used for both rows and columns.
-        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, {}, true);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, {}, true);
         EXPECT_EQ(oracle1.get(0), 10);
-        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, {}, false);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, {}, false);
         EXPECT_EQ(oracle2.get(0), 10);
 
-        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(UnaryMockDerived<>(), true));
-        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(UnaryMockDerived<>(), false));
+        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(UnaryMock<>(), true));
+        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(UnaryMock<>(), false));
     }
 
     { 
         // Check that the oracle is correctly used for rows only.
         {
-            UnaryMockDerived<> mock(false, true, false, false, false); // zero-dependency for non-sparse operation.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({false, true, false, false, false}); // zero-dependency for non-sparse operation.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 10);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 0);
 
             EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -99,10 +155,10 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            UnaryMockDerived<> mock(false, false, false, true, false); // non-zero dependency.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({false, false, false, true, false}); // non-zero dependency.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 10);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 0);
 
             EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -110,10 +166,10 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            UnaryMockDerived<> mock(true, true, false, false, false); // zero dependency ignored for sparse operations.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({true, true, false, false, false}); // zero dependency ignored for sparse operations.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 0);
 
             EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -124,10 +180,10 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
     { 
         // Check that the oracle is correctly used for columns only.
         {
-            UnaryMockDerived<> mock(false, false, true, false, false); // zero-dependency for non-sparse operation.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({false, false, true, false, false}); // zero-dependency for non-sparse operation.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 10);
 
             EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -135,10 +191,10 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            UnaryMockDerived<> mock(false, false, false, false, true); // non-zero dependency.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({false, false, false, false, true}); // non-zero dependency.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 10);
 
             EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -146,10 +202,10 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            UnaryMockDerived<> mock(true, false, true, false, false); // zero dependency ignored for sparse operations.
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle1(optr, mock, true);
+            UnaryMock<> mock({true, false, true, false, false}); // zero dependency ignored for sparse operations.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
-            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMockDerived<>, int> oracle2(optr, mock, false);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, UnaryMock<>, int> oracle2(optr, mock, false);
             EXPECT_EQ(oracle2.get(0), 0);
 
             EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
@@ -158,12 +214,11 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
     }
 }
 
-class DelayedUnaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
+class DelayedUnaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool, UnaryMockParams> > {
 protected:
     inline static int nrow = 57, ncol = 37;
     inline static std::vector<double> simulated;
-    inline static std::shared_ptr<const tatami::NumericMatrix> dense, sparse, udense, usparse, ref;
-    inline static std::shared_ptr<const tatami::Matrix<uint8_t, int> > i_udense, i_usparse, i_ref;
+    inline static std::shared_ptr<const tatami::NumericMatrix> dense, sparse;
 
     static void SetUpTestSuite() {
         simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
@@ -173,54 +228,66 @@ protected:
             return opt;
         }());
 
-        dense.reset(new tatami::DenseMatrix<double, int, decltype(simulated)>(nrow, ncol, std::move(simulated), true)); // row major
+        dense.reset(new tatami::DenseMatrix<double, int, decltype(simulated)>(nrow, ncol, simulated, true)); // row major
         sparse = tatami::convert_to_compressed_sparse<double, int>(*dense, false, {});  // column major
-
-        udense.reset(new tatami::DelayedUnaryIsometricOperation<double, double, int>(dense, std::make_shared<UnaryMockDerived<> >()));
-        usparse.reset(new tatami::DelayedUnaryIsometricOperation<double, double, int>(sparse, std::make_shared<UnaryMockDerived<> >(true)));
-        ref.reset(new tatami::DenseMatrix<double, int, std::vector<double> >(nrow, ncol, std::vector<double>(nrow * ncol), true));
-
-        i_udense.reset(new tatami::DelayedUnaryIsometricOperation<uint8_t, double, int>(dense, std::make_shared<UnaryMockDerived<uint8_t> >()));
-        i_usparse.reset(new tatami::DelayedUnaryIsometricOperation<uint8_t, double, int>(sparse, std::make_shared<UnaryMockDerived<uint8_t> >(true)));
-        i_ref.reset(new tatami::DenseMatrix<uint8_t, int, std::vector<uint8_t> >(nrow, ncol, std::vector<uint8_t>(nrow * ncol), true));
     }
 };
 
 TEST_P(DelayedUnaryIsometricOperationTest, Mock) {
-    EXPECT_FALSE(udense->is_sparse());
-    EXPECT_EQ(udense->is_sparse_proportion(), 0);
-
-    EXPECT_TRUE(usparse->is_sparse());
-    EXPECT_EQ(usparse->is_sparse_proportion(), 1);
-
     // Spamming a whole stack of tests.
     tatami_test::TestAccessOptions opts;
     auto tparam = GetParam();
     opts.use_row = std::get<0>(tparam);
     opts.use_oracle = std::get<1>(tparam);
 
-    tatami_test::test_full_access(*udense, *ref, opts);
-    tatami_test::test_block_access(*udense, *ref, 0.25, 0.34, opts);
-    tatami_test::test_indexed_access(*udense, *ref, 0.3, 0.5, opts);
+    auto mockparams = std::get<2>(tparam);
+    auto mockop = std::make_shared<UnaryMock<> >(mockparams);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, mockop);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, mockop);
 
-    tatami_test::test_full_access(*usparse, *ref, opts);
-    tatami_test::test_block_access(*usparse, *ref, 0.5, 0.35, opts);
-    tatami_test::test_indexed_access(*usparse, *ref, 0.2, 0.4, opts);
-}
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_EQ(dense_mod.is_sparse_proportion(), 0);
+    if (mockparams.sparse) {
+        EXPECT_TRUE(sparse_mod.is_sparse());
+        EXPECT_EQ(sparse_mod.is_sparse_proportion(), 1);
+    } else {
+        EXPECT_FALSE(sparse_mod.is_sparse());
+        EXPECT_EQ(sparse_mod.is_sparse_proportion(), 0);
+    }
 
-TEST_P(DelayedUnaryIsometricOperationTest, NewType) {
-    auto tparam = GetParam();
-    tatami_test::TestAccessOptions opts;
-    opts.use_row = std::get<0>(tparam);
-    opts.use_oracle = std::get<1>(tparam);
+    auto refvec = simulated;
+    size_t counter = 0;
+    for (int r = 0; r < nrow; ++r) {
+        for (int c = 0; c < ncol; ++c) {
+            refvec[counter] = mock_operation(r, c, refvec[counter], mockparams);
+            ++counter;
+        }
+    }
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    tatami_test::test_full_access(*i_udense, *i_ref, opts);
-    tatami_test::test_block_access(*i_udense, *i_ref, 0.3, 0.55, opts);
-    tatami_test::test_indexed_access(*i_udense, *i_ref, 0.3, 0.55, opts);
+    tatami_test::test_full_access(dense_mod, ref, opts);
+    tatami_test::test_block_access(dense_mod, ref, 0.25, 0.34, opts);
+    tatami_test::test_indexed_access(dense_mod, ref, 0.3, 0.5, opts);
 
-    tatami_test::test_full_access(*i_usparse, *i_ref, opts);
-    tatami_test::test_block_access(*i_usparse, *i_ref, 0.25, 0.3, opts);
-    tatami_test::test_indexed_access(*i_usparse, *i_ref, 0.2, 0.3, opts);
+    tatami_test::test_full_access(sparse_mod, ref, opts);
+    tatami_test::test_block_access(sparse_mod, ref, 0.5, 0.35, opts);
+    tatami_test::test_indexed_access(sparse_mod, ref, 0.2, 0.4, opts);
+
+    // Using a different type.
+    {
+        auto i_mockop = std::make_shared<UnaryMock<int> >(mockparams);
+        tatami::DelayedUnaryIsometricOperation<int, double, int> i_dense_mod(dense, i_mockop);
+        tatami::DelayedUnaryIsometricOperation<int, double, int> i_sparse_mod(sparse, i_mockop);
+        tatami::DenseMatrix<int, int, std::vector<int> > i_ref(nrow, ncol, std::vector<int>(refvec.begin(), refvec.end()), true);
+
+        tatami_test::test_full_access(i_dense_mod, i_ref, opts);
+        tatami_test::test_block_access(i_dense_mod, i_ref, 0.3, 0.55, opts);
+        tatami_test::test_indexed_access(i_dense_mod, i_ref, 0.3, 0.55, opts);
+
+        tatami_test::test_full_access(i_sparse_mod, i_ref, opts);
+        tatami_test::test_block_access(i_sparse_mod, i_ref, 0.25, 0.3, opts);
+        tatami_test::test_indexed_access(i_sparse_mod, i_ref, 0.2, 0.3, opts);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -228,7 +295,16 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricOperationTest,
     ::testing::Combine(
         ::testing::Values(true, false), // row access
-        ::testing::Values(true, false)  // oracle usage
+        ::testing::Values(true, false), // oracle usage
+        ::testing::Values(
+            UnaryMockParams({ false, true, true, true, true }),
+            UnaryMockParams({ false, true, true, false, false }),
+            UnaryMockParams({ false, false, false, true, true }),
+            UnaryMockParams({ false, false, true, false, true }),
+            UnaryMockParams({ true, false, false, false, true }),
+            UnaryMockParams({ true, false, true, false, false }),
+            UnaryMockParams({ true, false, true, false, true })
+        )
     )
 );
 
