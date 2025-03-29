@@ -136,6 +136,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2715fa12671a4c8fbe5caa092db60957"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac894879c4fb4f6a8a6edb13236468613" id="r_ac894879c4fb4f6a8a6edb13236468613"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac894879c4fb4f6a8a6edb13236468613">is_sparse</a> () const =0</td></tr>
 <tr class="separator:ac894879c4fb4f6a8a6edb13236468613"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2838a8794fd9ab3b5fdc1d62a25f64eb" id="r_a2838a8794fd9ab3b5fdc1d62a25f64eb"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2838a8794fd9ab3b5fdc1d62a25f64eb">nrow</a> () const =0</td></tr>
+<tr class="separator:a2838a8794fd9ab3b5fdc1d62a25f64eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e10a8b0b2cb9961f7976b7295e3ab71" id="r_a8e10a8b0b2cb9961f7976b7295e3ab71"><td class="memItemLeft" align="right" valign="top">virtual std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e10a8b0b2cb9961f7976b7295e3ab71">ncol</a> () const =0</td></tr>
+<tr class="separator:a8e10a8b0b2cb9961f7976b7295e3ab71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename OutputValue_, typename InputValue_, typename Index_&gt;<br />
@@ -558,6 +562,66 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
 <dl class="section return"><dt>Returns</dt><dd>Whether this operation preserves sparsity. </dd></dl>
 
 <p>Implemented in <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html#aa36ab571e1e3f350354e8b0f97e86823">tatami::DelayedBinaryIsometricArithmeticHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html#a7afb53bdf0a10934e2e27d140f847823">tatami::DelayedBinaryIsometricBooleanHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, and <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html#a8b6eee392b4396f529eae93b1d159eb5">tatami::DelayedBinaryIsometricCompareHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a2838a8794fd9ab3b5fdc1d62a25f64eb" name="a2838a8794fd9ab3b5fdc1d62a25f64eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2838a8794fd9ab3b5fdc1d62a25f64eb">&#9670;&#160;</a></span>nrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html">tatami::DelayedBinaryIsometricOperationHelper</a>&lt; OutputValue_, InputValue_, Index_ &gt;::nrow </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of rows in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of rows. </dd></dl>
+
+<p>Implemented in <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html#a11c082a13e550afdd10891360a17e43c">tatami::DelayedBinaryIsometricArithmeticHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html#aa0b0d5f6ade7d6864c15853bface0983">tatami::DelayedBinaryIsometricBooleanHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, and <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html#ac0f34c94f718d29cebb7760e1a18a2d3">tatami::DelayedBinaryIsometricCompareHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a8e10a8b0b2cb9961f7976b7295e3ab71" name="a8e10a8b0b2cb9961f7976b7295e3ab71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e10a8b0b2cb9961f7976b7295e3ab71">&#9670;&#160;</a></span>ncol()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html">tatami::DelayedBinaryIsometricOperationHelper</a>&lt; OutputValue_, InputValue_, Index_ &gt;::ncol </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of columns in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of columns. </dd></dl>
+
+<p>Implemented in <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html#ae839440671931f9f8fe63b50a80922c4">tatami::DelayedBinaryIsometricArithmeticHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, <a class="el" href="structtatami_1_1DelayedBinaryIsometricBooleanHelper.html#ae85fd34e94835281e0be47803c0a19a4">tatami::DelayedBinaryIsometricBooleanHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>, and <a class="el" href="structtatami_1_1DelayedBinaryIsometricCompareHelper.html#a00111821f0c280dac35ee9c31f287043">tatami::DelayedBinaryIsometricCompareHelper&lt; op_, OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 
 </div>
 </div>

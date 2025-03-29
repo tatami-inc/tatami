@@ -142,6 +142,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9cc8760f73087b4a7709ec866a6e05ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa36ab571e1e3f350354e8b0f97e86823" id="r_aa36ab571e1e3f350354e8b0f97e86823"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa36ab571e1e3f350354e8b0f97e86823">is_sparse</a> () const</td></tr>
 <tr class="separator:aa36ab571e1e3f350354e8b0f97e86823"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11c082a13e550afdd10891360a17e43c" id="r_a11c082a13e550afdd10891360a17e43c"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11c082a13e550afdd10891360a17e43c">nrow</a> () const</td></tr>
+<tr class="separator:a11c082a13e550afdd10891360a17e43c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae839440671931f9f8fe63b50a80922c4" id="r_ae839440671931f9f8fe63b50a80922c4"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae839440671931f9f8fe63b50a80922c4">ncol</a> () const</td></tr>
+<tr class="separator:ae839440671931f9f8fe63b50a80922c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1DelayedBinaryIsometricOperationHelper"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1DelayedBinaryIsometricOperationHelper')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html">tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -566,6 +570,66 @@ template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9
 <dl class="section return"><dt>Returns</dt><dd>Whether this operation preserves sparsity. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html#ac894879c4fb4f6a8a6edb13236468613">tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a11c082a13e550afdd10891360a17e43c" name="a11c082a13e550afdd10891360a17e43c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11c082a13e550afdd10891360a17e43c">&#9670;&#160;</a></span>nrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html">tatami::DelayedBinaryIsometricArithmeticHelper</a>&lt; op_, OutputValue_, InputValue_, Index_ &gt;::nrow </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of rows in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of rows. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html#a2838a8794fd9ab3b5fdc1d62a25f64eb">tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ae839440671931f9f8fe63b50a80922c4" name="ae839440671931f9f8fe63b50a80922c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae839440671931f9f8fe63b50a80922c4">&#9670;&#160;</a></span>ncol()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html">tatami::DelayedBinaryIsometricArithmeticHelper</a>&lt; op_, OutputValue_, InputValue_, Index_ &gt;::ncol </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of columns in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of columns. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperationHelper.html#a8e10a8b0b2cb9961f7976b7295e3ab71">tatami::DelayedBinaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 
 </div>
 </div>

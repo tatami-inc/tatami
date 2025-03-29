@@ -1006,6 +1006,20 @@
       <anchor>aa36ab571e1e3f350354e8b0f97e86823</anchor>
       <arglist>() const</arglist>
     </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>a11c082a13e550afdd10891360a17e43c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html</anchorfile>
+      <anchor>ae839440671931f9f8fe63b50a80922c4</anchor>
+      <arglist>() const</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedBinaryIsometricBooleanHelper</name>
@@ -1078,6 +1092,20 @@
       <anchor>a7afb53bdf0a10934e2e27d140f847823</anchor>
       <arglist>() const</arglist>
     </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>aa0b0d5f6ade7d6864c15853bface0983</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricBooleanHelper.html</anchorfile>
+      <anchor>ae85fd34e94835281e0be47803c0a19a4</anchor>
+      <arglist>() const</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedBinaryIsometricCompareHelper</name>
@@ -1148,6 +1176,20 @@
       <name>is_sparse</name>
       <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
       <anchor>a8b6eee392b4396f529eae93b1d159eb5</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>ac0f34c94f718d29cebb7760e1a18a2d3</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>structtatami_1_1DelayedBinaryIsometricCompareHelper.html</anchorfile>
+      <anchor>a00111821f0c280dac35ee9c31f287043</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -1367,6 +1409,20 @@
       <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
       <anchor>ac894879c4fb4f6a8a6edb13236468613</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a2838a8794fd9ab3b5fdc1d62a25f64eb</anchor>
+      <arglist>() const =0</arglist>
+    </member>
+    <member kind="function" virtualness="pure">
+      <type>virtual std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOperationHelper.html</anchorfile>
+      <anchor>a8e10a8b0b2cb9961f7976b7295e3ab71</anchor>
       <arglist>() const =0</arglist>
     </member>
   </compound>
