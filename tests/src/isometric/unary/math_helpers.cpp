@@ -81,6 +81,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Abs) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sign) {
@@ -119,6 +125,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
             quick_test_all<float, int>(dense_fmod, fref);
             quick_test_all<float, int>(sparse_fmod, fref);
         }
+
+        // For coverage purposes.
+        EXPECT_FALSE(op->zero_depends_on_row());
+        EXPECT_FALSE(op->non_zero_depends_on_row());
+        EXPECT_FALSE(op->zero_depends_on_column());
+        EXPECT_FALSE(op->non_zero_depends_on_column());
     }
 
     // Throwing in some NaNs.
@@ -231,6 +243,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         // Doing some light tests, assuming that log(<negative value>) => NaN and log(0) => Inf.
         quick_test_all<double, int>(dense_mod, ref); 
         quick_test_all<double, int>(sparse_mod, ref);
+
+        // For coverage purposes.
+        EXPECT_FALSE(op->zero_depends_on_row());
+        EXPECT_FALSE(op->non_zero_depends_on_row());
+        EXPECT_FALSE(op->zero_depends_on_column());
+        EXPECT_FALSE(op->non_zero_depends_on_column());
     }
 
     // Trying with another base.
@@ -292,6 +310,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
         // Doing some light tests, assuming that log1p(<less than 1>) => NaN and log1p(-1) => Inf.
         quick_test_all<double, int>(dense_mod, ref);
         quick_test_all<double, int>(sparse_mod, ref);
+
+        // For coverage purposes.
+        EXPECT_FALSE(op->zero_depends_on_row());
+        EXPECT_FALSE(op->non_zero_depends_on_row());
+        EXPECT_FALSE(op->zero_depends_on_column());
+        EXPECT_FALSE(op->non_zero_depends_on_column());
     }
 
     // Trying with another base.
@@ -363,6 +387,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Exp) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
@@ -396,6 +426,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Round) {
@@ -429,6 +465,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Round) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
@@ -462,6 +504,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Floor) {
@@ -495,6 +543,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Floor) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
@@ -528,6 +582,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sin) {
@@ -561,6 +621,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Sin) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Cos) {
@@ -594,6 +660,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Cos) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Tan) {
@@ -627,6 +699,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Tan) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Asin) {
@@ -662,6 +740,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Asin) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Acos) {
@@ -697,6 +781,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Acos) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Atan) {
@@ -730,6 +820,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Atan) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
@@ -763,6 +859,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
@@ -796,6 +898,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
@@ -829,6 +937,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
@@ -862,6 +976,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
@@ -896,6 +1016,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
@@ -930,6 +1056,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
@@ -964,6 +1096,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
@@ -998,4 +1136,10 @@ TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
         quick_test_all<float, int>(dense_fmod, fref);
         quick_test_all<float, int>(sparse_fmod, fref);
     }
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }

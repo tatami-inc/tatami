@@ -65,6 +65,12 @@ TEST_F(DelayedBinaryIsometricCompareTest, Equal) {
 
     quick_test_all<double, int>(dense_mod, ref);
     quick_test_all<double, int>(sparse_mod, ref);
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 TEST_F(DelayedBinaryIsometricCompareTest, GreaterThan) {
