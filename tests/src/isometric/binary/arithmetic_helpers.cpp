@@ -191,14 +191,17 @@ TEST_F(DelayedBinaryIsometricAddTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
-    tatami::DelayedBinaryIsometricOperation<double, double, int> mixed_mod(
-        sparse_left,
-        dense_right,
-        std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >()
-    );
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> mixed_mod(sparse_left, dense_right, op);
     EXPECT_FALSE(mixed_mod.is_sparse());
     EXPECT_EQ(mixed_mod.prefer_rows_proportion(), 0.5);
     EXPECT_EQ(mixed_mod.is_sparse_proportion(), 0.5);
+
+    // For coverage purposes.
+    EXPECT_FALSE(op->zero_depends_on_row());
+    EXPECT_FALSE(op->non_zero_depends_on_row());
+    EXPECT_FALSE(op->zero_depends_on_column());
+    EXPECT_FALSE(op->non_zero_depends_on_column());
 }
 
 BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricAddFullTest, DelayedBinaryIsometricAddUtils)
