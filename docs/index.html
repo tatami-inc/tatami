@@ -97,8 +97,18 @@ $(function(){ initResizable(false); });
 <p><b>tatami</b> is a header-only library, so it can be easily used by just <code>#include</code>ing the relevant source files:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="tatami_8hpp.html">tatami/tatami.hpp</a>&quot;</span></div>
 <div class="line"> </div>
-<div class="line">std::shared_ptr&lt;tatami::NumericMatrix&gt; mat(</div>
-<div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseRowMatrix.html">tatami::DenseRowMatrix&lt;double, int&gt;</a>(nrows, ncols, vals)</div>
+<div class="line"><span class="keywordtype">int</span> nrows = 10;</div>
+<div class="line"><span class="keywordtype">int</span> ncols = 20;</div>
+<div class="line">std::vector&lt;double&gt; vals(nrows * ncols);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// &#39;double&#39; is the data type, &#39;int&#39; is the row/column index type.</span></div>
+<div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; mat(</div>
+<div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a>&lt;<span class="keywordtype">double</span>, <span class="keywordtype">int</span>, std::vector&lt;double&gt; &gt;(</div>
+<div class="line">        nrows,</div>
+<div class="line">        ncols,</div>
+<div class="line">        vals,</div>
+<div class="line">        <span class="comment">/* row_major = */</span> <span class="keyword">true</span></div>
+<div class="line">    )</div>
 <div class="line">);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Get the dimensions:</span></div>
@@ -113,7 +123,7 @@ $(function(){ initResizable(false); });
 <div class="line"><span class="comment">// Extract the [5, 12) rows of the &#39;i&#39;-th column.</span></div>
 <div class="line"><span class="keyword">auto</span> sliced_extractor = mat-&gt;dense_column(5, 7)</div>
 <div class="line"><span class="keyword">auto</span> sliced_ptr = sliced_extractor-&gt;fetch(i, buffer.data());</div>
-<div class="ttc" id="aclasstatami_1_1DenseRowMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseRowMatrix.html">tatami::DenseRowMatrix</a></div><div class="ttdoc">Dense row-major matrix.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:324</div></div>
+<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:168</div></div>
 <div class="ttc" id="atatami_8hpp_html"><div class="ttname"><a href="tatami_8hpp.html">tatami.hpp</a></div><div class="ttdoc">Flexible representations of matrix data.</div></div>
 </div><!-- fragment --><p>The key idea here is that, once <code>mat</code> is created, the application does not need to worry about the exact format of the matrix referenced by the pointer. Application developers can write code that works interchangeably with a variety of different matrix representations.</p>
 <h1>Instructions</h1>
@@ -129,39 +139,67 @@ $(function(){ initResizable(false); });
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">List of lists sparse matrix   </td><td class="markdownTableBodyNone"><code>FragmentedSparseMatrix</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Delayed isometric unary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedUnaryIsometricOperation()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed isometric unary operation   </td><td class="markdownTableBodyNone"><code>DelayedUnaryIsometricOperation()</code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Delayed isometric binary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedBinaryIsometricOperation()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed isometric binary operation   </td><td class="markdownTableBodyNone"><code>DelayedBinaryIsometricOperation()</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Delayed combination   </td><td class="markdownTableBodyNone"><code>make_DelayedBind()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed combination   </td><td class="markdownTableBodyNone"><code>DelayedBind()</code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Delayed subset   </td><td class="markdownTableBodyNone"><code>make_DelayedSubset()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed subset   </td><td class="markdownTableBodyNone"><code>DelayedSubset()</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Delayed transpose   </td><td class="markdownTableBodyNone"><code>make_DelayedTranspose()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed transpose   </td><td class="markdownTableBodyNone"><code>DelayedTranspose()</code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Delayed cast   </td><td class="markdownTableBodyNone"><code>make_DelayedCast()</code>   </td></tr>
+<td class="markdownTableBodyNone">Delayed cast   </td><td class="markdownTableBodyNone"><code>DelayedCast()</code>   </td></tr>
 </table>
-<p>For example, to create a compressed sparse matrix from sparse triplet data (<code>x</code>, <code>i</code>, <code>j</code>), we could do:</p>
+<p>For example, to create a compressed sparse matrix from sparse triplet data, we could do:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="tatami_8hpp.html">tatami/tatami.hpp</a>&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> NROW = 10, NCOL = 20;</div>
-<div class="line"><span class="keyword">auto</span> indptrs = <a class="code hl_function" href="namespacetatami.html#a3b2756af73514cbf89b42f5abd7997cc">tatami::compress_sparse_triplets&lt;false&gt;</a>(NR, NC, x, i, j);</div>
-<div class="line"><span class="keyword">auto</span> raw_ptr = <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1CompressedSparseColumnMatrix.html">tatami::CompressedSparseColumnMatrix&lt;double, int&gt;</a>(</div>
-<div class="line">    NR, </div>
-<div class="line">    NC, </div>
-<div class="line">    std::move(x), </div>
-<div class="line">    std::move(i), </div>
-<div class="line">    std::move(indptrs)</div>
-<div class="line">);</div>
+<div class="line">std::vector&lt;double&gt; x; <span class="comment">// vector of non-zero values.</span></div>
+<div class="line">std::vector&lt;int&gt; i; <span class="comment">// row indices of length equal to &#39;x&#39;.</span></div>
+<div class="line">std::vector&lt;int&gt; j; <span class="comment">// column indices of length equal to &#39;x&#39;.</span></div>
 <div class="line"> </div>
-<div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; mat(raw_ptr);</div>
-<div class="ttc" id="aclasstatami_1_1CompressedSparseColumnMatrix_html"><div class="ttname"><a href="classtatami_1_1CompressedSparseColumnMatrix.html">tatami::CompressedSparseColumnMatrix</a></div><div class="ttdoc">Compressed sparse column matrix.</div><div class="ttdef"><b>Definition</b> CompressedSparseMatrix.hpp:748</div></div>
+<div class="line"><span class="keyword">auto</span> indptrs = <a class="code hl_function" href="namespacetatami.html#a3b2756af73514cbf89b42f5abd7997cc">tatami::compress_sparse_triplets</a>(NROW, NCOL, x, i, j, <span class="comment">/* csr = */</span> <span class="keyword">false</span>);</div>
+<div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; smat(</div>
+<div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a>&lt;</div>
+<div class="line">        <span class="keywordtype">double</span>, <span class="comment">// data type</span></div>
+<div class="line">        <span class="keywordtype">int</span>, <span class="comment">// index type</span></div>
+<div class="line">        std::vector&lt;double&gt;, <span class="comment">// type of &#39;x&#39;</span></div>
+<div class="line">        std::vector&lt;int&gt;, <span class="comment">// type of the row indices &#39;i&#39;</span></div>
+<div class="line">        std::vector&lt;size_t&gt; <span class="comment">// type of the pointers &#39;indptrs&#39;</span></div>
+<div class="line">    &gt;(</div>
+<div class="line">        NR, </div>
+<div class="line">        NC, </div>
+<div class="line">        std::move(x), </div>
+<div class="line">        std::move(i), </div>
+<div class="line">        std::move(indptrs),</div>
+<div class="line">        <span class="comment">/* csr = */</span> <span class="keyword">false</span></div>
+<div class="line">    )</div>
+<div class="line">);</div>
+<div class="ttc" id="aclasstatami_1_1CompressedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a></div><div class="ttdoc">Compressed sparse matrix representation.</div><div class="ttdef"><b>Definition</b> CompressedSparseMatrix.hpp:505</div></div>
 <div class="ttc" id="anamespacetatami_html_a3b2756af73514cbf89b42f5abd7997cc"><div class="ttname"><a href="namespacetatami.html#a3b2756af73514cbf89b42f5abd7997cc">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; size_t &gt; compress_sparse_triplets(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</div><div class="ttdef"><b>Definition</b> compress_sparse_triplets.hpp:98</div></div>
 </div><!-- fragment --><p>We typically create a <code>shared_ptr</code> to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> to leverage run-time polymorphism. This enables downstream applications to accept many different matrix representations by compiling against the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> interface. Alternatively, applications may use templating to achieve compile-time polymorphism on the different <b>tatami</b> subclasses, but this is rather restrictive without providing obvious performance benefits.</p>
 <p>We use templating to define the type of values returned by the interface. This includes the type of the data (most typically <code>double</code>) as well as the type of row/column indices (default <code>int</code>, but one could imagine using, e.g., <code>size_t</code>). It is worth noting that the storage type does not need to be the same as the interface type. For example, developers could store a matrix of small counts as <code>uint16_t</code> while returning <code>double</code>s for compatibility with downstream mathematical code.</p>
 <p>The delayed operations are ~stolen from~ inspired by those in the <a href="https://github.com/Bioconductor/DelayedArray"><b>DelayedArray</b></a> package. Isometric operations are particularly useful as they accommodate matrix-scalar/vector arithmetic and various mathematical operations. For example, we could apply a sparsity-breaking delayed operation to our sparse matrix <code>mat</code> without actually creating a dense matrix:</p>
-<div class="fragment"><div class="line">tatami::DelayedAddScalarHelper&lt;double&gt; op(1);</div>
-<div class="line"><span class="keyword">auto</span> mat2 = tatami::make_DelayedIsometricOp(mat, std::move(op));</div>
+<div class="fragment"><div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; mat2(</div>
+<div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DelayedUnaryIsometricOperation.html">tatami::DelayedUnaryIsometricOperation</a>&lt;</div>
+<div class="line">        <span class="keywordtype">double</span>, <span class="comment">// type of the result of the operation </span></div>
+<div class="line">        <span class="keywordtype">double</span>, <span class="comment">// type of the original matrix</span></div>
+<div class="line">        <span class="keywordtype">int</span> <span class="comment">// row/column index type</span></div>
+<div class="line">    &gt;(</div>
+<div class="line">        mat, </div>
+<div class="line">        std::make_shared&lt;</div>
+<div class="line">            <a class="code hl_class" href="classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html">tatami::DelayedUnaryIsometricAddScalarHelper</a>&lt;</div>
+<div class="line">                <span class="keywordtype">double</span>, <span class="comment">// type of the result of the operation</span></div>
+<div class="line">                <span class="keywordtype">double</span>, <span class="comment">// type of the original matrix</span></div>
+<div class="line">                <span class="keywordtype">int</span>, <span class="comment">// row/column index type</span></div>
+<div class="line">                <span class="keywordtype">double</span> <span class="comment">// type of the scalar</span></div>
+<div class="line">            &gt;</div>
+<div class="line">        &gt;(2.0)</div>
+<div class="line">    )</div>
+<div class="line">);</div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricArithmeticScalarHelper_html"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html">tatami::DelayedUnaryIsometricArithmeticScalarHelper</a></div><div class="ttdoc">Helper for delayed unary isometric scalar arithmetic.</div><div class="ttdef"><b>Definition</b> arithmetic_helpers.hpp:93</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html">tatami::DelayedUnaryIsometricOperation</a></div><div class="ttdoc">Delayed isometric operation on a single matrix.</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:669</div></div>
 </div><!-- fragment --><p>Some libraries in the <a href="https://github.com/tatami-inc"><b>@tatami-inc</b></a> organization implement further extensions of <b>tatami</b>'s interface, e.g., for <a href="https://github.com/tatami-inc/tatami_hdf5">HDF5-backed matrices</a> and <a href="https://github.com/tatami-inc/tatami_r">R-based matrices</a>.</p>
 <h2>Extracting matrix contents</h2>
 <p>Given an abstract <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>, we create an <code>Extractor</code> instance to actually extract the matrix data. Each <code>Extractor</code> object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access. For example, to perform extract dense rows from our <code>mat</code>:</p>
