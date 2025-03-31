@@ -595,11 +595,12 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether <code>i</code> refers to the row or column index. </td></tr>
-    <tr><td class="paramname">i</td><td>The index of the row (if <code>row = true</code>) or column (otherwise) containing the zeros. This argument should be ignored if the operation does not depend on the row/column (i.e., when all of <code><a class="el" href="#a9992998041c23dd38e096e59a62bcb5e">zero_depends_on_row()</a></code> and friends return false), in which case an arbitrary placeholder may be supplied.</td></tr>
+    <tr><td class="paramname">i</td><td>The index of the row (if <code>row = true</code>) or column (otherwise) containing the zeros. This argument should be ignored if the operation does not depend on the row/column, i.e., when all of <code><a class="el" href="#a9992998041c23dd38e096e59a62bcb5e">zero_depends_on_row()</a></code> and friends return false.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The result of the operation being applied on zeros from the <code>i</code>-th row/column of the matrix. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the operation being applied on zeros from the <code>i</code>-th row/column of the matrix.</dd></dl>
+<p>This function will never be called by <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> if the operation depends on the dimension that is not specified by <code>row</code>, i.e., when <code>row = true &amp;&amp; <a class="el" href="#a2d038e4421f2c810876890c80b3243c7">zero_depends_on_column()</a></code> or <code>row = false &amp;&amp; <a class="el" href="#a9992998041c23dd38e096e59a62bcb5e">zero_depends_on_row()</a></code>. In such cases, no single fill value would exist. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a545f431c53f329988d8e495e90851888">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 
