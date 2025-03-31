@@ -20,8 +20,18 @@ Many applications involve looping over rows or columns to compute some statistic
 ```cpp
 #include "tatami/tatami.hpp"
 
-std::shared_ptr<tatami::NumericMatrix> mat(
-    new tatami::DenseRowMatrix<double, int>(nrows, ncols, vals)
+int nrows = 10;
+int ncols = 20;
+std::vector<double> vals(nrows * ncols);
+
+// 'double' is the data type, 'int' is the row/column index type.
+std::shared_ptr<tatami::Matrix<double, int> > mat(
+    new tatami::DenseMatrix<double, int, std::vector<double> >(
+        nrows,
+        ncols,
+        vals,
+        /* row_major = */ true
+    )
 );
 
 // Get the dimensions:
@@ -47,34 +57,45 @@ Application developers can write code that works interchangeably with a variety 
 
 Users can create an instance of a concrete `tatami::Matrix` subclass by using one of the constructors or the equivalent `make_*` utility:
 
-| Description                                | Class or function                        |
-|--------------------------------------------|------------------------------------------|
-| Dense matrix                               | `DenseMatrix`                            |
-| Compressed sparse matrix                   | `CompressedSparseMatrix`                 |
-| List of lists sparse matrix                | `FragmentedSparseMatrix`                 |
-| Delayed isometric unary operation          | `make_DelayedUnaryIsometricOperation()`  |
-| Delayed isometric binary operation         | `make_DelayedBinaryIsometricOperation()` |
-| Delayed combination                        | `make_DelayedBind()`                     |
-| Delayed subset                             | `make_DelayedSubset()`                   |
-| Delayed transpose                          | `make_DelayedTranspose()`                |
-| Delayed cast                               | `make_DelayedCast()`                     |
+| Description                                | Class                             |
+|--------------------------------------------|-----------------------------------|
+| Dense matrix                               | `DenseMatrix`                     |
+| Compressed sparse matrix                   | `CompressedSparseMatrix`          |
+| List of lists sparse matrix                | `FragmentedSparseMatrix`          |
+| Delayed isometric unary operation          | `DelayedUnaryIsometricOperation`  |
+| Delayed isometric binary operation         | `DelayedBinaryIsometricOperation` |
+| Delayed combination                        | `DelayedBind`                     |
+| Delayed subset                             | `DelayedSubset`                   |
+| Delayed transpose                          | `DelayedTranspose`                |
+| Delayed cast                               | `DelayedCast`                     |
 
-For example, to create a compressed sparse matrix from sparse triplet data (`x`, `i`, `j`), we could do:
+For example, to create a compressed sparse matrix from sparse triplet data, we could do:
 
 ```cpp
 #include "tatami/tatami.hpp"
 
 int NROW = 10, NCOL = 20;
-auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, x, i, j);
-auto raw_ptr = new tatami::CompressedSparseColumnMatrix<double, int>(
-    NR, 
-    NC, 
-    std::move(x), 
-    std::move(i), 
-    std::move(indptrs)
-);
+std::vector<double> x; // vector of non-zero values.
+std::vector<int> i; // row indices of length equal to 'x'.
+std::vector<int> j; // column indices of length equal to 'x'.
 
-std::shared_ptr<tatami::Matrix<double, int> > mat(raw_ptr);
+auto indptrs = tatami::compress_sparse_triplets(NROW, NCOL, x, i, j, /* csr = */ false);
+std::shared_ptr<tatami::Matrix<double, int> > smat(
+    new tatami::CompressedSparseMatrix<
+        double, // data type
+        int, // index type
+        std::vector<double>, // type of 'x'
+        std::vector<int>, // type of the row indices 'i'
+        std::vector<size_t> // type of the pointers 'indptrs'
+    >(
+        NR, 
+        NC, 
+        std::move(x), 
+        std::move(i), 
+        std::move(indptrs),
+        /* csr = */ false
+    )
+);
 ```
 
 We typically create a `shared_ptr` to a `tatami::Matrix` to leverage run-time polymorphism.
@@ -89,11 +110,26 @@ For example, developers could store a matrix of small counts as `uint16_t` while
 
 The delayed operations are ~stolen from~ inspired by those in the [**DelayedArray**](https://github.com/Bioconductor/DelayedArray) package.
 Isometric operations are particularly useful as they accommodate matrix-scalar/vector arithmetic and various mathematical operations.
-For example, we could apply a sparsity-breaking delayed operation to our sparse matrix `mat` without actually creating a dense matrix:
+For example, we could apply a sparsity-breaking delayed operation to our sparse matrix `smat` without actually creating a dense matrix:
 
 ```cpp
-tatami::DelayedAddScalarHelper<double> op(1);
-auto mat2 = tatami::make_DelayedIsometricOp(mat, std::move(op));
+std::shared_ptr<tatami::Matrix<double, int> > mat2(
+    new tatami::DelayedUnaryIsometricOperation<
+        double, // type of the result of the operation 
+        double, // type of the original matrix
+        int // row/column index type
+    >(
+        smat, 
+        std::make_shared<
+            tatami::DelayedUnaryIsometricAddScalarHelper<
+                double, // type of the result of the operation
+                double, // type of the original matrix
+                int, // row/column index type
+                double // type of the scalar
+            >
+        >(2.0)
+    )
+);
 ```
 
 Some libraries in the [**@tatami-inc**](https://github.com/tatami-inc) organization implement further extensions of **tatami**'s interface, 
