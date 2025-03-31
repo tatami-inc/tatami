@@ -109,10 +109,14 @@ public:
     /**
      * @param row Whether `i` refers to the row or column index.
      * @param i The index of the row (if `row = true`) or column (otherwise) containing the zeros.
-     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
-     * in which case an arbitrary placeholder may be supplied. 
+     * This argument should be ignored if the operation does not depend on the row/column,
+     * i.e., when all of `zero_depends_on_row()` and friends return false.
      *
      * @return The result of the operation being applied on zeros from the `i`-th row/column of the matrix.
+     *
+     * This function will never be called by `DelayedUnaryIsometricOperation` if the operation depends on the dimension that is not specified by `row`,
+     * i.e., when `row = true && zero_depends_on_column()` or `row = false && zero_depends_on_row()`.
+     * In such cases, no single fill value would exist.
      */
     virtual OutputValue_ fill(bool row, Index_ i) const = 0; 
 
