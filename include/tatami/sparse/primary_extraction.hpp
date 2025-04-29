@@ -75,11 +75,12 @@ public:
         auto original_start = indices_start;
         refine_primary_limits(indices_start, indices_end, my_extent, my_offset, my_lastp1);
 
-        for (; indices_start != indices_end; ++indices_start) {
+        auto counter = indices_start - original_start;
+        for (; indices_start != indices_end; ++indices_start, ++counter) {
             auto ix = *indices_start;
             auto shift = my_present[ix - my_offset];
             if (shift) {
-                store(shift - 1, indices_start - original_start);
+                store(shift - 1, counter);
             }
         }
     }
@@ -120,10 +121,11 @@ public:
         auto original_start = indices_start;
         refine_primary_limits(indices_start, indices_end, my_extent, my_offset, my_lastp1);
 
-        for (; indices_start != indices_end; ++indices_start) {
+        auto counter = indices_start - original_start;
+        for (; indices_start != indices_end; ++indices_start, ++counter) {
             auto ix = *indices_start;
             if (my_present[ix - my_offset]) {
-                store(indices_start - original_start, ix);
+                store(counter, ix);
             }
         }
     }
