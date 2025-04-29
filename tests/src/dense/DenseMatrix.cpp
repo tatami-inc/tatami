@@ -47,10 +47,26 @@ TEST(DenseMatrix, Basic) {
     EXPECT_FALSE(mat.uses_oracle(true));
 }
 
+TEST(DenseMatrix, Empty) {
+    std::vector<double> contents;
+    tatami::DenseColumnMatrix<double, int> mat(0, 20, contents);
+    EXPECT_EQ(mat.nrow(), 0);
+    EXPECT_EQ(mat.ncol(), 20);
+
+    tatami::DenseColumnMatrix<double, int> mat2(20, 0, contents);
+    EXPECT_EQ(mat2.nrow(), 20);
+    EXPECT_EQ(mat2.ncol(), 0);
+}
+
 TEST(DenseMatrix, Errors) {
     std::vector<double> contents;
     tatami_test::throws_error([&]() {
         tatami::DenseColumnMatrix<double, int> mat(10, 20, contents);
+    }, "length of 'values' should be equal");
+
+    contents.push_back(1);
+    tatami_test::throws_error([&]() {
+        tatami::DenseColumnMatrix<double, int> mat(0, 20, contents);
     }, "length of 'values' should be equal");
 }
 

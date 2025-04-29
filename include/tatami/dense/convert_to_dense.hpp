@@ -51,11 +51,11 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
 
     if (row_major == pref_rows) {
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
-        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
+        parallelize([&](int, std::size_t start, std::size_t length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
-            auto wrk = consecutive_extractor<false>(matrix, pref_rows, start, length);
+            auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, start, length);
 
-            for (InputIndex_ x = 0; x < length; ++x) {
+            for (decltype(length) x = 0; x < length; ++x) {
                 auto store_copy = store + static_cast<std::size_t>(start + x) * secondary; // cast to avoid overflow.
                 if constexpr(same_type) {
                     auto ptr = wrk->fetch(store_copy);
@@ -83,7 +83,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
             // Note that we don't use the blocked transposition strategy
             // from the dense case, because the overhead of looping is 
             // worse than the cache misses for sparse data.
-            for (std::size_t x = 0; x < primary; ++x) {
+            for (decltype(primary) x = 0; x < primary; ++x) {
                 auto range = wrk->fetch(vtemp.data(), itemp.data());
                 for (InputIndex_ i = 0; i < range.number; ++i) {
                     store[static_cast<std::size_t>(range.index[i]) * primary + x] = range.value[i]; // cast to std::size_t to avoid overflow.
@@ -103,29 +103,29 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
             // consecutive primary dimension elements so that we can
             // transpose by blocks along the secondary dimension.
             constexpr std::size_t block_size = 16;
-            const std::size_t alloc = std::min(primary, block_size);
+            auto alloc = std::min(primary, block_size);
             std::vector<InputValue_> bigbuffer(length * alloc); // already size_ts, to avoid overflow.
             std::vector<const InputValue_*> ptrs(alloc);
             std::vector<InputValue_*> buf_ptrs(alloc);
-            for (std::size_t i = 0; i < alloc; ++i) {
+            for (decltype(alloc) i = 0; i < alloc; ++i) {
                 buf_ptrs[i] = bigbuffer.data() + i * length; // already all size_t's, to avoid overflow.
             }
 
             std::size_t prim_i = 0;
             while (prim_i < primary) {
-                std::size_t prim_to_process = std::min(static_cast<std::size_t>(primary - prim_i), block_size);
-                for (std::size_t c = 0; c < prim_to_process; ++c) {
+                auto prim_to_process = std::min(static_cast<std::size_t>(primary - prim_i), block_size);
+                for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                     ptrs[c] = wrk->fetch(buf_ptrs[c]);
                 }
 
                 std::size_t sec_i = 0;
                 while (sec_i < length) {
-                    std::size_t sec_end = sec_i + std::min(static_cast<std::size_t>(length - sec_i), block_size);
-                    for (std::size_t c = 0; c < prim_to_process; ++c) {
+                    auto sec_end = sec_i + std::min(static_cast<std::size_t>(length - sec_i), block_size);
+                    for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                         auto input = ptrs[c];
                         std::size_t offset = start * primary + (c + prim_i); // already all std::size_t's, to avoid overflow.
-                        for (std::size_t r = sec_i; r < sec_end; ++r) {
-                            store[r * primary + offset] = input[r];
+                        for (auto r = sec_i; r < sec_end; ++r) {
+                            store[r * primary + offset] = input[r]; // again, these are all size_t's already.
                         }
                     }
 
@@ -163,7 +163,7 @@ template <
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_major, const ConvertToDenseOptions& options) {
     auto NR = matrix.nrow();
     auto NC = matrix.ncol();
-    std::vector<StoredValue_> buffer(static_cast<std::size_t>(NR) * static_cast<std::size_t>(NC));
+    std::vector<StoredValue_> buffer(static_cast<std::size_t>(NR) * static_cast<std::size_t>(NC)); // cast to size_t to avoid overflow.
     convert_to_dense(matrix, row_major, buffer.data(), options);
     return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row_major));
 }
