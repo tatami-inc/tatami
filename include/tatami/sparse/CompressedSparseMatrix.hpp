@@ -44,9 +44,9 @@ public:
     {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto offset = my_pointers[i], end = my_pointers[i+1];
+        auto start_pos = my_pointers[i], end_pos = my_pointers[i+1];
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        for (auto x = offset; x < end; ++x) {
+        for (auto x = start_pos; x < end_pos; ++x) {
             buffer[my_indices[x]] = my_values[x];
         }
         return buffer;
@@ -113,13 +113,12 @@ public:
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        auto offset = (iStart - my_indices.begin());
-        auto number = iEnd - iStart;
+        auto start_pos = (iStart - my_indices.begin());
+        auto end_pos = (iEnd - my_indices.begin());
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        for (decltype(number) i = 0; i < number; ++i) {
-            auto cur_offset = offset + i;
-            buffer[my_indices[cur_offset] - my_block_start] = my_values[cur_offset];
+        for (auto x = start_pos; x < end_pos; ++x) {
+            buffer[my_indices[x] - my_block_start] = my_values[x];
         }
         return buffer;
     }
