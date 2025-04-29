@@ -103,7 +103,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
             // consecutive primary dimension elements so that we can
             // transpose by blocks along the secondary dimension.
             constexpr std::size_t block_size = 16;
-            auto alloc = std::min(primary, block_size);
+            std::size_t alloc = std::min(primary, block_size);
             std::vector<InputValue_> bigbuffer(length * alloc); // already size_ts, to avoid overflow.
             std::vector<const InputValue_*> ptrs(alloc);
             std::vector<InputValue_*> buf_ptrs(alloc);
@@ -113,18 +113,18 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
 
             std::size_t prim_i = 0;
             while (prim_i < primary) {
-                auto prim_to_process = std::min(static_cast<std::size_t>(primary - prim_i), block_size);
+                std::size_t prim_to_process = std::min(static_cast<std::size_t>(primary - prim_i), block_size);
                 for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                     ptrs[c] = wrk->fetch(buf_ptrs[c]);
                 }
 
                 std::size_t sec_i = 0;
                 while (sec_i < length) {
-                    auto sec_end = sec_i + std::min(static_cast<std::size_t>(length - sec_i), block_size);
+                    std::size_t sec_end = sec_i + std::min(static_cast<std::size_t>(length - sec_i), block_size);
                     for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                         auto input = ptrs[c];
                         std::size_t offset = start * primary + (c + prim_i); // already all std::size_t's, to avoid overflow.
-                        for (auto r = sec_i; r < sec_end; ++r) {
+                        for (std::size_t r = sec_i; r < sec_end; ++r) {
                             store[r * primary + offset] = input[r]; // again, these are all size_t's already.
                         }
                     }
