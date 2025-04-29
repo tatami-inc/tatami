@@ -139,7 +139,7 @@ public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::size_t offset = i;
         const auto& indices = *my_indices_ptr;
-        for (decltype(my_indices.size()) x = 0, end = indices.size(); x < end; ++x) {
+        for (decltype(indices.size()) x = 0, end = indices.size(); x < end; ++x) {
             buffer[x] = my_storage[static_cast<std::size_t>(indices[x]) * my_secondary + offset]; // casting to avoid overflow.
         }
         return buffer;

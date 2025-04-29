@@ -567,11 +567,13 @@ public:
      * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool by_row) : 
-        my_matrices(std::move(matrices)), my_by_row(by_row), my_cumulative(my_matrices.size()+1) 
-    {
-        size_t sofar = 0;
-        for (size_t i = 0, nmats = my_matrices.size(); i < nmats; ++i) {
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool by_row) : my_matrices(std::move(matrices)), my_by_row(by_row) {
+        auto nmats = my_matrices.size();
+        my_cumulative.reserve(nmats + 1);
+        decltype(nmats) sofar = 0;
+        my_cumulative.push_back(0);
+
+        for (decltype(nmats) i = 0; i < nmats; ++i) {
             auto& current = my_matrices[i];
             Index_ primary, secondary;
             if (my_by_row) {
@@ -594,12 +596,11 @@ public:
                 if (sofar != i) {
                     my_matrices[sofar] = std::move(current);
                 }
-                my_cumulative[sofar + 1] = my_cumulative[sofar] + primary;
+                my_cumulative.push_back(my_cumulative.back() + primary);
                 ++sofar;
             }
         }
 
-        my_cumulative.resize(sofar + 1);
         my_matrices.resize(sofar);
 
         // At this point, the number of matrices must be no greater than the

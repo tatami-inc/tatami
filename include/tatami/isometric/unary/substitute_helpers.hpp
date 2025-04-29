@@ -2,7 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 
 #include "../compare_utils.hpp"
-#include "../../utils/integer_comparison.hpp"
+#include "../../utils/integer_comparisons.hpp"
 #include "helper_interface.hpp"
 
 #include <vector>

@@ -46,7 +46,7 @@ int is_ordered(const Primary_& primary, const Secondary_& secondary) {
 }
 
 template<typename Size_, class Primary_, class Secondary_>
-void order(int status, std::vector<Size_>& indices, const Primary& primary, const Secondary& secondary) {
+void order(int status, std::vector<Size_>& indices, const Primary_& primary, const Secondary_& secondary) {
     if (status == 1) {
         auto nprimary = primary.size();
         decltype(nprimary) start = 0;
@@ -102,7 +102,7 @@ void order(int status, std::vector<Size_>& indices, const Primary& primary, cons
  */
 template<class Values_, class RowIndices_, class ColumnIndices_>
 std::vector<decltype(std::declval<Values_>().size())> compress_sparse_triplets(std::size_t nrow, std::size_t ncol, Values_& values, RowIndices_& row_indices, ColumnIndices_& column_indices, bool csr) {
-    // We use decltype(N) as the return type to match the size_type of the input containers, which might not be size_t for arbitrary code.
+    // We use decltype(N) as the return type to match the size_type of the input containers, which might not be size_t for arbitrary containers.
     auto N = values.size();
     if (!safe_non_negative_equal(N, row_indices.size()) || !safe_non_negative_equal(N, column_indices.size())) { 
         throw std::runtime_error("'row_indices', 'column_indices' and 'values' should have the same length");

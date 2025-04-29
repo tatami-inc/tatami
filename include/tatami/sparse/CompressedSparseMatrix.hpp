@@ -522,7 +522,7 @@ public:
             }
 
             auto npointers = my_pointers.size(); 
-            auto check_pointers = [](auto dim) {
+            auto check_pointers = [&](auto dim) {
                 // subtracting 1 from npointers (once we know it's >= 1) instead of adding 1 to dim, as the latter might overflow.
                 return npointers >= 1 && safe_non_negative_equal(npointers - 1, dim);
             };
