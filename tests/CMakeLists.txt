@@ -103,6 +103,7 @@ add_executable(
     src/utils/FixedOracle.cpp
     src/utils/process_consecutive_indices.cpp
     src/utils/miscellaneous.cpp
+    src/utils/integer_comparisons.cpp
 )
 decorate_executable(utils_test)
 
