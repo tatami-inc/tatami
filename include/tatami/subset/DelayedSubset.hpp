@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include <algorithm>
 #include <memory>
+#include <cstddef>
 
 /**
  * @file DelayedSubset.hpp
@@ -209,7 +210,7 @@ public:
     }
 
 private:
-    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt) {
+    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, std::size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt) {
         my_shift = extent - processed.collapsed.size();
 
         my_needs_value = opt.sparse_extract_value;
@@ -359,7 +360,7 @@ private:
     SparseParallelReindex<Index_> my_reindex;
     std::vector<std::pair<Index_, Value_> > my_sortspace;
     std::vector<Index_> my_holding_ibuffer;
-    size_t my_shift;
+    std::size_t my_shift;
 };
 
 }

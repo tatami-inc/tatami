@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstddef>
 
 /**
  * @file convert_to_fragmented_sparse.hpp
@@ -31,7 +32,7 @@ struct FragmentedSparseContents {
     /**
      * @cond
      */
-    FragmentedSparseContents(size_t n) : value(n), index(n) {}
+    FragmentedSparseContents(std::size_t n) : value(n), index(n) {}
     /**
      * @endcond
      */

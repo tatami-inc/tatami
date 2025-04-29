@@ -1,6 +1,8 @@
 #ifndef TATAMI_ARRAY_VIEW_HPP
 #define TATAMI_ARRAY_VIEW_HPP
 
+#include <cstddef>
+
 /**
  * @file ArrayView.hpp
  *
@@ -25,7 +27,7 @@ public:
      * The lifetime of the array is assumed to exceed that of the constructed `ArrayView` instance.
      * @param number Number of array elements.
      */
-    ArrayView(const T* ptr, size_t number) : my_ptr(ptr), my_number(number) {}
+    ArrayView(const T* ptr, std::size_t number) : my_ptr(ptr), my_number(number) {}
 
     /**
      * Default constructor to create a zero-length view.
@@ -35,7 +37,7 @@ public:
     /**
      * @return Number of array elements.
      */
-    size_t size() const { return my_number; }
+    std::size_t size() const { return my_number; }
 
     /**
      * @return Pointer to the start of the array.
@@ -56,13 +58,13 @@ public:
      * @param i Index of the array.
      * @return Value of the array at element `i`.
      */
-    T operator[](size_t i) const {
+    T operator[](std::size_t i) const {
         return my_ptr[i];
     }
 
 private:
     const T* my_ptr;
-    size_t my_number;
+    std::size_t my_number;
 };
 
 }

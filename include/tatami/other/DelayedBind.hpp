@@ -13,6 +13,7 @@
 #include <memory>
 #include <array>
 #include <type_traits>
+#include <cstddef>
 
 /**
  * @file DelayedBind.hpp
@@ -417,7 +418,7 @@ void initialize_perp_oracular(
     std::vector<Index_>& chosen, 
     Initialize_ init) 
 {
-    size_t ntotal = oracle->total();
+    auto ntotal = oracle->total();
     chosen.reserve(ntotal);
 
     struct Predictions {
@@ -448,7 +449,7 @@ void initialize_perp_oracular(
 
     Index_ nmats = cumulative.size() - 1;
     std::vector<Predictions> predictions(nmats);
-    for (size_t i = 0; i < ntotal; ++i) {
+    for (decltype(ntotal) i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         Index_ choice = mapping[prediction];
         chosen.push_back(choice);
@@ -503,7 +504,7 @@ public:
 private:
     std::vector<Index_> segments;
     std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > my_exts;
-    size_t used = 0;
+    std::size_t used = 0;
 };
 
 template<typename Value_, typename Index_>
@@ -540,7 +541,7 @@ public:
 private:
     std::vector<Index_> segments;
     std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > my_exts;
-    size_t used = 0;
+    std::size_t used = 0;
 };
 
 }

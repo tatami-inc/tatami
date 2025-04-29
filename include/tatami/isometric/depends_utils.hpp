@@ -2,6 +2,8 @@
 #define TATAMI_DELAYED_ISOMETRIC_OPERATION_UTILS_HPP
 
 #include <type_traits>
+#include <cstddef>
+
 #include "../utils/new_extractor.hpp"
 
 namespace tatami {
@@ -49,7 +51,7 @@ public:
 
 private:
     MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, size_t, bool>::type my_used = 0;
+    typename std::conditional<oracle_, std::size_t, bool>::type my_used = 0;
 };
 
 template<class Operation_>

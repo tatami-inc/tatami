@@ -2,7 +2,9 @@
 #define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 
 #include "../compare_utils.hpp"
+#include "../../utils/integer_comparison.hpp"
 #include "helper_interface.hpp"
+
 #include <vector>
 #include <limits>
 
@@ -274,10 +276,11 @@ public:
         my_substitute(std::move(substitute)),
         my_by_row(by_row) 
     {
-        if (static_cast<size_t>(my_compared.size()) != static_cast<size_t>(my_substitute.size())) {
+        auto ncompared = my_compared.size();
+        if (!safe_non_negative_equal(ncompared, my_substitute.size())) {
             throw std::runtime_error("'compared' and 'substitute' should have the same length");
         }
-        for (size_t i = 0, end = my_compared.size(); i < end; ++i) {
+        for (decltype(ncompared) i = 0; i < ncompared; ++i) {
             if (!delayed_substitute_is_sparse<op_, InputValue_>(my_compared[i], my_substitute[i])) {
                  my_sparse = false;
                  break;

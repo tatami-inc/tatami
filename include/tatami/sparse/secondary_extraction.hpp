@@ -20,11 +20,11 @@ private:
 
     Index_ my_max_index;
 
-    typedef typename IndexServer_::pointer_type Pointer_;
+    typedef typename IndexServer_::pointer_type Pointer;
 
     // The cached position of the pointer at each primary element.
     // Specifically, 'my_indices[i][my_cached_pointers[i]]' is the lower bound for 'my_last_request' in the primary element 'i'.
-    std::vector<Pointer_> my_cached_pointers; 
+    std::vector<Pointer> my_cached_pointers; 
 
     // This vector contains the cached index being pointed to by 'my_cached_pointers'.
     // We store this here as it is more cache-friendly than doing a look-up to 'my_indices' every time.
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    size_t size() const {
+    auto size() const {
         return my_cached_indices.size();
     }
 
@@ -297,7 +297,7 @@ public:
         return my_cache.search(secondary, [](Index_ ip) -> Index_ { return ip; }, std::move(store));
     }
 
-    size_t size() const {
+    auto size() const {
         return my_cache.size();
     }
 
@@ -316,7 +316,7 @@ public:
         return my_cache.search(secondary, Helper(my_block_start), std::move(store));
     }
 
-    size_t size() const {
+    auto size() const {
         return my_cache.size();
     }
 
@@ -347,7 +347,7 @@ public:
         return my_cache.search(secondary, Helper(*my_indices_ptr), std::move(store));
     }
 
-    size_t size() const {
+    auto size() const {
         return my_cache.size();
     }
 

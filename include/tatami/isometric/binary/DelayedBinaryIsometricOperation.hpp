@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 #include <type_traits>
+#include <cstddef>
 
 /**
  * @file DelayedBinaryIsometricOperation.hpp
@@ -456,7 +457,7 @@ public:
     }
 
 private:
-    void initialize(size_t extent, Options& opt) {
+    void initialize(std::size_t extent, Options& opt) {
         my_report_value = opt.sparse_extract_value;
         my_report_index = opt.sparse_extract_index;
 
