@@ -42,8 +42,7 @@ public:
         const auto& curi = my_indices[i];
 
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        auto end = curv.size();
-        for (decltype(end) x = 0; x < end; ++x) {
+        for (decltype(curv.size()) x = 0, end = curv.size(); x < end; ++x) {
             buffer[curi[x]] = curv[x];
         }
         return buffer;
@@ -70,7 +69,7 @@ public:
             output.value = sparse_utils::extract_primary_vector(curv, static_cast<decltype(curv.size())>(0), curv.size(), vbuffer);
         }
         if (my_needs_index) {
-            output.index = sparse_utils::extract_primary_vector(curi, static_cast<decltype(curv.size())>(0), curi.size(), index_buffer);
+            output.index = sparse_utils::extract_primary_vector(curi, static_cast<decltype(curi.size())>(0), curi.size(), index_buffer);
         }
         return output;
     }
@@ -98,13 +97,12 @@ public:
         auto iStart = curi.begin();
         auto iEnd = curi.end();
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        auto offset = (iStart - curi.begin());
-        auto number = iEnd - iStart;
+        auto start_pos = (iStart - curi.begin());
+        auto end_pos = (iEnd - curi.begin());
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        for (decltype(number) i = 0; i < number; ++i) {
-            auto cur_offset = offset + i;
-            buffer[curi[cur_offset] - my_block_start] = curv[cur_offset];
+        for (auto x = start_pos; x < end_pos; ++x) {
+            buffer[curi[x] - my_block_start] = curv[x];
         }
         return buffer;
     }
