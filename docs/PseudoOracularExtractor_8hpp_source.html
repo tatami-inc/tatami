@@ -119,7 +119,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    std::shared_ptr&lt;const Oracle&lt;Index_&gt; &gt; my_oracle;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">size_t</span> my_used = 0;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::size_t my_used = 0;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>};</div>
 </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
@@ -141,7 +141,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::shared_ptr&lt;const Oracle&lt;Index_&gt; &gt; my_oracle;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordtype">size_t</span> my_used = 0;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    std::size_t my_used = 0;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>};</div>
 </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
@@ -152,7 +152,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aMatrix_8hpp_html"><div class="ttname"><a href="Matrix_8hpp.html">Matrix.hpp</a></div><div class="ttdoc">Virtual class for a matrix of some numeric type.</div></div>
 <div class="ttc" id="aclasstatami_1_1MyopicDenseExtractor_html"><div class="ttname"><a href="classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in dense form without an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:24</div></div>
 <div class="ttc" id="aclasstatami_1_1MyopicSparseExtractor_html"><div class="ttname"><a href="classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in sparse form without an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:140</div></div>
-<div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:21</div></div>
+<div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:23</div></div>
 <div class="ttc" id="aclasstatami_1_1OracularDenseExtractor_html"><div class="ttname"><a href="classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in dense form with an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:72</div></div>
 <div class="ttc" id="aclasstatami_1_1OracularSparseExtractor_html"><div class="ttname"><a href="classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in sparse form with an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:193</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>

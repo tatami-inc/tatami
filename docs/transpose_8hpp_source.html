@@ -102,7 +102,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Input_, <span class="keyword">typename</span> Output_&gt;</div>
 <div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacetatami.html#a07c1d1f96ea3a59d9f6106b17873d494">   38</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a07c1d1f96ea3a59d9f6106b17873d494">transpose</a>(<span class="keyword">const</span> Input_* input, <span class="keywordtype">size_t</span> nrow, <span class="keywordtype">size_t</span> ncol, <span class="keywordtype">size_t</span> input_stride, Output_* output, <span class="keywordtype">size_t</span> output_stride) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">   38</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(<span class="keyword">const</span> Input_* input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_* output, std::size_t output_stride) {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">if</span> ((nrow == 1 &amp;&amp; output_stride == 1) || (ncol == 1 &amp;&amp; input_stride == 1)) {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        std::copy_n(input, nrow * ncol, output);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">return</span>;</div>
@@ -110,16 +110,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">// Using a blockwise strategy to perform the transposition,</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="comment">// in order to be more input-friendly.</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">constexpr</span> <span class="keywordtype">size_t</span> block = 16;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">size_t</span> col_start = 0;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">constexpr</span> std::size_t block = 16;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::size_t col_start = 0;</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">while</span> (col_start &lt; ncol) {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="keywordtype">size_t</span> col_end = col_start + std::min(block, ncol - col_start);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        std::size_t col_end = col_start + std::min(block, ncol - col_start);</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        <span class="keywordtype">size_t</span> row_start = 0;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        std::size_t row_start = 0;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="keywordflow">while</span> (row_start &lt; nrow) {</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            <span class="keywordtype">size_t</span> row_end = row_start + std::min(block, nrow - row_start);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> c = col_start; c &lt; col_end; ++c) {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> r = row_start; r &lt; row_end; ++r) {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            std::size_t row_end = row_start + std::min(block, nrow - row_start);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            <span class="keywordflow">for</span> (std::size_t c = col_start; c &lt; col_end; ++c) {</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                <span class="keywordflow">for</span> (std::size_t r = row_start; r &lt; row_end; ++r) {</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                    output[c * output_stride + r] = input[r * input_stride + c];</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>                }</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            }</div>
@@ -133,8 +133,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Input_, <span class="keyword">typename</span> Output_&gt;</div>
 <div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="namespacetatami.html#a86be7b06c9d13b25f9ff04eed87430a7">   86</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a07c1d1f96ea3a59d9f6106b17873d494">transpose</a>(<span class="keyword">const</span> Input_* input, <span class="keywordtype">size_t</span> nrow, <span class="keywordtype">size_t</span> ncol, Output_* output) {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <a class="code hl_function" href="namespacetatami.html#a07c1d1f96ea3a59d9f6106b17873d494">transpose</a>(input, nrow, ncol, ncol, output, nrow);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="namespacetatami.html#a2c591e4e4e2f9277add6a84fd90b4018">   86</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(<span class="keyword">const</span> Input_* input, std::size_t nrow, std::size_t ncol, Output_* output) {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(input, nrow, ncol, ncol, output, nrow);</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
 </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
@@ -151,7 +151,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a07c1d1f96ea3a59d9f6106b17873d494"><div class="ttname"><a href="namespacetatami.html#a07c1d1f96ea3a59d9f6106b17873d494">tatami::transpose</a></div><div class="ttdeci">void transpose(const Input_ *input, size_t nrow, size_t ncol, size_t input_stride, Output_ *output, size_t output_stride)</div><div class="ttdef"><b>Definition</b> transpose.hpp:38</div></div>
+<div class="ttc" id="anamespacetatami_html_a7f1da1074c607221bcaee4b52c3f9f63"><div class="ttname"><a href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">tatami::transpose</a></div><div class="ttdeci">void transpose(const Input_ *input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_ *output, std::size_t output_stride)</div><div class="ttdef"><b>Definition</b> transpose.hpp:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

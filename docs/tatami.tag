@@ -76,25 +76,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedBinaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arithmetic__helpers_8hpp.html</filename>
@@ -143,10 +124,10 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedUnaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
+    <name>DelayedBinaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -161,6 +142,25 @@
     <path>tatami/isometric/unary/</path>
     <filename>unary_2helper__interface_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DelayedUnaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -373,6 +373,12 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>integer_comparisons.hpp</name>
+    <path>tatami/utils/</path>
+    <filename>integer__comparisons_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>new_extractor.hpp</name>
     <path>tatami/utils/</path>
     <filename>new__extractor_8hpp.html</filename>
@@ -420,8 +426,8 @@
       <type></type>
       <name>ArrayView</name>
       <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a98f383e531be5aac446242d62febf4e9</anchor>
-      <arglist>(const T *ptr, size_t number)</arglist>
+      <anchor>a77e4c9dac707487562307fe1f168b69d</anchor>
+      <arglist>(const T *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -431,10 +437,10 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>size</name>
       <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a7983c151067c852f6382b76661937dfd</anchor>
+      <anchor>a6bf052041aef1ac04f2273e546c037fe</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -462,8 +468,8 @@
       <type>T</type>
       <name>operator[]</name>
       <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a329bcfebf2ebc7ca73d559836170722c</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>a50079d86f709df85cf11a883f055616f</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -723,18 +729,18 @@
       <arglist>(Index_ start, Index_ length)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>total</name>
       <anchorfile>classtatami_1_1ConsecutiveOracle.html</anchorfile>
-      <anchor>aade9b656fa50f1b41f52486a70591d58</anchor>
+      <anchor>a2ff5c653e64ddebb2bbb0725e600c269</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1ConsecutiveOracle.html</anchorfile>
-      <anchor>a7310f20500d941eb27eb367b3f930b88</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>abf4738517f1d7cd0c2af21c20b5e9085</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6282,18 +6288,18 @@
       <arglist>(std::vector&lt; Index_ &gt; vector)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>aee8f5bfa07d50e1b1689652543342572</anchor>
+      <anchor>ac54a6cdffbe92321ede3c4426c990d23</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>ac3a568555ec15ccbed4aab42d5dddb37</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>a884ad60b6b16284713fdbd2c9d6b550b</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6305,22 +6311,22 @@
       <type></type>
       <name>FixedViewOracle</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a9289696daa4d9d7bba3997c308927fe9</anchor>
-      <arglist>(const Index_ *ptr, size_t number)</arglist>
+      <anchor>a0fb6965567e80db39b8b77f244ec3023</anchor>
+      <arglist>(const Index_ *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>aa858ead22df2b721fd723a9509ac28f9</anchor>
+      <anchor>a90ee6c09f9dbbc47f3b1325e674b6ef3</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a6ff53180a31ec5c4a0f3d7f7eb026e0f</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>aec39b28a8ebf2ef35d927d8f0a121ab0</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6611,8 +6617,8 @@
       <type></type>
       <name>Iterator</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a2d745a37ba547a547724d23e4745e965</anchor>
-      <arglist>(const SomeNumericArray *parent, size_t index)</arglist>
+      <anchor>aa67b3b4e35900910113464762f7168d4</anchor>
+      <arglist>(const SomeNumericArray *parent, std::size_t index)</arglist>
     </member>
     <member kind="function">
       <type>value_type</type>
@@ -6625,8 +6631,8 @@
       <type>value_type</type>
       <name>operator[]</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ac984e87144d5d955bb0d9b84ae4aced5</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>a5786c5fcf2bb99d8779c8ac2ea9b936b</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -6674,8 +6680,8 @@
       <type>Iterator &amp;</type>
       <name>operator+=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>aa275bd0c414ca54a8cc2464229a21fbd</anchor>
-      <arglist>(size_t n)</arglist>
+      <anchor>ad76a8a05f7a40e880709d6ea3b44a5a4</anchor>
+      <arglist>(std::size_t n)</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
@@ -6695,8 +6701,8 @@
       <type>Iterator &amp;</type>
       <name>operator-=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a9ac7d3ad35ae95b2f6b0dc2b4eebaed4</anchor>
-      <arglist>(size_t n)</arglist>
+      <anchor>aef850d60faee9e47d5796afbbb182c4b</anchor>
+      <arglist>(std::size_t n)</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
@@ -6716,15 +6722,15 @@
       <type>Iterator</type>
       <name>operator+</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>af0d534fb6c5fd6e9121ae2c4c61e5848</anchor>
-      <arglist>(size_t n) const</arglist>
+      <anchor>a95a2610460a8f3883c889afa5c019046</anchor>
+      <arglist>(std::size_t n) const</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>operator-</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ae100fbb36753c9b666d7e1f70aea8b44</anchor>
-      <arglist>(size_t n) const</arglist>
+      <anchor>a04acac4ee7ceebed09694c9006642826</anchor>
+      <arglist>(std::size_t n) const</arglist>
     </member>
     <member kind="function">
       <type>std::ptrdiff_t</type>
@@ -6737,8 +6743,8 @@
       <type>friend Iterator</type>
       <name>operator+</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>af891cdee3c447bfccb98be31584ab4a8</anchor>
-      <arglist>(size_t n, const Iterator &amp;it)</arglist>
+      <anchor>a20033fee0c6079cc9cb677bd264185de</anchor>
+      <arglist>(std::size_t n, const Iterator &amp;it)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -7398,18 +7404,18 @@
     <filename>classtatami_1_1Oracle.html</filename>
     <templarg>typename Index_</templarg>
     <member kind="function" virtualness="pure">
-      <type>virtual size_t</type>
+      <type>virtual std::size_t</type>
       <name>total</name>
       <anchorfile>classtatami_1_1Oracle.html</anchorfile>
-      <anchor>a611f0c44f1b3de3ec065c91ada017808</anchor>
+      <anchor>af1f05ec8e29c690342b7a568bca2969e</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1Oracle.html</anchorfile>
-      <anchor>a852153ae7d04d12fdea97ebb7b11f357</anchor>
-      <arglist>(size_t i) const =0</arglist>
+      <anchor>a49d7178c4f4f32a751bdaecbcf907e06</anchor>
+      <arglist>(std::size_t i) const =0</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -7532,91 +7538,91 @@
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a34316bc03b9b9c873c4c3c3d87d51bc3</anchor>
-      <arglist>(void *ptr, size_t number, SomeNumericType type)</arglist>
+      <anchor>a849e42c129798fedb4a445aff54fe449</anchor>
+      <arglist>(void *ptr, std::size_t number, SomeNumericType type)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a72480d4ee601d6e4b53079c3c9d778b6</anchor>
-      <arglist>(const int8_t *ptr, size_t number)</arglist>
+      <anchor>ad5a75ca0ff6ea84b9fe91773ff1d27c5</anchor>
+      <arglist>(const int8_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>ad98452abd9d16187b9a3f47f4382a03b</anchor>
-      <arglist>(const uint8_t *ptr, size_t number)</arglist>
+      <anchor>aaddf6bb16ac0fe2100674e49b26e2935</anchor>
+      <arglist>(const uint8_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>aa426e3d15474854e6a9ed83340a9b186</anchor>
-      <arglist>(const int16_t *ptr, size_t number)</arglist>
+      <anchor>aaded579db2150662bf09a994b2a899b6</anchor>
+      <arglist>(const int16_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a73bbe62be2b580fcb089681614d54db3</anchor>
-      <arglist>(const uint16_t *ptr, size_t number)</arglist>
+      <anchor>a27d70241b1f8502c257554267bc227d3</anchor>
+      <arglist>(const uint16_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a014ed5da5ed50927b16a7809d79090a2</anchor>
-      <arglist>(const int32_t *ptr, size_t number)</arglist>
+      <anchor>a55b29f13ee92cf9d5c960c9376fea27a</anchor>
+      <arglist>(const int32_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>addaf5c43710c1b5c24d0044142059c3b</anchor>
-      <arglist>(const uint32_t *ptr, size_t number)</arglist>
+      <anchor>adfe5b622c0d187f2af250baa420e9746</anchor>
+      <arglist>(const uint32_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a3841d7a193e4c3a943ef37c457b1f7b0</anchor>
-      <arglist>(const int64_t *ptr, size_t number)</arglist>
+      <anchor>a33bb99fd8a9826c03ee54c497e18bdb1</anchor>
+      <arglist>(const int64_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a45580fc9b26e1b4b51196ea00355fa6b</anchor>
-      <arglist>(const uint64_t *ptr, size_t number)</arglist>
+      <anchor>a57daa32381fe8cd95e69207f67eb6cf3</anchor>
+      <arglist>(const uint64_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a04746b0ed1a52c1f1b07ea9268e6e710</anchor>
-      <arglist>(const float *ptr, size_t number)</arglist>
+      <anchor>aaee9906b60f47b8f7b5079bd4d930211</anchor>
+      <arglist>(const float *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a3188a107ac6731af5c1afaef1964946c</anchor>
-      <arglist>(const double *ptr, size_t number)</arglist>
+      <anchor>a6f94139ee189d2dfc6cfb140b4ceac18</anchor>
+      <arglist>(const double *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type>Value_</type>
       <name>operator[]</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a9db3207e514ed5dd645bdb6c14bf89f9</anchor>
-      <arglist>(size_t i) const</arglist>
+      <anchor>a2281ce7578ac3aa679e1526bbbe8f28a</anchor>
+      <arglist>(std::size_t i) const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>size</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>ada2335bab3c287700c1888ae1cb1d73f</anchor>
+      <anchor>adef230cbcde9ff6bcb797dd581810ff5</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -8379,15 +8385,15 @@
       <type>void</type>
       <name>transpose</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a07c1d1f96ea3a59d9f6106b17873d494</anchor>
-      <arglist>(const Input_ *input, size_t nrow, size_t ncol, size_t input_stride, Output_ *output, size_t output_stride)</arglist>
+      <anchor>a7f1da1074c607221bcaee4b52c3f9f63</anchor>
+      <arglist>(const Input_ *input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_ *output, std::size_t output_stride)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>transpose</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a86be7b06c9d13b25f9ff04eed87430a7</anchor>
-      <arglist>(const Input_ *input, size_t nrow, size_t ncol, Output_ *output)</arglist>
+      <anchor>a2c591e4e4e2f9277add6a84fd90b4018</anchor>
+      <arglist>(const Input_ *input, std::size_t nrow, std::size_t ncol, Output_ *output)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; ValueOut_, IndexOut_ &gt; &gt;</type>
@@ -8397,11 +8403,11 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; ValueIn_, IndexIn_ &gt; &gt; p)</arglist>
     </member>
     <member kind="function">
-      <type>std::vector&lt; size_t &gt;</type>
+      <type>std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;</type>
       <name>compress_sparse_triplets</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3b2756af73514cbf89b42f5abd7997cc</anchor>
-      <arglist>(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</arglist>
+      <anchor>aa007887c6e13021b8a9d5565de1b8bb9</anchor>
+      <arglist>(std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8472,6 +8478,13 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab52a806e3f13a68741a9e1f77dccab14</anchor>
       <arglist>(const Value_ *input, Size_ n, Value_ *output)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>safe_non_negative_equal</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7a0814791f83eae7180c58fd82485a63</anchor>
+      <arglist>(Left_ l, Right_ r)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>

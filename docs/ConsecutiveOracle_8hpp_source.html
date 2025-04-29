@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_CONSECUTIVE_ORACLE_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Oracle_8hpp.html">../base/Oracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;numeric&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
@@ -108,20 +108,20 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="classtatami_1_1ConsecutiveOracle.html#ab6d9e6d767d2c9705d927be501abfe9d">   27</a></span>    <a class="code hl_function" href="classtatami_1_1ConsecutiveOracle.html#ab6d9e6d767d2c9705d927be501abfe9d">ConsecutiveOracle</a>(Index_ start, Index_ length) : my_offset(start), my_length(length) {}</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classtatami_1_1ConsecutiveOracle.html#aade9b656fa50f1b41f52486a70591d58">   29</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="classtatami_1_1ConsecutiveOracle.html#aade9b656fa50f1b41f52486a70591d58">total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classtatami_1_1ConsecutiveOracle.html#a2ff5c653e64ddebb2bbb0725e600c269">   29</a></span>    std::size_t <a class="code hl_function" href="classtatami_1_1ConsecutiveOracle.html#a2ff5c653e64ddebb2bbb0725e600c269">total</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordflow">return</span> my_length;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    }</div>
 </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
 <div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classtatami_1_1ConsecutiveOracle.html#a7310f20500d941eb27eb367b3f930b88">   33</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1ConsecutiveOracle.html#a7310f20500d941eb27eb367b3f930b88">get</a>(<span class="keywordtype">size_t</span> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classtatami_1_1ConsecutiveOracle.html#abf4738517f1d7cd0c2af21c20b5e9085">   33</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1ConsecutiveOracle.html#abf4738517f1d7cd0c2af21c20b5e9085">get</a>(std::size_t i)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">return</span> my_offset + i;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    }</div>
 </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    Index_ my_offset;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">size_t</span> my_length;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::size_t my_length;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>};</div>
 </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
@@ -130,10 +130,10 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aOracle_8hpp_html"><div class="ttname"><a href="Oracle_8hpp.html">Oracle.hpp</a></div><div class="ttdoc">Oracle for data access.</div></div>
 <div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html">tatami::ConsecutiveOracle</a></div><div class="ttdoc">Predict future accesses along a consecutive sequence.</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:21</div></div>
-<div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_a7310f20500d941eb27eb367b3f930b88"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#a7310f20500d941eb27eb367b3f930b88">tatami::ConsecutiveOracle::get</a></div><div class="ttdeci">Index_ get(size_t i) const</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:33</div></div>
-<div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_aade9b656fa50f1b41f52486a70591d58"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#aade9b656fa50f1b41f52486a70591d58">tatami::ConsecutiveOracle::total</a></div><div class="ttdeci">size_t total() const</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:29</div></div>
+<div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_a2ff5c653e64ddebb2bbb0725e600c269"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#a2ff5c653e64ddebb2bbb0725e600c269">tatami::ConsecutiveOracle::total</a></div><div class="ttdeci">std::size_t total() const</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:29</div></div>
 <div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_ab6d9e6d767d2c9705d927be501abfe9d"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#ab6d9e6d767d2c9705d927be501abfe9d">tatami::ConsecutiveOracle::ConsecutiveOracle</a></div><div class="ttdeci">ConsecutiveOracle(Index_ start, Index_ length)</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:27</div></div>
-<div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:21</div></div>
+<div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_abf4738517f1d7cd0c2af21c20b5e9085"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#abf4738517f1d7cd0c2af21c20b5e9085">tatami::ConsecutiveOracle::get</a></div><div class="ttdeci">Index_ get(std::size_t i) const</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:33</div></div>
+<div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:23</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

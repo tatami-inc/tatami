@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/sparse/compress_sparse_triplets.hpp File Reference</title>
+<title>tatami: tatami/utils/integer_comparisons.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,38 +85,34 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_c0869e65bd76f51f58a796014da5892c.html">sparse</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_d053d230eec548c17a4551a02c6d5eb8.html">utils</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
-  <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">compress_sparse_triplets.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">integer_comparisons.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Convert sparse data in triplet format to a compressed sparse row/column format.  
-<a href="#details">More...</a></p>
-
-<p><a href="compress__sparse__triplets_8hpp_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
-Namespaces</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
-<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9" id="r_aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplParams" colspan="2">template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9">tatami::compress_sparse_triplets</a> (std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</td></tr>
-<tr class="separator:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Convert sparse data in triplet format to a compressed sparse row/column format. </p>
-</div></div><!-- contents -->
+<a href="integer__comparisons_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef TATAMI_SAFE_NON_NEGATIVE_EQUAL_HPP</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_SAFE_NON_NEGATIVE_EQUAL_HPP</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Left_, <span class="keyword">typename</span> Right_&gt;</div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="}">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">   23</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">safe_non_negative_equal</a>(Left_ l, Right_ r) {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> l &gt;= 0 &amp;&amp; r &gt;= 0 &amp;&amp; <span class="keyword">static_cast&lt;</span>typename std::make_unsigned&lt;Left_&gt;::type<span class="keyword">&gt;</span>(l) == <span class="keyword">static_cast&lt;</span>typename std::make_unsigned&lt;Right_&gt;::type<span class="keyword">&gt;</span>(r);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
+</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>}</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
+<div class="ttc" id="anamespacetatami_html_a7a0814791f83eae7180c58fd82485a63"><div class="ttname"><a href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">tatami::safe_non_negative_equal</a></div><div class="ttdeci">bool safe_non_negative_equal(Left_ l, Right_ r)</div><div class="ttdef"><b>Definition</b> integer_comparisons.hpp:23</div></div>
+</div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0

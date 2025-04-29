@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/sparse/compress_sparse_triplets.hpp File Reference</title>
+<title>tatami: tatami/utils/integer_comparisons.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_c0869e65bd76f51f58a796014da5892c.html">sparse</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_d053d230eec548c17a4551a02c6d5eb8.html">utils</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -93,14 +93,14 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">compress_sparse_triplets.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">integer_comparisons.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Convert sparse data in triplet format to a compressed sparse row/column format.  
+<p>Sign-aware integer comparisons.  
 <a href="#details">More...</a></p>
 
-<p><a href="compress__sparse__triplets_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="integer__comparisons_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -110,12 +110,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9" id="r_aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplParams" colspan="2">template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9">tatami::compress_sparse_triplets</a> (std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</td></tr>
-<tr class="separator:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a0814791f83eae7180c58fd82485a63" id="r_a7a0814791f83eae7180c58fd82485a63"><td class="memTemplParams" colspan="2">template&lt;typename Left_ , typename Right_ &gt; </td></tr>
+<tr class="memitem:a7a0814791f83eae7180c58fd82485a63"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">tatami::safe_non_negative_equal</a> (Left_ l, Right_ r)</td></tr>
+<tr class="separator:a7a0814791f83eae7180c58fd82485a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Convert sparse data in triplet format to a compressed sparse row/column format. </p>
+<div class="textblock"><p>Sign-aware integer comparisons. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
