@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <vector>
 #include <type_traits>
+#include <cstddef>
 
 /**
  * @file DelayedUnaryIsometricOperation.hpp
@@ -491,7 +492,7 @@ private:
     static constexpr bool same_value = std::is_same<OutputValue_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
 
-    void initialize(const Options& opt, size_t extent) {
+    void initialize(const Options& opt, std::size_t extent) {
         if constexpr(!same_value) {
             if (opt.sparse_extract_value) {
                 my_holding_vbuffer.resize(extent);
@@ -580,7 +581,7 @@ public:
     }
 
 private:
-    void initialize(Options& opt, size_t extent) {
+    void initialize(Options& opt, std::size_t extent) {
         my_report_value = opt.sparse_extract_value;
         my_report_index = opt.sparse_extract_index;
 

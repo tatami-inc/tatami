@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <numeric>
 #include <memory>
+#include <cstddef>
 
 /**
  * @file DelayedSubsetSorted.hpp
@@ -78,7 +79,7 @@ public:
     }
 
 private:
-    void initialize(const Matrix<Value_, Index_>* mat, DenseParallelResults<Index_> processed, size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
+    void initialize(const Matrix<Value_, Index_>* mat, DenseParallelResults<Index_> processed, std::size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
         my_shift = extent - processed.collapsed.size();
         my_ext = new_extractor<false, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
         my_expansion = std::move(processed.expansion);
@@ -116,7 +117,7 @@ public:
 private:
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
     std::vector<Index_> my_expansion;
-    size_t my_shift;
+    std::size_t my_shift;
 };
 
 template<typename Index_>
@@ -189,7 +190,7 @@ template<bool oracle_, typename Value_, typename Index_>
 class ParallelSparseCore {
 public:
     template<class SubsetStorage_, class ToIndex_>
-    ParallelSparseCore(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt, ToIndex_ to_index) {
+    ParallelSparseCore(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, std::size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt, ToIndex_ to_index) {
         auto processed = format_sparse_parallel<Index_>(subset, extent, std::forward<ToIndex_>(to_index));
         my_shift = extent - processed.collapsed.size();
 
@@ -259,7 +260,7 @@ private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
     std::vector<Index_> my_holding_ibuffer;
     SparseParallelExpansion<Index_> my_expansion;
-    size_t my_shift;
+    std::size_t my_shift;
 };
 
 template<bool oracle_, typename Value_, typename Index_>

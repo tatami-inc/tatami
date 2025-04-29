@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <cstddef>
 
 /**
  * @file DelayedSubsetBlock.hpp
@@ -93,11 +94,11 @@ class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, Index_ shift) : my_oracle(std::move(oracle)), my_shift(shift) {}
 
-    size_t total() const {
+    std::size_t total() const {
         return my_oracle->total();
     }
 
-    Index_ get(size_t i) const {
+    Index_ get(std::size_t i) const {
         return my_oracle->get(i) + my_shift;
     }
 

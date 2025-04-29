@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstddef>
 
 /**
  * @file convert_to_compressed_sparse.hpp
@@ -365,12 +366,14 @@ struct RetrieveCompressedSparseContentsOptions {
  * The behavior of this function can be replicated by manually calling `count_compressed_sparse_non_zeros()` followed by `fill_compressed_sparse_contents()`.
  * This may be desirable for users who want to put the compressed sparse contents into pre-existing memory allocations.
  */
-template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
+template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = std::size_t, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(
     const Matrix<InputValue_, InputIndex_>& matrix,
     bool row,
     const RetrieveCompressedSparseContentsOptions& options)
 {
+    // We use size_t as the default pointer type here, as our output consists of vectors
+    // with the default allocator, for which the size_type is unlikely to be bigger than size_t. 
     CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> output;
     auto& output_v = output.value;
     auto& output_i = output.index;
@@ -395,7 +398,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
         const auto& store_v = frag.value;
         const auto& store_i = frag.index;
 
-        output_p.resize(static_cast<size_t>(primary) + 1);
+        output_p.resize(static_cast<std::size_t>(primary) + 1);
         for (InputIndex_ p = 0; p < primary; ++p) {
             output_p[p + 1] = output_p[p] + store_v[p].size();
         }
@@ -409,7 +412,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
     } else if (row == matrix.prefer_rows()) {
         // First pass to figure out how many non-zeros there are.
-        output_p.resize(static_cast<size_t>(primary) + 1);
+        output_p.resize(static_cast<std::size_t>(primary) + 1);
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];
@@ -431,7 +434,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
     } else {
         // First pass to figure out how many non-zeros there are.
-        output_p.resize(static_cast<size_t>(primary) + 1);
+        output_p.resize(static_cast<std::size_t>(primary) + 1);
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];
@@ -493,7 +496,7 @@ template<
     typename Index_,
     typename StoredValue_ = Value_,
     typename StoredIndex_ = Index_,
-    typename StoredPointer_ = size_t,
+    typename StoredPointer_ = std::size_t,
     typename InputValue_,
     typename InputIndex_
 >
@@ -571,7 +574,7 @@ void fill_compressed_sparse_contents(const tatami::Matrix<InputValue_, InputInde
     );
 }
 
-template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
+template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = std::size_t, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
     return retrieve_compressed_sparse_contents(
         *matrix,
@@ -600,7 +603,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
 }
 
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
-CompressedSparseContents<Value_, Index_, size_t> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool two_pass, int threads = 1) {
+CompressedSparseContents<Value_, Index_, std::size_t> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool two_pass, int threads = 1) {
     return retrieve_compressed_sparse_contents<Value_, Index_>(matrix, row_, two_pass, threads);
 }
 

@@ -2,7 +2,8 @@
 #define TATAMI_FIXED_ORACLE_HPP
 
 #include "../base/Oracle.hpp"
-#include <numeric>
+#include <vector>
+#include <cstddef>
 
 /**
  * @file FixedOracle.hpp
@@ -25,19 +26,19 @@ public:
      * The underlying array should be valid for the lifetime of this `FixedViewOracle` instance.
      * @param number Length of the array at `ptr`.
      */
-    FixedViewOracle(const Index_* ptr, size_t number) : my_reference(ptr), my_length(number) {}
+    FixedViewOracle(const Index_* ptr, std::size_t number) : my_reference(ptr), my_length(number) {}
 
-    size_t total() const {
+    std::size_t total() const {
         return my_length;
     }
 
-    Index_ get(size_t i) const {
+    Index_ get(std::size_t i) const {
         return my_reference[i];
     }
 
 private:
     const Index_* my_reference;
-    size_t my_length;
+    std::size_t my_length;
 };
 
 /**
@@ -53,11 +54,11 @@ public:
      */
     FixedVectorOracle(std::vector<Index_> vector) : my_sequence(std::move(vector)) {}
 
-    size_t total() const {
+    std::size_t total() const {
         return my_sequence.size();
     }
 
-    Index_ get(size_t i) const {
+    Index_ get(std::size_t i) const {
         return my_sequence[i];
     }
 

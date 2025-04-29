@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <type_traits>
+#include <cstddef>
 
 namespace tatami {
 
@@ -17,11 +18,11 @@ class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, const SubsetStorage_& subset) : my_oracle(std::move(oracle)), my_subset(subset) {}
 
-    Index_ get(size_t i) const {
+    Index_ get(std::size_t i) const {
         return my_subset[my_oracle->get(i)];
     }
 
-    size_t total() const {
+    std::size_t total() const {
         return my_oracle->total();
     }
 

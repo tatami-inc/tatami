@@ -72,8 +72,7 @@ public:
 
 private:
     void initialize(const Matrix<Value_, Index_>* matrix, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        size_t extent = processed.sorted.size();
-        my_holding_vbuffer.resize(extent);
+        my_holding_vbuffer.resize(processed.sorted.size());
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.sorted), opt);
         my_permutation = std::move(processed.permutation);
     }

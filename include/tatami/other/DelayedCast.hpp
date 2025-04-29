@@ -7,6 +7,7 @@
 #include <memory>
 #include <type_traits>
 #include <algorithm>
+#include <cstddef>
 
 /**
  * @file DelayedCast.hpp
@@ -26,11 +27,11 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
-    IndexIn_ get(size_t i) const {
+    IndexIn_ get(std::size_t i) const {
         return my_oracle->get(i);
     }
 
-    size_t total() const {
+    std::size_t total() const {
         return my_oracle->total();
     }
 
@@ -77,7 +78,7 @@ public:
     }
 
 private:
-    void allocate(size_t n) {
+    void allocate(std::size_t n) {
         if constexpr(!no_op) {
             my_buffer.resize(n);
         }
@@ -119,7 +120,7 @@ public:
     }
 
 private:
-    void allocate(size_t n, const Options& opt) {
+    void allocate(std::size_t n, const Options& opt) {
         if constexpr(!no_op_value) {
             if (opt.sparse_extract_value) {
                 my_vbuffer.resize(n);

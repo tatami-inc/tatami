@@ -27,11 +27,11 @@ namespace tatami {
  * @tparam Function_ Function to be applied for a contiguous range of tasks.
  * This should accept three arguments:
  * - `thread`, the thread number executing this task range.
- *   This will be passed as a `size_t`.
+ *   This will be passed as an `int`.
  * - `task_start`, the start index of the task range.
- *   This will be passed as a `Index_`.
+ *   This will be passed as an `Index_`.
  * - `task_length`, the number of tasks in the task range.
- *   This will be passed as a `Index_`.
+ *   This will be passed as an `Index_`.
  * @tparam Index_ Integer type for the number of tasks.
  *
  * @param fun Function that executes a contiguous range of tasks.

@@ -13,6 +13,7 @@
 #include <memory>
 #include <array>
 #include <type_traits>
+#include <cstddef>
 
 /**
  * @file DelayedBind.hpp
@@ -49,7 +50,8 @@ Index_ initialize_parallel_block(
     Index_ actual_start = block_start - cumulative[start_index];
     Index_ block_end = block_start + block_length;
 
-    for (Index_ index = start_index, nmats = cumulative.size() - 1; index < nmats; ++index) {
+    Index_ nmats = cumulative.size() - 1; // This is guaranteed to fit, see reasoning in the DelayedBind constructor.
+    for (Index_ index = start_index; index < nmats; ++index) {
         Index_ submat_end = cumulative[index + 1]; 
         bool not_final = (block_end > submat_end);
         Index_ actual_end = (not_final ? submat_end : block_end) - cumulative[index];
@@ -201,7 +203,7 @@ public:
         auto icopy = index_buffer;
         Index_ accumulated = 0;
 
-        for (Index_ x = 0, end = my_cumulative.size() - 1; x < end; ++x) {
+        for (decltype(my_exts.size()) x = 0, end = my_exts.size(); x < end; ++x) {
             auto range = my_exts[x]->fetch(i, vcopy, icopy); 
             accumulated += range.number;
             if (my_needs_value) {
@@ -417,7 +419,7 @@ void initialize_perp_oracular(
     std::vector<Index_>& chosen, 
     Initialize_ init) 
 {
-    size_t ntotal = oracle->total();
+    auto ntotal = oracle->total();
     chosen.reserve(ntotal);
 
     struct Predictions {
@@ -446,16 +448,16 @@ void initialize_perp_oracular(
         }
     };
 
-    Index_ nmats = cumulative.size() - 1;
+    auto nmats = cumulative.size() - 1;
     std::vector<Predictions> predictions(nmats);
-    for (size_t i = 0; i < ntotal; ++i) {
+    for (decltype(ntotal) i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         Index_ choice = mapping[prediction];
         chosen.push_back(choice);
         predictions[choice].add(prediction - cumulative[choice]);
     }
 
-    for (Index_ x = 0; x < nmats; ++x) {
+    for (decltype(nmats) x = 0; x < nmats; ++x) {
         auto& current = predictions[x];
         if (current.consecutive) {
             if (current.number) {
@@ -503,7 +505,7 @@ public:
 private:
     std::vector<Index_> segments;
     std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > my_exts;
-    size_t used = 0;
+    std::size_t used = 0;
 };
 
 template<typename Value_, typename Index_>
@@ -540,7 +542,7 @@ public:
 private:
     std::vector<Index_> segments;
     std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > my_exts;
-    size_t used = 0;
+    std::size_t used = 0;
 };
 
 }
@@ -566,11 +568,13 @@ public:
      * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool by_row) : 
-        my_matrices(std::move(matrices)), my_by_row(by_row), my_cumulative(my_matrices.size()+1) 
-    {
-        size_t sofar = 0;
-        for (size_t i = 0, nmats = my_matrices.size(); i < nmats; ++i) {
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool by_row) : my_matrices(std::move(matrices)), my_by_row(by_row) {
+        auto nmats = my_matrices.size();
+        my_cumulative.reserve(nmats + 1);
+        decltype(nmats) sofar = 0;
+        my_cumulative.push_back(0);
+
+        for (decltype(nmats) i = 0; i < nmats; ++i) {
             auto& current = my_matrices[i];
             Index_ primary, secondary;
             if (my_by_row) {
@@ -593,20 +597,20 @@ public:
                 if (sofar != i) {
                     my_matrices[sofar] = std::move(current);
                 }
-                my_cumulative[sofar + 1] = my_cumulative[sofar] + primary;
+                my_cumulative.push_back(my_cumulative.back() + primary);
                 ++sofar;
             }
         }
 
-        my_cumulative.resize(sofar + 1);
         my_matrices.resize(sofar);
+        nmats = sofar;
 
         // At this point, the number of matrices must be no greater than the
         // number of rows/columns of the combined matrix (as we've removed all
         // non-contributing submatrices) and thus should fit into 'Index_';
         // hence, using Index_ for the mapping should not overflow.
         my_mapping.reserve(my_cumulative.back());
-        for (Index_ i = 0, nmats = my_matrices.size(); i < nmats; ++i) {
+        for (decltype(nmats) i = 0; i < nmats; ++i) {
             my_mapping.insert(my_mapping.end(), (my_by_row ? my_matrices[i]->nrow() : my_matrices[i]->ncol()), i);
         }
 

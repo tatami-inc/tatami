@@ -42,7 +42,7 @@ public:
      * @param number Length of the array pointed to by `ptr`.
      * @param type Type of the array. 
      */
-    SomeNumericArray(void* ptr, size_t number, SomeNumericType type) : my_number(number), my_type(type) {
+    SomeNumericArray(void* ptr, std::size_t number, SomeNumericType type) : my_number(number), my_type(type) {
         switch(my_type) {
             case I8:
                 my_i8 = static_cast<const int8_t*>(ptr);
@@ -81,61 +81,61 @@ public:
      * @param ptr Pointer to an existing array of `int8_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int8_t* ptr, size_t number) : my_i8(ptr), my_number(number), my_type(I8) {}
+    SomeNumericArray(const int8_t* ptr, std::size_t number) : my_i8(ptr), my_number(number), my_type(I8) {}
 
     /**
      * @param ptr Pointer to an existing array of `uint8_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint8_t* ptr, size_t number) : my_u8(ptr), my_number(number), my_type(U8) {}
+    SomeNumericArray(const uint8_t* ptr, std::size_t number) : my_u8(ptr), my_number(number), my_type(U8) {}
 
     /**
      * @param ptr Pointer to an existing array of `int16_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int16_t* ptr, size_t number) : my_i16(ptr), my_number(number), my_type(I16) {}
+    SomeNumericArray(const int16_t* ptr, std::size_t number) : my_i16(ptr), my_number(number), my_type(I16) {}
 
     /**
      * @param ptr Pointer to an existing array of `uint16_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint16_t* ptr, size_t number) : my_u16(ptr), my_number(number), my_type(U16) {}
+    SomeNumericArray(const uint16_t* ptr, std::size_t number) : my_u16(ptr), my_number(number), my_type(U16) {}
     
     /**
      * @param ptr Pointer to an existing array of `int32_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int32_t* ptr, size_t number) : my_i32(ptr), my_number(number), my_type(I32) {}
+    SomeNumericArray(const int32_t* ptr, std::size_t number) : my_i32(ptr), my_number(number), my_type(I32) {}
     
     /**
      * @param ptr Pointer to an existing array of `uint32_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint32_t* ptr, size_t number) : my_u32(ptr), my_number(number), my_type(U32) {}
+    SomeNumericArray(const uint32_t* ptr, std::size_t number) : my_u32(ptr), my_number(number), my_type(U32) {}
     
     /**
      * @param ptr Pointer to an existing array of `int64_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int64_t* ptr, size_t number) : my_i64(ptr), my_number(number), my_type(I64) {}
+    SomeNumericArray(const int64_t* ptr, std::size_t number) : my_i64(ptr), my_number(number), my_type(I64) {}
     
     /**
      * @param ptr Pointer to an existing array of `uint64_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint64_t* ptr, size_t number) : my_u64(ptr), my_number(number), my_type(U64) {}
+    SomeNumericArray(const uint64_t* ptr, std::size_t number) : my_u64(ptr), my_number(number), my_type(U64) {}
     
     /**
      * @param ptr Pointer to an existing array of `float`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const float* ptr, size_t number) : my_f32(ptr), my_number(number), my_type(F32) {}
+    SomeNumericArray(const float* ptr, std::size_t number) : my_f32(ptr), my_number(number), my_type(F32) {}
     
     /**
      * @param ptr Pointer to an existing array of `double`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const double* ptr, size_t number) : my_f64(ptr), my_number(number), my_type(F64) {}
+    SomeNumericArray(const double* ptr, std::size_t number) : my_f64(ptr), my_number(number), my_type(F64) {}
 
 private:
     const int8_t* my_i8 = NULL;
@@ -149,7 +149,7 @@ private:
     const float* my_f32 = NULL;
     const double* my_f64 = NULL;
 
-    size_t my_number;
+    std::size_t my_number;
     SomeNumericType my_type;
 
 public:
@@ -157,7 +157,7 @@ public:
      * @param i Positional index on the array.
      * @return Value of the `i`-th element as a `Value_`.
      */
-    Value_ operator[](size_t i) const {
+    Value_ operator[](std::size_t i) const {
         switch (my_type) {
             case I8:
                 return my_i8[i];
@@ -186,7 +186,7 @@ public:
     /**
      * @return Length of the array, in terms of the number of elements of the specified type.
      */
-    size_t size() const {
+    std::size_t size() const {
         return my_number;
     }
 
@@ -208,7 +208,7 @@ public:
          *
          * Needless to say, we assume that the parental array outlives the iterator.
          */
-        Iterator(const SomeNumericArray* parent, size_t index) : my_parent(parent), my_index(index) {}
+        Iterator(const SomeNumericArray* parent, std::size_t index) : my_parent(parent), my_index(index) {}
 
     public:
         // Tags to pretend it's an iterator, at least enough for tatami to work;
@@ -241,7 +241,7 @@ public:
 
     private:
         const SomeNumericArray* my_parent;
-        size_t my_index;
+        std::size_t my_index;
 
     public:
         /**
@@ -255,7 +255,7 @@ public:
          * @param i The number of elements to add to the current position of the iterator to obtain a new position.
          * @return The value at the new position on the parental `SomeNumericArray` object.
          */
-        value_type operator[](size_t i) const {
+        value_type operator[](std::size_t i) const {
             return (*my_parent)[my_index + i];
         }
 
@@ -313,7 +313,7 @@ public:
          * @param n Number of elements to advance the current iterator.
          * @return The iterator's position is moved forward by `n`, and a reference to the iterator is returned.
          */
-        Iterator& operator+=(size_t n) {
+        Iterator& operator+=(std::size_t n) {
             my_index += n;
             return *this;
         }
@@ -340,7 +340,7 @@ public:
          * @param n Number of elements to move back the current iterator.
          * @return The iterator's position is moved backward by `n`, and a reference to the iterator is returned.
          */
-        Iterator& operator-=(size_t n) {
+        Iterator& operator-=(std::size_t n) {
             my_index -= n;
             return *this;
         }
@@ -368,7 +368,7 @@ public:
          * @param n Number of elements to advance the iterator.
          * @return A new iterator is returned at the position of the current iterator plus `n`.
          */
-        Iterator operator+(size_t n) const {
+        Iterator operator+(std::size_t n) const {
             return Iterator(my_parent, my_index + n);
         }
 
@@ -376,7 +376,7 @@ public:
          * @param n Number of elements to move back the iterator.
          * @return A new iterator is returned at the position of the current iterator minus `n`.
          */
-        Iterator operator-(size_t n) const {
+        Iterator operator-(std::size_t n) const {
             return Iterator(my_parent, my_index - n);
         }
 
@@ -385,7 +385,7 @@ public:
          * @param it An existing `Iterator`.
          * @return A new iterator is returned at the position of `it` plus `n`.
          */
-        friend Iterator operator+(size_t n, const Iterator& it) {
+        friend Iterator operator+(std::size_t n, const Iterator& it) {
             return Iterator(it.my_parent, it.my_index + n);
         }
 

@@ -2,7 +2,7 @@
 #define TATAMI_CONSECUTIVE_ORACLE_HPP
 
 #include "../base/Oracle.hpp"
-#include <numeric>
+#include <cstddef>
 
 /**
  * @file ConsecutiveOracle.hpp
@@ -26,17 +26,17 @@ public:
      */
     ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(length) {}
 
-    size_t total() const {
+    std::size_t total() const {
         return my_length;
     }
 
-    Index_ get(size_t i) const {
+    Index_ get(std::size_t i) const {
         return my_offset + i;
     }
 
 private:
     Index_ my_offset;
-    size_t my_length;
+    std::size_t my_length;
 };
 
 }

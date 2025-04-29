@@ -35,7 +35,7 @@ namespace tatami {
  * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
-void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_stride, Output_* output, size_t output_stride) {
+void transpose(const Input_* input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_* output, std::size_t output_stride) {
     if ((nrow == 1 && output_stride == 1) || (ncol == 1 && input_stride == 1)) {
         std::copy_n(input, nrow * ncol, output);
         return;
@@ -43,16 +43,16 @@ void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_strid
 
     // Using a blockwise strategy to perform the transposition,
     // in order to be more input-friendly.
-    constexpr size_t block = 16;
-    size_t col_start = 0;
+    constexpr std::size_t block = 16;
+    std::size_t col_start = 0;
     while (col_start < ncol) {
-        size_t col_end = col_start + std::min(block, ncol - col_start);
+        std::size_t col_end = col_start + std::min(block, ncol - col_start);
 
-        size_t row_start = 0;
+        std::size_t row_start = 0;
         while (row_start < nrow) {
-            size_t row_end = row_start + std::min(block, nrow - row_start);
-            for (size_t c = col_start; c < col_end; ++c) {
-                for (size_t r = row_start; r < row_end; ++r) {
+            std::size_t row_end = row_start + std::min(block, nrow - row_start);
+            for (std::size_t c = col_start; c < col_end; ++c) {
+                for (std::size_t r = row_start; r < row_end; ++r) {
                     output[c * output_stride + r] = input[r * input_stride + c];
                 }
             }
@@ -83,7 +83,7 @@ void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_strid
  * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
-void transpose(const Input_* input, size_t nrow, size_t ncol, Output_* output) {
+void transpose(const Input_* input, std::size_t nrow, std::size_t ncol, Output_* output) {
     transpose(input, nrow, ncol, ncol, output, nrow);
 }
 
