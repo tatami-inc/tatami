@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 #include <stdexcept>
+#include <cstddef>
 
 /**
  * @file CompressedSparseMatrix.hpp
@@ -43,12 +44,10 @@ public:
     {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto offset = my_pointers[i];
-        size_t delta = my_pointers[i+1] - my_pointers[i];
+        auto offset = my_pointers[i], end = my_pointers[i+1];
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        for (size_t x = 0; x < delta; ++x) {
-            auto cur_offset = offset + x;
-            buffer[my_indices[cur_offset]] = my_values[cur_offset];
+        for (auto x = offset; x < end; ++x) {
+            buffer[my_indices[x]] = my_values[x];
         }
         return buffer;
     }
@@ -74,7 +73,7 @@ public:
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         auto offset = my_pointers[i];
-        auto delta = my_pointers[i+1] - my_pointers[i];
+        decltype(offset) delta = my_pointers[i+1] - offset;
 
         SparseRange<Value_, Index_> output(delta, NULL, NULL);
         if (my_needs_value) {
@@ -114,11 +113,11 @@ public:
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        size_t offset = (iStart - my_indices.begin());
-        size_t number = iEnd - iStart;
+        auto offset = (iStart - my_indices.begin());
+        auto number = iEnd - iStart;
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        for (size_t i = 0; i < number; ++i) {
+        for (decltype(number) i = 0; i < number; ++i) {
             auto cur_offset = offset + i;
             buffer[my_indices[cur_offset] - my_block_start] = my_values[cur_offset];
         }
@@ -151,8 +150,8 @@ public:
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        size_t offset = iStart - my_indices.begin();
-        size_t delta = iEnd - iStart;
+        auto offset = iStart - my_indices.begin();
+        auto delta = iEnd - iStart;
 
         SparseRange<Value_, Index_> output(delta, NULL, NULL);
         if (my_needs_value) {
@@ -194,7 +193,7 @@ public:
         my_retriever.populate(
             my_indices.begin() + my_pointers[i], 
             my_indices.begin() + my_pointers[i+1],
-            [&](size_t s, size_t offset) -> void {
+            [&](auto s, auto offset) -> void {
                 buffer[s] = *(vIt + offset);
             }
         );
@@ -206,7 +205,7 @@ private:
     const IndexStorage_& my_indices;
     const PointerStorage_& my_pointers;
     sparse_utils::RetrievePrimarySubsetDense<Index_> my_retriever;
-    size_t my_num_indices;
+    std::size_t my_num_indices;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
@@ -229,7 +228,7 @@ public:
         my_retriever.populate(
             my_indices.begin() + my_pointers[i], 
             my_indices.begin() + my_pointers[i+1],
-            [&](size_t offset, Index_ ix) -> void {
+            [&](auto offset, auto ix) -> void {
                 ++count;
                 if (my_needs_value) {
                     *vcopy = *(vIt + offset);
@@ -299,7 +298,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i,
-            [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) -> void {
+            [&](Index_, Index_ index_primary, auto ptr) -> void {
                 buffer[index_primary] = my_values[ptr];
             }
         );
@@ -357,7 +356,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i,
-            [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) -> void {
+            [&](Index_, Index_ index_primary, auto ptr) -> void {
                 buffer[index_primary] = my_values[ptr];
             }
         );
@@ -383,7 +382,7 @@ public:
         Index_ count = 0;
         my_cache.search(
             i, 
-            [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) -> void {
+            [&](Index_ primary, Index_, auto ptr) -> void {
                 if (my_needs_value) {
                     value_buffer[count] = my_values[ptr];
                 }
@@ -514,21 +513,25 @@ public:
      * @param options Further options.
      */
     CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, const CompressedSparseMatrixOptions& options) : 
-        my_nrow(nrow), my_ncols(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_csr(csr)
+        my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_csr(csr)
     {
         if (options.check) {
-            size_t nnzero = my_values.size();
-            if (nnzero != my_indices.size()) {
+            auto nnzero = my_values.size();
+            if (!safe_non_negative_equal(nnzero, my_indices.size())) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
 
-            size_t npointers = my_pointers.size(); 
+            auto npointers = my_pointers.size(); 
+            auto check_pointers = [](auto dim) {
+                // subtracting 1 from npointers (once we know it's >= 1) instead of adding 1 to dim, as the latter might overflow.
+                return npointers >= 1 && safe_non_negative_equal(npointers - 1, dim);
+            };
             if (my_csr) {
-                if (npointers != static_cast<size_t>(my_nrow) + 1){
+                if (!check_pointers(my_nrow)) {
                     throw std::runtime_error("length of 'pointers' should be equal to 'nrow + 1'");
                 }
             } else {
-                if (npointers != static_cast<size_t>(my_ncols) + 1){
+                if (!check_pointers(my_ncol)){
                     throw std::runtime_error("length of 'pointers' should be equal to 'ncols + 1'");
                 }
             }
@@ -536,15 +539,14 @@ public:
             if (my_pointers[0] != 0) {
                 throw std::runtime_error("first element of 'pointers' should be zero");
             }
-
             auto last = my_pointers[npointers - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
-            if (static_cast<size_t>(last) != nnzero) {
+            if (!safe_non_negative_equal(nnzero, last)) {
                 throw std::runtime_error("last element of 'pointers' should be equal to length of 'indices'");
             }
 
-            ElementType<IndexStorage_> max_index = (my_csr ? my_ncols : my_nrow);
-            for (size_t i = 1; i < npointers; ++i) {
-                auto start = my_pointers[i- 1], end = my_pointers[i];
+            ElementType<IndexStorage_> max_index = (my_csr ? my_ncol : my_nrow);
+            for (decltype(npointers) i = 1; i < npointers; ++i) {
+                auto start = my_pointers[i - 1], end = my_pointers[i];
                 if (end < start || end > last) {
                     throw std::runtime_error("'pointers' should be in non-decreasing order");
                 }
@@ -588,7 +590,7 @@ public:
      */
 
 private:
-    Index_ my_nrow, my_ncols;
+    Index_ my_nrow, my_ncol;
     ValueStorage_ my_values;
     IndexStorage_ my_indices;
     PointerStorage_ my_pointers;
@@ -597,7 +599,7 @@ private:
 public:
     Index_ nrow() const { return my_nrow; }
 
-    Index_ ncol() const { return my_ncols; }
+    Index_ ncol() const { return my_ncol; }
 
     bool is_sparse() const { return true; }
 
@@ -620,7 +622,7 @@ public:
 private:
     Index_ secondary() const {
         if (my_csr) {
-            return my_ncols;
+            return my_ncol;
         } else {
             return my_nrow;
         }
@@ -744,7 +746,7 @@ public:
  *
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
+template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<std::size_t> >
 class CompressedSparseColumnMatrix final : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
 public:
     /**
@@ -764,7 +766,7 @@ public:
  *
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
+template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<std::size_t> >
 class CompressedSparseRowMatrix final : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
 public:
     /**

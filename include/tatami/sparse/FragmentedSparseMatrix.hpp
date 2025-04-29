@@ -12,6 +12,7 @@
 #include <memory>
 #include <utility>
 #include <stdexcept>
+#include <cstddef>
 
 /**
  * @file FragmentedSparseMatrix.hpp
@@ -41,8 +42,8 @@ public:
         const auto& curi = my_indices[i];
 
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        size_t end = curv.size();
-        for (size_t x = 0; x < end; ++x) {
+        auto end = curv.size();
+        for (decltype(end) x = 0; x < end; ++x) {
             buffer[curi[x]] = curv[x];
         }
         return buffer;
@@ -66,10 +67,10 @@ public:
 
         SparseRange<Value_, Index_> output(curv.size(), NULL, NULL);
         if (my_needs_value) {
-            output.value = sparse_utils::extract_primary_vector(curv, static_cast<size_t>(0), curv.size(), vbuffer);
+            output.value = sparse_utils::extract_primary_vector(curv, static_cast<decltype(curv.size())>(0), curv.size(), vbuffer);
         }
         if (my_needs_index) {
-            output.index = sparse_utils::extract_primary_vector(curi, static_cast<size_t>(0), curi.size(), index_buffer);
+            output.index = sparse_utils::extract_primary_vector(curi, static_cast<decltype(curv.size())>(0), curi.size(), index_buffer);
         }
         return output;
     }
@@ -97,11 +98,11 @@ public:
         auto iStart = curi.begin();
         auto iEnd = curi.end();
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        size_t offset = (iStart - curi.begin());
-        size_t number = iEnd - iStart;
+        auto offset = (iStart - curi.begin());
+        auto number = iEnd - iStart;
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        for (size_t i = 0; i < number; ++i) {
+        for (decltype(number) i = 0; i < number; ++i) {
             auto cur_offset = offset + i;
             buffer[curi[cur_offset] - my_block_start] = curv[cur_offset];
         }
@@ -133,8 +134,8 @@ public:
         auto iStart = curi.begin();
         auto iEnd = curi.end();
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
-        size_t offset = iStart - curi.begin();
-        size_t delta = iEnd - iStart;
+        auto offset = iStart - curi.begin();
+        auto delta = iEnd - iStart;
 
         SparseRange<Value_, Index_> output(delta, NULL, NULL);
         if (my_needs_value) {
@@ -171,7 +172,7 @@ public:
         my_retriever.populate(
             curi.begin(),
             curi.end(),
-            [&](size_t s, size_t offset) -> void {
+            [&](auto s, auto offset) -> void {
                 buffer[s] = curv[offset];
             }
         );
@@ -182,7 +183,7 @@ private:
     const ValueVectorStorage_& my_values;
     const IndexVectorStorage_& my_indices;
     sparse_utils::RetrievePrimarySubsetDense<Index_> my_retriever;
-    size_t my_num_indices;
+    std::size_t my_num_indices;
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
@@ -201,7 +202,7 @@ public:
         my_retriever.populate(
             curi.begin(),
             curi.end(),
-            [&](size_t offset, Index_ ix) -> void {
+            [&](auto offset, auto ix) -> void {
                 ++count;
                 if (my_needs_value) {
                     *vcopy = curv[offset];
@@ -237,7 +238,7 @@ private:
     const IndexVectorStorage_& my_indices;
 
 public:
-    typedef size_t pointer_type;
+    typedef decltype(std::declval<IndexVectorStorage_>()[0].size()) pointer_type;
 
     pointer_type start_offset(Index_) const {
         return 0;
@@ -267,7 +268,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i, 
-            [&](Index_ primary, Index_ index_primary, size_t ptr) -> void {
+            [&](Index_ primary, Index_ index_primary, auto ptr) -> void {
                 buffer[index_primary] = my_values[primary][ptr];
             }
         );
@@ -289,7 +290,7 @@ public:
         Index_ count = 0;
         my_cache.search(
             i,
-            [&](Index_ primary, Index_, size_t ptr) -> void {
+            [&](Index_ primary, Index_, auto ptr) -> void {
                 if (my_needs_value) {
                     value_buffer[count] = my_values[primary][ptr];
                 }
@@ -322,7 +323,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i,
-            [&](Index_ primary, Index_ index_primary, size_t ptr) -> void {
+            [&](Index_ primary, Index_ index_primary, auto ptr) -> void {
                 buffer[index_primary] = my_values[primary][ptr];
             }
         );
@@ -344,7 +345,7 @@ public:
         Index_ count = 0;
         my_cache.search(
             i, 
-            [&](Index_ primary, Index_, size_t ptr) -> void {
+            [&](Index_ primary, Index_, auto ptr) -> void {
                 if (my_needs_value) {
                     value_buffer[count] = my_values[primary][ptr];
                 }
@@ -377,7 +378,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i,
-            [&](Index_ primary, Index_ index_primary, size_t ptr) -> void {
+            [&](Index_ primary, Index_ index_primary, auto ptr) -> void {
                 buffer[index_primary] = my_values[primary][ptr];
             }
         );
@@ -399,7 +400,7 @@ public:
         Index_ count = 0;
         my_cache.search(
             i,
-            [&](Index_ primary, Index_, size_t ptr) -> void {
+            [&](Index_ primary, Index_, auto ptr) -> void {
                 if (my_needs_value) {
                     vbuffer[count] = my_values[primary][ptr];
                 }
@@ -482,20 +483,20 @@ public:
             }
 
             if (my_row_sparse) {
-                if (my_indices.size() != static_cast<size_t>(my_nrow)) {
+                if (!safe_non_negative_equal(my_indices.size(), my_nrow)) {
                     throw std::runtime_error("length of 'indices' should be equal to number of rows'");
                 }
             } else {
-                if (my_indices.size() != static_cast<size_t>(my_ncol)) {
+                if (!safe_non_negative_equal(my_indices.size(), my_ncol)) {
                     throw std::runtime_error("length of 'indices' should be equal to number of columns");
                 }
             }
 
             ElementType<ElementType<IndexVectorStorage_> > max_index = (my_row_sparse ? my_ncol : my_nrow);
-            for (size_t i = 0, end = my_indices.size(); i < end; ++i) {
+            for (decltype(my_indices.size()) i = 0, end = my_indices.size(); i < end; ++i) {
                 const auto& curv = my_values[i];
                 const auto& curi = my_indices[i];
-                if (curv.size() != curi.size()) {
+                if (!safe_non_negative_equal(curv.size(), curi.size())) {
                     throw std::runtime_error("corresponding elements of 'values' and 'indices' should have the same length");
                 }
 
@@ -505,7 +506,7 @@ public:
                     }
                 }
 
-                for (size_t j = 1, jend = curi.size(); j < jend; ++j) {
+                for (decltype(curi.size()) j = 1, jend = curi.size(); j < jend; ++j) {
                     if (curi[j] <= curi[j - 1]) {
                         throw std::runtime_error("my_indices should be strictly increasing within each element of 'indices'");
                     }

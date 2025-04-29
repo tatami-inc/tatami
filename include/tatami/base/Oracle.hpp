@@ -1,6 +1,8 @@
 #ifndef TATAMI_ORACLE_HPP
 #define TATAMI_ORACLE_HPP
 
+#include <cstddef>
+
 /**
  * @file Oracle.hpp
  *
@@ -36,13 +38,13 @@ public:
     /**
      * @return Total number of predictions.
      */
-    virtual size_t total() const = 0;
+    virtual std::size_t total() const = 0;
 
     /**
      * @param i Which prediction to return.
      * @return The `i`-th prediction, to be interpreted as an index on the target dimension.
      */
-    virtual Index_ get(size_t i) const = 0; 
+    virtual Index_ get(std::size_t i) const = 0; 
 };
 
 }

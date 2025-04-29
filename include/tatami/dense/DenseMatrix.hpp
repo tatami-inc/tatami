@@ -4,11 +4,13 @@
 #include "../base/Matrix.hpp"
 #include "SparsifiedWrapper.hpp"
 #include "../utils/has_data.hpp"
+#include "../utils/integer_comparisons.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <cstddef>
 
 /**
  * @file DenseMatrix.hpp
@@ -28,10 +30,10 @@ namespace DenseMatrix_internals {
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    PrimaryMyopicFullDense(const Storage_& storage, size_t secondary) : my_storage(storage), my_secondary(secondary) {}
+    PrimaryMyopicFullDense(const Storage_& storage, std::size_t secondary) : my_storage(storage), my_secondary(secondary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t to avoid overflow.
+        std::size_t offset = static_cast<std::size_t>(i) * my_secondary; // cast to std::size_t to avoid overflow.
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
@@ -42,17 +44,17 @@ public:
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
+    std::size_t my_secondary;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    PrimaryMyopicBlockDense(const Storage_& storage, size_t secondary, Index_ block_start, Index_ block_length) : 
+    PrimaryMyopicBlockDense(const Storage_& storage, std::size_t secondary, Index_ block_start, Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = static_cast<size_t>(i) * my_secondary + my_block_start; // cast to size_t to avoid overflow.
+        std::size_t offset = static_cast<std::size_t>(i) * my_secondary + my_block_start; // cast to std::size_t to avoid overflow.
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
@@ -63,28 +65,28 @@ public:
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
-    size_t my_block_start, my_block_length;
+    std::size_t my_secondary;
+    std::size_t my_block_start, my_block_length;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    PrimaryMyopicIndexDense(const Storage_& storage, size_t secondary, VectorPtr<Index_> indices_ptr) : 
+    PrimaryMyopicIndexDense(const Storage_& storage, std::size_t secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t to avoid overflow.
+        std::size_t offset = static_cast<std::size_t>(i) * my_secondary; // cast to std::size_t to avoid overflow.
         const auto& indices = *my_indices_ptr;
-        for (size_t x = 0, end = indices.size(); x < end; ++x) {
-            buffer[x] = my_storage[offset + static_cast<size_t>(indices[x])]; // more casting for overflow protection.
+        for (decltype(indices.size()) x = 0, end = indices.size(); x < end; ++x) {
+            buffer[x] = my_storage[offset + static_cast<std::size_t>(indices[x])]; // more casting for overflow protection.
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
+    std::size_t my_secondary;
     VectorPtr<Index_> my_indices_ptr;
 };
 
@@ -95,16 +97,16 @@ public:
         my_storage(storage), my_secondary(secondary), my_primary(primary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        for (size_t x = 0; x < my_primary; ++x) {
-            buffer[x] = my_storage[x * my_secondary + static_cast<size_t>(i)]; // cast to size_t to avoid overflow.
+        for (decltype(my_primary) x = 0; x < my_primary; ++x) {
+            buffer[x] = my_storage[x * my_secondary + static_cast<std::size_t>(i)]; // cast to std::size_t to avoid overflow.
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
-    size_t my_primary;
+    std::size_t my_secondary;
+    std::size_t my_primary;
 };
 
 template<typename Value_, typename Index_, class Storage_>
@@ -114,8 +116,8 @@ public:
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = my_block_start * my_secondary + static_cast<size_t>(i); // cast to avoid overflow.
-        for (size_t x = 0; x < my_block_length; ++x) {
+        std::size_t offset = my_block_start * my_secondary + static_cast<std::size_t>(i); // cast to avoid overflow.
+        for (decltype(my_block_length) x = 0; x < my_block_length; ++x) {
             buffer[x] = my_storage[x * my_secondary + offset];
         }
         return buffer;
@@ -123,9 +125,9 @@ public:
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
-    size_t my_block_start;
-    size_t my_block_length;
+    std::size_t my_secondary;
+    std::size_t my_block_start;
+    std::size_t my_block_length;
 };
 
 template<typename Value_, typename Index_, class Storage_>
@@ -135,17 +137,17 @@ public:
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = i;
+        std::size_t offset = i;
         const auto& indices = *my_indices_ptr;
-        for (size_t x = 0, end = indices.size(); x < end; ++x) {
-            buffer[x] = my_storage[static_cast<size_t>(indices[x]) * my_secondary + offset]; // casting to avoid overflow.
+        for (decltype(my_indices.size()) x = 0, end = indices.size(); x < end; ++x) {
+            buffer[x] = my_storage[static_cast<std::size_t>(indices[x]) * my_secondary + offset]; // casting to avoid overflow.
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    size_t my_secondary;
+    std::size_t my_secondary;
     VectorPtr<Index_> my_indices_ptr;
 };
 
@@ -175,7 +177,8 @@ public:
      * If `false`, a column-major representation is assumed instead.
      */
     DenseMatrix(Index_ nrow, Index_ ncol, Storage_ values, bool row_major) : my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_row_major(row_major) {
-        if (static_cast<size_t>(my_nrow) * static_cast<size_t>(my_ncol) != my_values.size()) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
+        auto nvalues = my_values.size();
+        if (!safe_non_negative_equal(nvalues / my_nrow, my_ncol) || nvalues % my_nrow != 0) { // using division instead of 'my_nrow * my_ncol == nvalues' as the product might overflow.
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
     }
