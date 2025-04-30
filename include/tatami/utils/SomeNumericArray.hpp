@@ -19,7 +19,34 @@ namespace tatami {
  * while the numbers specify the number of bits for the type.
  * So, for example, `U16` is an unsigned 16-bit integer, while `F64` is a `double`.
  */
-enum SomeNumericType { I8, U8, I16, U16, I32, U32, I64, U64, F32, F64 };
+enum SomeNumericType {
+#ifdef INT8_MAX
+    I8,
+#endif
+#ifdef UINT8_MAX
+    U8,
+#endif
+#ifdef INT16_MAX
+    I16,
+#endif
+#ifdef UINT16_MAX
+    U16,
+#endif
+#ifdef INT32_MAX
+    I32,
+#endif
+#ifdef UINT32_MAX
+    U32,
+#endif
+#ifdef INT64_MAX
+    I64,
+#endif
+#ifdef UINT64_MAX
+    U64,
+#endif
+    F32,
+    F64
+};
 
 /**
  * @brief Array of some numeric type, determined at runtime.
@@ -44,30 +71,46 @@ public:
      */
     SomeNumericArray(void* ptr, std::size_t number, SomeNumericType type) : my_number(number), my_type(type) {
         switch(my_type) {
+#ifdef INT8_MAX
             case I8:
-                my_i8 = static_cast<const int8_t*>(ptr);
+                my_i8 = static_cast<const std::int8_t*>(ptr);
                 break;
+#endif
+#ifdef UINT8_MAX
             case U8:
-                my_u8 = static_cast<const uint8_t*>(ptr);
+                my_u8 = static_cast<const std::uint8_t*>(ptr);
                 break;
+#endif
+#ifdef INT16_MAX
             case I16:
-                my_i16 = static_cast<const int16_t*>(ptr);
+                my_i16 = static_cast<const std::int16_t*>(ptr);
                 break;
+#endif
+#ifdef UINT16_MAX
             case U16:
-                my_u16 = static_cast<const uint16_t*>(ptr);
+                my_u16 = static_cast<const std::uint16_t*>(ptr);
                 break;
+#endif
+#ifdef INT32_MAX
             case I32:
-                my_i32 = static_cast<const int32_t*>(ptr);
+                my_i32 = static_cast<const std::int32_t*>(ptr);
                 break;
+#endif
+#ifdef UINT32_MAX
             case U32:
-                my_u32 = static_cast<const uint32_t*>(ptr);
+                my_u32 = static_cast<const std::uint32_t*>(ptr);
                 break;
+#endif
+#ifdef INT64_MAX
             case I64:
-                my_i64 = static_cast<const int64_t*>(ptr);
+                my_i64 = static_cast<const std::int64_t*>(ptr);
                 break;
+#endif
+#ifdef UINT64_MAX
             case U64:
-                my_u64 = static_cast<const uint64_t*>(ptr);
+                my_u64 = static_cast<const std::uint64_t*>(ptr);
                 break;
+#endif
             case F32:
                 my_f32 = static_cast<const float*>(ptr);
                 break;
@@ -77,60 +120,76 @@ public:
         }
     }
 
+#ifdef INT8_MAX
     /**
      * @param ptr Pointer to an existing array of `int8_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int8_t* ptr, std::size_t number) : my_i8(ptr), my_number(number), my_type(I8) {}
+    SomeNumericArray(const std::int8_t* ptr, std::size_t number) : my_i8(ptr), my_number(number), my_type(I8) {}
+#endif
 
+#ifdef UINT8_MAX
     /**
      * @param ptr Pointer to an existing array of `uint8_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint8_t* ptr, std::size_t number) : my_u8(ptr), my_number(number), my_type(U8) {}
+    SomeNumericArray(const std::uint8_t* ptr, std::size_t number) : my_u8(ptr), my_number(number), my_type(U8) {}
+#endif
 
+#ifdef INT16_MAX
     /**
      * @param ptr Pointer to an existing array of `int16_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int16_t* ptr, std::size_t number) : my_i16(ptr), my_number(number), my_type(I16) {}
+    SomeNumericArray(const std::int16_t* ptr, std::size_t number) : my_i16(ptr), my_number(number), my_type(I16) {}
+#endif
 
+#ifdef UINT16_MAX
     /**
      * @param ptr Pointer to an existing array of `uint16_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint16_t* ptr, std::size_t number) : my_u16(ptr), my_number(number), my_type(U16) {}
-    
+    SomeNumericArray(const std::uint16_t* ptr, std::size_t number) : my_u16(ptr), my_number(number), my_type(U16) {}
+#endif
+
+#ifdef INT32_MAX
     /**
      * @param ptr Pointer to an existing array of `int32_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int32_t* ptr, std::size_t number) : my_i32(ptr), my_number(number), my_type(I32) {}
-    
+    SomeNumericArray(const std::int32_t* ptr, std::size_t number) : my_i32(ptr), my_number(number), my_type(I32) {}
+#endif
+
+#ifdef UINT32_MAX
     /**
      * @param ptr Pointer to an existing array of `uint32_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint32_t* ptr, std::size_t number) : my_u32(ptr), my_number(number), my_type(U32) {}
-    
+    SomeNumericArray(const std::uint32_t* ptr, std::size_t number) : my_u32(ptr), my_number(number), my_type(U32) {}
+#endif
+
+#ifdef INT64_MAX
     /**
      * @param ptr Pointer to an existing array of `int64_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const int64_t* ptr, std::size_t number) : my_i64(ptr), my_number(number), my_type(I64) {}
-    
+    SomeNumericArray(const std::int64_t* ptr, std::size_t number) : my_i64(ptr), my_number(number), my_type(I64) {}
+#endif
+
+#ifdef UINT64_MAX
     /**
      * @param ptr Pointer to an existing array of `uint64_t`s.
      * @param number Length of the array pointed to by `ptr`.
      */
-    SomeNumericArray(const uint64_t* ptr, std::size_t number) : my_u64(ptr), my_number(number), my_type(U64) {}
-    
+    SomeNumericArray(const std::uint64_t* ptr, std::size_t number) : my_u64(ptr), my_number(number), my_type(U64) {}
+#endif
+
     /**
      * @param ptr Pointer to an existing array of `float`s.
      * @param number Length of the array pointed to by `ptr`.
      */
     SomeNumericArray(const float* ptr, std::size_t number) : my_f32(ptr), my_number(number), my_type(F32) {}
-    
+
     /**
      * @param ptr Pointer to an existing array of `double`s.
      * @param number Length of the array pointed to by `ptr`.
@@ -138,14 +197,30 @@ public:
     SomeNumericArray(const double* ptr, std::size_t number) : my_f64(ptr), my_number(number), my_type(F64) {}
 
 private:
-    const int8_t* my_i8 = NULL;
-    const uint8_t* my_u8 = NULL;
-    const int16_t* my_i16 = NULL;
-    const uint16_t* my_u16 = NULL;
-    const int32_t* my_i32 = NULL;
-    const uint32_t* my_u32 = NULL;
-    const int64_t* my_i64 = NULL;
-    const uint64_t* my_u64 = NULL;
+#ifdef INT8_MAX
+    const std::int8_t* my_i8 = NULL;
+#endif
+#ifdef UINT8_MAX
+    const std::uint8_t* my_u8 = NULL;
+#endif
+#ifdef INT16_MAX
+    const std::int16_t* my_i16 = NULL;
+#endif
+#ifdef UINT16_MAX
+    const std::uint16_t* my_u16 = NULL;
+#endif
+#ifdef INT32_MAX
+    const std::int32_t* my_i32 = NULL;
+#endif
+#ifdef UINT32_MAX
+    const std::uint32_t* my_u32 = NULL;
+#endif
+#ifdef INT64_MAX
+    const std::int64_t* my_i64 = NULL;
+#endif
+#ifdef UINT64_MAX
+    const std::uint64_t* my_u64 = NULL;
+#endif
     const float* my_f32 = NULL;
     const double* my_f64 = NULL;
 
@@ -159,22 +234,38 @@ public:
      */
     Value_ operator[](std::size_t i) const {
         switch (my_type) {
+#ifdef INT8_MAX
             case I8:
                 return my_i8[i];
+#endif
+#ifdef UINT8_MAX
             case U8:
                 return my_u8[i];
+#endif
+#ifdef INT16_MAX
             case I16:
                 return my_i16[i];
+#endif
+#ifdef UINT16_MAX
             case U16:
                 return my_u16[i];
+#endif
+#ifdef INT32_MAX
             case I32:
                 return my_i32[i];
+#endif
+#ifdef UINT32_MAX
             case U32:
                 return my_u32[i];
+#endif
+#ifdef INT64_MAX
             case I64:
                 return my_i64[i];
+#endif
+#ifdef UINT64_MAX
             case U64:
                 return my_u64[i];
+#endif
             case F32:
                 return my_f32[i];
             case F64:
