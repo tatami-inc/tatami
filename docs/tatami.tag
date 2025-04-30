@@ -7545,57 +7545,57 @@
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>ad5a75ca0ff6ea84b9fe91773ff1d27c5</anchor>
-      <arglist>(const int8_t *ptr, std::size_t number)</arglist>
+      <anchor>aafc1d93d8adc7d05583e7eb719dc54e9</anchor>
+      <arglist>(const std::int8_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>aaddf6bb16ac0fe2100674e49b26e2935</anchor>
-      <arglist>(const uint8_t *ptr, std::size_t number)</arglist>
+      <anchor>ac547f463a480dac9f9dfe795a18e4784</anchor>
+      <arglist>(const std::uint8_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>aaded579db2150662bf09a994b2a899b6</anchor>
-      <arglist>(const int16_t *ptr, std::size_t number)</arglist>
+      <anchor>ad16ff26752e258a1c9accc380344654b</anchor>
+      <arglist>(const std::int16_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a27d70241b1f8502c257554267bc227d3</anchor>
-      <arglist>(const uint16_t *ptr, std::size_t number)</arglist>
+      <anchor>a3df12df4d02ea87f33135ccba4c40cdc</anchor>
+      <arglist>(const std::uint16_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a55b29f13ee92cf9d5c960c9376fea27a</anchor>
-      <arglist>(const int32_t *ptr, std::size_t number)</arglist>
+      <anchor>aaec73889c56f830d3264ea8b8fb0a0d5</anchor>
+      <arglist>(const std::int32_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>adfe5b622c0d187f2af250baa420e9746</anchor>
-      <arglist>(const uint32_t *ptr, std::size_t number)</arglist>
+      <anchor>a09ceb99255211e22e77ed2b52dec28fe</anchor>
+      <arglist>(const std::uint32_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a33bb99fd8a9826c03ee54c497e18bdb1</anchor>
-      <arglist>(const int64_t *ptr, std::size_t number)</arglist>
+      <anchor>a6459082436a9550b8589423ca9ee5554</anchor>
+      <arglist>(const std::int64_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a57daa32381fe8cd95e69207f67eb6cf3</anchor>
-      <arglist>(const uint64_t *ptr, std::size_t number)</arglist>
+      <anchor>a48b2ef2d40806f0753c9b8e7deab8349</anchor>
+      <arglist>(const std::uint64_t *ptr, std::size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
