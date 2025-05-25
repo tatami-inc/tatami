@@ -21,7 +21,7 @@ option(TATAMI_FETCH_EXTERN "Automatically fetch tatami's external dependencies."
 if(TATAMI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(ltla_subpar 0.3.0 CONFIG REQUIRED)
+    find_package(ltla_subpar 0.4.0 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(tatami INTERFACE ltla::subpar)
