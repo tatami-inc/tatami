@@ -12,6 +12,12 @@
 namespace tatami {
 
 /**
+ * Unsigned integer type for the prediction index.
+ * This is used to obtain the `i`-th prediction from the `Oracle`.
+ */
+typedef std::size_t PredictionIndex;
+
+/**
  * @tparam Index_ Integer type of the row/column indices.
  *
  * @brief Predict future access requests on the target dimension.
@@ -38,13 +44,13 @@ public:
     /**
      * @return Total number of predictions.
      */
-    virtual std::size_t total() const = 0;
+    virtual PredictionIndex total() const = 0;
 
     /**
      * @param i Which prediction to return.
      * @return The `i`-th prediction, to be interpreted as an index on the target dimension.
      */
-    virtual Index_ get(std::size_t i) const = 0; 
+    virtual Index_ get(PredictionIndex i) const = 0;
 };
 
 }

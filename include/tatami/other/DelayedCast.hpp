@@ -27,11 +27,11 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
-    IndexIn_ get(std::size_t i) const {
+    IndexIn_ get(PredictionIndex i) const {
         return my_oracle->get(i);
     }
 
-    std::size_t total() const {
+    PredictionIndex total() const {
         return my_oracle->total();
     }
 

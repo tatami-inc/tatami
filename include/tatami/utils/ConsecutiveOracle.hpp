@@ -26,17 +26,17 @@ public:
      */
     ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(length) {}
 
-    std::size_t total() const {
+    PredictionIndex total() const {
         return my_length;
     }
 
-    Index_ get(std::size_t i) const {
+    Index_ get(PredictionIndex i) const {
         return my_offset + i;
     }
 
 private:
     Index_ my_offset;
-    std::size_t my_length;
+    PredictionIndex my_length;
 };
 
 }

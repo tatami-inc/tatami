@@ -94,11 +94,11 @@ class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, Index_ shift) : my_oracle(std::move(oracle)), my_shift(shift) {}
 
-    std::size_t total() const {
+    PredictionIndex total() const {
         return my_oracle->total();
     }
 
-    Index_ get(std::size_t i) const {
+    Index_ get(PredictionIndex i) const {
         return my_oracle->get(i) + my_shift;
     }
 

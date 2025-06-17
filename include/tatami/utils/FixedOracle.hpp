@@ -3,7 +3,6 @@
 
 #include "../base/Oracle.hpp"
 #include <vector>
-#include <cstddef>
 
 /**
  * @file FixedOracle.hpp
@@ -26,19 +25,19 @@ public:
      * The underlying array should be valid for the lifetime of this `FixedViewOracle` instance.
      * @param number Length of the array at `ptr`.
      */
-    FixedViewOracle(const Index_* ptr, std::size_t number) : my_reference(ptr), my_length(number) {}
+    FixedViewOracle(const Index_* ptr, PredictionIndex number) : my_reference(ptr), my_length(number) {}
 
-    std::size_t total() const {
+    PredictionIndex total() const {
         return my_length;
     }
 
-    Index_ get(std::size_t i) const {
+    Index_ get(PredictionIndex i) const {
         return my_reference[i];
     }
 
 private:
     const Index_* my_reference;
-    std::size_t my_length;
+    PredictionIndex my_length;
 };
 
 /**
@@ -54,11 +53,11 @@ public:
      */
     FixedVectorOracle(std::vector<Index_> vector) : my_sequence(std::move(vector)) {}
 
-    std::size_t total() const {
+    PredictionIndex total() const {
         return my_sequence.size();
     }
 
-    Index_ get(std::size_t i) const {
+    Index_ get(PredictionIndex i) const {
         return my_sequence[i];
     }
 
