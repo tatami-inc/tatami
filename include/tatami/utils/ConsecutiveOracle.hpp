@@ -2,6 +2,9 @@
 #define TATAMI_CONSECUTIVE_ORACLE_HPP
 
 #include "../base/Oracle.hpp"
+
+#include "sanisizer/sanisizer.hpp"
+
 #include <cstddef>
 
 /**
@@ -24,7 +27,7 @@ public:
      * @param start Start index of the consecutive sequence on the target dimension.
      * @param length Length of the sequence.
      */
-    ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(length) {}
+    ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(sanisizer::cast<PredictionIndex>(length)) {}
 
     PredictionIndex total() const {
         return my_length;

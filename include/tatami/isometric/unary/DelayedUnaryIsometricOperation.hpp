@@ -4,6 +4,7 @@
 #include "../../base/Matrix.hpp"
 #include "../../utils/copy.hpp"
 #include "../../utils/new_extractor.hpp"
+#include "../../utils/integer_comparisons.hpp"
 #include "../depends_utils.hpp"
 #include "helper_interface.hpp"
 
@@ -52,6 +53,7 @@ public:
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), opt))
     {
         if constexpr(!same_value) {
+            can_cast_Index_to_container_size<decltype(my_holding_buffer)>(my_extent);
             my_holding_buffer.resize(my_extent);
         }
     }
@@ -101,6 +103,7 @@ public:
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt))
     {
         if constexpr(!same_value) {
+            can_cast_Index_to_container_size<decltype(my_holding_buffer)>(my_block_length);
             my_holding_buffer.resize(my_block_length);
         }
     }
@@ -148,7 +151,9 @@ public:
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt))
     {
         if constexpr(!same_value) {
-            my_holding_buffer.resize(my_indices_ptr->size());
+            auto num_indices = my_indices_ptr->size();
+            can_cast_Index_to_container_size<decltype(my_holding_buffer)>(num_indices);
+            my_holding_buffer.resize(num_indices);
         }
     }
 
@@ -203,14 +208,15 @@ public:
         my_row(row),
         my_oracle(oracle, my_helper, row),
         my_extent(row ? matrix.ncol() : matrix.nrow()),
-        my_vbuffer(my_extent),
-        my_ibuffer(my_extent)
+        my_vbuffer(cast_Index_to_container_size<decltype(my_vbuffer)>(my_extent)),
+        my_ibuffer(cast_Index_to_container_size<decltype(my_ibuffer)>(my_extent))
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), opt);
 
         if constexpr(!same_value) {
+            can_cast_Index_to_container_size<decltype(my_result_vbuffer)>(my_extent);
             my_result_vbuffer.resize(my_extent);
         }
     }
@@ -277,14 +283,15 @@ public:
         my_oracle(oracle, my_helper, row),
         my_block_start(block_start),
         my_block_length(block_length),
-        my_vbuffer(block_length),
-        my_ibuffer(block_length)
+        my_vbuffer(cast_Index_to_container_size<decltype(my_vbuffer.size())>(block_length)),
+        my_ibuffer(cast_Index_to_container_size<decltype(my_ibuffer.size())>(block_length))
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
 
         if constexpr(!same_value) {
+            can_cast_Index_to_container_size<decltype(my_result_vbuffer.size())>(my_block_length);
             my_result_vbuffer.resize(my_block_length);
         }
     }
@@ -354,7 +361,9 @@ public:
 
         const auto& indices = *indices_ptr;
         my_extent = indices.size();
+        can_cast_Index_to_container_size<decltype(my_vbuffer.size())>(my_extent);
         my_vbuffer.resize(my_extent);
+        can_cast_Index_to_container_size<decltype(my_ibuffer.size())>(my_extent);
         my_ibuffer.resize(my_extent);
 
         // Create a remapping vector to map the extracted indices back to the
@@ -362,7 +371,9 @@ public:
         // full extent of the dimension.
         if (my_extent) {
             my_remapping_offset = indices.front();
-            my_remapping.resize(indices.back() - my_remapping_offset + 1);
+            Index_ to_alloc = indices.back() - my_remapping_offset + 1;
+            can_cast_Index_to_container_size<decltype(my_ibuffer.size())>(to_alloc);
+            my_remapping.resize(to_alloc);
             for (Index_ i = 0; i < my_extent; ++i) {
                 my_remapping[indices[i] - my_remapping_offset] = i;
             }
@@ -371,6 +382,7 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), std::move(indices_ptr), opt);
 
         if constexpr(!same_value) {
+            can_cast_Index_to_container_size<decltype(my_result_vbuffer.size())>(my_extent);
             my_result_vbuffer.resize(my_extent);
         }
     }
@@ -492,9 +504,10 @@ private:
     static constexpr bool same_value = std::is_same<OutputValue_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
 
-    void initialize(const Options& opt, std::size_t extent) {
+    void initialize(const Options& opt, Index_ extent) {
         if constexpr(!same_value) {
             if (opt.sparse_extract_value) {
+                can_cast_Index_to_container_size<decltype(my_holding_vbuffer.size())>(extent);
                 my_holding_vbuffer.resize(extent);
             }
         }
@@ -581,7 +594,7 @@ public:
     }
 
 private:
-    void initialize(Options& opt, std::size_t extent) {
+    void initialize(Options& opt, Index_ extent) {
         my_report_value = opt.sparse_extract_value;
         my_report_index = opt.sparse_extract_index;
 
@@ -594,12 +607,14 @@ private:
             // values but didn't provide enough space to store the indices
             // (which we need to pass to Helper_::is_sparse()).
             if (!my_report_index) {
+                can_cast_Index_to_container_size<decltype(my_ibuffer.size())>(extent);
                 my_ibuffer.resize(extent);
             }
         }
 
         if constexpr(!same_value) {
             if (my_report_value) {
+                can_cast_Index_to_container_size<decltype(my_holding_vbuffer.size())>(extent);
                 my_holding_vbuffer.resize(extent);
             }
         }

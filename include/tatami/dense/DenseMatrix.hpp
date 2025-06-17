@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <utility>
 
+#include "sanisizer/sanisizer.hpp"
+
 /**
  * @file DenseMatrix.hpp
  *
@@ -30,12 +32,10 @@ namespace DenseMatrix_internals {
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
-    PrimaryMyopicFullDense(const Storage_& storage, Size secondary) : my_storage(storage), my_secondary(secondary) {}
+    PrimaryMyopicFullDense(const Storage_& storage, Index_ secondary) : my_storage(storage), my_secondary(secondary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        Size offset = static_cast<Size>(i) * my_secondary; // cast to the container's size to avoid overflow.
+        auto offset = sanisizer::product_unsafe<decltype(my_storage.size())>(my_secondary, i);
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
@@ -46,19 +46,17 @@ public:
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
+    Index_ my_secondary;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
-    PrimaryMyopicBlockDense(const Storage_& storage, Size secondary, Index_ block_start, Index_ block_length) : 
+    PrimaryMyopicBlockDense(const Storage_& storage, Index_ secondary, Index_ block_start, Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        Size offset = static_cast<Size>(i) * my_secondary + my_block_start; // cast to container size to avoid overflow.
+        auto offset = sanisizer::nd_offset<decltype(my_storage.size())>(my_block_start, my_secondary, i);
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
@@ -69,97 +67,86 @@ public:
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
-    Size my_block_start, my_block_length;
+    Index_ my_secondary;
+    Index_ my_block_start, my_block_length;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class PrimaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
-    PrimaryMyopicIndexDense(const Storage_& storage, Size secondary, VectorPtr<Index_> indices_ptr) : 
+    PrimaryMyopicIndexDense(const Storage_& storage, Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        Size offset = static_cast<Size>(i) * my_secondary; // cast to container size to avoid overflow.
         const auto& indices = *my_indices_ptr;
         for (decltype(indices.size()) x = 0, end = indices.size(); x < end; ++x) {
-            buffer[x] = my_storage[offset + static_cast<Size>(indices[x])]; // more casting for overflow protection.
+            buffer[x] = my_storage[sanisizer::nd_offset<decltype(my_storage.size())>(indices[x], my_secondary, i)];
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
+    Index_ my_secondary;
     VectorPtr<Index_> my_indices_ptr;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class SecondaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
     SecondaryMyopicFullDense(const Storage_& storage, Index_ secondary, Index_ primary) : 
         my_storage(storage), my_secondary(secondary), my_primary(primary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         for (decltype(my_primary) x = 0; x < my_primary; ++x) {
-            buffer[x] = my_storage[x * my_secondary + static_cast<Size>(i)]; // cast to container size to avoid overflow.
+            buffer[x] = my_storage[sanisizer::nd_offset<decltype(my_storage.size())>(i, my_secondary, x)];
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
-    Size my_primary;
+    Index_ my_secondary;
+    Index_ my_primary;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class SecondaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
     SecondaryMyopicBlockDense(const Storage_& storage, Index_ secondary, Index_ block_start, Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        Size offset = my_block_start * my_secondary + static_cast<Size>(i); // cast to avoid overflow.
         for (decltype(my_block_length) x = 0; x < my_block_length; ++x) {
-            buffer[x] = my_storage[x * my_secondary + offset]; // everything is already Size to avoid overflow.
+            buffer[x] = my_storage[sanisizer::nd_offset<decltype(my_storage.size())>(i, my_secondary, my_block_start + x)];
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
-    Size my_block_start;
-    Size my_block_length;
+    Index_ my_secondary;
+    Index_ my_block_start;
+    Index_ my_block_length;
 };
 
 template<typename Value_, typename Index_, class Storage_>
 class SecondaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
-    typedef decltype(std::declval<Storage_>().size()) Size;
-
     SecondaryMyopicIndexDense(const Storage_& storage, Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        Size offset = i;
         const auto& indices = *my_indices_ptr;
         for (decltype(indices.size()) x = 0, end = indices.size(); x < end; ++x) {
-            buffer[x] = my_storage[static_cast<Size>(indices[x]) * my_secondary + offset]; // casting to avoid overflow.
+            buffer[x] = my_storage[sanisizer::nd_offset<decltype(my_storage.size())>(i, my_secondary, indices[x])];
         }
         return buffer;
     }
 
 private:
     const Storage_& my_storage;
-    Size my_secondary;
+    Index_ my_secondary;
     VectorPtr<Index_> my_indices_ptr;
 };
 
