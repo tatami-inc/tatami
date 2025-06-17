@@ -6,7 +6,7 @@ var searchData=
   ['fillcompressedsparsecontentsoptions_3',['FillCompressedSparseContentsOptions',['../structtatami_1_1FillCompressedSparseContentsOptions.html',1,'tatami']]],
   ['fixedoracle_2ehpp_4',['FixedOracle.hpp',['../FixedOracle_8hpp.html',1,'']]],
   ['fixedvectororacle_5',['FixedVectorOracle',['../classtatami_1_1FixedVectorOracle.html',1,'tatami::FixedVectorOracle&lt; Index_ &gt;'],['../classtatami_1_1FixedVectorOracle.html#a6bb84b35ef43559b85579e902d9463dc',1,'tatami::FixedVectorOracle::FixedVectorOracle()']]],
-  ['fixedvieworacle_6',['FixedViewOracle',['../classtatami_1_1FixedViewOracle.html',1,'tatami::FixedViewOracle&lt; Index_ &gt;'],['../classtatami_1_1FixedViewOracle.html#a0fb6965567e80db39b8b77f244ec3023',1,'tatami::FixedViewOracle::FixedViewOracle()']]],
+  ['fixedvieworacle_6',['FixedViewOracle',['../classtatami_1_1FixedViewOracle.html',1,'tatami::FixedViewOracle&lt; Index_ &gt;'],['../classtatami_1_1FixedViewOracle.html#ade2775f969ecd4eaad2ba67bf135165c',1,'tatami::FixedViewOracle::FixedViewOracle()']]],
   ['for_20all_20sorts_20of_20matrices_7',['A C++ API for all sorts of matrices',['../index.html',1,'']]],
   ['fragmentedsparsecolumnmatrix_8',['FragmentedSparseColumnMatrix',['../classtatami_1_1FragmentedSparseColumnMatrix.html',1,'tatami::FragmentedSparseColumnMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;'],['../classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62',1,'tatami::FragmentedSparseColumnMatrix::FragmentedSparseColumnMatrix()']]],
   ['fragmentedsparsecontents_9',['FragmentedSparseContents',['../structtatami_1_1FragmentedSparseContents.html',1,'tatami']]],

@@ -393,6 +393,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:a1a9c70ebcfa94bba3fea89202868f22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0438743ada096f37f307404851849ff" id="r_ae0438743ada096f37f307404851849ff"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0438743ada096f37f307404851849ff">NumericMatrix</a> = <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt;double, int&gt;</td></tr>
 <tr class="separator:ae0438743ada096f37f307404851849ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdedcc902be98f3bd38f3507b906971c" id="r_acdedcc902be98f3bd38f3507b906971c"><td class="memItemLeft" align="right" valign="top">typedef std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a></td></tr>
+<tr class="separator:acdedcc902be98f3bd38f3507b906971c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57425b6548448b71576c04f16f4dc38d" id="r_a57425b6548448b71576c04f16f4dc38d"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_  = double, typename InputValue_  = double, typename Index_  = int&gt; </td></tr>
 <tr class="memitem:a57425b6548448b71576c04f16f4dc38d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a57425b6548448b71576c04f16f4dc38d">DelayedBinaryIsometricAddHelper</a> = <a class="el" href="classtatami_1_1DelayedBinaryIsometricArithmeticHelper.html">DelayedBinaryIsometricArithmeticHelper</a>&lt;ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_&gt;</td></tr>
 <tr class="separator:a57425b6548448b71576c04f16f4dc38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -819,6 +821,21 @@ template&lt;typename Index_ &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>A convenient shorthand for the most common use case of double-precision matrices. </p>
+
+</div>
+</div>
+<a id="acdedcc902be98f3bd38f3507b906971c" name="acdedcc902be98f3bd38f3507b906971c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdedcc902be98f3bd38f3507b906971c">&#9670;&#160;</a></span>PredictionIndex</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::size_t <a class="el" href="#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Unsigned integer type for the prediction index. This is used to obtain the <code>i</code>-th prediction from the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code>. </p>
 
 </div>
 </div>

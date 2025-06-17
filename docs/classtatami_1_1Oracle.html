@@ -118,10 +118,10 @@ Inheritance diagram for tatami::Oracle&lt; Index_ &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af1f05ec8e29c690342b7a568bca2969e" id="r_af1f05ec8e29c690342b7a568bca2969e"><td class="memItemLeft" align="right" valign="top">virtual std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1f05ec8e29c690342b7a568bca2969e">total</a> () const =0</td></tr>
-<tr class="separator:af1f05ec8e29c690342b7a568bca2969e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49d7178c4f4f32a751bdaecbcf907e06" id="r_a49d7178c4f4f32a751bdaecbcf907e06"><td class="memItemLeft" align="right" valign="top">virtual Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49d7178c4f4f32a751bdaecbcf907e06">get</a> (std::size_t i) const =0</td></tr>
-<tr class="separator:a49d7178c4f4f32a751bdaecbcf907e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f651cfb834be796989f052ed2822a51" id="r_a3f651cfb834be796989f052ed2822a51"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f651cfb834be796989f052ed2822a51">total</a> () const =0</td></tr>
+<tr class="separator:a3f651cfb834be796989f052ed2822a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a397e9ad5b752258565f33d993129959e" id="r_a397e9ad5b752258565f33d993129959e"><td class="memItemLeft" align="right" valign="top">virtual Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a397e9ad5b752258565f33d993129959e">get</a> (<a class="el" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> i) const =0</td></tr>
+<tr class="separator:a397e9ad5b752258565f33d993129959e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Index_&gt;<br />
@@ -134,8 +134,8 @@ class tatami::Oracle&lt; Index_ &gt;</div><p>Predict future access requests on t
 </dl>
 <p>This allows <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> implementations to pre-fetch data for future requests to <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html#ae0376a4c48d7f4d55632ed42fd166fa1">OracularDenseExtractor::fetch()</a></code> or <code><a class="el" href="classtatami_1_1OracularSparseExtractor.html#ab934cfb30f9169a125fd746e15578975">OracularSparseExtractor::fetch()</a></code>. Check out <code><a class="el" href="classtatami_1_1ConsecutiveOracle.html" title="Predict future accesses along a consecutive sequence.">ConsecutiveOracle</a></code> and <code><a class="el" href="classtatami_1_1FixedVectorOracle.html" title="Predict future accesses from a vector containing a fixed sequence.">FixedVectorOracle</a></code> for some examples of concrete subclasses. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="af1f05ec8e29c690342b7a568bca2969e" name="af1f05ec8e29c690342b7a568bca2969e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1f05ec8e29c690342b7a568bca2969e">&#9670;&#160;</a></span>total()</h2>
+<a id="a3f651cfb834be796989f052ed2822a51" name="a3f651cfb834be796989f052ed2822a51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f651cfb834be796989f052ed2822a51">&#9670;&#160;</a></span>total()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ template&lt;typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::size_t <a class="el" href="classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt;::total </td>
+          <td class="memname">virtual <a class="el" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> <a class="el" href="classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt;::total </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -160,12 +160,12 @@ template&lt;typename Index_ &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Total number of predictions. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1ConsecutiveOracle.html#a2ff5c653e64ddebb2bbb0725e600c269">tatami::ConsecutiveOracle&lt; Index_ &gt;</a>, <a class="el" href="classtatami_1_1FixedVectorOracle.html#ac54a6cdffbe92321ede3c4426c990d23">tatami::FixedVectorOracle&lt; Index_ &gt;</a>, and <a class="el" href="classtatami_1_1FixedViewOracle.html#a90ee6c09f9dbbc47f3b1325e674b6ef3">tatami::FixedViewOracle&lt; Index_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1ConsecutiveOracle.html#a4f04e2fcb3ab81331cf0dc8f3ca5389d">tatami::ConsecutiveOracle&lt; Index_ &gt;</a>, <a class="el" href="classtatami_1_1FixedVectorOracle.html#a4e0d5965f608f2f127bafb90bf9e6573">tatami::FixedVectorOracle&lt; Index_ &gt;</a>, and <a class="el" href="classtatami_1_1FixedViewOracle.html#a0a45dcb056b99b8db17946d7ab6a2d0b">tatami::FixedViewOracle&lt; Index_ &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a49d7178c4f4f32a751bdaecbcf907e06" name="a49d7178c4f4f32a751bdaecbcf907e06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49d7178c4f4f32a751bdaecbcf907e06">&#9670;&#160;</a></span>get()</h2>
+<a id="a397e9ad5b752258565f33d993129959e" name="a397e9ad5b752258565f33d993129959e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a397e9ad5b752258565f33d993129959e">&#9670;&#160;</a></span>get()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +178,7 @@ template&lt;typename Index_ &gt; </div>
         <tr>
           <td class="memname">virtual Index_ <a class="el" href="classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt;::get </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a></td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -196,7 +196,7 @@ template&lt;typename Index_ &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The <code>i</code>-th prediction, to be interpreted as an index on the target dimension. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1ConsecutiveOracle.html#abf4738517f1d7cd0c2af21c20b5e9085">tatami::ConsecutiveOracle&lt; Index_ &gt;</a>, <a class="el" href="classtatami_1_1FixedVectorOracle.html#a884ad60b6b16284713fdbd2c9d6b550b">tatami::FixedVectorOracle&lt; Index_ &gt;</a>, and <a class="el" href="classtatami_1_1FixedViewOracle.html#aec39b28a8ebf2ef35d927d8f0a121ab0">tatami::FixedViewOracle&lt; Index_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1ConsecutiveOracle.html#aa0c6695749972f318734a39352acf142">tatami::ConsecutiveOracle&lt; Index_ &gt;</a>, <a class="el" href="classtatami_1_1FixedVectorOracle.html#a56fa1a71451f7aa6cc2543632437c8a2">tatami::FixedVectorOracle&lt; Index_ &gt;</a>, and <a class="el" href="classtatami_1_1FixedViewOracle.html#ab6ce3a0e85a2aa147ba9db53bce291e3">tatami::FixedViewOracle&lt; Index_ &gt;</a>.</p>
 
 </div>
 </div>

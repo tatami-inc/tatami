@@ -729,18 +729,18 @@
       <arglist>(Index_ start, Index_ length)</arglist>
     </member>
     <member kind="function">
-      <type>std::size_t</type>
+      <type>PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1ConsecutiveOracle.html</anchorfile>
-      <anchor>a2ff5c653e64ddebb2bbb0725e600c269</anchor>
+      <anchor>a4f04e2fcb3ab81331cf0dc8f3ca5389d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1ConsecutiveOracle.html</anchorfile>
-      <anchor>abf4738517f1d7cd0c2af21c20b5e9085</anchor>
-      <arglist>(std::size_t i) const</arglist>
+      <anchor>aa0c6695749972f318734a39352acf142</anchor>
+      <arglist>(PredictionIndex i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6288,18 +6288,18 @@
       <arglist>(std::vector&lt; Index_ &gt; vector)</arglist>
     </member>
     <member kind="function">
-      <type>std::size_t</type>
+      <type>PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>ac54a6cdffbe92321ede3c4426c990d23</anchor>
+      <anchor>a4e0d5965f608f2f127bafb90bf9e6573</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>a884ad60b6b16284713fdbd2c9d6b550b</anchor>
-      <arglist>(std::size_t i) const</arglist>
+      <anchor>a56fa1a71451f7aa6cc2543632437c8a2</anchor>
+      <arglist>(PredictionIndex i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6311,22 +6311,22 @@
       <type></type>
       <name>FixedViewOracle</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a0fb6965567e80db39b8b77f244ec3023</anchor>
-      <arglist>(const Index_ *ptr, std::size_t number)</arglist>
+      <anchor>ade2775f969ecd4eaad2ba67bf135165c</anchor>
+      <arglist>(const Index_ *ptr, PredictionIndex number)</arglist>
     </member>
     <member kind="function">
-      <type>std::size_t</type>
+      <type>PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a90ee6c09f9dbbc47f3b1325e674b6ef3</anchor>
+      <anchor>a0a45dcb056b99b8db17946d7ab6a2d0b</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>aec39b28a8ebf2ef35d927d8f0a121ab0</anchor>
-      <arglist>(std::size_t i) const</arglist>
+      <anchor>ab6ce3a0e85a2aa147ba9db53bce291e3</anchor>
+      <arglist>(PredictionIndex i) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -7404,18 +7404,18 @@
     <filename>classtatami_1_1Oracle.html</filename>
     <templarg>typename Index_</templarg>
     <member kind="function" virtualness="pure">
-      <type>virtual std::size_t</type>
+      <type>virtual PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1Oracle.html</anchorfile>
-      <anchor>af1f05ec8e29c690342b7a568bca2969e</anchor>
+      <anchor>a3f651cfb834be796989f052ed2822a51</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1Oracle.html</anchorfile>
-      <anchor>a49d7178c4f4f32a751bdaecbcf907e06</anchor>
-      <arglist>(std::size_t i) const =0</arglist>
+      <anchor>a397e9ad5b752258565f33d993129959e</anchor>
+      <arglist>(PredictionIndex i) const =0</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -7803,6 +7803,13 @@
       <name>NumericMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ae0438743ada096f37f307404851849ff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>std::size_t</type>
+      <name>PredictionIndex</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acdedcc902be98f3bd38f3507b906971c</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
