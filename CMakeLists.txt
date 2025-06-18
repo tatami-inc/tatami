@@ -22,9 +22,10 @@ if(TATAMI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
     find_package(ltla_subpar 0.4.0 CONFIG REQUIRED)
+    find_package(ltla_sanisizer 0.1.0 CONFIG REQUIRED)
 endif()
 
-target_link_libraries(tatami INTERFACE ltla::subpar)
+target_link_libraries(tatami INTERFACE ltla::subpar ltla::sanisizer)
 
 # Building the test-related machinery, if we are compiling this library directly.
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

@@ -2,7 +2,11 @@
 #define TATAMI_FIXED_ORACLE_HPP
 
 #include "../base/Oracle.hpp"
+
 #include <vector>
+#include <cstddef>
+
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file FixedOracle.hpp
@@ -25,7 +29,9 @@ public:
      * The underlying array should be valid for the lifetime of this `FixedViewOracle` instance.
      * @param number Length of the array at `ptr`.
      */
-    FixedViewOracle(const Index_* ptr, PredictionIndex number) : my_reference(ptr), my_length(number) {}
+    FixedViewOracle(const Index_* ptr, PredictionIndex number) : my_reference(ptr), my_length(number) {
+        sanisizer::can_cast<std::size_t>(number); // make sure that array is addressable by all [0, number).
+    }
 
     PredictionIndex total() const {
         return my_length;
@@ -51,7 +57,9 @@ public:
     /**
      * @param vector Vector containing a fixed sequence of indices on the target dimension.
      */
-    FixedVectorOracle(std::vector<Index_> vector) : my_sequence(std::move(vector)) {}
+    FixedVectorOracle(std::vector<Index_> vector) : my_sequence(std::move(vector)) {
+        sanisizer::can_cast<PredictionIndex>(my_sequence.size()); // make sure that total() will return a sensible value.
+    }
 
     PredictionIndex total() const {
         return my_sequence.size();

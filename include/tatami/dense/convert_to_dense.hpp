@@ -2,15 +2,17 @@
 #define TATAMI_CONVERT_TO_DENSE_H
 
 #include "./DenseMatrix.hpp"
-#include "./transpose.hpp"
 
 #include "../utils/consecutive_extractor.hpp"
 #include "../utils/parallelize.hpp"
 #include "../utils/copy.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <memory>
 #include <vector>
 #include <cstddef>
+
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file convert_to_dense.hpp
@@ -46,17 +48,26 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
     InputIndex_ NR = matrix.nrow();
     InputIndex_ NC = matrix.ncol();
     bool pref_rows = matrix.prefer_rows();
-    std::size_t primary = (pref_rows ? NR : NC);
-    std::size_t secondary = (pref_rows ? NC : NR);
+    auto primary = (pref_rows ? NR : NC);
+    auto secondary = (pref_rows ? NC : NR);
+
+    // We assume that 'store' was allocated correctly, in which case the product of 'primary' and 'secondary' is known to fit inside a std::size_t.
+    // This saves us from various checks when computing related products (see all the product_unsafe() calls).
 
     if (row_major == pref_rows) {
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
-        parallelize([&](int, std::size_t start, std::size_t length) -> void {
-            std::vector<InputValue_> temp(same_type ? 0 : secondary);
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, start, length);
+            auto temp = [&]{
+                if constexpr(same_type) {
+                    return false;
+                } else {
+                    return create_container_of_Index_size<std::vector<InputValue_> >(secondary);
+                }
+            }();
 
             for (decltype(length) x = 0; x < length; ++x) {
-                auto store_copy = store + static_cast<std::size_t>(start + x) * secondary; // cast to avoid overflow.
+                auto store_copy = store + sanisizer::product_unsafe<std::size_t>(secondary, start + x);
                 if constexpr(same_type) {
                     auto ptr = wrk->fetch(store_copy);
                     copy_n(ptr, secondary, store_copy);
@@ -68,17 +79,17 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
         }, primary, options.num_threads);
 
     } else if (matrix.is_sparse()) {
-        std::fill_n(store, primary * secondary, 0); // already cast to std::size_t to avoid overflow.
+        std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
 
         // We iterate over the input matrix's preferred dimension but split
         // into threads along the non-preferred dimension. This aims to
         // reduce false sharing across threads during writes, as locations
         // for simultaneous writes in the transposed matrix will be
         // separated by around 'secondary * length' elements. 
-        parallelize([&](int, std::size_t start, std::size_t length) -> void {
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);
-            std::vector<InputValue_> vtemp(length);
-            std::vector<InputIndex_> itemp(length);
+            auto vtemp = create_container_of_Index_size<std::vector<InputValue_> >(length);
+            auto itemp = create_container_of_Index_size<std::vector<InputIndex_> >(length);
 
             // Note that we don't use the blocked transposition strategy
             // from the dense case, because the overhead of looping is 
@@ -86,7 +97,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
             for (decltype(primary) x = 0; x < primary; ++x) {
                 auto range = wrk->fetch(vtemp.data(), itemp.data());
                 for (InputIndex_ i = 0; i < range.number; ++i) {
-                    store[static_cast<std::size_t>(range.index[i]) * primary + x] = range.value[i]; // cast to std::size_t to avoid overflow.
+                    store[sanisizer::nd_offset<std::size_t>(x, primary, range.index[i])] = range.value[i];
                 }
             }
         }, secondary, options.num_threads);
@@ -95,37 +106,36 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
         // Same logic as described for the sparse case; we iterate along the
         // preferred dimension but split into threads along the non-preferred
         // dimension to reduce false sharing.
-        parallelize([&](int, std::size_t start, std::size_t length) -> void {
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);
 
             // Performing a blocked transposition to be more
             // cache-friendly. This involves collecting several
             // consecutive primary dimension elements so that we can
             // transpose by blocks along the secondary dimension.
-            constexpr std::size_t block_size = 16;
-            std::size_t alloc = std::min(primary, block_size);
-            std::vector<InputValue_> bigbuffer(length * alloc); // already size_ts, to avoid overflow.
-            std::vector<const InputValue_*> ptrs(alloc);
+            constexpr InputIndex_ block_size = 16;
+            InputIndex_ alloc = std::min(primary, block_size);
+            std::vector<InputValue_> bigbuffer(sanisizer::product_unsafe<typename std::vector<InputValue_>::size_type>(length, alloc));
+            std::vector<const InputValue_*> ptrs(alloc); // no need for protection here, we know that alloc <= 16.
             std::vector<InputValue_*> buf_ptrs(alloc);
             for (decltype(alloc) i = 0; i < alloc; ++i) {
-                buf_ptrs[i] = bigbuffer.data() + i * length; // already all size_t's, to avoid overflow.
+                buf_ptrs[i] = bigbuffer.data() + sanisizer::product_unsafe<std::size_t>(length, i);
             }
 
-            std::size_t prim_i = 0;
+            InputIndex_ prim_i = 0;
             while (prim_i < primary) {
-                std::size_t prim_to_process = std::min(static_cast<std::size_t>(primary - prim_i), block_size);
+                InputIndex_ prim_to_process = std::min(static_cast<InputIndex_>(primary - prim_i), block_size);
                 for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                     ptrs[c] = wrk->fetch(buf_ptrs[c]);
                 }
 
-                std::size_t sec_i = 0;
+                InputIndex_ sec_i = 0;
                 while (sec_i < length) {
-                    std::size_t sec_end = sec_i + std::min(static_cast<std::size_t>(length - sec_i), block_size);
+                    InputIndex_ sec_end = sec_i + std::min(static_cast<InputIndex_>(length - sec_i), block_size);
                     for (decltype(prim_to_process) c = 0; c < prim_to_process; ++c) {
                         auto input = ptrs[c];
-                        std::size_t offset = start * primary + (c + prim_i); // already all std::size_t's, to avoid overflow.
-                        for (std::size_t r = sec_i; r < sec_end; ++r) {
-                            store[r * primary + offset] = input[r]; // again, these are all size_t's already.
+                        for (InputIndex_ r = sec_i; r < sec_end; ++r) {
+                            store[sanisizer::nd_offset<std::size_t>(c + prim_i, primary, r + start)] = input[r];
                         }
                     }
 
@@ -163,7 +173,8 @@ template <
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_major, const ConvertToDenseOptions& options) {
     auto NR = matrix.nrow();
     auto NC = matrix.ncol();
-    std::vector<StoredValue_> buffer(static_cast<std::size_t>(NR) * static_cast<std::size_t>(NC)); // cast to size_t to avoid overflow.
+    auto buffer_size = sanisizer::product<std::size_t>(NR, NC); // Make sure the product fits in a size_t for array access via a pointer, just in case size_type != size_t.
+    auto buffer = sanisizer::create<std::vector<StoredValue_> >(buffer_size);
     convert_to_dense(matrix, row_major, buffer.data(), options);
     return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row_major));
 }

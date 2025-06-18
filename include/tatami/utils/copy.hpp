@@ -12,10 +12,11 @@ namespace tatami {
 
 /**
  * @tparam Value_ Type of value being copied.
- * @tparam Size_ Type for the array length.
+ * @tparam Size_ Integer type of the array length.
  *
  * @param[in] input Pointer to a source array of size `n`.
  * @param n Length of the array.
+ * This should fit into a `std::size_t`, even if `Size_` is of a larger type.
  * @param[out] output Pointer to a destination array of size `n`.
  *
  * @return Values are copied from `input` to `output`, and `output` is returned.

@@ -4,6 +4,7 @@
 #include "../../base/Matrix.hpp"
 #include "../../utils/new_extractor.hpp"
 #include "../../utils/copy.hpp"
+#include "../../utils/integer_comparisons.hpp"
 #include "../../dense/SparsifiedWrapper.hpp"
 #include "../depends_utils.hpp"
 #include "helper_interface.hpp"
@@ -48,9 +49,9 @@ public:
         my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), opt);
         my_extent = my_row ? left.ncol() : left.nrow();
 
-        my_right_holding_buffer.resize(my_extent);
+        resize_container_to_Index_size(my_right_holding_buffer, my_extent);
         if constexpr(!same_value) {
-            my_left_holding_buffer.resize(my_extent);
+            my_left_holding_buffer.resize(my_right_holding_buffer.size());
         }
     }
 
@@ -103,9 +104,9 @@ public:
         my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
         my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
 
-        my_right_holding_buffer.resize(my_block_length);
+        resize_container_to_Index_size(my_right_holding_buffer, my_block_length);
         if constexpr(!same_value) {
-            my_left_holding_buffer.resize(my_block_length);
+            my_left_holding_buffer.resize(my_right_holding_buffer.size());
         }
     }
 
@@ -156,9 +157,9 @@ public:
         my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, my_indices_ptr, opt);
         my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), my_indices_ptr, opt);
 
-        my_right_holding_buffer.resize(my_indices_ptr->size());
+        resize_container_to_Index_size(my_right_holding_buffer, my_indices_ptr->size());
         if constexpr(!same_value) {
-            my_left_holding_buffer.resize(my_indices_ptr->size());
+            my_left_holding_buffer.resize(my_right_holding_buffer.size());
         }
     }
 
@@ -214,14 +215,16 @@ public:
         opt.sparse_ordered_index = true;
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, opt);
         my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
-
         my_extent = my_row ? left.ncol() : left.nrow();
-        my_left_vbuffer.resize(my_extent);
-        my_right_vbuffer.resize(my_extent);
-        my_output_vbuffer.resize(my_extent);
-        my_left_ibuffer.resize(my_extent);
-        my_right_ibuffer.resize(my_extent);
-        my_output_ibuffer.resize(my_extent);
+
+        resize_container_to_Index_size(my_left_vbuffer, my_extent);
+        my_right_vbuffer.resize(my_left_vbuffer.size());
+
+        resize_container_to_Index_size(my_output_vbuffer, my_extent);
+
+        resize_container_to_Index_size(my_left_ibuffer, my_extent);
+        my_right_ibuffer.resize(my_left_ibuffer.size());
+        my_output_ibuffer.resize(my_left_ibuffer.size());
     }
 
     const OutputValue_* fetch(Index_ i, OutputValue_* buffer) {
@@ -280,12 +283,14 @@ public:
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
         my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
 
-        my_left_vbuffer.resize(my_block_length);
-        my_right_vbuffer.resize(my_block_length);
-        my_output_vbuffer.resize(my_block_length);
-        my_left_ibuffer.resize(my_block_length);
-        my_right_ibuffer.resize(my_block_length);
-        my_output_ibuffer.resize(my_block_length);
+        resize_container_to_Index_size(my_left_vbuffer, my_block_length);
+        my_right_vbuffer.resize(my_left_vbuffer.size());
+
+        resize_container_to_Index_size(my_output_vbuffer, my_block_length);
+
+        resize_container_to_Index_size(my_left_ibuffer, my_block_length);
+        my_right_ibuffer.resize(my_left_ibuffer.size());
+        my_output_ibuffer.resize(my_left_ibuffer.size());
     }
 
     const OutputValue_* fetch(Index_ i, OutputValue_* buffer) {
@@ -342,8 +347,7 @@ public:
         const auto& indices = *indices_ptr;
         if (my_extent) {
             my_remapping_offset = indices.front();
-            my_remapping.resize(indices.back() - my_remapping_offset + 1);
-
+            resize_container_to_Index_size(my_remapping, indices.back() - my_remapping_offset + 1);
             for (Index_ i = 0; i < my_extent; ++i) {
                 my_remapping[indices[i] - my_remapping_offset] = i;
             }
@@ -355,12 +359,14 @@ public:
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
         my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), std::move(indices_ptr), opt);
 
-        my_left_vbuffer.resize(my_extent);
-        my_right_vbuffer.resize(my_extent);
-        my_output_vbuffer.resize(my_extent);
-        my_left_ibuffer.resize(my_extent);
-        my_right_ibuffer.resize(my_extent);
-        my_output_ibuffer.resize(my_extent);
+        resize_container_to_Index_size(my_left_vbuffer, my_extent);
+        my_right_vbuffer.resize(my_left_vbuffer.size());
+
+        resize_container_to_Index_size(my_output_vbuffer, my_extent);
+
+        resize_container_to_Index_size(my_left_ibuffer, my_extent);
+        my_right_ibuffer.resize(my_left_ibuffer.size());
+        my_output_ibuffer.resize(my_left_ibuffer.size());
     }
 
     const OutputValue_* fetch(Index_ i, OutputValue_* buffer) {
@@ -461,11 +467,12 @@ private:
         my_report_value = opt.sparse_extract_value;
         my_report_index = opt.sparse_extract_index;
 
-        my_left_ibuffer.resize(extent);
-        my_right_ibuffer.resize(extent);
+        resize_container_to_Index_size(my_left_ibuffer, extent);
+        my_right_ibuffer.resize(my_left_ibuffer.size());
+
         if (my_report_value) {
-            my_left_vbuffer.resize(extent);
-            my_right_vbuffer.resize(extent);
+            resize_container_to_Index_size(my_left_vbuffer, extent);
+            my_right_vbuffer.resize(my_left_vbuffer.size());
         }
 
         opt.sparse_ordered_index = true;
@@ -548,16 +555,18 @@ public:
     ) : 
         my_left(std::move(left)), my_right(std::move(right)), my_helper(std::move(helper)) 
     {
-        if (my_left->nrow() != my_right->nrow() || my_left->ncol() != my_right->ncol()) {
+        auto NR = my_left->nrow();
+        auto NC = my_left->ncol();
+        if (NR != my_right->nrow() || NC != my_right->ncol()) {
             throw std::runtime_error("shape of the left and right matrices should be the same");
         }
 
         auto expected_rows = my_helper->nrow();
-        if (expected_rows.has_value() && *expected_rows != my_left->nrow()) {
+        if (expected_rows.has_value() && *expected_rows != NR) {
             throw std::runtime_error("number of matrix rows is not consistent with those expected by 'helper'");
         }
         auto expected_cols = my_helper->ncol();
-        if (expected_cols.has_value() && *expected_cols != my_left->ncol()) {
+        if (expected_cols.has_value() && *expected_cols != NC) {
             throw std::runtime_error("number of matrix columns is not consistent with those expected by 'helper'");
         }
 

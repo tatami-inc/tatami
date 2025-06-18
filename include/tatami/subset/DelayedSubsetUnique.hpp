@@ -72,7 +72,7 @@ public:
 
 private:
     void initialize(const Matrix<Value_, Index_>* matrix, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        my_holding_vbuffer.resize(processed.sorted.size());
+        resize_container_to_Index_size(my_holding_vbuffer, processed.sorted.size()); // processed.sorted.size() should fit in an Index_, hence the cast is safe.
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.sorted), opt);
         my_permutation = std::move(processed.permutation);
     }
@@ -177,9 +177,10 @@ private:
             opt.sparse_extract_index = true;
             my_sortspace.reserve(sorted.size());
             if (my_needs_index) {
-                ; // no 'my_holding_ibuffer' required as a user-provided 'index_buffer' should be available.
+                // no 'my_holding_ibuffer' required as a user-provided 'index_buffer' should be available.
             } else {
-                my_holding_ibuffer.resize(sorted.size()); // needs 'my_holding_ibuffer' as user-provided 'index_buffer' may be NULL.
+                // Needs 'my_holding_ibuffer' as user-provided 'index_buffer' may be NULL.
+                resize_container_to_Index_size(my_holding_ibuffer, sorted.size()); // sorted.size() should fit in an Index_, hence the cast is safe.
             }
 
         } else if (my_needs_index) {

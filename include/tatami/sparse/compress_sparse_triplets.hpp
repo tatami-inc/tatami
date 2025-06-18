@@ -1,13 +1,15 @@
 #ifndef TATAMI_COMPRESS_SPARSE_TRIPLETS_H
 #define TATAMI_COMPRESS_SPARSE_TRIPLETS_H
 
+#include "../utils/integer_comparisons.hpp"
+
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include <utility>
 #include <cstddef>
 
-#include "../utils/integer_comparisons.hpp"
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file compress_sparse_triplets.hpp
@@ -116,7 +118,7 @@ std::vector<decltype(std::declval<Values_>().size())> compress_sparse_triplets(s
     }
 
     if (order_status != 0) {
-        std::vector<decltype(N)> indices(N);
+        auto indices = sanisizer::create<std::vector<decltype(N)> >(N);
         std::iota(indices.begin(), indices.end(), static_cast<decltype(N)>(0));
 
         // Sorting without duplicating the data.
@@ -129,7 +131,7 @@ std::vector<decltype(std::declval<Values_>().size())> compress_sparse_triplets(s
         // Reordering values in place. This (i) saves memory, and (ii) allows
         // us to work with Values_, RowIndices_, etc. that may not have well-defined copy
         // constructors (e.g., if they refer to external memory).
-        std::vector<unsigned char> used(N);
+        auto used = sanisizer::create<std::vector<unsigned char> >(N);
         for (decltype(N) i = 0; i < N; ++i) {
             if (used[i]) {
                 continue;
@@ -150,14 +152,16 @@ std::vector<decltype(std::declval<Values_>().size())> compress_sparse_triplets(s
     }
 
     // Collating the indices.
-    std::vector<decltype(N)> output(csr ? nrow + 1 : ncol + 1);
+    typedef std::vector<decltype(N)> Output;
+    typedef typename Output::size_type OutputSize;
+    Output output(sanisizer::sum<OutputSize>(csr ? nrow : ncol, 1));
     if (csr) {
         for (auto t : row_indices) {
-            ++(output[t+1]);
+            ++(output[static_cast<OutputSize>(t) + 1]);
         } 
     } else {
         for (auto t : column_indices) {
-            ++(output[t+1]);
+            ++(output[static_cast<OutputSize>(t) + 1]);
         }
     }
     std::partial_sum(output.begin(), output.end(), output.begin());

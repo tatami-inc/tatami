@@ -3,6 +3,7 @@
 
 #include "../base/Matrix.hpp"
 #include "../utils/new_extractor.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <memory>
 #include <type_traits>
@@ -78,9 +79,9 @@ public:
     }
 
 private:
-    void allocate(std::size_t n) {
+    void allocate(IndexIn_ n) {
         if constexpr(!no_op) {
-            my_buffer.resize(n);
+            resize_container_to_Index_size(my_buffer, n);
         }
     }
 
@@ -120,15 +121,15 @@ public:
     }
 
 private:
-    void allocate(std::size_t n, const Options& opt) {
+    void allocate(IndexIn_ n, const Options& opt) {
         if constexpr(!no_op_value) {
             if (opt.sparse_extract_value) {
-                my_vbuffer.resize(n);
+                resize_container_to_Index_size(my_vbuffer, n);
             }
         }
         if constexpr(!no_op_index) {
             if (opt.sparse_extract_index) {
-                my_ibuffer.resize(n);
+                resize_container_to_Index_size(my_ibuffer, n);
             }
         }
     }

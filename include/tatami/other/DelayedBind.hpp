@@ -7,6 +7,7 @@
 #include "../utils/FixedOracle.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 #include "../utils/copy.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <numeric>
 #include <algorithm>
@@ -50,7 +51,7 @@ Index_ initialize_parallel_block(
     Index_ actual_start = block_start - cumulative[start_index];
     Index_ block_end = block_start + block_length;
 
-    Index_ nmats = cumulative.size() - 1; // This is guaranteed to fit, see reasoning in the DelayedBind constructor.
+    Index_ nmats = cumulative.size() - 1; // Number of matrices is guaranteed to fit in Index_, see reasoning in the DelayedBind constructor.
     for (Index_ index = start_index; index < nmats; ++index) {
         Index_ submat_end = cumulative[index + 1]; 
         bool not_final = (block_end > submat_end);
@@ -440,7 +441,7 @@ void initialize_perp_oracular(
                     return;
                 }
                 consecutive = false;
-                predictions.resize(number);
+                resize_container_to_Index_size(predictions, number);
                 std::iota(predictions.begin(), predictions.end(), start);
             }
 
@@ -449,7 +450,7 @@ void initialize_perp_oracular(
     };
 
     auto nmats = cumulative.size() - 1;
-    std::vector<Predictions> predictions(nmats);
+    auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this call is legal.
     for (decltype(ntotal) i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         Index_ choice = mapping[prediction];
@@ -483,7 +484,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        my_exts.resize(matrices.size());
+        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an I ndex_, so this call is allowed.
         initialize_perp_oracular(
             cumulative,
             mapping,
@@ -520,7 +521,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        my_exts.resize(matrices.size());
+        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is legal.
         initialize_perp_oracular(
             cumulative,
             mapping,
@@ -570,7 +571,7 @@ public:
      */
     DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool by_row) : my_matrices(std::move(matrices)), my_by_row(by_row) {
         auto nmats = my_matrices.size();
-        my_cumulative.reserve(nmats + 1);
+        my_cumulative.reserve(sanisizer::sum<decltype(my_cumulative.size())>(nmats, 1));
         decltype(nmats) sofar = 0;
         my_cumulative.push_back(0);
 
@@ -597,7 +598,7 @@ public:
                 if (sofar != i) {
                     my_matrices[sofar] = std::move(current);
                 }
-                my_cumulative.push_back(my_cumulative.back() + primary);
+                my_cumulative.push_back(sanisizer::sum<Index_>(my_cumulative.back(), primary));
                 ++sofar;
             }
         }

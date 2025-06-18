@@ -5,6 +5,7 @@
 #include "convert_to_fragmented_sparse.hpp"
 #include "../utils/parallelize.hpp"
 #include "../utils/consecutive_extractor.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <memory>
 #include <vector>
@@ -57,7 +58,7 @@ void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, I
 
 template<typename Value_, typename Index_, typename Count_>
 void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_, Index_>& matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
-    std::vector<std::vector<Count_> > nz_counts(threads - 1);
+    auto nz_counts = sanisizer::create<std::vector<std::vector<Count_> > >(threads - 1);
     for (auto& x : nz_counts) {
         x.resize(primary);
     }
@@ -68,8 +69,8 @@ void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_,
         opt.sparse_ordered_index = false;
 
         parallelize([&](int t, Index_ start, Index_ length) -> void {
-            std::vector<Index_> buffer_i(primary);
             auto wrk = consecutive_extractor<true>(matrix, !row, start, length, opt);
+            auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(primary);
             auto my_counts = (t > 0 ? nz_counts[t - 1].data() : output);
 
             for (Index_ x = 0; x < length; ++x) {
@@ -83,7 +84,7 @@ void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_,
     } else {
         parallelize([&](int t, Index_ start, Index_ length) -> void {
             auto wrk = consecutive_extractor<false>(matrix, !row, start, length);
-            std::vector<Value_> buffer_v(primary);
+            auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(primary);
             auto my_counts = (t > 0 ? nz_counts[t - 1].data() : output);
 
             for (Index_ x = 0; x < length; ++x) {
@@ -118,9 +119,9 @@ void fill_compressed_sparse_matrix_consistent(
         opt.sparse_ordered_index = false;
 
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-            std::vector<InputValue_> buffer_v(secondary);
-            std::vector<InputIndex_> buffer_i(secondary);
             auto wrk = consecutive_extractor<true>(matrix, row, start, length, opt);
+            auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
+            auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(secondary);
 
             for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                 // Resist the urge to `fetch()` straight into 'output_v'
@@ -172,9 +173,9 @@ void fill_compressed_sparse_matrix_inconsistent(
         opt.sparse_ordered_index = false;
 
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-            std::vector<InputValue_> buffer_v(length);
-            std::vector<InputIndex_> buffer_i(length);
             auto wrk = consecutive_extractor<true>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length, opt);
+            auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(length);
+            auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(length);
             std::vector<Pointer_> offset_copy(pointers + start, pointers + start + length);
 
             for (InputIndex_ x = 0; x < secondary; ++x) {
@@ -190,8 +191,8 @@ void fill_compressed_sparse_matrix_inconsistent(
 
     } else {
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-            std::vector<InputValue_> buffer_v(length);
             auto wrk = consecutive_extractor<false>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length);
+            auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(length);
             std::vector<Pointer_> offset_copy(pointers + start, pointers + start + length);
 
             for (InputIndex_ x = 0; x < secondary; ++x) {
