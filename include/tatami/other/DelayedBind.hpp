@@ -441,7 +441,7 @@ void initialize_perp_oracular(
                     return;
                 }
                 consecutive = false;
-                predictions.resize(number);
+                resize_container_to_Index_size(predictions, number);
                 std::iota(predictions.begin(), predictions.end(), start);
             }
 
@@ -450,7 +450,7 @@ void initialize_perp_oracular(
     };
 
     auto nmats = cumulative.size() - 1;
-    auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this is okay.
+    auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this call is legal.
     for (decltype(ntotal) i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         Index_ choice = mapping[prediction];
@@ -484,7 +484,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        my_exts.resize(cast_Index_to_container_size<decltype(my_exts)>(matrices.size()));
+        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an I ndex_, so this call is allowed.
         initialize_perp_oracular(
             cumulative,
             mapping,
@@ -521,7 +521,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        my_exts.resize(cast_Index_to_container_size<decltype(my_exts)>(matrices.size()));
+        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is legal.
         initialize_perp_oracular(
             cumulative,
             mapping,

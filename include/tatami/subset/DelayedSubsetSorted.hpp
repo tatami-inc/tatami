@@ -158,9 +158,8 @@ SparseParallelResults<Index_> format_sparse_parallel(const SubsetStorage_& indic
         // The 'offset' defines the lower bound that must be subtracted from the array indices to get an index into 'start' or 'length'.
         output.expansion.offset = first;
         Index_ allocation = indices[to_index(len - 1)] - output.expansion.offset + 1; // fits in an Index_ as it should be no greater than the input matrix's dimension extent.
-        can_cast_Index_to_container_size<decltype(output.expansion.start)>(allocation);
-        output.expansion.start.resize(allocation);
-        output.expansion.length.resize(allocation);
+        resize_container_to_Index_size(output.expansion.start, allocation);
+        output.expansion.length.resize(output.expansion.start.size());
 
         Index_ lookup = 0;
         output.expansion.start[0] = 0;

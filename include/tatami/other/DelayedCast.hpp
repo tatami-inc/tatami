@@ -81,8 +81,7 @@ public:
 private:
     void allocate(IndexIn_ n) {
         if constexpr(!no_op) {
-            can_cast_Index_to_container_size<decltype(my_buffer)>(n);
-            my_buffer.resize(n);
+            resize_container_to_Index_size(my_buffer, n);
         }
     }
 
@@ -125,14 +124,12 @@ private:
     void allocate(IndexIn_ n, const Options& opt) {
         if constexpr(!no_op_value) {
             if (opt.sparse_extract_value) {
-                can_cast_Index_to_container_size<decltype(my_vbuffer)>(n);
-                my_vbuffer.resize(n);
+                resize_container_to_Index_size(my_vbuffer, n);
             }
         }
         if constexpr(!no_op_index) {
             if (opt.sparse_extract_index) {
-                can_cast_Index_to_container_size<decltype(my_ibuffer)>(n);
-                my_ibuffer.resize(n);
+                resize_container_to_Index_size(my_ibuffer, n);
             }
         }
     }

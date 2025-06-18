@@ -79,8 +79,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
         }, primary, options.num_threads);
 
     } else if (matrix.is_sparse()) {
-        auto total_size = sanisizer::product_unsafe<std::size_t>(primary, secondary);
-        std::fill_n(store, total_size, 0);
+        std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
 
         // We iterate over the input matrix's preferred dimension but split
         // into threads along the non-preferred dimension. This aims to
@@ -116,9 +115,9 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
             // transpose by blocks along the secondary dimension.
             constexpr InputIndex_ block_size = 16;
             InputIndex_ alloc = std::min(primary, block_size);
-            auto bigbuffer = sanisizer::create<std::vector<InputValue_> >(sanisizer::product_unsafe<std::size_t>(length, alloc));
-            auto ptrs = create_container_of_Index_size<std::vector<const InputValue_*> >(alloc);
-            auto buf_ptrs = create_container_of_Index_size<std::vector<InputValue_*> >(alloc);
+            std::vector<InputValue_> bigbuffer(sanisizer::product_unsafe<typename std::vector<InputValue_>::size_type>(length, alloc));
+            std::vector<const InputValue_*> ptrs(alloc); // no need for protection here, we know that alloc <= 16.
+            std::vector<InputValue_*> buf_ptrs(alloc);
             for (decltype(alloc) i = 0; i < alloc; ++i) {
                 buf_ptrs[i] = bigbuffer.data() + sanisizer::product_unsafe<std::size_t>(length, i);
             }
@@ -174,7 +173,8 @@ template <
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_major, const ConvertToDenseOptions& options) {
     auto NR = matrix.nrow();
     auto NC = matrix.ncol();
-    auto buffer = sanisizer::create<std::vector<StoredValue_> >(sanisizer::product<std::size_t>(NR, NC)); // Make sure the size fits in a size_t for pointer arithmetic, just in case size_type != size_t.
+    auto buffer_size = sanisizer::product<std::size_t>(NR, NC); // Make sure the product fits in a size_t for array access via a pointer, just in case size_type != size_t.
+    auto buffer = sanisizer::create<std::vector<StoredValue_> >(buffer_size);
     convert_to_dense(matrix, row_major, buffer.data(), options);
     return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row_major));
 }
