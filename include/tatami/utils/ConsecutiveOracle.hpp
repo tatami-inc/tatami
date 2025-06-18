@@ -5,8 +5,6 @@
 
 #include "sanisizer/sanisizer.hpp"
 
-#include <cstddef>
-
 /**
  * @file ConsecutiveOracle.hpp
  *
