@@ -1,11 +1,12 @@
 #ifndef TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
 #define TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
 
+#include "../base/Matrix.hpp"
+#include "../utils/integer_comparisons.hpp"
+
 #include <vector>
 #include <type_traits>
 #include <algorithm>
-
-#include "../base/Matrix.hpp"
 
 namespace tatami {
 
@@ -54,7 +55,10 @@ private:
 public:
     template<class PrimaryFunction_>
     SecondaryExtractionCache(IndexServer_ index_server, Index_ max_index, Index_ primary_length, PrimaryFunction_ to_primary) :
-        my_indices_server(std::move(index_server)), my_max_index(max_index), my_cached_pointers(primary_length), my_cached_indices(primary_length) 
+        my_indices_server(std::move(index_server)),
+        my_max_index(max_index),
+        my_cached_pointers(cast_Index_to_container_size<decltype(my_cached_pointers)>(primary_length)),
+        my_cached_indices(cast_Index_to_container_size<decltype(my_cached_indices)>(primary_length))
     {
         for (Index_ p = 0; p < primary_length; ++p) {
             auto primary = to_primary(p);

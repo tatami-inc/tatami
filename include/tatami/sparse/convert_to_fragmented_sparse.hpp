@@ -4,6 +4,7 @@
 #include "FragmentedSparseMatrix.hpp"
 #include "../utils/parallelize.hpp"
 #include "../utils/consecutive_extractor.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <memory>
 #include <vector>
@@ -32,7 +33,10 @@ struct FragmentedSparseContents {
     /**
      * @cond
      */
-    FragmentedSparseContents(std::size_t n) : value(n), index(n) {}
+    FragmentedSparseContents(Index_ n) :
+        value(cast_Index_to_container_size<decltype(value)>(n)),
+        index(cast_Index_to_container_size<decltype(index)>(n))
+    {}
     /**
      * @endcond
      */
@@ -91,9 +95,9 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
     if (row == matrix.prefer_rows()) {
         if (matrix.is_sparse()) {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-                std::vector<InputValue_> buffer_v(secondary);
-                std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<true>(matrix, row, start, length);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
+                auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(secondary);
 
                 for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
@@ -113,8 +117,8 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
         } else {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-                std::vector<InputValue_> buffer_v(secondary);
                 auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
@@ -141,9 +145,9 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
         if (matrix.is_sparse()) {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-                std::vector<InputValue_> buffer_v(primary);
-                std::vector<InputIndex_> buffer_i(primary);
                 auto wrk = consecutive_extractor<true>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
+                auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
@@ -159,7 +163,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
         } else {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
                 auto wrk = consecutive_extractor<false>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length);
-                std::vector<InputValue_> buffer_v(length);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
                     auto ptr = wrk->fetch(buffer_v.data());

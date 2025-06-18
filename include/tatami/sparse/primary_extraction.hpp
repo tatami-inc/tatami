@@ -2,6 +2,7 @@
 #define TATAMI_SPARSE_PRIMARY_EXTRACTION_HPP
 
 #include "../utils/has_data.hpp"
+#include "../utils/integer_comparisons.hpp"
 
 #include <algorithm>
 
@@ -44,7 +45,7 @@ public:
         if (!subset.empty()) {
             my_offset = subset.front();
             my_lastp1 = subset.back() + 1;
-            my_present.resize(my_lastp1 - my_offset);
+            my_present.resize(cast_Index_to_container_size<decltype(my_present)>(my_lastp1 - my_offset));
 
             // Starting off at 1 to ensure that 0 is still a marker for
             // absence. It should be fine as subset.size() should fit inside
@@ -92,8 +93,8 @@ public:
     RetrievePrimarySubsetSparse(const std::vector<Index_>& subset, Index_ extent) : my_extent(extent) {
         if (!subset.empty()) {
             my_offset = subset.front();
-            my_lastp1 = subset.back() + 1;
-            my_present.resize(my_lastp1 - my_offset);
+            my_lastp1 = subset.back() + 1; // +1 is safe as Index_ can hold the dimension extent, which is greater than all subset indices.
+            my_present.resize(cast_Index_to_container_size<decltype(my_present)>(my_lastp1 - my_offset));
 
             // Unlike the dense case, this is a simple present/absent signal,
             // as we don't need to map each structural non-zero back onto its 

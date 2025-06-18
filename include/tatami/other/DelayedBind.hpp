@@ -105,9 +105,9 @@ public:
         const Options& opt)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_count)>(nmats); // 'nmats' will fit into an Index_ (see reasoning in DelayedBind), so we can use it in can_cast_to_container_size().
+        can_cast_Index_to_container_size<decltype(my_count)>(nmats); // 'nmats' will fit into an Index_ (see reasoning in DelayedBind), so we can use it in can_cast_Index_to_container_size().
         my_exts.reserve(nmats);
-        can_cast_to_container_size<decltype(my_count)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
         my_count.reserve(nmats);
 
         for (const auto& m : matrices) {
@@ -127,9 +127,9 @@ public:
         const Options& opt)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
-        can_cast_to_container_size<decltype(my_count)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
         my_count.reserve(nmats);
 
         initialize_parallel_block(
@@ -154,9 +154,9 @@ public:
         const Options& opt)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
-        can_cast_to_container_size<decltype(my_count)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
         my_count.reserve(nmats);
 
         initialize_parallel_index(
@@ -206,7 +206,7 @@ public:
         my_needs_index(opt.sparse_extract_index)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
 
         for (const auto& m : matrices) {
@@ -261,7 +261,7 @@ public:
         my_needs_index(opt.sparse_extract_index) 
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
 
         my_start_matrix = initialize_parallel_block(
@@ -322,9 +322,9 @@ public:
         my_needs_index(opt.sparse_extract_index) 
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
-        can_cast_to_container_size<decltype(my_which_matrix)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_which_matrix)>(nmats);
         my_which_matrix.reserve(nmats);
 
         initialize_parallel_index(
@@ -388,7 +388,7 @@ public:
         my_mapping(mapping)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
 
         for (const auto& m : matrices) {
@@ -421,7 +421,7 @@ public:
         my_mapping(mapping)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.reserve(nmats);
 
         for (const auto& m : matrices) {
@@ -513,7 +513,7 @@ public:
         const Args_& ... args)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.resize(nmats);
 
         initialize_perp_oracular(
@@ -553,7 +553,7 @@ public:
         const Args_& ... args)
     {
         auto nmats = matrices.size();
-        can_cast_to_container_size<decltype(my_exts)>(nmats);
+        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
         my_exts.resize(nmats);
 
         initialize_perp_oracular(
@@ -644,7 +644,7 @@ public:
         // number of rows/columns of the combined matrix (as we've removed all
         // non-contributing submatrices) and thus should fit into 'Index_';
         // hence, using Index_ for the mapping should not overflow.
-        can_cast_to_container_size<decltype(my_mapping)>(my_cumulative.back());
+        can_cast_Index_to_container_size<decltype(my_mapping)>(my_cumulative.back());
         my_mapping.reserve(my_cumulative.back());
         for (decltype(nmats) i = 0; i < nmats; ++i) {
             my_mapping.insert(my_mapping.end(), (my_by_row ? my_matrices[i]->nrow() : my_matrices[i]->ncol()), i);
