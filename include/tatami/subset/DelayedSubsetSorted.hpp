@@ -198,8 +198,7 @@ public:
         opt.sparse_extract_index = true; // must extract the indices for proper my_expansion.
         if (!my_needs_index) {
             // Need a holding space for indices if 'ibuffer' is not supplied.
-            // Note that processed.collapsed.size() should fit in an Index_, hence the cast is safe.
-            my_holding_ibuffer.resize(cast_Index_to_container_size<decltype(my_holding_ibuffer)>(processed.collapsed.size()));
+            resize_container_to_Index_size(my_holding_ibuffer, processed.collapsed.size()); // processed.collapsed.size() should fit in an Index_, hence the cast is safe.
         }
 
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);

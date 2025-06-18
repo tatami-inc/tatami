@@ -42,7 +42,7 @@ DenseParallelResults<Index_> format_dense_parallel_base(const SubsetStorage_& su
     DenseParallelResults<Index_> output;
     if (collected.size()) {
         output.collapsed.reserve(len);
-        output.reindex.resize(cast_Index_to_container_size<decltype(output.reindex)>(len));
+        resize_container_to_Index_size(output.reindex, len);
 
         Index_ last = collected.front().first;
         output.collapsed.push_back(last);
@@ -87,8 +87,7 @@ public:
 
 private:
     void initialize(const Matrix<Value_, Index_>* matrix, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        // Note that processed.collapsed.size() should fit in an Index_, so this cast is safe.
-        my_holding_vbuffer.resize(cast_Index_to_container_size<decltype(my_holding_vbuffer)>(processed.collapsed.size()));
+        resize_container_to_Index_size(my_holding_vbuffer, processed.collapsed.size()); // processed.collapsed.size() should fit in an Index_, so this cast is safe.
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);
         my_reindex.swap(processed.reindex);
     }
@@ -121,7 +120,7 @@ struct SparseParallelReindex {
     // Let 'z' denote any integer in '[x, y)'.
     // In which case, 'indices[pool_indices[z]]' is equal to 'i'.
     // The general idea is that 'pool_indices[z]' can be used to fill the 'SparseRange::index' on output.
-    std::vector<Index_> pool_ptrs; // this can be Index_ as the length of 'pool_indices' is no greater than the dimension extent.
+    std::vector<Index_> pool_ptrs; // this can be Index_ as the length of 'pool_indices' is no greater than the output dimension extent.
     std::vector<Index_> pool_indices;
     Index_ offset;
 };
@@ -226,7 +225,7 @@ private:
         // We need to extract indices for sorting and expansion purposes, even if they weren't actually requested.
         opt.sparse_extract_index = true;
         if (!my_needs_index) {
-            my_holding_ibuffer.resize(cast_Index_to_container_size<decltype(my_holding_ibuffer)>(num_collapsed));
+            resize_container_to_Index_size(my_holding_ibuffer, num_collapsed);
         }
 
         my_ext = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);

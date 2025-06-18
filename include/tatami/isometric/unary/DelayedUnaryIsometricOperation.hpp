@@ -363,7 +363,7 @@ public:
         // full extent of the dimension.
         if (my_extent) {
             my_remapping_offset = indices.front();
-            my_remapping.resize(cast_Index_to_container_size<decltype(my_remapping)>(indices.back() - my_remapping_offset + 1));
+            resize_container_to_Index_size(my_remapping, indices.back() - my_remapping_offset + 1);
             for (Index_ i = 0; i < my_extent; ++i) {
                 my_remapping[indices[i] - my_remapping_offset] = i;
             }

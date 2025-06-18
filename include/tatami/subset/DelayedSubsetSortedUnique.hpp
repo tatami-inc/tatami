@@ -181,7 +181,7 @@ public:
         }
 
         Index_ mapping_dim = my_by_row ? my_matrix->nrow() : my_matrix->ncol();
-        my_mapping_single.resize(cast_Index_to_container_size<decltype(my_mapping_single)>(mapping_dim));
+        resize_container_to_Index_size(my_mapping_single, mapping_dim);
         for (Index_ i = 0, end = my_subset.size(); i < end; ++i) {
             my_mapping_single[my_subset[i]] = i;
         }
