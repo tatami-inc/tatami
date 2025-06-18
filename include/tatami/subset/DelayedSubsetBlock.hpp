@@ -7,7 +7,6 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
-#include <cstddef>
 
 /**
  * @file DelayedSubsetBlock.hpp

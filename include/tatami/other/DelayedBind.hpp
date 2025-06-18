@@ -104,12 +104,8 @@ public:
         MaybeOracle<oracle_, Index_> oracle,
         const Options& opt)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_count)>(nmats); // 'nmats' will fit into an Index_ (see reasoning in DelayedBind), so we can use it in can_cast_Index_to_container_size().
-        my_exts.reserve(nmats);
-        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
-        my_count.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
+        my_count.reserve(matrices.size());
         for (const auto& m : matrices) {
             my_count.emplace_back(row ? m->ncol() : m->nrow());
             my_exts.emplace_back(new_extractor<false, oracle_>(m.get(), row, oracle, opt));
@@ -126,12 +122,8 @@ public:
         Index_ block_length, 
         const Options& opt)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
-        my_count.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
+        my_count.reserve(matrices.size());
         initialize_parallel_block(
             cumulative, 
             mapping,
@@ -153,12 +145,8 @@ public:
         VectorPtr<Index_> indices_ptr,
         const Options& opt)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-        can_cast_Index_to_container_size<decltype(my_count)>(nmats);
-        my_count.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
+        my_count.reserve(matrices.size());
         initialize_parallel_index(
             cumulative, 
             mapping,
@@ -205,10 +193,7 @@ public:
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
         for (const auto& m : matrices) {
             my_exts.emplace_back(new_extractor<true, oracle_>(m.get(), row, oracle, opt));
         }
@@ -260,10 +245,7 @@ public:
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index) 
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
         my_start_matrix = initialize_parallel_block(
             my_cumulative, 
             mapping,
@@ -321,12 +303,8 @@ public:
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index) 
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-        can_cast_Index_to_container_size<decltype(my_which_matrix)>(nmats);
-        my_which_matrix.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
+        my_which_matrix.reserve(matrices.size());
         initialize_parallel_index(
             my_cumulative, 
             mapping,
@@ -387,10 +365,7 @@ public:
         my_cumulative(cumulative),
         my_mapping(mapping)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
         for (const auto& m : matrices) {
             my_exts.emplace_back(m->dense(row, args...));
         }
@@ -420,10 +395,7 @@ public:
         my_cumulative(cumulative),
         my_mapping(mapping)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.reserve(nmats);
-
+        my_exts.reserve(matrices.size());
         for (const auto& m : matrices) {
             my_exts.emplace_back(m->sparse(row, args...));
         }
@@ -478,7 +450,7 @@ void initialize_perp_oracular(
     };
 
     auto nmats = cumulative.size() - 1;
-    std::vector<Predictions> predictions(nmats);
+    auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this is okay.
     for (decltype(ntotal) i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         Index_ choice = mapping[prediction];
@@ -512,10 +484,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.resize(nmats);
-
+        my_exts.resize(cast_Index_to_container_size<decltype(my_exts)>(matrices.size()));
         initialize_perp_oracular(
             cumulative,
             mapping,
@@ -552,10 +521,7 @@ public:
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args)
     {
-        auto nmats = matrices.size();
-        can_cast_Index_to_container_size<decltype(my_exts)>(nmats);
-        my_exts.resize(nmats);
-
+        my_exts.resize(cast_Index_to_container_size<decltype(my_exts)>(matrices.size()));
         initialize_perp_oracular(
             cumulative,
             mapping,
@@ -644,7 +610,6 @@ public:
         // number of rows/columns of the combined matrix (as we've removed all
         // non-contributing submatrices) and thus should fit into 'Index_';
         // hence, using Index_ for the mapping should not overflow.
-        can_cast_Index_to_container_size<decltype(my_mapping)>(my_cumulative.back());
         my_mapping.reserve(my_cumulative.back());
         for (decltype(nmats) i = 0; i < nmats; ++i) {
             my_mapping.insert(my_mapping.end(), (my_by_row ? my_matrices[i]->nrow() : my_matrices[i]->ncol()), i);

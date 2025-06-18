@@ -7,7 +7,6 @@
 #include <vector>
 #include <algorithm>
 #include <type_traits>
-#include <cstddef>
 
 namespace tatami {
 

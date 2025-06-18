@@ -2,9 +2,12 @@
 #define TATAMI_DELAYED_SUBSET_HPP
 
 #include "utils.hpp"
+#include "../utils/integer_comparisons.hpp"
+
 #include <algorithm>
 #include <memory>
-#include <cstddef>
+
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file DelayedSubset.hpp
@@ -39,7 +42,7 @@ DenseParallelResults<Index_> format_dense_parallel_base(const SubsetStorage_& su
     DenseParallelResults<Index_> output;
     if (collected.size()) {
         output.collapsed.reserve(len);
-        output.reindex.resize(len);
+        output.reindex.resize(cast_Index_to_container_size<decltype(output.reindex)>(len));
 
         Index_ last = collected.front().first;
         output.collapsed.push_back(last);
@@ -84,7 +87,8 @@ public:
 
 private:
     void initialize(const Matrix<Value_, Index_>* matrix, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        my_holding_vbuffer.resize(processed.collapsed.size());
+        // Note that processed.collapsed.size() should fit in an Index_, so this cast is safe.
+        my_holding_vbuffer.resize(cast_Index_to_container_size<decltype(my_holding_vbuffer)>(processed.collapsed.size()));
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);
         my_reindex.swap(processed.reindex);
     }
@@ -117,7 +121,7 @@ struct SparseParallelReindex {
     // Let 'z' denote any integer in '[x, y)'.
     // In which case, 'indices[pool_indices[z]]' is equal to 'i'.
     // The general idea is that 'pool_indices[z]' can be used to fill the 'SparseRange::index' on output.
-    std::vector<Index_> pool_ptrs;
+    std::vector<Index_> pool_ptrs; // this can be Index_ as the length of 'pool_indices' is no greater than the dimension extent.
     std::vector<Index_> pool_indices;
     Index_ offset;
 };
@@ -145,18 +149,15 @@ SparseParallelResults<Index_> format_sparse_parallel_base(const SubsetStorage_& 
         output.reindex.pool_indices.reserve(len);
         Index_ first = collected.front().first;
 
-        // 'pool_ptrs' is a vector that enables look-up according to the
-        // indices of the underlying array. to avoid the need to allocate a
-        // vector of length equal to the underlying array's dimension, we only
-        // consider the extremes of 'indices'; we allocate 'pool_ptrs' to have
-        // length equal to the range of 'indices' (plus 1, as we're storing
-        // cumulative pointers). 'offset' defines the lower bound that must be
-        // subtracted from the array indices to get an index into 'pool_ptrs'.
+        // 'pool_ptrs' is a vector that enables look-up according to the indices of the underlying array.
+        // To avoid the need to allocate a vector of length equal to the underlying array's dimension, we only consider the extremes of 'indices'.
+        // We allocate 'pool_ptrs' to have length equal to the range of 'indices'... plus 1, as we're storing cumulative pointers.
+        // 'offset' defines the lower bound that must be subtracted from the array indices to get an index into 'pool_ptrs'.
         output.reindex.offset = first;
-        auto allocation = collected.back().first - output.reindex.offset + 1;
-        output.reindex.pool_ptrs.resize(allocation + 1);
+        Index_ allocation = collected.back().first - output.reindex.offset + 1;
+        output.reindex.pool_ptrs.resize(sanisizer::sum<decltype(output.reindex.pool_ptrs.size())>(allocation, 1));
 
-        Index_ counter = 0;
+        Index_ counter = 0; // this can never be larger than 'len', so using Index_ will not lead to overflows.
         output.reindex.pool_ptrs[counter] = 0; 
         ++counter;
         output.reindex.pool_indices.push_back(collected.front().second);
@@ -169,7 +170,7 @@ SparseParallelResults<Index_> format_sparse_parallel_base(const SubsetStorage_& 
             auto current = pp.first;
             if (current == last) {
                 output.reindex.pool_indices.push_back(pp.second);
-                ++(output.reindex.pool_ptrs[counter]);
+                ++(output.reindex.pool_ptrs[counter]); // contents of pool_ptrs will never be greater than len, so this won't overflow.
                 continue;
             }
 
@@ -210,8 +211,9 @@ public:
     }
 
 private:
-    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, std::size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt) {
-        my_shift = extent - processed.collapsed.size();
+    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, Index_ extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt) {
+        Index_ num_collapsed = processed.collapsed.size(); // number of unique subset indices should be no greater than the extent.
+        my_shift = extent - num_collapsed;
 
         my_needs_value = opt.sparse_extract_value;
         my_needs_index = opt.sparse_extract_index;
@@ -221,11 +223,10 @@ private:
             my_sortspace.reserve(extent);
         } 
 
-        // We need to extract indices for sorting and expansion purposes, even
-        // if they weren't actually requested.
+        // We need to extract indices for sorting and expansion purposes, even if they weren't actually requested.
         opt.sparse_extract_index = true;
         if (!my_needs_index) {
-            my_holding_ibuffer.resize(processed.collapsed.size());
+            my_holding_ibuffer.resize(cast_Index_to_container_size<decltype(my_holding_ibuffer)>(num_collapsed));
         }
 
         my_ext = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
@@ -360,7 +361,7 @@ private:
     SparseParallelReindex<Index_> my_reindex;
     std::vector<std::pair<Index_, Value_> > my_sortspace;
     std::vector<Index_> my_holding_ibuffer;
-    std::size_t my_shift;
+    Index_ my_shift;
 };
 
 }
@@ -390,7 +391,10 @@ public:
      * If false, the subset is applied to the columns.
      */
     DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool by_row) : 
-        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_by_row(by_row) {}
+        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_by_row(by_row)
+    {
+        sanisizer::can_cast<Index_>(my_subset.size());
+    }
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
