@@ -407,7 +407,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Number of rows. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of rows.</dd></dl>
+<p>It is expected that the number of rows can be represented by a <code>std::size_t</code> without overflow, even if <code>Index_</code> is of a larger size. This is implied by the fact that <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code> and friends accept a pointer for their buffer arguments; the length of the array referenced by these pointers (possibly equal to the number of rows) must fit in a <code>std::size_t</code>. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -437,7 +438,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Number of columns. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of columns.</dd></dl>
+<p>It is expected that the number of columns can be represented by a <code>std::size_t</code> without overflow, even if <code>Index_</code> is of a larger size. This is implied by the fact that <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code> and friends accept a pointer for their buffer arguments; the length of the array referenced by these pointers (possibly equal to the number of rows) must fit in a <code>std::size_t</code>. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 

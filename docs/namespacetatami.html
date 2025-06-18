@@ -717,9 +717,6 @@ Functions</h2></td></tr>
 <tr class="memitem:ab52a806e3f13a68741a9e1f77dccab14" id="r_ab52a806e3f13a68741a9e1f77dccab14"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Size_ &gt; </td></tr>
 <tr class="memitem:ab52a806e3f13a68741a9e1f77dccab14"><td class="memTemplItemLeft" align="right" valign="top">Value_ *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab52a806e3f13a68741a9e1f77dccab14">copy_n</a> (const Value_ *input, Size_ n, Value_ *output)</td></tr>
 <tr class="separator:ab52a806e3f13a68741a9e1f77dccab14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a0814791f83eae7180c58fd82485a63" id="r_a7a0814791f83eae7180c58fd82485a63"><td class="memTemplParams" colspan="2">template&lt;typename Left_ , typename Right_ &gt; </td></tr>
-<tr class="memitem:a7a0814791f83eae7180c58fd82485a63"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7a0814791f83eae7180c58fd82485a63">safe_non_negative_equal</a> (Left_ l, Right_ r)</td></tr>
-<tr class="separator:a7a0814791f83eae7180c58fd82485a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044" id="r_ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplParams" colspan="2">template&lt;bool sparse_, bool oracle_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &amp;matrix, bool row, <a class="el" href="#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle</a>&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:ac1514cda61f96e93a9cbc656f742a044"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3619,58 +3616,19 @@ template&lt;typename Value_ , typename Size_ &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of value being copied. </td></tr>
-    <tr><td class="paramname">Size_</td><td>Type for the array length.</td></tr>
+    <tr><td class="paramname">Size_</td><td>Integer type of the array length.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to a source array of size <code>n</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Length of the array. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Length of the array. This should fit into a <code>std::size_t</code>, even if <code>Size_</code> is of a larger type. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to a destination array of size <code>n</code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Values are copied from <code>input</code> to <code>output</code>, and <code>output</code> is returned. This is a no-op if <code>input == output</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a7a0814791f83eae7180c58fd82485a63" name="a7a0814791f83eae7180c58fd82485a63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a0814791f83eae7180c58fd82485a63">&#9670;&#160;</a></span>safe_non_negative_equal()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Left_ , typename Right_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool tatami::safe_non_negative_equal </td>
-          <td>(</td>
-          <td class="paramtype">Left_</td>          <td class="paramname"><span class="paramname"><em>l</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Right_</td>          <td class="paramname"><span class="paramname"><em>r</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>This is effectively a copy of C++20's <code>std::cmp_equal()</code>, but we aren't guaranteed access to C++20 when compiling <b>tatami</b>.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Left_</td><td>Integer type. </td></tr>
-    <tr><td class="paramname">Right_</td><td>Another integer type. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">l</td><td>Integer value. </td></tr>
-    <tr><td class="paramname">r</td><td>Integer value. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the two integer values are non-negative and equal. </dd></dl>
 
 </div>
 </div>

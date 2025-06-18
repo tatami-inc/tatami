@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="compare__utils_8hpp.html">../compare_utils.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="integer__comparisons_8hpp.html">../../utils/integer_comparisons.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;../../utils/integer_comparisons.hpp&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="unary_2helper__interface_8hpp.html">helper_interface.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
@@ -281,7 +281,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        my_by_row(by_row) </div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    {</div>
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keyword">auto</span> ncompared = my_compared.size();</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordflow">if</span> (!<a class="code hl_function" href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">safe_non_negative_equal</a>(ncompared, my_substitute.size())) {</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordflow">if</span> (!safe_non_negative_equal(ncompared, my_substitute.size())) {</div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>            throw std::runtime_error(<span class="stringliteral">&quot;&#39;compared&#39; and &#39;substitute&#39; should have the same length&quot;</span>);</div>
 <div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        }</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        for (<span class="keyword">decltype</span>(ncompared) i = 0; i &lt; ncompared; ++i) {</div>
@@ -653,9 +653,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricSubstituteVectorHelper_html_af901d8b3dbab69df806126a5b83441c3"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html#af901d8b3dbab69df806126a5b83441c3">tatami::DelayedUnaryIsometricSubstituteVectorHelper::zero_depends_on_column</a></div><div class="ttdeci">bool zero_depends_on_column() const</div><div class="ttdef"><b>Definition</b> substitute_helpers.hpp:319</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricSubstituteVectorHelper_html_afa0fc7e79721f31184073bb0ee00ae62"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricSubstituteVectorHelper.html#afa0fc7e79721f31184073bb0ee00ae62">tatami::DelayedUnaryIsometricSubstituteVectorHelper::non_zero_depends_on_column</a></div><div class="ttdeci">bool non_zero_depends_on_column() const</div><div class="ttdef"><b>Definition</b> substitute_helpers.hpp:327</div></div>
 <div class="ttc" id="acompare__utils_8hpp_html"><div class="ttname"><a href="compare__utils_8hpp.html">compare_utils.hpp</a></div><div class="ttdoc">Utilities for delayed comparison operations.</div></div>
-<div class="ttc" id="ainteger__comparisons_8hpp_html"><div class="ttname"><a href="integer__comparisons_8hpp.html">integer_comparisons.hpp</a></div><div class="ttdoc">Sign-aware integer comparisons.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a7a0814791f83eae7180c58fd82485a63"><div class="ttname"><a href="namespacetatami.html#a7a0814791f83eae7180c58fd82485a63">tatami::safe_non_negative_equal</a></div><div class="ttdeci">bool safe_non_negative_equal(Left_ l, Right_ r)</div><div class="ttdef"><b>Definition</b> integer_comparisons.hpp:23</div></div>
 <div class="ttc" id="aunary_2helper__interface_8hpp_html"><div class="ttname"><a href="unary_2helper__interface_8hpp.html">helper_interface.hpp</a></div><div class="ttdoc">Interface for tatami::DelayedUnaryIsometricOperation helpers.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

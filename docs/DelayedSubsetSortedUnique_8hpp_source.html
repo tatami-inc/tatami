@@ -247,8 +247,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        }</div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        Index_ mapping_dim = my_by_row ? my_matrix-&gt;nrow() : my_matrix-&gt;ncol();</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        my_mapping_single.resize(mapping_dim);</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        for (Index_ i = 0, end = my_subset.size(); i &lt; end; ++i) {</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        resize_container_to_Index_size(my_mapping_single, mapping_dim);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keywordflow">for</span> (Index_ i = 0, end = my_subset.size(); i &lt; end; ++i) {</div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            my_mapping_single[my_subset[i]] = i;</div>
 <div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        }</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    }</div>

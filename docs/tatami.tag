@@ -373,12 +373,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>integer_comparisons.hpp</name>
-    <path>tatami/utils/</path>
-    <filename>integer__comparisons_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>new_extractor.hpp</name>
     <path>tatami/utils/</path>
     <filename>new__extractor_8hpp.html</filename>
@@ -8485,13 +8479,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab52a806e3f13a68741a9e1f77dccab14</anchor>
       <arglist>(const Value_ *input, Size_ n, Value_ *output)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>safe_non_negative_equal</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a7a0814791f83eae7180c58fd82485a63</anchor>
-      <arglist>(Left_ l, Right_ r)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
