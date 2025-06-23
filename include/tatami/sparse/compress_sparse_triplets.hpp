@@ -1,7 +1,7 @@
 #ifndef TATAMI_COMPRESS_SPARSE_TRIPLETS_H
 #define TATAMI_COMPRESS_SPARSE_TRIPLETS_H
 
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 
 #include <vector>
 #include <algorithm>

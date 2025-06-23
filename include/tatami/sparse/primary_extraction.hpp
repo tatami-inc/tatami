@@ -2,7 +2,7 @@
 #define TATAMI_SPARSE_PRIMARY_EXTRACTION_HPP
 
 #include "../utils/has_data.hpp"
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 
 #include <algorithm>
 

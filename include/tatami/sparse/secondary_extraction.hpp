@@ -2,7 +2,7 @@
 #define TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
 
 #include "../base/Matrix.hpp"
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 
 #include <vector>
 #include <type_traits>

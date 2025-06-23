@@ -4,7 +4,7 @@
 #include "../base/Matrix.hpp"
 #include "SparsifiedWrapper.hpp"
 #include "../utils/has_data.hpp"
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 
 #include <vector>

@@ -5,7 +5,7 @@
 #include "convert_to_fragmented_sparse.hpp"
 #include "../utils/parallelize.hpp"
 #include "../utils/consecutive_extractor.hpp"
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 
 #include <memory>
 #include <vector>

@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_SUBSET_HPP
 
 #include "utils.hpp"
-#include "../utils/integer_comparisons.hpp"
+#include "../utils/Index_to_container.hpp"
 
 #include <algorithm>
 #include <memory>
