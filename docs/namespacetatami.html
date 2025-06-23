@@ -717,6 +717,18 @@ Functions</h2></td></tr>
 <tr class="memitem:ab52a806e3f13a68741a9e1f77dccab14" id="r_ab52a806e3f13a68741a9e1f77dccab14"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Size_ &gt; </td></tr>
 <tr class="memitem:ab52a806e3f13a68741a9e1f77dccab14"><td class="memTemplItemLeft" align="right" valign="top">Value_ *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab52a806e3f13a68741a9e1f77dccab14">copy_n</a> (const Value_ *input, Size_ n, Value_ *output)</td></tr>
 <tr class="separator:ab52a806e3f13a68741a9e1f77dccab14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83f279d4c20987ff3be049f9ffc922b9" id="r_a83f279d4c20987ff3be049f9ffc922b9"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a83f279d4c20987ff3be049f9ffc922b9"><td class="memTemplItemLeft" align="right" valign="top">Index_&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a83f279d4c20987ff3be049f9ffc922b9">can_cast_Index_to_container_size</a> (Index_ x)</td></tr>
+<tr class="separator:a83f279d4c20987ff3be049f9ffc922b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fbc87d33e2177ca494bb096ec72c308" id="r_a4fbc87d33e2177ca494bb096ec72c308"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a4fbc87d33e2177ca494bb096ec72c308"><td class="memTemplItemLeft" align="right" valign="top">decltype(std::declval&lt; Container_ &gt;().size())&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4fbc87d33e2177ca494bb096ec72c308">cast_Index_to_container_size</a> (Index_ x)</td></tr>
+<tr class="separator:a4fbc87d33e2177ca494bb096ec72c308"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea335e69cc68e2ef5e5c48230a24d4b" id="r_a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memTemplItemLeft" align="right" valign="top">Container_&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0ea335e69cc68e2ef5e5c48230a24d4b">create_container_of_Index_size</a> (Index_ x)</td></tr>
+<tr class="separator:a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a690c131a23026fa5d0eede1a0f026263" id="r_a690c131a23026fa5d0eede1a0f026263"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a690c131a23026fa5d0eede1a0f026263"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a> (Container_ &amp;container, Index_ x)</td></tr>
+<tr class="separator:a690c131a23026fa5d0eede1a0f026263"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044" id="r_ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplParams" colspan="2">template&lt;bool sparse_, bool oracle_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &amp;matrix, bool row, <a class="el" href="#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle</a>&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:ac1514cda61f96e93a9cbc656f742a044"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3629,6 +3641,142 @@ template&lt;typename Value_ , typename Size_ &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Values are copied from <code>input</code> to <code>output</code>, and <code>output</code> is returned. This is a no-op if <code>input == output</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a83f279d4c20987ff3be049f9ffc922b9" name="a83f279d4c20987ff3be049f9ffc922b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83f279d4c20987ff3be049f9ffc922b9">&#9670;&#160;</a></span>can_cast_Index_to_container_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Container_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Index_ tatami::can_cast_Index_to_container_size </td>
+          <td>(</td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Size of the container as an <code>Index_</code>, typically the dimension extents. It is assumed that <code>x</code> can be represented by a <code>std::size_t</code>, even if <code>Index_</code> is a larger type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>x</code> as its input type. An error is raised if casting to the type of <code>Container_::size()</code> would result in overflow. </dd></dl>
+
+</div>
+</div>
+<a id="a4fbc87d33e2177ca494bb096ec72c308" name="a4fbc87d33e2177ca494bb096ec72c308"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fbc87d33e2177ca494bb096ec72c308">&#9670;&#160;</a></span>cast_Index_to_container_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Container_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">decltype(std::declval&lt; Container_ &gt;().size()) tatami::cast_Index_to_container_size </td>
+          <td>(</td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Size of the container as an <code>Index_</code>, typically the dimension extents. It is assumed that <code>x</code> can be represented by a <code>std::size_t</code>, even if <code>Index_</code> is a larger type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>x</code> as the type of <code>Container_::size()</code>. An error is raised if the cast would result in overflow. </dd></dl>
+
+</div>
+</div>
+<a id="a0ea335e69cc68e2ef5e5c48230a24d4b" name="a0ea335e69cc68e2ef5e5c48230a24d4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea335e69cc68e2ef5e5c48230a24d4b">&#9670;&#160;</a></span>create_container_of_Index_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Container_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">Container_ tatami::create_container_of_Index_size </td>
+          <td>(</td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">x</td><td>Size of the container as an <code>Index_</code>, typically the dimension extents. It is assumed that <code>x</code> can be represented by a <code>std::size_t</code>, even if <code>Index_</code> is a larger type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Instance of a <code>Container_</code> of size <code>x</code>. An error is raised if <code>x</code> is too large. </dd></dl>
+
+</div>
+</div>
+<a id="a690c131a23026fa5d0eede1a0f026263" name="a690c131a23026fa5d0eede1a0f026263"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a690c131a23026fa5d0eede1a0f026263">&#9670;&#160;</a></span>resize_container_to_Index_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Container_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tatami::resize_container_to_Index_size </td>
+          <td>(</td>
+          <td class="paramtype">Container_ &amp;</td>          <td class="paramname"><span class="paramname"><em>container</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">container_</td><td>Instance of a container. On output, this is resized to size <code>x</code>. An error is raised if <code>x</code> is too large. </td></tr>
+    <tr><td class="paramname">x</td><td>Size of the container as an <code>Index_</code>, typically the dimension extents. It is assumed that <code>x</code> can be represented by a <code>std::size_t</code>, even if <code>Index_</code> is a larger type. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

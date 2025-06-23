@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Matrix_8hpp.html">../base/Matrix.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="new__extractor_8hpp.html">../utils/new_extractor.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;../utils/integer_comparisons.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;../utils/Index_to_container.hpp&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
@@ -167,7 +167,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordtype">void</span> allocate(IndexIn_ n) {</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!no_op) {</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            resize_container_to_Index_size(my_buffer, n);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_buffer, n);</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        }</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    }</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
@@ -210,12 +210,12 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="keywordtype">void</span> allocate(IndexIn_ n, <span class="keyword">const</span> Options&amp; opt) {</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!no_op_value) {</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>            <span class="keywordflow">if</span> (opt.sparse_extract_value) {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                resize_container_to_Index_size(my_vbuffer, n);</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_vbuffer, n);</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            }</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        }</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!no_op_index) {</div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            <span class="keywordflow">if</span> (opt.sparse_extract_index) {</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                resize_container_to_Index_size(my_ibuffer, n);</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_ibuffer, n);</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            }</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        }</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    }</div>
@@ -449,6 +449,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
+<div class="ttc" id="anamespacetatami_html_a690c131a23026fa5d0eede1a0f026263"><div class="ttname"><a href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:86</div></div>
 <div class="ttc" id="anamespacetatami_html_a92f2deb44e0a3cb1c569a379c6facbf0"><div class="ttname"><a href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:273</div></div>
 <div class="ttc" id="anamespacetatami_html_ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><div class="ttname"><a href="namespacetatami.html#ab4c8b88eeaa5fcbb1e5d47d020eb98ea">tatami::make_DelayedCast</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; ValueOut_, IndexOut_ &gt; &gt; make_DelayedCast(std::shared_ptr&lt; const Matrix&lt; ValueIn_, IndexIn_ &gt; &gt; p)</div><div class="ttdef"><b>Definition</b> DelayedCast.hpp:318</div></div>
 <div class="ttc" id="anamespacetatami_html_acdedcc902be98f3bd38f3507b906971c"><div class="ttname"><a href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></div><div class="ttdeci">std::size_t PredictionIndex</div><div class="ttdef"><b>Definition</b> Oracle.hpp:18</div></div>

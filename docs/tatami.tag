@@ -8481,6 +8481,34 @@
       <arglist>(const Value_ *input, Size_ n, Value_ *output)</arglist>
     </member>
     <member kind="function">
+      <type>Index_</type>
+      <name>can_cast_Index_to_container_size</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a83f279d4c20987ff3be049f9ffc922b9</anchor>
+      <arglist>(Index_ x)</arglist>
+    </member>
+    <member kind="function">
+      <type>decltype(std::declval&lt; Container_ &gt;().size())</type>
+      <name>cast_Index_to_container_size</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4fbc87d33e2177ca494bb096ec72c308</anchor>
+      <arglist>(Index_ x)</arglist>
+    </member>
+    <member kind="function">
+      <type>Container_</type>
+      <name>create_container_of_Index_size</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a0ea335e69cc68e2ef5e5c48230a24d4b</anchor>
+      <arglist>(Index_ x)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>resize_container_to_Index_size</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a690c131a23026fa5d0eede1a0f026263</anchor>
+      <arglist>(Container_ &amp;container, Index_ x)</arglist>
+    </member>
+    <member kind="function">
       <type>auto</type>
       <name>new_extractor</name>
       <anchorfile>namespacetatami.html</anchorfile>

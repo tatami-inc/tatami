@@ -247,7 +247,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        }</div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>        Index_ mapping_dim = my_by_row ? my_matrix-&gt;nrow() : my_matrix-&gt;ncol();</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        resize_container_to_Index_size(my_mapping_single, mapping_dim);</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_mapping_single, mapping_dim);</div>
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keywordflow">for</span> (Index_ i = 0, end = my_subset.size(); i &lt; end; ++i) {</div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            my_mapping_single[my_subset[i]] = i;</div>
 <div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        }</div>
@@ -474,6 +474,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
+<div class="ttc" id="anamespacetatami_html_a690c131a23026fa5d0eede1a0f026263"><div class="ttname"><a href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:86</div></div>
 <div class="ttc" id="anamespacetatami_html_ac1514cda61f96e93a9cbc656f742a044"><div class="ttname"><a href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
