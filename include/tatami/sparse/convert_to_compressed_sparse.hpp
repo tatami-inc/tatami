@@ -385,6 +385,8 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
     InputIndex_ primary = (row ? NR : NC);
     InputIndex_ secondary = (row ? NC : NR);
 
+    output_p.resize(sanisizer::sum<decltype(output_p.size())>(primary, 1));
+
     if (!options.two_pass) {
         // Doing a single fragmented run and then concatenating everything together.
         auto frag = retrieve_fragmented_sparse_contents<InputValue_, InputIndex_>(
@@ -399,7 +401,6 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
         const auto& store_v = frag.value;
         const auto& store_i = frag.index;
 
-        output_p.resize(static_cast<std::size_t>(primary) + 1);
         for (InputIndex_ p = 0; p < primary; ++p) {
             output_p[p + 1] = output_p[p] + store_v[p].size();
         }
@@ -413,7 +414,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
     } else if (row == matrix.prefer_rows()) {
         // First pass to figure out how many non-zeros there are.
-        output_p.resize(static_cast<std::size_t>(primary) + 1);
+        output_p.resize(sanisizer::sum<decltype(output_p.size())>(primary, 1));
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];
@@ -435,7 +436,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
     } else {
         // First pass to figure out how many non-zeros there are.
-        output_p.resize(static_cast<std::size_t>(primary) + 1);
+        output_p.resize(sanisizer::sum<decltype(output_p.size())>(primary, 1));
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];

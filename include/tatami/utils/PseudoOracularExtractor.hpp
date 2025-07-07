@@ -37,7 +37,7 @@ struct PseudoOracularDenseExtractor final : public OracularDenseExtractor<Value_
 private:
     std::shared_ptr<const Oracle<Index_> > my_oracle;
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > my_ext;
-    std::size_t my_used = 0;
+    PredictionIndex my_used = 0;
 };
 
 /**
@@ -66,7 +66,7 @@ struct PseudoOracularSparseExtractor final : public OracularSparseExtractor<Valu
 private:
     std::shared_ptr<const Oracle<Index_> > my_oracle;
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > my_ext;
-    std::size_t my_used = 0;
+    PredictionIndex my_used = 0;
 };
 
 }

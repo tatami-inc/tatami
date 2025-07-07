@@ -51,7 +51,7 @@ public:
 
 private:
     MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, std::size_t, bool>::type my_used = 0;
+    typename std::conditional<oracle_, PredictionIndex, bool>::type my_used = 0;
 };
 
 template<class Operation_>

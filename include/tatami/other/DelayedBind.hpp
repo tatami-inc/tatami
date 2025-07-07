@@ -489,7 +489,7 @@ public:
             cumulative,
             mapping,
             ora.get(),
-            segments,
+            my_segments,
             [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
             }
@@ -497,16 +497,16 @@ public:
     }
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto chosen = segments[used];
+        auto chosen = my_segments[my_used];
         auto output = my_exts[chosen]->fetch(i, buffer);
-        ++used;
+        ++my_used;
         return output;
     }
 
 private:
-    std::vector<Index_> segments;
+    std::vector<Index_> my_segments;
     std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > my_exts;
-    std::size_t used = 0;
+    PredictionIndex my_used = 0;
 };
 
 template<typename Value_, typename Index_>
@@ -526,7 +526,7 @@ public:
             cumulative,
             mapping,
             ora.get(),
-            segments,
+            my_segments,
             [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
             }
@@ -534,16 +534,16 @@ public:
     }
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        auto chosen = segments[used];
+        auto chosen = my_segments[my_used];
         auto output = my_exts[chosen]->fetch(i, vbuffer, ibuffer);
-        ++used;
+        ++my_used;
         return output;
     }
 
 private:
-    std::vector<Index_> segments;
+    std::vector<Index_> my_segments;
     std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > my_exts;
-    std::size_t used = 0;
+    PredictionIndex my_used = 0;
 };
 
 }
