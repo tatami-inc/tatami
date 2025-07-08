@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(tatami
-    VERSION 4.0.0
+    VERSION 4.0.1
     DESCRIPTION "A C++ interface for assorted matrix representations"
     LANGUAGES CXX)
 
