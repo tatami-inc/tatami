@@ -119,7 +119,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    std::shared_ptr&lt;const Oracle&lt;Index_&gt; &gt; my_oracle;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::size_t my_used = 0;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> my_used = 0;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>};</div>
 </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
@@ -141,7 +141,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::shared_ptr&lt;const Oracle&lt;Index_&gt; &gt; my_oracle;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    std::size_t my_used = 0;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> my_used = 0;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>};</div>
 </div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
@@ -156,6 +156,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1OracularDenseExtractor_html"><div class="ttname"><a href="classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in dense form with an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:72</div></div>
 <div class="ttc" id="aclasstatami_1_1OracularSparseExtractor_html"><div class="ttname"><a href="classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a></div><div class="ttdoc">Extract an element of the target dimension in sparse form with an oracle.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:193</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
+<div class="ttc" id="anamespacetatami_html_acdedcc902be98f3bd38f3507b906971c"><div class="ttname"><a href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></div><div class="ttdeci">std::size_t PredictionIndex</div><div class="ttdef"><b>Definition</b> Oracle.hpp:18</div></div>
 <div class="ttc" id="astructtatami_1_1PseudoOracularDenseExtractor_html"><div class="ttname"><a href="structtatami_1_1PseudoOracularDenseExtractor.html">tatami::PseudoOracularDenseExtractor</a></div><div class="ttdoc">Mimic the OracularDenseExtractor interface.</div><div class="ttdef"><b>Definition</b> PseudoOracularExtractor.hpp:24</div></div>
 <div class="ttc" id="astructtatami_1_1PseudoOracularDenseExtractor_html_a099afedb958b1c9a7738508eb7cf387f"><div class="ttname"><a href="structtatami_1_1PseudoOracularDenseExtractor.html#a099afedb958b1c9a7738508eb7cf387f">tatami::PseudoOracularDenseExtractor::PseudoOracularDenseExtractor</a></div><div class="ttdeci">PseudoOracularDenseExtractor(std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt; ext)</div><div class="ttdef"><b>Definition</b> PseudoOracularExtractor.hpp:29</div></div>
 <div class="ttc" id="astructtatami_1_1PseudoOracularDenseExtractor_html_a4964662d29114e2f9fa9d8aeb548def6"><div class="ttname"><a href="structtatami_1_1PseudoOracularDenseExtractor.html#a4964662d29114e2f9fa9d8aeb548def6">tatami::PseudoOracularDenseExtractor::fetch</a></div><div class="ttdeci">const Value_ * fetch(Index_, Value_ *buffer)</div><div class="ttdef"><b>Definition</b> PseudoOracularExtractor.hpp:32</div></div>
