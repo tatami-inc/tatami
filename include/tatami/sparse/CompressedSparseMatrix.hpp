@@ -2,12 +2,12 @@
 #define TATAMI_COMPRESSED_SPARSE_MATRIX_H
 
 #include "../base/Matrix.hpp"
-#include "primary_extraction.hpp"
-#include "secondary_extraction.hpp"
-
 #include "../utils/ElementType.hpp"
 #include "../utils/has_data.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
+
+#include "primary_extraction.hpp"
+#include "secondary_extraction.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -15,6 +15,8 @@
 #include <utility>
 #include <stdexcept>
 #include <cstddef>
+
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file CompressedSparseMatrix.hpp
@@ -519,6 +521,10 @@ public:
             if (!safe_non_negative_equal(nnzero, my_indices.size())) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
+
+            // Check that iterator subtraction is safe.
+            // Various functions in 'sparse_utils' will subtract iterators when converting the lower_bound return value to an index.
+            sanisizer::can_ptrdiff<decltype(my_indices.begin())>(nnzero);
 
             auto npointers = my_pointers.size(); 
             auto check_pointers = [&](auto dim) {
