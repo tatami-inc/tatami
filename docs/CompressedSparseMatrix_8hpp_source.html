@@ -570,7 +570,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span> </div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>            <span class="comment">// Check that iterator subtraction is safe.</span></div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>            <span class="comment">// Various functions in &#39;sparse_utils&#39; will subtract iterators when converting the lower_bound return value to an index.</span></div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>            sanisizer::ptrdiff(my_indices.begin(), my_indices.end(), nnzero);</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>            sanisizer::can_ptrdiff&lt;<span class="keyword">decltype</span>(my_indices.begin())&gt;(nnzero);</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span> </div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>            <span class="keyword">auto</span> npointers = my_pointers.size(); </div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>            <span class="keyword">auto</span> check_pointers = [&amp;](<span class="keyword">auto</span> dim) {</div>

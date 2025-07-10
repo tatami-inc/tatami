@@ -559,7 +559,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>                <span class="comment">// Check that iterator subtraction is safe.</span></div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>                <span class="comment">// Various functions in &#39;sparse_utils&#39; will subtract iterators when converting the lower_bound return value to an index.</span></div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>                <span class="comment">// We cast to Index_ as it gives us a chance to skip the check at compile time, given that the size is no greater than the dimension extents.</span></div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>                sanisizer::ptrdiff(curi.begin(), curi.end(), <span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(curi.size()));</div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>                sanisizer::can_ptrdiff&lt;<span class="keyword">decltype</span>(curi.begin())&gt;(<span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(curi.size()));</div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>            }</div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        }</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>    }</div>
