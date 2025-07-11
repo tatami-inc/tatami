@@ -262,7 +262,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ad06cf62ba0b58e240aed427379c2ac38">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row_major, <span class="keywordtype">int</span> threads = 1) {</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    ConvertToDenseOptions options;</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    options.num_threads = threads;</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ad06cf62ba0b58e240aed427379c2ac38">convert_to_dense&lt;Value_, Index_&gt;</a>(</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ad06cf62ba0b58e240aed427379c2ac38">convert_to_dense&lt;Value_, Index_, StoredValue_&gt;</a>(</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        *matrix,</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        row_major,</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        [&amp;]{</div>
