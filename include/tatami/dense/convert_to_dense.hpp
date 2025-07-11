@@ -201,7 +201,7 @@ template <typename Value_ = double, typename Index_ = int, typename StoredValue_
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, int threads = 1) {
     ConvertToDenseOptions options;
     options.num_threads = threads;
-    return convert_to_dense<Value_, Index_>(
+    return convert_to_dense<Value_, Index_, StoredValue_>(
         *matrix,
         row_major,
         [&]{

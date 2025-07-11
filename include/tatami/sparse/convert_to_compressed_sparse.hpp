@@ -592,7 +592,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
 template<typename Value_ = double, typename Index_ = int, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass = false, int threads = 1) {
-    return convert_to_compressed_sparse<Value_, Index_>(
+    return convert_to_compressed_sparse<Value_, Index_, StoredValue_, StoredIndex_>(
         *matrix,
         row,
         [&]{
