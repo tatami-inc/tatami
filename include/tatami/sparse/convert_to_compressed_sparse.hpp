@@ -578,7 +578,7 @@ void fill_compressed_sparse_contents(const tatami::Matrix<InputValue_, InputInde
 
 template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = std::size_t, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
-    return retrieve_compressed_sparse_contents(
+    return retrieve_compressed_sparse_contents<StoredValue_, StoredIndex_>(
         *matrix,
         row,
         [&]{
