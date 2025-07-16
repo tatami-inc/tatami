@@ -723,12 +723,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a4fbc87d33e2177ca494bb096ec72c308" id="r_a4fbc87d33e2177ca494bb096ec72c308"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a4fbc87d33e2177ca494bb096ec72c308"><td class="memTemplItemLeft" align="right" valign="top">decltype(std::declval&lt; Container_ &gt;().size())&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4fbc87d33e2177ca494bb096ec72c308">cast_Index_to_container_size</a> (Index_ x)</td></tr>
 <tr class="separator:a4fbc87d33e2177ca494bb096ec72c308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ea335e69cc68e2ef5e5c48230a24d4b" id="r_a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memTemplItemLeft" align="right" valign="top">Container_&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a0ea335e69cc68e2ef5e5c48230a24d4b">create_container_of_Index_size</a> (Index_ x)</td></tr>
-<tr class="separator:a0ea335e69cc68e2ef5e5c48230a24d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a690c131a23026fa5d0eede1a0f026263" id="r_a690c131a23026fa5d0eede1a0f026263"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a690c131a23026fa5d0eede1a0f026263"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a> (Container_ &amp;container, Index_ x)</td></tr>
-<tr class="separator:a690c131a23026fa5d0eede1a0f026263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4210bdd032791100c12effa775e8b6b" id="r_aa4210bdd032791100c12effa775e8b6b"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ , typename ... Args_&gt; </td></tr>
+<tr class="memitem:aa4210bdd032791100c12effa775e8b6b"><td class="memTemplItemLeft" align="right" valign="top">Container_&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa4210bdd032791100c12effa775e8b6b">create_container_of_Index_size</a> (Index_ x, Args_ &amp;&amp;... args)</td></tr>
+<tr class="separator:aa4210bdd032791100c12effa775e8b6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c8a6fad0ecaa74e7eb69d50c25c44f8" id="r_a5c8a6fad0ecaa74e7eb69d50c25c44f8"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ , typename ... Args_&gt; </td></tr>
+<tr class="memitem:a5c8a6fad0ecaa74e7eb69d50c25c44f8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5c8a6fad0ecaa74e7eb69d50c25c44f8">resize_container_to_Index_size</a> (Container_ &amp;container, Index_ x, Args_ &amp;&amp;... args)</td></tr>
+<tr class="separator:a5c8a6fad0ecaa74e7eb69d50c25c44f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044" id="r_ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplParams" colspan="2">template&lt;bool sparse_, bool oracle_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:ac1514cda61f96e93a9cbc656f742a044"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &amp;matrix, bool row, <a class="el" href="#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle</a>&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:ac1514cda61f96e93a9cbc656f742a044"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3710,26 +3710,31 @@ template&lt;typename Container_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a0ea335e69cc68e2ef5e5c48230a24d4b" name="a0ea335e69cc68e2ef5e5c48230a24d4b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ea335e69cc68e2ef5e5c48230a24d4b">&#9670;&#160;</a></span>create_container_of_Index_size()</h2>
+<a id="aa4210bdd032791100c12effa775e8b6b" name="aa4210bdd032791100c12effa775e8b6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4210bdd032791100c12effa775e8b6b">&#9670;&#160;</a></span>create_container_of_Index_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Container_ , typename Index_ &gt; </div>
+template&lt;typename Container_ , typename Index_ , typename ... Args_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">Container_ tatami::create_container_of_Index_size </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">Args_ &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method and a constructor that accepts the size as the first argument. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices. </td></tr>
+    <tr><td class="paramname">Args_</td><td>Further arguments to pass to the <code>Container_</code>'s constructor.</td></tr>
   </table>
   </dd>
 </dl>
@@ -3743,13 +3748,13 @@ template&lt;typename Container_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a690c131a23026fa5d0eede1a0f026263" name="a690c131a23026fa5d0eede1a0f026263"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a690c131a23026fa5d0eede1a0f026263">&#9670;&#160;</a></span>resize_container_to_Index_size()</h2>
+<a id="a5c8a6fad0ecaa74e7eb69d50c25c44f8" name="a5c8a6fad0ecaa74e7eb69d50c25c44f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c8a6fad0ecaa74e7eb69d50c25c44f8">&#9670;&#160;</a></span>resize_container_to_Index_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Container_ , typename Index_ &gt; </div>
+template&lt;typename Container_ , typename Index_ , typename ... Args_&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void tatami::resize_container_to_Index_size </td>
@@ -3759,14 +3764,20 @@ template&lt;typename Container_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span>&#160;)</td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>x</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args_ &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Container_</td><td>Container with a <code>size()</code> method and a <code>resize()</code> method that accepts the new length as the first argument. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices. </td></tr>
+    <tr><td class="paramname">Args_</td><td>Further arguments to pass to <code>Container_::resize()</code>.</td></tr>
   </table>
   </dd>
 </dl>

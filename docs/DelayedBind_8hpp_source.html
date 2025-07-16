@@ -525,7 +525,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>                    <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>                }</div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                consecutive = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>                <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(predictions, number);</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>                <a class="code hl_function" href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">resize_container_to_Index_size</a>(predictions, number);</div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>                std::iota(predictions.begin(), predictions.end(), start);</div>
 <div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            }</div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span> </div>
@@ -568,7 +568,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; ora, </div>
 <div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>        <span class="keyword">const</span> Args_&amp; ... args)</div>
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>    {</div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_exts, matrices.size()); <span class="comment">// number of matrices should fit in an I ndex_, so this call is allowed.</span></div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>        <a class="code hl_function" href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">resize_container_to_Index_size</a>(my_exts, matrices.size()); <span class="comment">// number of matrices should fit in an I ndex_, so this call is allowed.</span></div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>        initialize_perp_oracular(</div>
 <div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>            cumulative,</div>
 <div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>            mapping,</div>
@@ -605,7 +605,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; ora, </div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>        <span class="keyword">const</span> Args_&amp; ... args)</div>
 <div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>    {</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        <a class="code hl_function" href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">resize_container_to_Index_size</a>(my_exts, matrices.size()); <span class="comment">// number of matrices should fit in an Index_, so this call is legal.</span></div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        <a class="code hl_function" href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">resize_container_to_Index_size</a>(my_exts, matrices.size()); <span class="comment">// number of matrices should fit in an Index_, so this call is legal.</span></div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>        initialize_perp_oracular(</div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>            cumulative,</div>
 <div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>            mapping,</div>
@@ -987,7 +987,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="acopy_8hpp_html"><div class="ttname"><a href="copy_8hpp.html">copy.hpp</a></div><div class="ttdoc">Copy data from one buffer to another.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
-<div class="ttc" id="anamespacetatami_html_a690c131a23026fa5d0eede1a0f026263"><div class="ttname"><a href="namespacetatami.html#a690c131a23026fa5d0eede1a0f026263">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:86</div></div>
+<div class="ttc" id="anamespacetatami_html_a5c8a6fad0ecaa74e7eb69d50c25c44f8"><div class="ttname"><a href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:88</div></div>
 <div class="ttc" id="anamespacetatami_html_a92f2deb44e0a3cb1c569a379c6facbf0"><div class="ttname"><a href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:273</div></div>
 <div class="ttc" id="anamespacetatami_html_ab52a806e3f13a68741a9e1f77dccab14"><div class="ttname"><a href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *input, Size_ n, Value_ *output)</div><div class="ttdef"><b>Definition</b> copy.hpp:26</div></div>
 <div class="ttc" id="anamespacetatami_html_acdedcc902be98f3bd38f3507b906971c"><div class="ttname"><a href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></div><div class="ttdeci">std::size_t PredictionIndex</div><div class="ttdef"><b>Definition</b> Oracle.hpp:18</div></div>

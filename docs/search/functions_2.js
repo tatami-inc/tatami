@@ -14,5 +14,5 @@ var searchData=
   ['convert_5fto_5ffragmented_5fsparse_11',['convert_to_fragmented_sparse',['../namespacetatami.html#add29754647077a82209dfe6ba78cd2b5',1,'tatami']]],
   ['copy_5fn_12',['copy_n',['../namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14',1,'tatami']]],
   ['count_5fcompressed_5fsparse_5fnon_5fzeros_13',['count_compressed_sparse_non_zeros',['../namespacetatami.html#ac004bfb30ee5623bec14d3783c2cc21e',1,'tatami']]],
-  ['create_5fcontainer_5fof_5findex_5fsize_14',['create_container_of_Index_size',['../namespacetatami.html#a0ea335e69cc68e2ef5e5c48230a24d4b',1,'tatami']]]
+  ['create_5fcontainer_5fof_5findex_5fsize_14',['create_container_of_Index_size',['../namespacetatami.html#aa4210bdd032791100c12effa775e8b6b',1,'tatami']]]
 ];

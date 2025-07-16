@@ -8498,15 +8498,15 @@
       <type>Container_</type>
       <name>create_container_of_Index_size</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0ea335e69cc68e2ef5e5c48230a24d4b</anchor>
-      <arglist>(Index_ x)</arglist>
+      <anchor>aa4210bdd032791100c12effa775e8b6b</anchor>
+      <arglist>(Index_ x, Args_ &amp;&amp;... args)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>resize_container_to_Index_size</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a690c131a23026fa5d0eede1a0f026263</anchor>
-      <arglist>(Container_ &amp;container, Index_ x)</arglist>
+      <anchor>a5c8a6fad0ecaa74e7eb69d50c25c44f8</anchor>
+      <arglist>(Container_ &amp;container, Index_ x, Args_ &amp;&amp;... args)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
