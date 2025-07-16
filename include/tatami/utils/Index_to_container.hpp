@@ -56,8 +56,9 @@ decltype(std::declval<Container_>().size()) cast_Index_to_container_size(Index_ 
 }
 
 /**
- * @tparam Container_ Container with a `size()` method.
+ * @tparam Container_ Container with a `size()` method and a constructor that accepts the size as the first argument.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Args_ Further arguments to pass to the `Container_`'s constructor.
  *
  * @param x Size of the container as an `Index_`, typically the dimension extents.
  * It is assumed that `x` can be represented by a `std::size_t`, even if `Index_` is a larger type.
@@ -65,16 +66,17 @@ decltype(std::declval<Container_>().size()) cast_Index_to_container_size(Index_ 
  * @return Instance of a `Container_` of size `x`.
  * An error is raised if `x` is too large.
  */
-template<typename Container_, typename Index_>
-Container_ create_container_of_Index_size(Index_ x) {
+template<typename Container_, typename Index_, typename ... Args_>
+Container_ create_container_of_Index_size(Index_ x, Args_&& ... args) {
     // Same logic as described above.
     typedef typename std::conditional<std::numeric_limits<std::size_t>::max() < std::numeric_limits<Index_>::max(), std::size_t, Index_>::type Intermediate;
-    return sanisizer::create<Container_>(static_cast<Intermediate>(x));
+    return sanisizer::create<Container_>(static_cast<Intermediate>(x), std::forward<Args_>(args)...);
 }
 
 /**
- * @tparam Container_ Container with a `size()` method.
+ * @tparam Container_ Container with a `size()` method and a `resize()` method that accepts the new length as the first argument.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Args_ Further arguments to pass to `Container_::resize()`.
  *
  * @param container_ Instance of a container.
  * On output, this is resized to size `x`.
@@ -82,9 +84,9 @@ Container_ create_container_of_Index_size(Index_ x) {
  * @param x Size of the container as an `Index_`, typically the dimension extents.
  * It is assumed that `x` can be represented by a `std::size_t`, even if `Index_` is a larger type.
  */
-template<typename Container_, typename Index_>
-void resize_container_to_Index_size(Container_& container, Index_ x) {
-    container.resize(cast_Index_to_container_size<Container_>(x));
+template<typename Container_, typename Index_, typename ... Args_>
+void resize_container_to_Index_size(Container_& container, Index_ x, Args_&& ... args) {
+    container.resize(cast_Index_to_container_size<Container_>(x), std::forward<Args_>(args)...);
 }
 
 }
