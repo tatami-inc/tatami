@@ -68,6 +68,8 @@ Users can create an instance of a concrete `tatami::Matrix` subclass by using on
 | Delayed subset                             | `DelayedSubset`                   |
 | Delayed transpose                          | `DelayedTranspose`                |
 | Delayed cast                               | `DelayedCast`                     |
+| Delayed cast                               | `DelayedCast`                     |
+| Constant matrix                            | `ConstantMatrix`                  |
 
 For example, to create a compressed sparse matrix from sparse triplet data, we could do:
 
@@ -293,22 +295,34 @@ Advanced users can also define their own `Oracle` subclasses to generate predict
 
 ## Comments on other operations
 
-As previously mentioned, **tatami** is designed to pull out rows or columns of a matrix, and little else.
-Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) R package -
-see the [**tatami_stats**](https://github.com/tatami-inc/tatami_stats) library for more information.
+As previously mentioned, **tatami** is primarily designed to pull out rows or columns of a matrix.
+Some support is provided for computing basic statistics via the [**tatami_stats**](https://github.com/tatami-inc/tatami_stats) library,
+in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) R package.
+Matrix multiplication is similarly implemented via the [**tatami_mult**](https://github.com/tatami-inc/tatami_mult) library.
 
-**tatami** does not directly support matrix algebra or decompositions. 
-If these high-level operations are needed, applications should write their own code, e.g., by using **tatami**'s extractors to implement matrix multiplication.
-Alternatively, we can transfer data from **tatami** into other frameworks like [**Eigen**](https://eigen.tuxfamily.org/) for complex matrix operations,
+**tatami** does not currently support more sophisticated matrix operations like decompositions. 
+If these are required, we suggest copying data from **tatami** into other frameworks like [**Eigen**](https://eigen.tuxfamily.org/), 
 effectively trading the diversity of representations for a more comprehensive suite of operations.
-For example, we often use **tatami** to represent the input data in a custom format to save memory for large datasets;
+For example, we often use **tatami** to represent the large input datasets in a custom memory-efficient format;
 process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
-and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
+and then copy the data into a `Eigen::MatrixXd` or `Eigen::SparseMatrix` for the desired operations.
+In practice, many standard decompositions do not scale well for large matrices,
+so our applications end up using approximate methods like [**ILRBA**](https://github.com/LTLA/CppIrlba) that only require a multiplication operator.
 
-It is not possible to modify the matrix contents via the **tatami** API.
-This is especially relevant for matrices with delayed operations or those referring to remote data stores, where reading the matrix data is trivial but writing is not guaranteed to work.
-Experience suggests that a matrix writer abstraction is less useful than the equivalent reader abstraction.
-This is because applications typically control the output format, so there is no need to accommodate a diversity of formats via an abstract interface.
+<!---
+(At this point, it is worth noting that **Eigen** also supports delayed operations via its expression templates.
+These are determined at compile-time and are more efficient than **tatami**'s operations.
+However, it is also much harder to pass expression templates around an application while preserving the delayed operations.
+Each expression is its own type so supporting multiple expressions would require a potentially-combinatorial increase in the number of realized template functions.
+Additionally, the expressions do not extend the lifetime of the matrices on which they operate, so if the matrix is destructed before the expression is evaluated, a segfault will occur.
+**tatami** avoids these problems and makes it easier to pass around a matrix with delayed operations.)
+-->
+
+**tatami** does not directly support modification of the matrix contents.
+Instead, "modifications" are performed by adding delayed operations on top of an immutable matrix.
+This avoids difficult bugs where the hypothetical modification of matrix contents via one `shared_ptr` affects all references to the same matrix across the application.
+Delayed operations are also more appropriate for matrices referring to read-only data sources, e.g., remote stores or files.
+That said, if delayed operations are undesirable, we can use functions like `tatami::convert_to_dense()` to realize our modifications into a new matrix instance. 
 
 ## Building projects 
 
