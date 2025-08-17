@@ -2,7 +2,7 @@ var searchData=
 [
   ['can_5fcast_5findex_5fto_5fcontainer_5fsize_0',['can_cast_Index_to_container_size',['../namespacetatami.html#a83f279d4c20987ff3be049f9ffc922b9',1,'tatami']]],
   ['cast_5findex_5fto_5fcontainer_5fsize_1',['cast_Index_to_container_size',['../namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308',1,'tatami']]],
-  ['compress_5fsparse_5ftriplets_2',['compress_sparse_triplets',['../namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_2',['compress_sparse_triplets',['../namespacetatami.html#abb624f8a5bc844d3e902cde63b84001f',1,'tatami']]],
   ['compressedsparsecolumnmatrix_3',['CompressedSparseColumnMatrix',['../classtatami_1_1CompressedSparseColumnMatrix.html#a4a7d2c1c47bbab5e0bdde48ad9ba9ec7',1,'tatami::CompressedSparseColumnMatrix']]],
   ['compressedsparsematrix_4',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html#a01256bb540937246cfc78dd2a30ff2e0',1,'tatami::CompressedSparseMatrix']]],
   ['compressedsparserowmatrix_5',['CompressedSparseRowMatrix',['../classtatami_1_1CompressedSparseRowMatrix.html#ab757e111074096fb542148675c72cade',1,'tatami::CompressedSparseRowMatrix']]],

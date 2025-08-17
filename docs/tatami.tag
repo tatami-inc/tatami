@@ -8404,11 +8404,11 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; ValueIn_, IndexIn_ &gt; &gt; p)</arglist>
     </member>
     <member kind="function">
-      <type>std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;</type>
+      <type>std::vector&lt; Pointer_ &gt;</type>
       <name>compress_sparse_triplets</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa007887c6e13021b8a9d5565de1b8bb9</anchor>
-      <arglist>(std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</arglist>
+      <anchor>abb624f8a5bc844d3e902cde63b84001f</anchor>
+      <arglist>(std::size_t num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

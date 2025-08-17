@@ -684,9 +684,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab4c8b88eeaa5fcbb1e5d47d020eb98ea" id="r_ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memTemplParams" colspan="2">template&lt;typename ValueOut_ , typename IndexOut_ , typename ValueIn_ , typename IndexIn_ &gt; </td></tr>
 <tr class="memitem:ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; ValueOut_, IndexOut_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab4c8b88eeaa5fcbb1e5d47d020eb98ea">make_DelayedCast</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; ValueIn_, IndexIn_ &gt; &gt; p)</td></tr>
 <tr class="separator:ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9" id="r_aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplParams" colspan="2">template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aa007887c6e13021b8a9d5565de1b8bb9">compress_sparse_triplets</a> (std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</td></tr>
-<tr class="separator:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f" id="r_abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplParams" colspan="2">template&lt;class Values_ , typename Pointer_  = decltype(std::declval&lt;Values_&gt;().size()), class PrimaryIndices_ , class SecondaryIndices_ &gt; </td></tr>
+<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Pointer_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abb624f8a5bc844d3e902cde63b84001f">compress_sparse_triplets</a> (std::size_t num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</td></tr>
+<tr class="separator:abb624f8a5bc844d3e902cde63b84001f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac004bfb30ee5623bec14d3783c2cc21e" id="r_ac004bfb30ee5623bec14d3783c2cc21e"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Count_ &gt; </td></tr>
 <tr class="memitem:ac004bfb30ee5623bec14d3783c2cc21e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac004bfb30ee5623bec14d3783c2cc21e">count_compressed_sparse_non_zeros</a> (const <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;matrix, bool row, Count_ *output, const <a class="el" href="structtatami_1_1CountCompressedSparseNonZerosOptions.html">CountCompressedSparseNonZerosOptions</a> &amp;options)</td></tr>
 <tr class="separator:ac004bfb30ee5623bec14d3783c2cc21e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3075,23 +3075,18 @@ template&lt;typename ValueOut_ , typename IndexOut_ , typename ValueIn_ , typena
 
 </div>
 </div>
-<a id="aa007887c6e13021b8a9d5565de1b8bb9" name="aa007887c6e13021b8a9d5565de1b8bb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa007887c6e13021b8a9d5565de1b8bb9">&#9670;&#160;</a></span>compress_sparse_triplets()</h2>
+<a id="abb624f8a5bc844d3e902cde63b84001f" name="abb624f8a5bc844d3e902cde63b84001f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb624f8a5bc844d3e902cde63b84001f">&#9670;&#160;</a></span>compress_sparse_triplets()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </div>
+template&lt;class Values_ , typename Pointer_  = decltype(std::declval&lt;Values_&gt;().size()), class PrimaryIndices_ , class SecondaryIndices_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt; tatami::compress_sparse_triplets </td>
+          <td class="memname">std::vector&lt; Pointer_ &gt; tatami::compress_sparse_triplets </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>nrow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>ncol</em></span>, </td>
+          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_primary</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -3101,40 +3096,36 @@ template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RowIndices_ &amp;</td>          <td class="paramname"><span class="paramname"><em>row_indices</em></span>, </td>
+          <td class="paramtype">const PrimaryIndices_ &amp;</td>          <td class="paramname"><span class="paramname"><em>primary_indices</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ColumnIndices_ &amp;</td>          <td class="paramname"><span class="paramname"><em>column_indices</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>csr</em></span>&#160;)</td>
+          <td class="paramtype">SecondaryIndices_ &amp;</td>          <td class="paramname"><span class="paramname"><em>secondary_indices</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>For compressed sparse matrices, we consider the "primary" dimension to be that along which the structural non-zero elements are grouped in memory, e.g., the columns and rows for compressed sparse row and column matrices, respectively. Thus, the matrix only needs to retain the indices of structural non-zeros along the other (i.e., "secondary") dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Values_</td><td>Random-access container for the values. </td></tr>
-    <tr><td class="paramname">RowIndices_</td><td>Random access container for the row indices. </td></tr>
-    <tr><td class="paramname">ColumnIndices_</td><td>Random access container for the column indices.</td></tr>
+    <tr><td class="paramname">Values_</td><td>Random-access container for the values. This should have a <code>size()</code> method and a <code>[</code> access operator. </td></tr>
+    <tr><td class="paramname">Pointer_</td><td>Integer type of the index pointers in the output. </td></tr>
+    <tr><td class="paramname">PrimaryIndices_</td><td>Random access container for the primary indices. This should have a <code>size()</code> method and a <code>[</code> access operator. </td></tr>
+    <tr><td class="paramname">SecondaryIndices_</td><td>Random access container for the secondary indices. This should have a <code>size()</code> method and a <code>[</code> access operator.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nrow</td><td>Number of rows. </td></tr>
-    <tr><td class="paramname">ncol</td><td>Number of columns. </td></tr>
-    <tr><td class="paramname">row_indices</td><td>Row indices of the structural non-zeros. Values must be non-negative integers less than <code>nrow</code>. </td></tr>
-    <tr><td class="paramname">column_indices</td><td>Column indices of the structural non-zeros. This must be of the same length as <code>row_indices</code>, where corresponding entries contain data for a single structural non-zero. Values must be non-negative integers less than <code>ncol</code>. </td></tr>
-    <tr><td class="paramname">values</td><td>Values of the structural non-zeros. This must be of the same length as <code>row_indices</code> and <code>column_indices</code>, where corresponding entries contain data for a single structural non-zero. </td></tr>
-    <tr><td class="paramname">csr</td><td>Whether to create a compressed sparse row format. If <code>false</code>, the compressed sparse column format is used instead.</td></tr>
+    <tr><td class="paramname">num_primary</td><td>Extent of the primary dimension. </td></tr>
+    <tr><td class="paramname">values</td><td>Values of the structural non-zeros. </td></tr>
+    <tr><td class="paramname">primary_indices</td><td>Indices of the structural non-zeros along the primary dimension. Values must be non-negative integers less than <code>num_primary</code>. The length of the vector should be equal to <code>values</code>. </td></tr>
+    <tr><td class="paramname">secondary_indices</td><td>Indices of the structural non-zeros along the secondary dimension. Values must be non-negative integers. The length of the vector should be equal to <code>values</code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code>row_indices</code>, <code>column_indices</code> and <code>values</code> are sorted in-place by the row and column indices (if <code>csr = true</code>) or by the column and row indices (if <code>csr = false</code>). A vector of index pointers is returned with length <code>nrow + 1</code> (if <code>csr = true</code>) or <code>ncol + 1</code> (if <code>csr = false</code>). </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><code>secondary_indices</code> and <code>values</code> are sorted in-place, as if all the structural non-zeros were sorted by increasing <code>primary_indices</code> and then <code>secondary_indices</code>. A vector of index pointers is returned with length <code>num_primary + 1</code>, specifying the subarray of <code>values</code> and <code>secondary_indices</code> corresponding to each primary dimension element.</dd></dl>
+<p>Note that <code>primary_indices</code> is not modified inside this function for efficiency. If needed, a sorted <code>primary_indices</code> can be easily created by simply filling <code>primary_indices</code> based on the differences between consecutive index pointers. </p>
 
 </div>
 </div>

@@ -110,9 +110,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9" id="r_aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplParams" colspan="2">template&lt;class Values_ , class RowIndices_ , class ColumnIndices_ &gt; </td></tr>
-<tr class="memitem:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; decltype(std::declval&lt; Values_ &gt;().size())&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9">tatami::compress_sparse_triplets</a> (std::size_t nrow, std::size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</td></tr>
-<tr class="separator:aa007887c6e13021b8a9d5565de1b8bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f" id="r_abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplParams" colspan="2">template&lt;class Values_ , typename Pointer_  = decltype(std::declval&lt;Values_&gt;().size()), class PrimaryIndices_ , class SecondaryIndices_ &gt; </td></tr>
+<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Pointer_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#abb624f8a5bc844d3e902cde63b84001f">tatami::compress_sparse_triplets</a> (std::size_t num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</td></tr>
+<tr class="separator:abb624f8a5bc844d3e902cde63b84001f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Convert sparse data in triplet format to a compressed sparse row/column format. </p>

@@ -7,7 +7,7 @@ var searchData=
   ['compare_5fhelpers_2ehpp_4',['compare_helpers.hpp',['../binary_2compare__helpers_8hpp.html',1,'(Global Namespace)'],['../unary_2compare__helpers_8hpp.html',1,'(Global Namespace)']]],
   ['compare_5futils_2ehpp_5',['compare_utils.hpp',['../compare__utils_8hpp.html',1,'']]],
   ['compareoperation_6',['CompareOperation',['../namespacetatami.html#a89475b46f681dd39b9926ced507240cc',1,'tatami']]],
-  ['compress_5fsparse_5ftriplets_7',['compress_sparse_triplets',['../namespacetatami.html#aa007887c6e13021b8a9d5565de1b8bb9',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_7',['compress_sparse_triplets',['../namespacetatami.html#abb624f8a5bc844d3e902cde63b84001f',1,'tatami']]],
   ['compress_5fsparse_5ftriplets_2ehpp_8',['compress_sparse_triplets.hpp',['../compress__sparse__triplets_8hpp.html',1,'']]],
   ['compressedsparsecolumnmatrix_9',['CompressedSparseColumnMatrix',['../classtatami_1_1CompressedSparseColumnMatrix.html',1,'tatami::CompressedSparseColumnMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;'],['../classtatami_1_1CompressedSparseColumnMatrix.html#a4a7d2c1c47bbab5e0bdde48ad9ba9ec7',1,'tatami::CompressedSparseColumnMatrix::CompressedSparseColumnMatrix()']]],
   ['compressedsparsecontents_10',['CompressedSparseContents',['../structtatami_1_1CompressedSparseContents.html',1,'tatami']]],
