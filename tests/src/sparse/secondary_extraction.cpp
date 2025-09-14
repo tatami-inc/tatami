@@ -15,13 +15,13 @@ protected:
         const PointerStorage_& indptr;
 
     public:
-        typedef tatami::ElementType<PointerStorage_> pointer_type;
+        typedef tatami::ElementType<PointerStorage_> Pointer;
 
-        pointer_type start_offset(Index_ primary) const {
+        Pointer start_offset(Index_ primary) const {
             return indptr[primary];
         }
 
-        pointer_type end_offset(Index_ primary) const {
+        Pointer end_offset(Index_ primary) const {
             return indptr[primary + 1];
         }
 
@@ -43,13 +43,13 @@ protected:
         const IndexVectorStorage_& indices;
 
     public:
-        typedef size_t pointer_type;
+        typedef size_t Pointer;
 
-        pointer_type start_offset(Index_) const {
+        Pointer start_offset(Index_) const {
             return 0;
         }
 
-        pointer_type end_offset(Index_ primary) const {
+        Pointer end_offset(Index_ primary) const {
             return indices[primary].size();
         }
 

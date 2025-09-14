@@ -17,9 +17,9 @@ namespace tatami {
  * We provide some methods to mimic a `std::vector` for use within the **tatami** constructors.
  * This is implemented in lieu of having access to C++20's `std::span` class.
  *
- * @tparam T Array type, usually numeric.
+ * @tparam Type_ Array type, usually numeric.
  */
-template<typename T>
+template<typename Type_>
 class ArrayView {
 public:
     /**
@@ -27,7 +27,7 @@ public:
      * The lifetime of the array is assumed to exceed that of the constructed `ArrayView` instance.
      * @param number Number of array elements.
      */
-    ArrayView(const T* ptr, std::size_t number) : my_ptr(ptr), my_number(number) {}
+    ArrayView(const Type_* const ptr, const std::size_t number) : my_ptr(ptr), my_number(number) {}
 
     /**
      * Default constructor to create a zero-length view.
@@ -42,28 +42,28 @@ public:
     /**
      * @return Pointer to the start of the array.
      */
-    const T* data() const { return my_ptr; }
+    const Type_* data() const { return my_ptr; }
 
     /**
-     * @return Pointer to the start of the array, for use in templated functions expecting a `std::vector`.
+     * @return Pointer to the start of the array.
      */
-    const T* begin() const { return my_ptr; }
+    const Type_* begin() const { return my_ptr; }
 
     /**
-     * @return Pointer to the end of the array, for use in templated functions expecting a `std::vector`.
+     * @return Pointer to one-past-the-end of the array.
      */
-    const T* end() const { return my_ptr + my_number; }
+    const Type_* end() const { return my_ptr + my_number; }
 
     /**
      * @param i Index of the array.
      * @return Value of the array at element `i`.
      */
-    T operator[](std::size_t i) const {
+    Type_ operator[](std::size_t i) const {
         return my_ptr[i];
     }
 
 private:
-    const T* my_ptr;
+    const Type_* my_ptr;
     std::size_t my_number;
 };
 

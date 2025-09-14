@@ -18,7 +18,7 @@ namespace tatami {
  * @cond
  */
 template<CompareOperation op_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
-void delayed_compare_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, OutputValue_* output) {
+void delayed_compare_run_simple(const InputValue_* input, const Index_ length, const Scalar_ scalar, OutputValue_* const output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to enable optimizations.
     }
@@ -28,7 +28,7 @@ void delayed_compare_run_simple(const InputValue_* input, Index_ length, Scalar_
 }
 
 template<CompareOperation op_, typename InputValue_, typename Scalar_>
-bool delayed_compare_actual_sparse(Scalar_ scalar) {
+bool delayed_compare_actual_sparse(const Scalar_ scalar) {
     return !delayed_compare<op_, InputValue_>(0, scalar);
 }
 /**
@@ -54,7 +54,7 @@ public:
      * @param scalar Scalar to be compared to the matrix values.
      * The matrix value is assumed to be on the left hand side of the comparison, while `scalar` is on the right.
      */
-    DelayedUnaryIsometricCompareScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
+    DelayedUnaryIsometricCompareScalarHelper(const Scalar_ scalar) : my_scalar(scalar) {
         my_sparse = delayed_compare_actual_sparse<op_, InputValue_>(my_scalar);
     }
 
@@ -89,11 +89,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_compare_run_simple<op_>(input, length, my_scalar, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_compare_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
@@ -102,11 +102,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_compare_run_simple<op_>(input_value, number, my_scalar, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         return delayed_compare<op_, InputValue_>(0, my_scalar);
     }
 };
@@ -237,11 +237,11 @@ public:
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricCompareVectorHelper(Vector_ vector, bool by_row) : 
+    DelayedUnaryIsometricCompareVectorHelper(Vector_ vector, const bool by_row) : 
         my_vector(std::move(vector)),
         my_by_row(by_row)
     {
-        for (auto x : my_vector) {
+        for (const auto x : my_vector) {
              if (!delayed_compare_actual_sparse<op_, InputValue_>(x)) {
                  my_sparse = false;
                  break;
@@ -289,7 +289,7 @@ public:
     }
 
 public:
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const Index_ start, const Index_ length, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input, length, my_vector[idx], output);
         } else {
@@ -302,14 +302,14 @@ public:
         }
     }
 
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 input = output; // basically an assertion to the compiler to enable optimizations.
             }
-            Index_ length = indices.size();
+            const Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
                 output[i] = delayed_compare<op_, InputValue_>(input[i], my_vector[indices[i]]);
             }
@@ -321,7 +321,7 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* indices, OutputValue_* output_value) const {
+    void sparse(const bool row, const Index_ idx, const Index_ number, const InputValue_* input_value, const Index_* const indices, OutputValue_* const output_value) const {
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input_value, number, my_vector[idx], output_value);
         } else {
@@ -334,7 +334,7 @@ public:
         }
     }
 
-    OutputValue_ fill(bool row, Index_ idx) const {
+    OutputValue_ fill(const bool row, const Index_ idx) const {
         if (row == my_by_row) {
             return delayed_compare<op_, InputValue_>(0, my_vector[idx]);
         } else {
@@ -452,7 +452,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @cond
  */
 template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_special_compare_run_simple(const InputValue_* input, Index_ length, OutputValue_* output) {
+void delayed_special_compare_run_simple(const InputValue_* const input, const Index_ length, OutputValue_* const output) {
     for (Index_ i = 0; i < length; ++i) {
         output[i] = delayed_special_compare<op_, pass_, InputValue_>(input[i]);
     }
@@ -518,11 +518,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_special_compare_run_simple<op_, pass_>(input, length, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_special_compare_run_simple<op_, pass_>(input, static_cast<Index_>(indices.size()), output);
     }
 
@@ -531,11 +531,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_special_compare_run_simple<op_, pass_>(input_value, number, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         return !my_sparse;
     }
 };

@@ -64,7 +64,7 @@ public:
         return 1 - my_matrix->prefer_rows_proportion();
     }
 
-    bool uses_oracle(bool row) const {
+    bool uses_oracle(const bool row) const {
         return my_matrix->uses_oracle(!row);
     }
 
@@ -76,15 +76,27 @@ public:
      *** Myopic dense ***
      ********************/
 public:
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        VectorPtr<Index_> indices_ptr,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, std::move(indices_ptr), opt);
     }
 
@@ -92,15 +104,27 @@ public:
      *** Myopic sparse ***
      *********************/
 public:
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        VectorPtr<Index_> indices_ptr,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, std::move(indices_ptr), opt);
     }
 
@@ -108,15 +132,30 @@ public:
      *** Oracular dense ***
      **********************/
 public:
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        VectorPtr<Index_> indices_ptr,
+        const Options& opt)
+    const {
         return my_matrix->dense(!row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -124,15 +163,30 @@ public:
      *** Oracular sparse ***
      ***********************/
 public:
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        VectorPtr<Index_> indices,
+        const Options& opt)
+    const {
         return my_matrix->sparse(!row, std::move(oracle), std::move(indices), opt);
     }
 };

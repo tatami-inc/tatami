@@ -7,6 +7,7 @@
 #include "DelayedSubset.hpp"
 #include "DelayedSubsetBlock.hpp"
 #include "../utils/ArrayView.hpp"
+#include "../utils/copy.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -36,41 +37,38 @@ namespace tatami {
  * @return A pointer to a `DelayedSubset` instance.
  */
 template<typename Value_, typename Index_, class SubsetStorage_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool by_row) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, const bool by_row) {
+    const auto nsub = subset.size();
+    typedef I<decltype(nsub)> Subset;
+
     bool is_unsorted = false;
-    for (Index_ i = 0, end = subset.size(); i < end; ++i) {
-        if (i) {
-            if (subset[i] < subset[i-1]) {
-                is_unsorted = true;
-                break;
-            }
+    for (Subset i = 1; i < nsub; ++i) {
+        if (subset[i] < subset[i-1]) {
+            is_unsorted = true;
+            break;
         }
     }
 
     if (!is_unsorted) {
         bool has_duplicates = false;
-        for (Index_ i = 0, end = subset.size(); i < end; ++i) {
-            if (i) {
-                if (subset[i] == subset[i-1]) {
-                    has_duplicates = true;
-                    break;
-                }
+        for (Subset i = 1; i < nsub; ++i) {
+            if (subset[i] == subset[i-1]) {
+                has_duplicates = true;
+                break;
             }
         }
 
         if (!has_duplicates) {
             bool consecutive = true;
-            for (Index_ i = 0, end = subset.size(); i < end; ++i) {
-                if (i) {
-                    if (subset[i] > subset[i-1] + 1) {
-                        consecutive = false;
-                        break;
-                    }
+            for (Subset i = 1; i < nsub; ++i) {
+                if (subset[i] > subset[i-1] + 1) {
+                    consecutive = false;
+                    break;
                 }
             }
 
             if (consecutive) {
-                auto start = (subset.size() ? subset[0] : 0);
+                const auto start = (nsub ? subset[0] : 0);
                 return std::shared_ptr<Matrix<Value_, Index_> >(
                     new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), start, subset.size(), by_row)
                 );
@@ -87,8 +85,8 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
     }
 
     bool has_duplicates = false;
-    std::vector<unsigned char> accumulated(by_row ? matrix->nrow() : matrix->ncol());
-    for (Index_ i = 0, end = subset.size(); i < end; ++i) {
+    auto accumulated = create_container_of_Index_size<std::vector<unsigned char> >(by_row ? matrix->nrow() : matrix->ncol());
+    for (Subset i = 0; i < nsub; ++i) {
         auto& found = accumulated[subset[i]];
         if (found) {
             has_duplicates = true;
@@ -113,7 +111,7 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
  * @cond
  */
 template<typename Value_, typename Index_, class SubsetStorage_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool by_row) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, const bool by_row) {
     return make_DelayedSubset<Value_, Index_, SubsetStorage_>(std::shared_ptr<const Matrix<Value_, Index_> >(std::move(matrix)), std::move(subset), by_row);
 }
 /**

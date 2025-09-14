@@ -14,7 +14,7 @@ namespace DelayedIsometricOperation_internal {
 template<bool oracle_, class Operation_, typename Index_>
 class MaybeOracleDepends {
 public:
-    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, const Operation_& op, bool row) {
+    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, const Operation_& op, const bool row) {
         if constexpr(oracle_) {
             if ([&]{
                 // Only storing if the oracle if we need the row/column index
@@ -40,7 +40,7 @@ public:
         }
     }
 
-    Index_ get(Index_ i) {
+    Index_ get(const Index_ i) {
         if constexpr(oracle_) {
             if (my_oracle) {
                 return my_oracle->get(my_used++);
@@ -55,7 +55,7 @@ private:
 };
 
 template<class Operation_>
-bool can_dense_expand(const Operation_& op, bool row) {
+bool can_dense_expand(const Operation_& op, const bool row) {
     if (!op.is_sparse()) { // as I said before: if it's sparse, zeros remain zero so they can't depend on either the row or column.
         if (row) {
             // If zero processing doesn't depend on the column identity, then
@@ -74,7 +74,7 @@ bool can_dense_expand(const Operation_& op, bool row) {
 }
 
 template<class Operation_>
-bool needs_sparse_indices(const Operation_& op, bool row) {
+bool needs_sparse_indices(const Operation_& op, const bool row) {
     if (row) {
         // If we depend on columns, then we need column indices
         // when the rows are the target dimension.

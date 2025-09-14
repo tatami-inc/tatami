@@ -20,12 +20,12 @@ namespace tatami {
  * @cond
  */
 template<CompareOperation op_, typename InputValue_, typename Scalar_, typename OutputValue_>
-bool delayed_substitute_is_sparse(Scalar_ compared, OutputValue_ substitute) {
+bool delayed_substitute_is_sparse(const Scalar_ compared, const OutputValue_ substitute) {
     return !delayed_compare<op_, InputValue_>(0, compared) || substitute == 0;
 }
 
 template<CompareOperation op_, typename InputValue_, typename Scalar_, typename OutputValue_>
-OutputValue_ delayed_substitute_run(InputValue_ val, Scalar_ compared, OutputValue_ substitute) {
+OutputValue_ delayed_substitute_run(const InputValue_ val, const Scalar_ compared, const OutputValue_ substitute) {
     if (delayed_compare<op_>(val, compared)) {
         return substitute;
     } else {
@@ -34,7 +34,7 @@ OutputValue_ delayed_substitute_run(InputValue_ val, Scalar_ compared, OutputVal
 }
 
 template<CompareOperation op_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
-void delayed_substitute_run_simple(const InputValue_* input, Index_ length, Scalar_ compared, OutputValue_* output, OutputValue_ substitute) {
+void delayed_substitute_run_simple(const InputValue_* input, const Index_ length, const Scalar_ compared, OutputValue_* const output, const OutputValue_ substitute) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to skip aliasing protection.
     }
@@ -66,7 +66,10 @@ public:
      * The matrix value is assumed to be on the left hand side of the comparison, while `compared` is on the right.
      * @param substitute Scalar to substitute into the matrix for every element where the comparison to `compared` is true.
      */
-    DelayedUnaryIsometricSubstituteScalarHelper(Scalar_ compared, OutputValue_ substitute) : my_compared(compared), my_substitute(substitute) {
+    DelayedUnaryIsometricSubstituteScalarHelper(const Scalar_ compared, const OutputValue_ substitute) :
+        my_compared(compared),
+        my_substitute(substitute)
+    {
         my_sparse = delayed_substitute_is_sparse<op_, InputValue_>(my_compared, my_substitute);
     }
 
@@ -102,11 +105,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_substitute_run_simple<op_>(input, length, my_compared, output, my_substitute);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_substitute_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_compared, output, my_substitute);
     }
 
@@ -115,11 +118,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_substitute_run_simple<op_>(input_value, number, my_compared, output_value, my_substitute);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         if (my_sparse) {
             return 0;
         } else {
@@ -271,16 +274,16 @@ public:
      * If true, each element of the vectors is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vectors is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricSubstituteVectorHelper(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) : 
+    DelayedUnaryIsometricSubstituteVectorHelper(ComparedVector_ compared, SubstituteVector_ substitute, const bool by_row) : 
         my_compared(std::move(compared)),
         my_substitute(std::move(substitute)),
         my_by_row(by_row) 
     {
-        auto ncompared = my_compared.size();
+        const auto ncompared = my_compared.size();
         if (!safe_non_negative_equal(ncompared, my_substitute.size())) {
             throw std::runtime_error("'compared' and 'substitute' should have the same length");
         }
-        for (decltype(ncompared) i = 0; i < ncompared; ++i) {
+        for (I<decltype(ncompared)> i = 0; i < ncompared; ++i) {
             if (!delayed_substitute_is_sparse<op_, InputValue_>(my_compared[i], my_substitute[i])) {
                  my_sparse = false;
                  break;
@@ -329,7 +332,7 @@ public:
     }
 
 public:
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const Index_ start, const Index_ length, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_>(input, length, my_compared[idx], output, my_substitute[idx]);
         } else {
@@ -337,22 +340,22 @@ public:
                 input = output; // basically an assertion to the compiler to skip aliasing protection.
             }
             for (Index_ i = 0; i < length; ++i) {
-                Index_ is = i + start;
+                const Index_ is = i + start;
                 output[i] = delayed_substitute_run<op_>(input[i], my_compared[is], my_substitute[is]);
             }
         }
     }
 
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_compared[idx], output, my_substitute[idx]);
         } else {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 input = output; // basically an assertion to the compiler to skip aliasing protection.
             }
-            Index_ length = indices.size();
+            const Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
-                auto ii = indices[i];
+                const auto ii = indices[i];
                 output[i] = delayed_substitute_run<op_>(input[i], my_compared[ii], my_substitute[ii]);
             }
         }
@@ -371,7 +374,7 @@ public:
                 input_value = output_value; // basically an assertion to the compiler to skip aliasing protection.
             }
             for (Index_ i = 0; i < number; ++i) {
-                auto ii = indices[i];
+                const auto ii = indices[i];
                 output_value[i] = delayed_substitute_run<op_>(input_value[i], my_compared[ii], my_substitute[ii]);
             }
         }
@@ -379,7 +382,7 @@ public:
 
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
-            auto sub = my_substitute[idx];
+            const auto sub = my_substitute[idx];
             if (!delayed_compare<op_, InputValue_>(0, my_compared[idx])) {
                 return 0;
             } else {
@@ -518,12 +521,12 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @cond
  */
 template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename OutputValue_>
-bool delayed_special_substitute_is_sparse(OutputValue_ substitute) {
+bool delayed_special_substitute_is_sparse(const OutputValue_ substitute) {
     return !delayed_special_compare<op_, pass_, InputValue_>(0) || substitute == 0;
 }
 
 template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename OutputValue_>
-OutputValue_ delayed_special_substitute_run(InputValue_ val, OutputValue_ substitute) {
+OutputValue_ delayed_special_substitute_run(const InputValue_ val, const OutputValue_ substitute) {
     if (delayed_special_compare<op_, pass_>(val)) {
         return substitute;
     } else {
@@ -532,7 +535,7 @@ OutputValue_ delayed_special_substitute_run(InputValue_ val, OutputValue_ substi
 }
 
 template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_special_substitute_run_simple(const InputValue_* input, Index_ length, OutputValue_ substitute, OutputValue_* output) {
+void delayed_special_substitute_run_simple(const InputValue_* input, const Index_ length, const OutputValue_ substitute, OutputValue_* const output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to skip aliasing protection.
     }
@@ -563,7 +566,7 @@ public:
     /**
      * @param substitute Scalar to substitute into the matrix for every element where the special comparison is true (if `pass_ = true`) or false (otherwise).
      */
-    DelayedUnaryIsometricSpecialSubstituteHelper(OutputValue_ substitute) : my_substitute(substitute) {
+    DelayedUnaryIsometricSpecialSubstituteHelper(const OutputValue_ substitute) : my_substitute(substitute) {
         my_sparse = delayed_special_substitute_is_sparse<op_, pass_, InputValue_>(my_substitute);
     }
 
@@ -598,11 +601,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_special_substitute_run_simple<op_, pass_>(input, length, my_substitute, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_special_substitute_run_simple<op_, pass_>(input, static_cast<Index_>(indices.size()), my_substitute, output);
     }
 
@@ -611,11 +614,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_special_substitute_run_simple<op_, pass_>(input_value, number, my_substitute, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         if (my_sparse) {
             return 0;
         } else {

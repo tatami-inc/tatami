@@ -39,7 +39,7 @@ namespace tatami {
  * @param threads Number of threads.
  */
 template<bool parallel_ = true, class Function_, typename Index_>
-void parallelize(Function_ fun, Index_ tasks, int threads) {
+void parallelize(Function_ fun, const Index_ tasks, const int threads) {
     if constexpr(parallel_) {
 #ifdef TATAMI_CUSTOM_PARALLEL
         TATAMI_CUSTOM_PARALLEL(fun, tasks, threads);

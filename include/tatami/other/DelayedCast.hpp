@@ -28,7 +28,7 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
-    IndexIn_ get(PredictionIndex i) const {
+    IndexIn_ get(const PredictionIndex i) const {
         return my_oracle->get(i);
     }
 
@@ -63,34 +63,51 @@ VectorPtr<IndexIn_> convert(VectorPtr<IndexOut_> indices_ptr) {
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
 class Dense final : public DenseExtractor<oracle_, ValueOut_, IndexOut_> {
 public:
-    Dense(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, const Options& opt) {
-        allocate(row ? matrix->ncol() : matrix->nrow());
+    Dense(
+        const Matrix<ValueIn_, IndexIn_>& matrix, 
+        const bool row, MaybeOracle<oracle_, IndexOut_> oracle, 
+        const Options& opt)
+    {
+        allocate(row ? matrix.ncol() : matrix.nrow());
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
     }
 
-    Dense(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) {
+    Dense(
+        const Matrix<ValueIn_, IndexIn_>& matrix,
+        const bool row,
+        MaybeOracle<oracle_, IndexOut_> oracle,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    {
         allocate(block_length);
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
 
-    Dense(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) {
+    Dense(
+        const Matrix<ValueIn_, IndexIn_>& matrix,
+        const bool row,
+        MaybeOracle<oracle_, IndexOut_> oracle,
+        VectorPtr<IndexOut_> indices_ptr,
+        const Options& opt)
+    {
         allocate(indices_ptr->size());
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
 private:
-    void allocate(IndexIn_ n) {
+    void allocate(const IndexIn_ n) {
         if constexpr(!no_op) {
             resize_container_to_Index_size(my_buffer, n);
         }
     }
 
 public:
-    const ValueOut_* fetch(IndexOut_ i, ValueOut_* buffer) {
+    const ValueOut_* fetch(const IndexOut_ i, ValueOut_* const buffer) {
         if constexpr(no_op) {
             return my_ext->fetch(i, buffer);
         } else {
-            auto ptr = my_ext->fetch(i, my_buffer.data());
+            const auto ptr = my_ext->fetch(i, my_buffer.data());
             std::copy_n(ptr, my_buffer.size(), buffer);
             return buffer;
         }
@@ -105,23 +122,41 @@ private:
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
 class Sparse final : public SparseExtractor<oracle_, ValueOut_, IndexOut_> {
 public:
-    Sparse(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, const Options& opt) {
-        allocate(row ? matrix->ncol() : matrix->nrow(), opt);
+    Sparse(
+        const Matrix<ValueIn_, IndexIn_>& matrix,
+        const bool row,
+        MaybeOracle<oracle_, IndexOut_> oracle,
+        const Options& opt)
+    {
+        allocate(row ? matrix.ncol() : matrix.nrow(), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
     }
 
-    Sparse(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) {
+    Sparse(
+        const Matrix<ValueIn_, IndexIn_>& matrix,
+        const bool row,
+        MaybeOracle<oracle_, IndexOut_> oracle,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    {
         allocate(block_length, opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
 
-    Sparse(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) {
+    Sparse(
+        const Matrix<ValueIn_, IndexIn_>& matrix,
+        const bool row,
+        MaybeOracle<oracle_, IndexOut_> oracle,
+        VectorPtr<IndexOut_> indices_ptr,
+        const Options& opt)
+    {
         allocate(indices_ptr->size(), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
 private:
-    void allocate(IndexIn_ n, const Options& opt) {
+    void allocate(const IndexIn_ n, const Options& opt) {
         if constexpr(!no_op_value) {
             if (opt.sparse_extract_value) {
                 resize_container_to_Index_size(my_vbuffer, n);
@@ -135,8 +170,8 @@ private:
     }
 
 public:
-    SparseRange<ValueOut_, IndexOut_> fetch(IndexOut_ i, ValueOut_* value_buffer, IndexOut_* index_buffer) {
-        IndexIn_* iptr = [&]{
+    SparseRange<ValueOut_, IndexOut_> fetch(const IndexOut_ i, ValueOut_* const value_buffer, IndexOut_* const index_buffer) {
+        IndexIn_* const iptr = [&]{
             if constexpr(no_op_index) {
                 return index_buffer;
             } else {
@@ -144,7 +179,7 @@ public:
             }
         }();
 
-        ValueIn_* vptr = [&]{
+        ValueIn_* const vptr = [&]{
             if constexpr(no_op_value) {
                 return value_buffer;
             } else {
@@ -152,7 +187,7 @@ public:
             }
         }();
 
-        auto range = my_ext->fetch(i, vptr, iptr);
+        const auto range = my_ext->fetch(i, vptr, iptr);
         SparseRange<ValueOut_, IndexOut_> output(range.number);
 
         if constexpr(no_op_index) {
@@ -231,7 +266,7 @@ public:
         return my_matrix->prefer_rows_proportion();
     }
 
-    bool uses_oracle(bool row) const {
+    bool uses_oracle(const bool row) const {
         return my_matrix->uses_oracle(row);
     }
 
@@ -242,64 +277,118 @@ private:
      *** Myopic dense ***
      ********************/
 public:
-    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, opt);
+    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, block_start, block_length, opt);
+    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, VectorPtr<IndexOut_> indices_my_matrix, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, std::move(indices_my_matrix), opt);
+    std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        VectorPtr<IndexOut_> indices_my_matrix,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, std::move(indices_my_matrix), opt);
     }
 
     /*********************
      *** Myopic sparse ***
      *********************/
 public:
-    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, opt);
+    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, block_start, block_length, opt);
+    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, VectorPtr<IndexOut_> indices_my_matrix, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, false, std::move(indices_my_matrix), opt);
+    std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        VectorPtr<IndexOut_> indices_my_matrix,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, std::move(indices_my_matrix), opt);
     }
 
     /**********************
      *** Oracular dense ***
      **********************/
 public:
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), opt);
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), block_start, block_length, opt);
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_my_matrix, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), std::move(indices_my_matrix), opt);
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        VectorPtr<IndexOut_> indices_my_matrix,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), std::move(indices_my_matrix), opt);
     }
 
     /***********************
      *** Oracular sparse ***
      ***********************/
 public:
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), opt);
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), block_start, block_length, opt);
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        const IndexOut_ block_start,
+        const IndexOut_ block_length,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_my_matrix, const Options& opt) const {
-        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(my_matrix.get(), row, std::move(oracle), std::move(indices_my_matrix), opt);
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(
+        const bool row,
+        std::shared_ptr<const Oracle<IndexOut_> > oracle,
+        VectorPtr<IndexOut_> indices_my_matrix,
+        const Options& opt)
+    const {
+        return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), std::move(indices_my_matrix), opt);
     }
 };
 

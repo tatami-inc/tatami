@@ -25,7 +25,7 @@ public:
      * @param start Start index of the consecutive sequence on the target dimension.
      * @param length Length of the sequence.
      */
-    ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(sanisizer::cast<PredictionIndex>(length)) {}
+    ConsecutiveOracle(const Index_ start, const Index_ length) : my_offset(start), my_length(sanisizer::cast<PredictionIndex>(length)) {}
 
     PredictionIndex total() const {
         return my_length;

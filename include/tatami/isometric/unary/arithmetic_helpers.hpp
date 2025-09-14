@@ -19,7 +19,7 @@ namespace tatami {
  * @cond
  */
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
-void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, OutputValue_* output) {
+void delayed_arithmetic_run_simple(const InputValue_* input, const Index_ length, const Scalar_ scalar, OutputValue_* const output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to skip aliasing protection.
     }
@@ -31,11 +31,11 @@ void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scal
 // The '*_actual_sparse' and '*_zero' functions should be mirrors of each other;
 // we enforce this by putting their logic all in the same place.
 template<bool check_only_, ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
-auto delayed_arithmetic_zeroish(Scalar_ scalar) {
+auto delayed_arithmetic_zeroish(const Scalar_ scalar) {
     if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
         if constexpr(right_) {
             if (scalar) {
-                OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
+                const OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
                 if constexpr(check_only_) {
                     return val == 0;
                 } else {
@@ -52,7 +52,7 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
         }
 
     } else {
-        OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
+        const OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
         if constexpr(check_only_) {
             return val == 0;
         } else {
@@ -62,12 +62,12 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
 }
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
-bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
+bool delayed_arithmetic_actual_sparse(const Scalar_ scalar) {
     return delayed_arithmetic_zeroish<true, op_, right_, OutputValue_, InputValue_, Scalar_>(scalar);
 }
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
-OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
+OutputValue_ delayed_arithmetic_zero(const Scalar_ scalar) {
     return delayed_arithmetic_zeroish<false, op_, right_, OutputValue_, InputValue_, Scalar_>(scalar);
 }
 /**
@@ -95,7 +95,7 @@ public:
     /**
      * @param scalar Scalar value to be used in the operation.
      */
-    DelayedUnaryIsometricArithmeticScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
+    DelayedUnaryIsometricArithmeticScalarHelper(const Scalar_ scalar) : my_scalar(scalar) {
         my_sparse = delayed_arithmetic_actual_sparse<op_, right_, OutputValue_, InputValue_>(my_scalar);
     }
 
@@ -130,11 +130,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_arithmetic_run_simple<op_, right_>(input, length, my_scalar, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
@@ -143,11 +143,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_scalar, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         // We perform the operation with the InputValue_ before casting it to
         // the OutputValue_, which is consistent with the behavior of all other
         // methods. See ../arithmetic_utils.hpp for some comments about the
@@ -306,8 +306,8 @@ public:
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricArithmeticVectorHelper(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
-        for (auto x : my_vector) {
+    DelayedUnaryIsometricArithmeticVectorHelper(Vector_ vector, const bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
+        for (const auto x : my_vector) {
             if (!delayed_arithmetic_actual_sparse<op_, right_, OutputValue_, InputValue_>(x)) {
                 my_sparse = false;
                 break;
@@ -355,7 +355,7 @@ public:
     }
 
 public:
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const Index_ start, const Index_ length, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, length, my_vector[idx], output);
         } else {
@@ -368,7 +368,7 @@ public:
         }
     }
 
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
@@ -387,7 +387,14 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* index, OutputValue_* output_value) const {
+    void sparse(
+        const bool row,
+        const Index_ idx,
+        const Index_ number,
+        const InputValue_* input_value,
+        const Index_* const index,
+        OutputValue_* const output_value)
+    const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_vector[idx], output_value);
         } else {
@@ -400,7 +407,7 @@ public:
         }
     }
 
-    OutputValue_ fill(bool row, Index_ idx) const {
+    OutputValue_ fill(const bool row, const Index_ idx) const {
         if (row == my_by_row) {
             return delayed_arithmetic_zero<op_, right_, OutputValue_, InputValue_>(my_vector[idx]);
         } else {

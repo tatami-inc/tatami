@@ -7,11 +7,11 @@ template<bool must_have_both, typename InputValue_, typename Index_, typename Ou
 Index_ delayed_binary_isometric_sparse_operation(
     const SparseRange<InputValue_, Index_>& left,
     const SparseRange<InputValue_, Index_>& right, 
-    OutputValue_* value_buffer, 
-    Index_* index_buffer, 
-    bool needs_value, 
-    bool needs_index, 
-    Function_ fun)
+    OutputValue_* const value_buffer, 
+    Index_* const index_buffer, 
+    const bool needs_value, 
+    const bool needs_index, 
+    const Function_ fun)
 {
     Index_ lcount = 0, rcount = 0, output = 0;
 

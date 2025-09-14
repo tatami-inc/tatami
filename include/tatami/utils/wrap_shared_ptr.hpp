@@ -25,7 +25,7 @@ namespace tatami {
  * The assumption is that `ptr` will always outlive the returned pointer.
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<const Matrix<Value_, Index_> > wrap_shared_ptr(const Matrix<Value_, Index_>* ptr) {
+std::shared_ptr<const Matrix<Value_, Index_> > wrap_shared_ptr(const Matrix<Value_, Index_>* const ptr) {
     // Using an aliasing constructor, see https://stackoverflow.com/a/36691828
     return std::shared_ptr<const Matrix<Value_, Index_> >(std::shared_ptr<const Matrix<Value_, Index_> >{}, ptr);
 }

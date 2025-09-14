@@ -27,7 +27,7 @@ enum class CompareOperation : char {
  * @cond
  */
 template<CompareOperation op_, typename Value_, typename Scalar_>
-bool delayed_compare(Value_ val, Scalar_ scalar) {
+bool delayed_compare(const Value_ val, const Scalar_ scalar) {
     if constexpr(op_ == CompareOperation::EQUAL) {
         return val == scalar;
     } else if constexpr(op_ == CompareOperation::GREATER_THAN) {
@@ -59,7 +59,7 @@ enum class SpecialCompareOperation : char {
  * @cond
  */
 template<SpecialCompareOperation op_, bool pass_, typename Value_>
-bool delayed_special_compare(Value_ val) {
+bool delayed_special_compare(const Value_ val) {
     if constexpr(op_ == SpecialCompareOperation::ISNAN) {
         return pass_ == std::isnan(val);
     } else if constexpr(op_ == SpecialCompareOperation::ISINF) {

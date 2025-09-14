@@ -23,7 +23,7 @@ enum class BooleanOperation : char {
  * @cond
  */
 template<BooleanOperation op_>
-bool delayed_boolean(bool val, bool scalar) {
+bool delayed_boolean(const bool val, const bool scalar) {
     if constexpr(op_ == BooleanOperation::AND) {
         return val && scalar;
     } else if constexpr(op_ == BooleanOperation::OR) {

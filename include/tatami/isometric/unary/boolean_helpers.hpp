@@ -18,7 +18,7 @@ namespace tatami {
  * @cond
  */
 template<typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_boolean_cast(const InputValue_* input, Index_ length, OutputValue_* output) {
+void delayed_boolean_cast(const InputValue_* input, const Index_ length, OutputValue_* const output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to skip aliasing protection.
     }
@@ -28,7 +28,7 @@ void delayed_boolean_cast(const InputValue_* input, Index_ length, OutputValue_*
 }
 
 template<typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_boolean_not(const InputValue_* input, Index_ length, OutputValue_* output) {
+void delayed_boolean_not(const InputValue_* input, const Index_ length, OutputValue_* const output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to skip aliasing protection.
     }
@@ -38,7 +38,7 @@ void delayed_boolean_not(const InputValue_* input, Index_ length, OutputValue_* 
 }
 
 template<BooleanOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool scalar, OutputValue_* output) {
+void delayed_boolean_run_simple(const InputValue_* const input, const Index_ length, const bool scalar, OutputValue_* const output) {
     if constexpr(op_ == BooleanOperation::AND) {
         if (scalar) {
             delayed_boolean_cast(input, length, output); 
@@ -67,7 +67,7 @@ void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool sc
 }
 
 template<BooleanOperation op_>
-bool delayed_boolean_actual_sparse(bool scalar) {
+bool delayed_boolean_actual_sparse(const bool scalar) {
     return delayed_boolean<op_>(0, scalar) == static_cast<bool>(0);
 }
 /**
@@ -91,7 +91,7 @@ public:
     /**
      * @param scalar Scalar value.
      */
-    DelayedUnaryIsometricBooleanScalarHelper(bool scalar) : my_scalar(scalar) {
+    DelayedUnaryIsometricBooleanScalarHelper(const bool scalar) : my_scalar(scalar) {
         my_sparse = delayed_boolean_actual_sparse<op_>(my_scalar);
     }
 
@@ -126,11 +126,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_run_simple<op_>(input, length, my_scalar, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
@@ -139,11 +139,11 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_boolean_run_simple<op_>(input_value, number, my_scalar, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         // Remember, the operation needs to be performed on the InputValue_
         // to use in casting it to the OutputValue_.
         return delayed_boolean<op_>(0, my_scalar);
@@ -256,11 +256,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_not(input, length, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_not(input, static_cast<Index_>(indices.size()), output);
     }
 
@@ -269,11 +269,11 @@ public:
         return false;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_boolean_not(input_value, number, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         return 1;
     }
 };
@@ -317,11 +317,11 @@ public:
     }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const Index_, const Index_ length, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_cast(input, length, output);
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool, const Index_, const std::vector<Index_>& indices, const InputValue_* const input, OutputValue_* const output) const {
         delayed_boolean_cast(input, static_cast<Index_>(indices.size()), output);
     }
 
@@ -330,11 +330,11 @@ public:
         return true;
     }
 
-    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+    void sparse(const bool, const Index_, const Index_ number, const InputValue_* const input_value, const Index_* const, OutputValue_* const output_value) const {
         delayed_boolean_cast(input_value, number, output_value);
     }
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         return 0;
     }
 };
@@ -371,7 +371,7 @@ public:
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricBooleanVectorHelper(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
+    DelayedUnaryIsometricBooleanVectorHelper(Vector_ vector, const bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
              if (!delayed_boolean_actual_sparse<op_>(x)) {
                  my_sparse = false;
@@ -420,7 +420,7 @@ public:
     }
 
 public:
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const Index_ start, const Index_ length, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, length, my_vector[idx], output);
         } else {
@@ -433,14 +433,14 @@ public:
         }
     }
 
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+    void dense(const bool row, const Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* const output) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 input = output; // basically an assertion to the compiler to skip aliasing protection.
             }
-            Index_ length = indices.size();
+            const Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
                 output[i] = delayed_boolean<op_>(input[i], my_vector[indices[i]]);
             }
@@ -452,7 +452,7 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* index, OutputValue_* output_value) const {
+    void sparse(const bool row, const Index_ idx, const Index_ number, const InputValue_* input_value, const Index_* const index, OutputValue_* const output_value) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input_value, number, my_vector[idx], output_value);
         } else {
@@ -465,7 +465,7 @@ public:
         }
     }
 
-    OutputValue_ fill(bool row, Index_ idx) const {
+    OutputValue_ fill(const bool row, const Index_ idx) const {
         if (row == my_by_row) {
             return delayed_boolean<op_>(0, my_vector[idx]);
         } else {

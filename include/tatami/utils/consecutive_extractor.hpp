@@ -32,7 +32,7 @@ namespace tatami {
  * This may be either an `OracularDenseExtractor` or `OracularSparseExtractor` depending on `sparse_`.
  */
 template<bool sparse_, typename Value_, typename Index_, typename ... Args_>
-auto consecutive_extractor(const Matrix<Value_, Index_>& matrix, bool row, Index_ iter_start, Index_ iter_length, Args_&&... args) {
+auto consecutive_extractor(const Matrix<Value_, Index_>& matrix, const bool row, const Index_ iter_start, const Index_ iter_length, Args_&&... args) {
     return new_extractor<sparse_, true>(
         matrix,
         row,

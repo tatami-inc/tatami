@@ -29,7 +29,7 @@ public:
      * The underlying array should be valid for the lifetime of this `FixedViewOracle` instance.
      * @param number Length of the array at `ptr`.
      */
-    FixedViewOracle(const Index_* ptr, PredictionIndex number) : my_reference(ptr), my_length(number) {
+    FixedViewOracle(const Index_* const ptr, const PredictionIndex number) : my_reference(ptr), my_length(number) {
         sanisizer::can_cast<std::size_t>(number); // make sure that array is addressable by all [0, number).
     }
 
