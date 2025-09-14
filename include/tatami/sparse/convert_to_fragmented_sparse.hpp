@@ -172,11 +172,12 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
                     const auto ptr = wrk->fetch(buffer_v.data());
-                    for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
+                    for (InputIndex_ p = 0; p < length; ++p) {
                         const auto val = ptr[p];
                         if (val) {
-                            store_v[p].push_back(val);
-                            store_i[p].push_back(x);
+                            const auto idx = p + start;
+                            store_v[idx].push_back(val);
+                            store_i[idx].push_back(x);
                         }
                     }
                 }
