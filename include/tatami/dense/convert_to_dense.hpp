@@ -66,7 +66,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool
                 }
             }();
 
-            for (I<decltype(length)> x = 0; x < length; ++x) {
+            for (InputIndex_ x = 0; x < length; ++x) {
                 const auto store_copy = store + sanisizer::product_unsafe<std::size_t>(secondary, start + x);
                 if constexpr(same_type) {
                     auto ptr = wrk->fetch(store_copy);
@@ -94,7 +94,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool
             // Note that we don't use the blocked transposition strategy
             // from the dense case, because the overhead of looping is 
             // worse than the cache misses for sparse data.
-            for (I<decltype(primary)> x = 0; x < primary; ++x) {
+            for (InputIndex_ x = 0; x < primary; ++x) {
                 const auto range = wrk->fetch(vtemp.data(), itemp.data());
                 for (InputIndex_ i = 0; i < range.number; ++i) {
                     store[sanisizer::nd_offset<std::size_t>(x, primary, range.index[i])] = range.value[i];
@@ -118,21 +118,21 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool
             std::vector<InputValue_> bigbuffer(sanisizer::product_unsafe<typename std::vector<InputValue_>::size_type>(length, alloc));
             std::vector<const InputValue_*> ptrs(alloc); // no need for protection here, we know that alloc <= 16.
             std::vector<InputValue_*> buf_ptrs(alloc);
-            for (I<decltype(alloc)> i = 0; i < alloc; ++i) {
+            for (InputIndex_ i = 0; i < alloc; ++i) {
                 buf_ptrs[i] = bigbuffer.data() + sanisizer::product_unsafe<std::size_t>(length, i);
             }
 
             InputIndex_ prim_i = 0;
             while (prim_i < primary) {
                 const InputIndex_ prim_to_process = std::min(static_cast<InputIndex_>(primary - prim_i), block_size);
-                for (I<decltype(prim_to_process)> c = 0; c < prim_to_process; ++c) {
+                for (InputIndex_ c = 0; c < prim_to_process; ++c) {
                     ptrs[c] = wrk->fetch(buf_ptrs[c]);
                 }
 
                 InputIndex_ sec_i = 0;
                 while (sec_i < length) {
                     const InputIndex_ sec_end = sec_i + std::min(static_cast<InputIndex_>(length - sec_i), block_size);
-                    for (I<decltype(prim_to_process)> c = 0; c < prim_to_process; ++c) {
+                    for (InputIndex_ c = 0; c < prim_to_process; ++c) {
                         const auto input = ptrs[c];
                         for (InputIndex_ r = sec_i; r < sec_end; ++r) {
                             store[sanisizer::nd_offset<std::size_t>(c + prim_i, primary, r + start)] = input[r];
