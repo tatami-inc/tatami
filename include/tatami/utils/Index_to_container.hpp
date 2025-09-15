@@ -64,6 +64,7 @@ I<decltype(std::declval<Container_>().size())> cast_Index_to_container_size(cons
  *
  * @param x Size of the container as an `Index_`, typically the dimension extents.
  * It is assumed that `x` can be represented by a `std::size_t`, even if `Index_` is a larger type.
+ * @param args Further arguments to pass to the `Container_` constructor, after `x`.
  *
  * @return Instance of a `Container_` of size `x`.
  * An error is raised if `x` is too large.
@@ -80,11 +81,12 @@ Container_ create_container_of_Index_size(const Index_ x, Args_&& ... args) {
  * @tparam Index_ Integer type of the row/column indices.
  * @tparam Args_ Further arguments to pass to `Container_::resize()`.
  *
- * @param container_ Instance of a container.
+ * @param container Instance of a container.
  * On output, this is resized to size `x`.
  * An error is raised if `x` is too large.
  * @param x Size of the container as an `Index_`, typically the dimension extents.
  * It is assumed that `x` can be represented by a `std::size_t`, even if `Index_` is a larger type.
+ * @param args Further arguments to pass to the `resize()` method, after `x`.
  */
 template<typename Container_, typename Index_, typename ... Args_>
 void resize_container_to_Index_size(Container_& container, const Index_ x, Args_&& ... args) {
