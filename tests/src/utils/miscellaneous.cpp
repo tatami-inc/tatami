@@ -76,3 +76,25 @@ TEST_F(BackCompatibilityTest, ConsecutiveExtractor) {
     EXPECT_EQ(ptr[0], -45);
     EXPECT_EQ(ptr[9], 135);
 }
+
+TEST(HasData, Basic) {
+    {
+        constexpr bool found = tatami::has_data<int, std::vector<int> >::value;
+        EXPECT_TRUE(found);
+    }
+
+    {
+        constexpr bool found = tatami::has_data<int, const std::vector<int> >::value;
+        EXPECT_TRUE(found);
+    }
+
+    {
+        constexpr bool found = tatami::has_data<double, std::vector<int> >::value;
+        EXPECT_FALSE(found);
+    }
+
+    {
+        constexpr bool found = tatami::has_data<double, std::pair<double, double> >::value;
+        EXPECT_FALSE(found);
+    }
+}

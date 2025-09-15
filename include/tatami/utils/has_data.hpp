@@ -13,12 +13,12 @@ namespace tatami {
 
 /**
  * @brief Compile time check for the `data()` method.
- * @tparam T Expected type of the data.
- * @tparam V Class to check for `data()`.
+ * @tparam Type_ Expected type of the data.
+ * @tparam Container_ Class to check for `data()`.
  *
  * This returns `false` by default.
  */
-template<typename T, class V, typename = int>
+template<typename Type_, class Container_, typename = int>
 struct has_data {
     /**
      * Compile-time constant indicating whether `data()` exists.
@@ -28,17 +28,25 @@ struct has_data {
 
 /**
  * @brief Compile time check for the `data()` method.
- * @tparam T Expected type of the data.
- * @tparam V Class to check for `data()`.
+ * @tparam Type_ Expected type of the data.
+ * @tparam Container_ Class to check for `data()`.
  *
- * This only returns `true` if `V` has a `data()` method that returns a pointer to an array of `T`'s.
+ * This only returns `true` if `Container_` has a `data()` method that returns a (possibly `const`) pointer to an array of `Type_`'s.
  */
-template<typename T, class V>
-struct has_data<T, V, decltype((void) std::declval<V>().data(), 0)> { 
+template<typename Type_, class Container_>
+struct has_data<Type_, Container_, decltype((void) std::declval<Container_>().data(), 0)> { 
+    /**
+     * @cond
+     */
+    typedef decltype(std::declval<Container_>().data()) DataResult;
+    /**
+     * @endcond
+     */
+
     /**
      * Compile-time constant indicating whether `data()` exists.
      */
-    static const bool value = std::is_same<T*, decltype(std::declval<V>().data())>::value;
+    static const bool value = std::is_same<Type_*, DataResult>::value || std::is_same<const Type_*, DataResult>::value;
 };
 
 }
