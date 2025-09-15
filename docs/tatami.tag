@@ -369,7 +369,7 @@
     <path>tatami/utils/</path>
     <filename>has__data_8hpp.html</filename>
     <class kind="struct">tatami::has_data</class>
-    <class kind="struct">tatami::has_data&lt; T, V, decltype((void) std::declval&lt; V &gt;().data(), 0)&gt;</class>
+    <class kind="struct">tatami::has_data&lt; Type_, Container_, decltype((void) std::declval&lt; Container_ &gt;().data(), 0)&gt;</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -6517,27 +6517,27 @@
   <compound kind="struct">
     <name>tatami::has_data</name>
     <filename>structtatami_1_1has__data.html</filename>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
+    <templarg>typename Type_</templarg>
+    <templarg>class Container_</templarg>
     <templarg>typename</templarg>
     <member kind="variable" static="yes">
       <type>static const bool</type>
       <name>value</name>
       <anchorfile>structtatami_1_1has__data.html</anchorfile>
-      <anchor>a11170da5b517708a7102d54ca6815d9e</anchor>
+      <anchor>a8daea495b21dd7f51b24d297c5360d76</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami::has_data&lt; T, V, decltype((void) std::declval&lt; V &gt;().data(), 0)&gt;</name>
-    <filename>structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html</filename>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
+    <name>tatami::has_data&lt; Type_, Container_, decltype((void) std::declval&lt; Container_ &gt;().data(), 0)&gt;</name>
+    <filename>structtatami_1_1has__data_3_01Type___00_01Container___00_01decltype_07_07void_08_01std_1_1declva66f694cee1ca6e7d197226a9c6d58cf5.html</filename>
+    <templarg>typename Type_</templarg>
+    <templarg>class Container_</templarg>
     <member kind="variable" static="yes">
       <type>static const bool</type>
       <name>value</name>
-      <anchorfile>structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html</anchorfile>
-      <anchor>a13d4f9e0cac2afe51fdde3c552cbf1a7</anchor>
+      <anchorfile>structtatami_1_1has__data_3_01Type___00_01Container___00_01decltype_07_07void_08_01std_1_1declva66f694cee1ca6e7d197226a9c6d58cf5.html</anchorfile>
+      <anchor>acfcbad1792cd74438cc5be5ad7e46e9b</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -7756,7 +7756,7 @@
     <class kind="class">tatami::FragmentedSparseRowMatrix</class>
     <class kind="class">tatami::FullSparsifiedWrapper</class>
     <class kind="struct">tatami::has_data</class>
-    <class kind="struct">tatami::has_data&lt; T, V, decltype((void) std::declval&lt; V &gt;().data(), 0)&gt;</class>
+    <class kind="struct">tatami::has_data&lt; Type_, Container_, decltype((void) std::declval&lt; Container_ &gt;().data(), 0)&gt;</class>
     <class kind="class">tatami::IndexSparsifiedWrapper</class>
     <class kind="class">tatami::Matrix</class>
     <class kind="class">tatami::MyopicDenseExtractor</class>
