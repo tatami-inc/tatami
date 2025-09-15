@@ -108,7 +108,7 @@ $(function(){ initResizable(false); });
 </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span>&lt;BooleanOperation op_&gt;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keywordtype">bool</span> delayed_boolean(<span class="keywordtype">bool</span> val, <span class="keywordtype">bool</span> scalar) {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keywordtype">bool</span> delayed_boolean(<span class="keyword">const</span> <span class="keywordtype">bool</span> val, <span class="keyword">const</span> <span class="keywordtype">bool</span> scalar) {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(op_ == BooleanOperation::AND) {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keywordflow">return</span> val &amp;&amp; scalar;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(op_ == BooleanOperation::OR) {</div>

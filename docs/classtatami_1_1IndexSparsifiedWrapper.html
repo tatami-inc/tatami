@@ -106,8 +106,8 @@ $(function(){ initResizable(false); });
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad4571decc854c38dae3b9ec1f6593a1e" id="r_ad4571decc854c38dae3b9ec1f6593a1e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4571decc854c38dae3b9ec1f6593a1e">IndexSparsifiedWrapper</a> (std::unique_ptr&lt; <a class="el" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt; oracle_, Value_, Index_ &gt; &gt; dense, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt)</td></tr>
 <tr class="separator:ad4571decc854c38dae3b9ec1f6593a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbe93b184694bfd36f2052e6af5210c3" id="r_adbe93b184694bfd36f2052e6af5210c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbe93b184694bfd36f2052e6af5210c3">fetch</a> (Index_ i, Value_ *value_buffer, Index_ *index_buffer)</td></tr>
-<tr class="separator:adbe93b184694bfd36f2052e6af5210c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab36dce2ea8822a59d739001050c08c5f" id="r_ab36dce2ea8822a59d739001050c08c5f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab36dce2ea8822a59d739001050c08c5f">fetch</a> (const Index_ i, Value_ *const value_buffer, Index_ *const index_buffer)</td></tr>
+<tr class="separator:ab36dce2ea8822a59d739001050c08c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;bool oracle_, typename Value_, typename Index_&gt;<br />
@@ -167,8 +167,8 @@ template&lt;bool oracle_, typename Value_ , typename Index_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adbe93b184694bfd36f2052e6af5210c3" name="adbe93b184694bfd36f2052e6af5210c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbe93b184694bfd36f2052e6af5210c3">&#9670;&#160;</a></span>fetch()</h2>
+<a id="ab36dce2ea8822a59d739001050c08c5f" name="ab36dce2ea8822a59d739001050c08c5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab36dce2ea8822a59d739001050c08c5f">&#9670;&#160;</a></span>fetch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -181,17 +181,17 @@ template&lt;bool oracle_, typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1IndexSparsifiedWrapper.html">tatami::IndexSparsifiedWrapper</a>&lt; oracle_, Value_, Index_ &gt;::fetch </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Value_ *</td>          <td class="paramname"><span class="paramname"><em>value_buffer</em></span>, </td>
+          <td class="paramtype">Value_ *const</td>          <td class="paramname"><span class="paramname"><em>value_buffer</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_ *</td>          <td class="paramname"><span class="paramname"><em>index_buffer</em></span>&#160;)</td>
+          <td class="paramtype">Index_ *const</td>          <td class="paramname"><span class="paramname"><em>index_buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

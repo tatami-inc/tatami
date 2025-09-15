@@ -96,16 +96,19 @@ $(function(){ initResizable(false); });
 <a href="ElementType_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef TATAMI_ELEMENTTYPE_HPP</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_ELEMENTTYPE_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> Array_&gt;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="namespacetatami.html#a83f5bea1c12d21f81732d6abd0665554">   17</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespacetatami.html#a83f5bea1c12d21f81732d6abd0665554">ElementType</a> = <span class="keyword">typename</span> std::remove_cv&lt;typename std::remove_reference&lt;decltype(std::declval&lt;Array_&gt;()[0])&gt;::type&gt;::type;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="copy_8hpp.html">copy.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> Array_&gt;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="namespacetatami.html#a7676f28b5618fd937e38b7a5c759d8bf">   19</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespacetatami.html#a7676f28b5618fd937e38b7a5c759d8bf">ElementType</a> = I&lt;decltype(std::declval&lt;Array_&gt;()[0])&gt;;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>}</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="acopy_8hpp_html"><div class="ttname"><a href="copy_8hpp.html">copy.hpp</a></div><div class="ttdoc">Copy data from one buffer to another.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a83f5bea1c12d21f81732d6abd0665554"><div class="ttname"><a href="namespacetatami.html#a83f5bea1c12d21f81732d6abd0665554">tatami::ElementType</a></div><div class="ttdeci">typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type ElementType</div><div class="ttdef"><b>Definition</b> ElementType.hpp:17</div></div>
+<div class="ttc" id="anamespacetatami_html_a7676f28b5618fd937e38b7a5c759d8bf"><div class="ttname"><a href="namespacetatami.html#a7676f28b5618fd937e38b7a5c759d8bf">tatami::ElementType</a></div><div class="ttdeci">I&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt; ElementType</div><div class="ttdef"><b>Definition</b> ElementType.hpp:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

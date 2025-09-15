@@ -102,7 +102,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Input_, <span class="keyword">typename</span> Output_&gt;</div>
 <div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">   38</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(<span class="keyword">const</span> Input_* input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_* output, std::size_t output_stride) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">   38</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">transpose</a>(<span class="keyword">const</span> Input_* <span class="keyword">const</span> input, <span class="keyword">const</span> std::size_t nrow, <span class="keyword">const</span> std::size_t ncol, <span class="keyword">const</span> std::size_t input_stride, Output_* <span class="keyword">const</span> output, <span class="keyword">const</span> std::size_t output_stride) {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">if</span> ((nrow == 1 &amp;&amp; output_stride == 1) || (ncol == 1 &amp;&amp; input_stride == 1)) {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        std::copy_n(input, nrow * ncol, output);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">return</span>;</div>
@@ -133,8 +133,8 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Input_, <span class="keyword">typename</span> Output_&gt;</div>
 <div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="namespacetatami.html#a2c591e4e4e2f9277add6a84fd90b4018">   86</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(<span class="keyword">const</span> Input_* input, std::size_t nrow, std::size_t ncol, Output_* output) {</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <a class="code hl_function" href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">transpose</a>(input, nrow, ncol, ncol, output, nrow);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="namespacetatami.html#af7c8278aeb3a9f87ec780c8678489924">   86</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">transpose</a>(<span class="keyword">const</span> Input_* <span class="keyword">const</span> input, <span class="keyword">const</span> std::size_t nrow, <span class="keyword">const</span> std::size_t ncol, Output_* <span class="keyword">const</span> output) {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <a class="code hl_function" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">transpose</a>(input, nrow, ncol, ncol, output, nrow);</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
 </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
@@ -151,7 +151,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a7f1da1074c607221bcaee4b52c3f9f63"><div class="ttname"><a href="namespacetatami.html#a7f1da1074c607221bcaee4b52c3f9f63">tatami::transpose</a></div><div class="ttdeci">void transpose(const Input_ *input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_ *output, std::size_t output_stride)</div><div class="ttdef"><b>Definition</b> transpose.hpp:38</div></div>
+<div class="ttc" id="anamespacetatami_html_a559b03571aa5f2e9a3cef60723d9ff96"><div class="ttname"><a href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">tatami::transpose</a></div><div class="ttdeci">void transpose(const Input_ *const input, const std::size_t nrow, const std::size_t ncol, const std::size_t input_stride, Output_ *const output, const std::size_t output_stride)</div><div class="ttdef"><b>Definition</b> transpose.hpp:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -104,10 +104,10 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7e2520995f66e861ce0bc8474c1d3895" id="r_a7e2520995f66e861ce0bc8474c1d3895"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e2520995f66e861ce0bc8474c1d3895">FullSparsifiedWrapper</a> (std::unique_ptr&lt; <a class="el" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt; oracle_, Value_, Index_ &gt; &gt; dense, Index_ extent, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt)</td></tr>
-<tr class="separator:a7e2520995f66e861ce0bc8474c1d3895"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae483dd2d6e3f16af28654e5cd20ab092" id="r_ae483dd2d6e3f16af28654e5cd20ab092"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae483dd2d6e3f16af28654e5cd20ab092">fetch</a> (Index_ i, Value_ *value_buffer, Index_ *index_buffer)</td></tr>
-<tr class="separator:ae483dd2d6e3f16af28654e5cd20ab092"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96aa1d5f7956bf32c288d8d0a83ab6db" id="r_a96aa1d5f7956bf32c288d8d0a83ab6db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96aa1d5f7956bf32c288d8d0a83ab6db">FullSparsifiedWrapper</a> (std::unique_ptr&lt; <a class="el" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt; oracle_, Value_, Index_ &gt; &gt; dense, const Index_ extent, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt)</td></tr>
+<tr class="separator:a96aa1d5f7956bf32c288d8d0a83ab6db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd7150d97457f1c7eed4108cd0b09ae3" id="r_abd7150d97457f1c7eed4108cd0b09ae3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd7150d97457f1c7eed4108cd0b09ae3">fetch</a> (const Index_ i, Value_ *const value_buffer, Index_ *const index_buffer)</td></tr>
+<tr class="separator:abd7150d97457f1c7eed4108cd0b09ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;bool oracle_, typename Value_, typename Index_&gt;<br />
@@ -122,8 +122,8 @@ class tatami::FullSparsifiedWrapper&lt; oracle_, Value_, Index_ &gt;</div><p>Wra
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a7e2520995f66e861ce0bc8474c1d3895" name="a7e2520995f66e861ce0bc8474c1d3895"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e2520995f66e861ce0bc8474c1d3895">&#9670;&#160;</a></span>FullSparsifiedWrapper()</h2>
+<a id="a96aa1d5f7956bf32c288d8d0a83ab6db" name="a96aa1d5f7956bf32c288d8d0a83ab6db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96aa1d5f7956bf32c288d8d0a83ab6db">&#9670;&#160;</a></span>FullSparsifiedWrapper()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,7 +141,7 @@ template&lt;bool oracle_, typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>extent</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>extent</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -167,8 +167,8 @@ template&lt;bool oracle_, typename Value_ , typename Index_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae483dd2d6e3f16af28654e5cd20ab092" name="ae483dd2d6e3f16af28654e5cd20ab092"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae483dd2d6e3f16af28654e5cd20ab092">&#9670;&#160;</a></span>fetch()</h2>
+<a id="abd7150d97457f1c7eed4108cd0b09ae3" name="abd7150d97457f1c7eed4108cd0b09ae3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd7150d97457f1c7eed4108cd0b09ae3">&#9670;&#160;</a></span>fetch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -181,17 +181,17 @@ template&lt;bool oracle_, typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1FullSparsifiedWrapper.html">tatami::FullSparsifiedWrapper</a>&lt; oracle_, Value_, Index_ &gt;::fetch </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Value_ *</td>          <td class="paramname"><span class="paramname"><em>value_buffer</em></span>, </td>
+          <td class="paramtype">Value_ *const</td>          <td class="paramname"><span class="paramname"><em>value_buffer</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_ *</td>          <td class="paramname"><span class="paramname"><em>index_buffer</em></span>&#160;)</td>
+          <td class="paramtype">Index_ *const</td>          <td class="paramname"><span class="paramname"><em>index_buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>

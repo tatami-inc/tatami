@@ -124,8 +124,8 @@ Collaboration diagram for tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;:</d
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab35da0c6e104fe5dcfd9e31feed3ee80" id="r_ab35da0c6e104fe5dcfd9e31feed3ee80"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab35da0c6e104fe5dcfd9e31feed3ee80">DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; matrix, Index_ subset_start, Index_ subset_length, bool by_row)</td></tr>
-<tr class="separator:ab35da0c6e104fe5dcfd9e31feed3ee80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e0d013c4da863bae0dc93c92109f9c6" id="r_a5e0d013c4da863bae0dc93c92109f9c6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e0d013c4da863bae0dc93c92109f9c6">DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; matrix, const Index_ subset_start, const Index_ subset_length, const bool by_row)</td></tr>
+<tr class="separator:a5e0d013c4da863bae0dc93c92109f9c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f09481f1564fe050f515ab893ab3cb7" id="r_a1f09481f1564fe050f515ab893ab3cb7"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f09481f1564fe050f515ab893ab3cb7">nrow</a> () const</td></tr>
 <tr class="separator:a1f09481f1564fe050f515ab893ab3cb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a397f04132c63c97c39afa68e2bc2f600" id="r_a397f04132c63c97c39afa68e2bc2f600"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a397f04132c63c97c39afa68e2bc2f600">ncol</a> () const</td></tr>
@@ -138,32 +138,32 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aeb7911f1048e29196a24fa0da8093b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33461de6d39962ab1dd23dfd3d574d72" id="r_a33461de6d39962ab1dd23dfd3d574d72"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33461de6d39962ab1dd23dfd3d574d72">prefer_rows_proportion</a> () const</td></tr>
 <tr class="separator:a33461de6d39962ab1dd23dfd3d574d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac30ebebd3c8293ca6c4bc86c05a47a71" id="r_ac30ebebd3c8293ca6c4bc86c05a47a71"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac30ebebd3c8293ca6c4bc86c05a47a71">uses_oracle</a> (bool row) const</td></tr>
-<tr class="separator:ac30ebebd3c8293ca6c4bc86c05a47a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b18c892e717c1a1167a5b2028e1110f" id="r_a3b18c892e717c1a1167a5b2028e1110f"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b18c892e717c1a1167a5b2028e1110f">dense</a> (bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a3b18c892e717c1a1167a5b2028e1110f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d186a597674c603ce5b899a6ebcc8e3" id="r_a2d186a597674c603ce5b899a6ebcc8e3"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d186a597674c603ce5b899a6ebcc8e3">dense</a> (bool row, Index_ block_start, Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a2d186a597674c603ce5b899a6ebcc8e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a842a5dece24524235cc408212ff356af" id="r_a842a5dece24524235cc408212ff356af"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a842a5dece24524235cc408212ff356af">dense</a> (bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a842a5dece24524235cc408212ff356af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97908a89a4b76a92c25b8b041794e643" id="r_a97908a89a4b76a92c25b8b041794e643"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97908a89a4b76a92c25b8b041794e643">sparse</a> (bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a97908a89a4b76a92c25b8b041794e643"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5ac39b6671feb1389e0b3fdabe25e4c" id="r_ad5ac39b6671feb1389e0b3fdabe25e4c"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5ac39b6671feb1389e0b3fdabe25e4c">sparse</a> (bool row, Index_ block_start, Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:ad5ac39b6671feb1389e0b3fdabe25e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e9287584a2040ef83d252e6f2373381" id="r_a3e9287584a2040ef83d252e6f2373381"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3e9287584a2040ef83d252e6f2373381">sparse</a> (bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a3e9287584a2040ef83d252e6f2373381"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a849e1982154ebcc308131ef526d4b322" id="r_a849e1982154ebcc308131ef526d4b322"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a849e1982154ebcc308131ef526d4b322">dense</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a849e1982154ebcc308131ef526d4b322"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca14e61cf151b970681fa1a2124feff9" id="r_aca14e61cf151b970681fa1a2124feff9"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca14e61cf151b970681fa1a2124feff9">dense</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:aca14e61cf151b970681fa1a2124feff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2abd9c3da5613f4af78db1a77c249182" id="r_a2abd9c3da5613f4af78db1a77c249182"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2abd9c3da5613f4af78db1a77c249182">dense</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a2abd9c3da5613f4af78db1a77c249182"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a383ec95c99cfbd8787b69fab35e2e5ce" id="r_a383ec95c99cfbd8787b69fab35e2e5ce"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a383ec95c99cfbd8787b69fab35e2e5ce">sparse</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a383ec95c99cfbd8787b69fab35e2e5ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fd46b6f3a4cefb5709db879fe85287e" id="r_a7fd46b6f3a4cefb5709db879fe85287e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fd46b6f3a4cefb5709db879fe85287e">sparse</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a7fd46b6f3a4cefb5709db879fe85287e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c0f79b67346db6cfc40f0658b761f76" id="r_a4c0f79b67346db6cfc40f0658b761f76"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4c0f79b67346db6cfc40f0658b761f76">sparse</a> (bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a4c0f79b67346db6cfc40f0658b761f76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a2136a612eeec1fe79474e9f2a3896b" id="r_a2a2136a612eeec1fe79474e9f2a3896b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a2136a612eeec1fe79474e9f2a3896b">uses_oracle</a> (const bool row) const</td></tr>
+<tr class="separator:a2a2136a612eeec1fe79474e9f2a3896b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a22f61ebd83664e917cfa807a615980" id="r_a2a22f61ebd83664e917cfa807a615980"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a22f61ebd83664e917cfa807a615980">dense</a> (const bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a2a22f61ebd83664e917cfa807a615980"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a450626f78cee37f55ef9f9f7135f6aa6" id="r_a450626f78cee37f55ef9f9f7135f6aa6"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a450626f78cee37f55ef9f9f7135f6aa6">dense</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a450626f78cee37f55ef9f9f7135f6aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e75540cdb90ccb602120826f9110f6e" id="r_a2e75540cdb90ccb602120826f9110f6e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e75540cdb90ccb602120826f9110f6e">dense</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a2e75540cdb90ccb602120826f9110f6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a441d7c76e928c0e0a1d976dabaaa801d" id="r_a441d7c76e928c0e0a1d976dabaaa801d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a441d7c76e928c0e0a1d976dabaaa801d">sparse</a> (const bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a441d7c76e928c0e0a1d976dabaaa801d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4e00eee6ae2f0ef1b7b62aaa8ff35f2" id="r_aa4e00eee6ae2f0ef1b7b62aaa8ff35f2"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4e00eee6ae2f0ef1b7b62aaa8ff35f2">sparse</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:aa4e00eee6ae2f0ef1b7b62aaa8ff35f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9482e05d62e1da59d893e935ccbbcd8" id="r_aa9482e05d62e1da59d893e935ccbbcd8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9482e05d62e1da59d893e935ccbbcd8">sparse</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:aa9482e05d62e1da59d893e935ccbbcd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af120e36bec4dca4ec3e7c1e059b42854" id="r_af120e36bec4dca4ec3e7c1e059b42854"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af120e36bec4dca4ec3e7c1e059b42854">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:af120e36bec4dca4ec3e7c1e059b42854"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0de184e6686b0f5869bdc3ce506fa49a" id="r_a0de184e6686b0f5869bdc3ce506fa49a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0de184e6686b0f5869bdc3ce506fa49a">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a0de184e6686b0f5869bdc3ce506fa49a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77573ded69e92e687744e6bc7ae07d96" id="r_a77573ded69e92e687744e6bc7ae07d96"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77573ded69e92e687744e6bc7ae07d96">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a77573ded69e92e687744e6bc7ae07d96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7a9648c22403d9b505ad34b4f32cc4c" id="r_ac7a9648c22403d9b505ad34b4f32cc4c"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7a9648c22403d9b505ad34b4f32cc4c">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ac7a9648c22403d9b505ad34b4f32cc4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5893399067e5cce519cdd2758b3f55c1" id="r_a5893399067e5cce519cdd2758b3f55c1"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5893399067e5cce519cdd2758b3f55c1">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a5893399067e5cce519cdd2758b3f55c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59d06483090b55e31b040c6e8407f418" id="r_a59d06483090b55e31b040c6e8407f418"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59d06483090b55e31b040c6e8407f418">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a59d06483090b55e31b040c6e8407f418"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix&lt; Value_, Index_ &gt;</a></td></tr>
 <tr class="memitem:a168f0e932b5503c9bfc5dbd42754a7a5 inherit pub_methods_classtatami_1_1Matrix" id="r_a168f0e932b5503c9bfc5dbd42754a7a5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">dense_row</a> (const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a168f0e932b5503c9bfc5dbd42754a7a5 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -314,8 +314,8 @@ class tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</div><p>Delayed subsett
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab35da0c6e104fe5dcfd9e31feed3ee80" name="ab35da0c6e104fe5dcfd9e31feed3ee80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab35da0c6e104fe5dcfd9e31feed3ee80">&#9670;&#160;</a></span>DelayedSubsetBlock()</h2>
+<a id="a5e0d013c4da863bae0dc93c92109f9c6" name="a5e0d013c4da863bae0dc93c92109f9c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e0d013c4da863bae0dc93c92109f9c6">&#9670;&#160;</a></span>DelayedSubsetBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -333,17 +333,17 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>subset_start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>subset_start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>subset_length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>subset_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -550,8 +550,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="ac30ebebd3c8293ca6c4bc86c05a47a71" name="ac30ebebd3c8293ca6c4bc86c05a47a71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac30ebebd3c8293ca6c4bc86c05a47a71">&#9670;&#160;</a></span>uses_oracle()</h2>
+<a id="a2a2136a612eeec1fe79474e9f2a3896b" name="a2a2136a612eeec1fe79474e9f2a3896b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a2136a612eeec1fe79474e9f2a3896b">&#9670;&#160;</a></span>uses_oracle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -564,7 +564,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">bool <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::uses_oracle </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span></td><td>)</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -587,8 +587,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a3b18c892e717c1a1167a5b2028e1110f" name="a3b18c892e717c1a1167a5b2028e1110f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b18c892e717c1a1167a5b2028e1110f">&#9670;&#160;</a></span>dense() <span class="overload">[1/6]</span></h2>
+<a id="a2a22f61ebd83664e917cfa807a615980" name="a2a22f61ebd83664e917cfa807a615980"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a22f61ebd83664e917cfa807a615980">&#9670;&#160;</a></span>dense() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -601,7 +601,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -628,8 +628,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a2d186a597674c603ce5b899a6ebcc8e3" name="a2d186a597674c603ce5b899a6ebcc8e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d186a597674c603ce5b899a6ebcc8e3">&#9670;&#160;</a></span>dense() <span class="overload">[2/6]</span></h2>
+<a id="a450626f78cee37f55ef9f9f7135f6aa6" name="a450626f78cee37f55ef9f9f7135f6aa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a450626f78cee37f55ef9f9f7135f6aa6">&#9670;&#160;</a></span>dense() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -642,17 +642,17 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -681,8 +681,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a842a5dece24524235cc408212ff356af" name="a842a5dece24524235cc408212ff356af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a842a5dece24524235cc408212ff356af">&#9670;&#160;</a></span>dense() <span class="overload">[3/6]</span></h2>
+<a id="a2e75540cdb90ccb602120826f9110f6e" name="a2e75540cdb90ccb602120826f9110f6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e75540cdb90ccb602120826f9110f6e">&#9670;&#160;</a></span>dense() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -695,7 +695,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -728,8 +728,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a97908a89a4b76a92c25b8b041794e643" name="a97908a89a4b76a92c25b8b041794e643"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a97908a89a4b76a92c25b8b041794e643">&#9670;&#160;</a></span>sparse() <span class="overload">[1/6]</span></h2>
+<a id="a441d7c76e928c0e0a1d976dabaaa801d" name="a441d7c76e928c0e0a1d976dabaaa801d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a441d7c76e928c0e0a1d976dabaaa801d">&#9670;&#160;</a></span>sparse() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -742,7 +742,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -769,8 +769,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="ad5ac39b6671feb1389e0b3fdabe25e4c" name="ad5ac39b6671feb1389e0b3fdabe25e4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5ac39b6671feb1389e0b3fdabe25e4c">&#9670;&#160;</a></span>sparse() <span class="overload">[2/6]</span></h2>
+<a id="aa4e00eee6ae2f0ef1b7b62aaa8ff35f2" name="aa4e00eee6ae2f0ef1b7b62aaa8ff35f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4e00eee6ae2f0ef1b7b62aaa8ff35f2">&#9670;&#160;</a></span>sparse() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -783,17 +783,17 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -822,8 +822,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a3e9287584a2040ef83d252e6f2373381" name="a3e9287584a2040ef83d252e6f2373381"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e9287584a2040ef83d252e6f2373381">&#9670;&#160;</a></span>sparse() <span class="overload">[3/6]</span></h2>
+<a id="aa9482e05d62e1da59d893e935ccbbcd8" name="aa9482e05d62e1da59d893e935ccbbcd8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9482e05d62e1da59d893e935ccbbcd8">&#9670;&#160;</a></span>sparse() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -836,7 +836,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -869,8 +869,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a849e1982154ebcc308131ef526d4b322" name="a849e1982154ebcc308131ef526d4b322"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a849e1982154ebcc308131ef526d4b322">&#9670;&#160;</a></span>dense() <span class="overload">[4/6]</span></h2>
+<a id="af120e36bec4dca4ec3e7c1e059b42854" name="af120e36bec4dca4ec3e7c1e059b42854"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af120e36bec4dca4ec3e7c1e059b42854">&#9670;&#160;</a></span>dense() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -883,7 +883,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -916,8 +916,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="aca14e61cf151b970681fa1a2124feff9" name="aca14e61cf151b970681fa1a2124feff9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca14e61cf151b970681fa1a2124feff9">&#9670;&#160;</a></span>dense() <span class="overload">[5/6]</span></h2>
+<a id="a0de184e6686b0f5869bdc3ce506fa49a" name="a0de184e6686b0f5869bdc3ce506fa49a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0de184e6686b0f5869bdc3ce506fa49a">&#9670;&#160;</a></span>dense() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -930,7 +930,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -940,12 +940,12 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -975,8 +975,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a2abd9c3da5613f4af78db1a77c249182" name="a2abd9c3da5613f4af78db1a77c249182"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2abd9c3da5613f4af78db1a77c249182">&#9670;&#160;</a></span>dense() <span class="overload">[6/6]</span></h2>
+<a id="a77573ded69e92e687744e6bc7ae07d96" name="a77573ded69e92e687744e6bc7ae07d96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77573ded69e92e687744e6bc7ae07d96">&#9670;&#160;</a></span>dense() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -989,7 +989,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1028,8 +1028,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a383ec95c99cfbd8787b69fab35e2e5ce" name="a383ec95c99cfbd8787b69fab35e2e5ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a383ec95c99cfbd8787b69fab35e2e5ce">&#9670;&#160;</a></span>sparse() <span class="overload">[4/6]</span></h2>
+<a id="ac7a9648c22403d9b505ad34b4f32cc4c" name="ac7a9648c22403d9b505ad34b4f32cc4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7a9648c22403d9b505ad34b4f32cc4c">&#9670;&#160;</a></span>sparse() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1042,7 +1042,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1075,8 +1075,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a7fd46b6f3a4cefb5709db879fe85287e" name="a7fd46b6f3a4cefb5709db879fe85287e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7fd46b6f3a4cefb5709db879fe85287e">&#9670;&#160;</a></span>sparse() <span class="overload">[5/6]</span></h2>
+<a id="a5893399067e5cce519cdd2758b3f55c1" name="a5893399067e5cce519cdd2758b3f55c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5893399067e5cce519cdd2758b3f55c1">&#9670;&#160;</a></span>sparse() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1089,7 +1089,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1099,12 +1099,12 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1134,8 +1134,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a4c0f79b67346db6cfc40f0658b761f76" name="a4c0f79b67346db6cfc40f0658b761f76"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c0f79b67346db6cfc40f0658b761f76">&#9670;&#160;</a></span>sparse() <span class="overload">[6/6]</span></h2>
+<a id="a59d06483090b55e31b040c6e8407f418" name="a59d06483090b55e31b040c6e8407f418"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59d06483090b55e31b040c6e8407f418">&#9670;&#160;</a></span>sparse() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1148,7 +1148,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubsetBlock.html">tatami::DelayedSubsetBlock</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

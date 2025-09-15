@@ -96,30 +96,31 @@ $(function(){ initResizable(false); });
 <a href="has__data_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef TATAMI_HAS_DATA_HPP</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_HAS_DATA_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">class</span> V, <span class="keyword">typename</span> = <span class="keywordtype">int</span>&gt;</div>
-<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data.html">   21</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1has__data.html">has_data</a> {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">   25</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">value</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>};</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">class</span> V, <span class="keyword">typename</span> = <span class="keywordtype">int</span>&gt;</div>
+<div class="foldopen" id="foldopen00022" data-start="{" data-end="};">
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data.html">   22</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1has__data.html">has_data</a> {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">   26</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">value</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
 </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">class</span> V&gt;</div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="};">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html">   36</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1has__data.html">has_data</a>&lt;T, V, decltype((void) std::declval&lt;V&gt;().data(), 0)&gt; { </div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html#a13d4f9e0cac2afe51fdde3c552cbf1a7">   40</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">value</a> = std::is_same&lt;T*, decltype(std::declval&lt;V&gt;().data())&gt;<a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">::value</a>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>};</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">class</span> V&gt;</div>
+<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html">   37</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1has__data.html">has_data</a>&lt;T, V, decltype((void) std::declval&lt;V&gt;().data(), 0)&gt; { </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="structtatami_1_1has__data_3_01T_00_01V_00_01decltype_07_07void_08_01std_1_1declval_3_01V_01_4_07_08_8data_07_08_00_010_08_4.html#a13d4f9e0cac2afe51fdde3c552cbf1a7">   41</a></span>    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">value</a> = std::is_same&lt;T*, decltype(std::declval&lt;V&gt;().data())&gt;<a class="code hl_variable" href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">::value</a>;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>};</div>
 </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>}</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>}</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="astructtatami_1_1has__data_html"><div class="ttname"><a href="structtatami_1_1has__data.html">tatami::has_data</a></div><div class="ttdoc">Compile time check for the data() method.</div><div class="ttdef"><b>Definition</b> has_data.hpp:21</div></div>
-<div class="ttc" id="astructtatami_1_1has__data_html_a11170da5b517708a7102d54ca6815d9e"><div class="ttname"><a href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">tatami::has_data::value</a></div><div class="ttdeci">static const bool value</div><div class="ttdef"><b>Definition</b> has_data.hpp:25</div></div>
+<div class="ttc" id="astructtatami_1_1has__data_html"><div class="ttname"><a href="structtatami_1_1has__data.html">tatami::has_data</a></div><div class="ttdoc">Compile time check for the data() method.</div><div class="ttdef"><b>Definition</b> has_data.hpp:22</div></div>
+<div class="ttc" id="astructtatami_1_1has__data_html_a11170da5b517708a7102d54ca6815d9e"><div class="ttname"><a href="structtatami_1_1has__data.html#a11170da5b517708a7102d54ca6815d9e">tatami::has_data::value</a></div><div class="ttdeci">static const bool value</div><div class="ttdef"><b>Definition</b> has_data.hpp:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

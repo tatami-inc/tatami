@@ -102,55 +102,58 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;sanisizer/sanisizer.hpp&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="copy_8hpp.html">copy.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Left_, <span class="keyword">typename</span> Right_&gt; <span class="comment">// provided only for back-compatibility.</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">bool</span> safe_non_negative_equal(Left_ l, Right_ r) {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">return</span> l &gt;= 0 &amp;&amp; r &gt;= 0 &amp;&amp; sanisizer::is_equal(l, r);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>}</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="foldopen" id="foldopen00034" data-start="{" data-end="}">
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="namespacetatami.html#a83f279d4c20987ff3be049f9ffc922b9">   34</a></span>Index_ <a class="code hl_function" href="namespacetatami.html#a83f279d4c20987ff3be049f9ffc922b9">can_cast_Index_to_container_size</a>(Index_ x) {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="comment">// If the Index_ type is larger than size_t, we cast it to size_t to provide can_cast() with some opportunities for compile-time optimization.</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="comment">// This is because we know that all uses of Index_ must fit into a size_t in order for the Extractor::fetch calls to address the user-supplied arrays.</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="comment">// By casting away larger types, we allow can_cast() to eliminate the run-time overflow checks completely.</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::numeric_limits&lt;std::size_t&gt;::max() &lt; std::numeric_limits&lt;Index_&gt;::max(), std::size_t, Index_&gt;::type Intermediate;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    sanisizer::can_cast&lt;decltype(std::declval&lt;Container_&gt;().size())&gt;(<span class="keyword">static_cast&lt;</span>Intermediate<span class="keyword">&gt;</span>(x));</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> x;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Left_, <span class="keyword">typename</span> Right_&gt; <span class="comment">// provided only for back-compatibility.</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keywordtype">bool</span> safe_non_negative_equal(<span class="keyword">const</span> Left_ l, <span class="keyword">const</span> Right_ r) {</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> l &gt;= 0 &amp;&amp; r &gt;= 0 &amp;&amp; sanisizer::is_equal(l, r);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_&gt;</div>
+<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">   36</a></span>Index_ <a class="code hl_function" href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">can_cast_Index_to_container_size</a>(<span class="keyword">const</span> Index_ x) {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="comment">// If the Index_ type is larger than size_t, we cast it to size_t to provide can_cast() with some opportunities for compile-time optimization.</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="comment">// This is because we know that all uses of Index_ must fit into a size_t in order for the Extractor::fetch calls to address the user-supplied arrays.</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="comment">// By casting away larger types, we allow can_cast() to eliminate the run-time overflow checks completely.</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::numeric_limits&lt;std::size_t&gt;::max() &lt; std::numeric_limits&lt;Index_&gt;::max(), std::size_t, Index_&gt;::type Intermediate;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    sanisizer::can_cast&lt;I&lt;decltype(std::declval&lt;Container_&gt;().size())&gt; &gt;(<span class="keyword">static_cast&lt;</span>Intermediate<span class="keyword">&gt;</span>(x));</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">return</span> x;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>}</div>
 </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308">   54</a></span><span class="keyword">decltype</span>(std::declval&lt;Container_&gt;().size()) <a class="code hl_function" href="namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308">cast_Index_to_container_size</a>(Index_ x) {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a83f279d4c20987ff3be049f9ffc922b9">can_cast_Index_to_container_size&lt;Container_&gt;</a>(x);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_&gt;</div>
+<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">   56</a></span>I&lt;decltype(std::declval&lt;Container_&gt;().size())&gt; <a class="code hl_function" href="namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">cast_Index_to_container_size</a>(<span class="keyword">const</span> Index_ x) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">can_cast_Index_to_container_size&lt;Container_&gt;</a>(x);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
 </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="namespacetatami.html#aa4210bdd032791100c12effa775e8b6b">   70</a></span>Container_ <a class="code hl_function" href="namespacetatami.html#aa4210bdd032791100c12effa775e8b6b">create_container_of_Index_size</a>(Index_ x, Args_&amp;&amp; ... args) {</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="comment">// Same logic as described above.</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::numeric_limits&lt;std::size_t&gt;::max() &lt; std::numeric_limits&lt;Index_&gt;::max(), std::size_t, Index_&gt;::type Intermediate;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">return</span> sanisizer::create&lt;Container_&gt;(<span class="keyword">static_cast&lt;</span>Intermediate<span class="keyword">&gt;</span>(x), std::forward&lt;Args_&gt;(args)...);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
+<div class="foldopen" id="foldopen00072" data-start="{" data-end="}">
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">   72</a></span>Container_ <a class="code hl_function" href="namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">create_container_of_Index_size</a>(<span class="keyword">const</span> Index_ x, Args_&amp;&amp; ... args) {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="comment">// Same logic as described above.</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> std::conditional&lt;std::numeric_limits&lt;std::size_t&gt;::max() &lt; std::numeric_limits&lt;Index_&gt;::max(), std::size_t, Index_&gt;::type Intermediate;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">return</span> sanisizer::create&lt;Container_&gt;(<span class="keyword">static_cast&lt;</span>Intermediate<span class="keyword">&gt;</span>(x), std::forward&lt;Args_&gt;(args)...);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}</div>
 </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="foldopen" id="foldopen00088" data-start="{" data-end="}">
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">   88</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">resize_container_to_Index_size</a>(Container_&amp; container, Index_ x, Args_&amp;&amp; ... args) {</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    container.resize(<a class="code hl_function" href="namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308">cast_Index_to_container_size&lt;Container_&gt;</a>(x), std::forward&lt;Args_&gt;(args)...);</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
-</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
+<div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">   90</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">resize_container_to_Index_size</a>(Container_&amp; container, <span class="keyword">const</span> Index_ x, Args_&amp;&amp; ... args) {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    container.resize(<a class="code hl_function" href="namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">cast_Index_to_container_size&lt;Container_&gt;</a>(x), std::forward&lt;Args_&gt;(args)...);</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>}</div>
+</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>}</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="acopy_8hpp_html"><div class="ttname"><a href="copy_8hpp.html">copy.hpp</a></div><div class="ttdoc">Copy data from one buffer to another.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a4fbc87d33e2177ca494bb096ec72c308"><div class="ttname"><a href="namespacetatami.html#a4fbc87d33e2177ca494bb096ec72c308">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">decltype(std::declval&lt; Container_ &gt;().size()) cast_Index_to_container_size(Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:54</div></div>
-<div class="ttc" id="anamespacetatami_html_a5c8a6fad0ecaa74e7eb69d50c25c44f8"><div class="ttname"><a href="namespacetatami.html#a5c8a6fad0ecaa74e7eb69d50c25c44f8">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:88</div></div>
-<div class="ttc" id="anamespacetatami_html_a83f279d4c20987ff3be049f9ffc922b9"><div class="ttname"><a href="namespacetatami.html#a83f279d4c20987ff3be049f9ffc922b9">tatami::can_cast_Index_to_container_size</a></div><div class="ttdeci">Index_ can_cast_Index_to_container_size(Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:34</div></div>
-<div class="ttc" id="anamespacetatami_html_aa4210bdd032791100c12effa775e8b6b"><div class="ttname"><a href="namespacetatami.html#aa4210bdd032791100c12effa775e8b6b">tatami::create_container_of_Index_size</a></div><div class="ttdeci">Container_ create_container_of_Index_size(Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:70</div></div>
+<div class="ttc" id="anamespacetatami_html_a4d15fa0c5213ad27fc0c99c3dd5c02ad"><div class="ttname"><a href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">tatami::can_cast_Index_to_container_size</a></div><div class="ttdeci">Index_ can_cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:36</div></div>
+<div class="ttc" id="anamespacetatami_html_a61b43d2b751c7fcca6815f3be929d4d3"><div class="ttname"><a href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, const Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:90</div></div>
+<div class="ttc" id="anamespacetatami_html_ac6d0f6694ab914f57229b925641779d4"><div class="ttname"><a href="namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">I&lt; decltype(std::declval&lt; Container_ &gt;().size())&gt; cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:56</div></div>
+<div class="ttc" id="anamespacetatami_html_ada885a7e7ae9dcafcaf98cde30622afc"><div class="ttname"><a href="namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">tatami::create_container_of_Index_size</a></div><div class="ttdeci">Container_ create_container_of_Index_size(const Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:72</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

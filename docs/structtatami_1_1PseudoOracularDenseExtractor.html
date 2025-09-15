@@ -126,8 +126,8 @@ Collaboration diagram for tatami::PseudoOracularDenseExtractor&lt; Value_, Index
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a099afedb958b1c9a7738508eb7cf387f" id="r_a099afedb958b1c9a7738508eb7cf387f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a099afedb958b1c9a7738508eb7cf387f">PseudoOracularDenseExtractor</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; ext)</td></tr>
 <tr class="separator:a099afedb958b1c9a7738508eb7cf387f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4964662d29114e2f9fa9d8aeb548def6" id="r_a4964662d29114e2f9fa9d8aeb548def6"><td class="memItemLeft" align="right" valign="top">const Value_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4964662d29114e2f9fa9d8aeb548def6">fetch</a> (Index_, Value_ *buffer)</td></tr>
-<tr class="separator:a4964662d29114e2f9fa9d8aeb548def6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fafc47daf67364fdae457f7cf7acac4" id="r_a2fafc47daf67364fdae457f7cf7acac4"><td class="memItemLeft" align="right" valign="top">const Value_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fafc47daf67364fdae457f7cf7acac4">fetch</a> (const Index_, Value_ *const buffer)</td></tr>
+<tr class="separator:a2fafc47daf67364fdae457f7cf7acac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1OracularDenseExtractor"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1OracularDenseExtractor')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor&lt; Value_, Index_ &gt;</a></td></tr>
 <tr class="memitem:ae0376a4c48d7f4d55632ed42fd166fa1 inherit pub_methods_classtatami_1_1OracularDenseExtractor" id="r_ae0376a4c48d7f4d55632ed42fd166fa1"><td class="memItemLeft" align="right" valign="top">const Value_ *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1OracularDenseExtractor.html#ae0376a4c48d7f4d55632ed42fd166fa1">fetch</a> (Value_ *buffer)</td></tr>
 <tr class="separator:ae0376a4c48d7f4d55632ed42fd166fa1 inherit pub_methods_classtatami_1_1OracularDenseExtractor"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,8 +183,8 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4964662d29114e2f9fa9d8aeb548def6" name="a4964662d29114e2f9fa9d8aeb548def6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4964662d29114e2f9fa9d8aeb548def6">&#9670;&#160;</a></span>fetch()</h2>
+<a id="a2fafc47daf67364fdae457f7cf7acac4" name="a2fafc47daf67364fdae457f7cf7acac4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fafc47daf67364fdae457f7cf7acac4">&#9670;&#160;</a></span>fetch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -197,12 +197,12 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
         <tr>
           <td class="memname">const Value_ * <a class="el" href="structtatami_1_1PseudoOracularDenseExtractor.html">tatami::PseudoOracularDenseExtractor</a>&lt; Value_, Index_ &gt;::fetch </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Value_ *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
+          <td class="paramtype">Value_ *const</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -212,7 +212,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code> and <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
-<p>Other than the extra <code>i</code> argument, all other behaviors of the two overloads are the same. To avoid confusion, most users should just use the <code><a class="el" href="#a4964662d29114e2f9fa9d8aeb548def6">fetch()</a></code> overload that does not accept <code>i</code>, given that the value of <code>i</code> is never actually used.</p>
+<p>Other than the extra <code>i</code> argument, all other behaviors of the two overloads are the same. To avoid confusion, most users should just use the <code><a class="el" href="#a2fafc47daf67364fdae457f7cf7acac4">fetch()</a></code> overload that does not accept <code>i</code>, given that the value of <code>i</code> is never actually used.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Ignored, only provided for consistency with <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>, </td></tr>

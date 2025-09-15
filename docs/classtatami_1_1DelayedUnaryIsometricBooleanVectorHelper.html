@@ -124,8 +124,8 @@ Collaboration diagram for tatami::DelayedUnaryIsometricBooleanVectorHelper&lt; o
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a61aa30a53d8badf75c42fafbbbd1ce1a" id="r_a61aa30a53d8badf75c42fafbbbd1ce1a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61aa30a53d8badf75c42fafbbbd1ce1a">DelayedUnaryIsometricBooleanVectorHelper</a> (Vector_ vector, bool by_row)</td></tr>
-<tr class="separator:a61aa30a53d8badf75c42fafbbbd1ce1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79084cad78d10638b92f8418baeff7ac" id="r_a79084cad78d10638b92f8418baeff7ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79084cad78d10638b92f8418baeff7ac">DelayedUnaryIsometricBooleanVectorHelper</a> (Vector_ vector, const bool by_row)</td></tr>
+<tr class="separator:a79084cad78d10638b92f8418baeff7ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2399f4e88490ec2f9b262cf2edbcd8a0" id="r_a2399f4e88490ec2f9b262cf2edbcd8a0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2399f4e88490ec2f9b262cf2edbcd8a0">nrow</a> () const</td></tr>
 <tr class="separator:a2399f4e88490ec2f9b262cf2edbcd8a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad831f18fd58c867d7f5d89aba175e5d7" id="r_ad831f18fd58c867d7f5d89aba175e5d7"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad831f18fd58c867d7f5d89aba175e5d7">ncol</a> () const</td></tr>
@@ -138,16 +138,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0ecd9d9a5f30abfca556eceae5e7e9a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad981d5580466517a578ae46eee07c2a1" id="r_ad981d5580466517a578ae46eee07c2a1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad981d5580466517a578ae46eee07c2a1">non_zero_depends_on_column</a> () const</td></tr>
 <tr class="separator:ad981d5580466517a578ae46eee07c2a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01679fb34567a58d5217e88caffabe15" id="r_a01679fb34567a58d5217e88caffabe15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01679fb34567a58d5217e88caffabe15">dense</a> (bool row, Index_ idx, Index_ start, Index_ length, const InputValue_ *input, OutputValue_ *output) const</td></tr>
-<tr class="separator:a01679fb34567a58d5217e88caffabe15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7da8daf215f67f39ea090b36293b91c3" id="r_a7da8daf215f67f39ea090b36293b91c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7da8daf215f67f39ea090b36293b91c3">dense</a> (bool row, Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *output) const</td></tr>
-<tr class="separator:a7da8daf215f67f39ea090b36293b91c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a189bb8762870f6b10942c2be47c95dca" id="r_a189bb8762870f6b10942c2be47c95dca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a189bb8762870f6b10942c2be47c95dca">dense</a> (const bool row, const Index_ idx, const Index_ start, const Index_ length, const InputValue_ *input, OutputValue_ *const output) const</td></tr>
+<tr class="separator:a189bb8762870f6b10942c2be47c95dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a82f79388e6c9577d56b2b2d49125b9" id="r_a4a82f79388e6c9577d56b2b2d49125b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a82f79388e6c9577d56b2b2d49125b9">dense</a> (const bool row, const Index_ idx, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *input, OutputValue_ *const output) const</td></tr>
+<tr class="separator:a4a82f79388e6c9577d56b2b2d49125b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dfa9e80939c313a9e6f3fc01e9ef399" id="r_a0dfa9e80939c313a9e6f3fc01e9ef399"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dfa9e80939c313a9e6f3fc01e9ef399">is_sparse</a> () const</td></tr>
 <tr class="separator:a0dfa9e80939c313a9e6f3fc01e9ef399"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9afb96ee58c6b5e641731ebbced53a94" id="r_a9afb96ee58c6b5e641731ebbced53a94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9afb96ee58c6b5e641731ebbced53a94">sparse</a> (bool row, Index_ idx, Index_ number, const InputValue_ *input_value, const Index_ *index, OutputValue_ *output_value) const</td></tr>
-<tr class="separator:a9afb96ee58c6b5e641731ebbced53a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96feb37bbb292be0ebbde279d3dd16eb" id="r_a96feb37bbb292be0ebbde279d3dd16eb"><td class="memItemLeft" align="right" valign="top">OutputValue_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96feb37bbb292be0ebbde279d3dd16eb">fill</a> (bool row, Index_ idx) const</td></tr>
-<tr class="separator:a96feb37bbb292be0ebbde279d3dd16eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05760f154dc57993a6c36204c9864234" id="r_a05760f154dc57993a6c36204c9864234"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05760f154dc57993a6c36204c9864234">sparse</a> (const bool row, const Index_ idx, const Index_ number, const InputValue_ *input_value, const Index_ *const index, OutputValue_ *const output_value) const</td></tr>
+<tr class="separator:a05760f154dc57993a6c36204c9864234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15c4e0f3050b3834f065ba8eeffe5293" id="r_a15c4e0f3050b3834f065ba8eeffe5293"><td class="memItemLeft" align="right" valign="top">OutputValue_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15c4e0f3050b3834f065ba8eeffe5293">fill</a> (const bool row, const Index_ idx) const</td></tr>
+<tr class="separator:a15c4e0f3050b3834f065ba8eeffe5293"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1DelayedUnaryIsometricOperationHelper"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1DelayedUnaryIsometricOperationHelper')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -165,8 +165,8 @@ class tatami::DelayedUnaryIsometricBooleanVectorHelper&lt; op_, OutputValue_, In
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a61aa30a53d8badf75c42fafbbbd1ce1a" name="a61aa30a53d8badf75c42fafbbbd1ce1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61aa30a53d8badf75c42fafbbbd1ce1a">&#9670;&#160;</a></span>DelayedUnaryIsometricBooleanVectorHelper()</h2>
+<a id="a79084cad78d10638b92f8418baeff7ac" name="a79084cad78d10638b92f8418baeff7ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79084cad78d10638b92f8418baeff7ac">&#9670;&#160;</a></span>DelayedUnaryIsometricBooleanVectorHelper()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -184,7 +184,7 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -386,8 +386,8 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
 
 </div>
 </div>
-<a id="a01679fb34567a58d5217e88caffabe15" name="a01679fb34567a58d5217e88caffabe15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a01679fb34567a58d5217e88caffabe15">&#9670;&#160;</a></span>dense() <span class="overload">[1/2]</span></h2>
+<a id="a189bb8762870f6b10942c2be47c95dca" name="a189bb8762870f6b10942c2be47c95dca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a189bb8762870f6b10942c2be47c95dca">&#9670;&#160;</a></span>dense() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,22 +400,22 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="memname">void <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html">tatami::DelayedUnaryIsometricBooleanVectorHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Vector_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>start</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>start</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>length</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -425,7 +425,7 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">OutputValue_ *</td>          <td class="paramname"><span class="paramname"><em>output</em></span>&#160;) const</td>
+          <td class="paramtype">OutputValue_ *const</td>          <td class="paramname"><span class="paramname"><em>output</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -451,8 +451,8 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
 
 </div>
 </div>
-<a id="a7da8daf215f67f39ea090b36293b91c3" name="a7da8daf215f67f39ea090b36293b91c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7da8daf215f67f39ea090b36293b91c3">&#9670;&#160;</a></span>dense() <span class="overload">[2/2]</span></h2>
+<a id="a4a82f79388e6c9577d56b2b2d49125b9" name="a4a82f79388e6c9577d56b2b2d49125b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a82f79388e6c9577d56b2b2d49125b9">&#9670;&#160;</a></span>dense() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -465,12 +465,12 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="memname">void <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html">tatami::DelayedUnaryIsometricBooleanVectorHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Vector_ &gt;::dense </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -485,7 +485,7 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">OutputValue_ *</td>          <td class="paramname"><span class="paramname"><em>output</em></span>&#160;) const</td>
+          <td class="paramtype">OutputValue_ *const</td>          <td class="paramname"><span class="paramname"><em>output</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -540,8 +540,8 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
 
 </div>
 </div>
-<a id="a9afb96ee58c6b5e641731ebbced53a94" name="a9afb96ee58c6b5e641731ebbced53a94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9afb96ee58c6b5e641731ebbced53a94">&#9670;&#160;</a></span>sparse()</h2>
+<a id="a05760f154dc57993a6c36204c9864234" name="a05760f154dc57993a6c36204c9864234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05760f154dc57993a6c36204c9864234">&#9670;&#160;</a></span>sparse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -554,17 +554,17 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="memname">void <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html">tatami::DelayedUnaryIsometricBooleanVectorHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Vector_ &gt;::sparse </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>num</em></span>, </td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>num</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -574,12 +574,12 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Index_ *</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
+          <td class="paramtype">const Index_ *const</td>          <td class="paramname"><span class="paramname"><em>index</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">OutputValue_ *</td>          <td class="paramname"><span class="paramname"><em>output_value</em></span>&#160;) const</td>
+          <td class="paramtype">OutputValue_ *const</td>          <td class="paramname"><span class="paramname"><em>output_value</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
@@ -588,7 +588,7 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method is expected to iterate over <code>input_value</code>, apply the operation to each value, and store the result in <code>output_value</code>. We assume that the operation only needs to be applied to the structural non-zeros; structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="#a96feb37bbb292be0ebbde279d3dd16eb">fill()</a></code>.</p>
+<p>This method is expected to iterate over <code>input_value</code>, apply the operation to each value, and store the result in <code>output_value</code>. We assume that the operation only needs to be applied to the structural non-zeros; structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="#a15c4e0f3050b3834f065ba8eeffe5293">fill()</a></code>.</p>
 <p>If <code><a class="el" href="#a0ecd9d9a5f30abfca556eceae5e7e9a5">non_zero_depends_on_row()</a> &amp;&amp; !row</code> or <code><a class="el" href="#ad981d5580466517a578ae46eee07c2a1">non_zero_depends_on_column()</a> &amp;&amp; row</code>, <code>index</code> is guaranteed to be non-NULL. Otherwise, it may be NULL and should be ignored. Even if non-NULL, indices are not guaranteed to be sorted.</p>
 <p>Implementations of this method do not necessarily need to have the same template arguments as shown here. It will be called without any explicit template arguments so anything can be used as long as type deduction works.</p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -607,8 +607,8 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
 
 </div>
 </div>
-<a id="a96feb37bbb292be0ebbde279d3dd16eb" name="a96feb37bbb292be0ebbde279d3dd16eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96feb37bbb292be0ebbde279d3dd16eb">&#9670;&#160;</a></span>fill()</h2>
+<a id="a15c4e0f3050b3834f065ba8eeffe5293" name="a15c4e0f3050b3834f065ba8eeffe5293"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15c4e0f3050b3834f065ba8eeffe5293">&#9670;&#160;</a></span>fill()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -621,12 +621,12 @@ template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f18411
         <tr>
           <td class="memname">OutputValue_ <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVectorHelper.html">tatami::DelayedUnaryIsometricBooleanVectorHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Vector_ &gt;::fill </td>
           <td>(</td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>&#160;) const</td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
