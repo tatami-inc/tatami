@@ -17,7 +17,7 @@ class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, const SubsetStorage_& subset) : my_oracle(std::move(oracle)), my_subset(subset) {}
 
-    Index_ get(PredictionIndex i) const {
+    Index_ get(const PredictionIndex i) const {
         return my_subset[my_oracle->get(i)];
     }
 
@@ -34,10 +34,17 @@ template<typename Value_, typename Index_, class SubsetStorage_>
 class MyopicPerpendicularDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
-    MyopicPerpendicularDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, Args_&& ... args) : 
-        my_subset(subset), my_ext(new_extractor<false, false>(matrix, row, false, std::forward<Args_>(args)...)) {}
+    MyopicPerpendicularDense(
+        const Matrix<Value_, Index_>& matrix,
+        const SubsetStorage_& subset,
+        const bool row,
+        Args_&& ... args
+    ) : 
+        my_subset(subset),
+        my_ext(new_extractor<false, false>(matrix, row, false, std::forward<Args_>(args)...))
+    {}
 
-    const Value_* fetch(Index_ i, Value_* buffer) {
+    const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(my_subset[i], buffer);
     }
 
@@ -50,10 +57,17 @@ template<typename Value_, typename Index_, class SubsetStorage_>
 class MyopicPerpendicularSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
-    MyopicPerpendicularSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, Args_&& ... args) : 
-        my_subset(subset), my_ext(new_extractor<true, false>(matrix, row, false, std::forward<Args_>(args)...)) {}
+    MyopicPerpendicularSparse(
+        const Matrix<Value_, Index_>& matrix,
+        const SubsetStorage_& subset,
+        const bool row,
+        Args_&& ... args
+    ) : 
+        my_subset(subset),
+        my_ext(new_extractor<true, false>(matrix, row, false, std::forward<Args_>(args)...))
+    {}
 
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_ext->fetch(my_subset[i], value_buffer, index_buffer);
     }
 
@@ -66,10 +80,17 @@ template<typename Value_, typename Index_>
 class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
     template<class SubsetStorage_, typename ... Args_>
-    OracularPerpendicularDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) :
-        my_ext(new_extractor<false, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...)) {}
+    OracularPerpendicularDense(
+        const Matrix<Value_, Index_>& matrix,
+        const SubsetStorage_& subset,
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        Args_&& ... args
+    ) :
+        my_ext(new_extractor<false, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...))
+    {}
 
-    const Value_* fetch(Index_ i, Value_* buffer) {
+    const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i, buffer);
     }
 
@@ -81,10 +102,17 @@ template<typename Value_, typename Index_>
 class OracularPerpendicularSparse final : public OracularSparseExtractor<Value_, Index_> {
 public:
     template<class SubsetStorage_, typename ... Args_>
-    OracularPerpendicularSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) :
-        my_ext(new_extractor<true, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...)) {}
+    OracularPerpendicularSparse(
+        const Matrix<Value_, Index_>& matrix,
+        const SubsetStorage_& subset,
+        const bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        Args_&& ... args
+    ) :
+        my_ext(new_extractor<true, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...))
+    {}
 
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_ext->fetch(i, value_buffer, index_buffer);
     }
 

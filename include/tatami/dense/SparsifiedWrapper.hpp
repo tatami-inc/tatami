@@ -36,7 +36,7 @@ public:
      * @param extent Extent of the row/column extracted by `d`.
      * @param opt Options for extraction.
      */
-    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, Index_ extent, const Options& opt) :
+    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, const Index_ extent, const Options& opt) :
         my_dense(std::move(dense)), 
         my_extent(extent), 
         my_needs_value(opt.sparse_extract_value), 
@@ -49,7 +49,7 @@ public:
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         SparseRange<Value_, Index_> output(my_extent);
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
@@ -92,7 +92,7 @@ public:
      * Should be the same as that used to construct `dense`.
      * @param opt Options for extraction.
      */
-    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, Index_ block_start, Index_ block_length, const Options& opt) :
+    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, const Index_ block_start, const Index_ block_length, const Options& opt) :
         my_dense(std::move(dense)), 
         my_block_start(block_start), 
         my_block_length(block_length), 
@@ -106,7 +106,7 @@ public:
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         SparseRange<Value_, Index_> output(my_block_length, NULL, NULL);
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
@@ -160,7 +160,7 @@ public:
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& ix = *my_indices_ptr;
         SparseRange<Value_, Index_> output(ix.size());
         if (my_needs_value) {

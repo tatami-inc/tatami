@@ -1,6 +1,7 @@
 #ifndef TATAMI_HAS_DATA_HPP
 #define TATAMI_HAS_DATA_HPP
 
+#include <utility>
 #include <type_traits>
 
 /**

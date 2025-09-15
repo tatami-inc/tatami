@@ -2,6 +2,9 @@
 #define TATAMI_ARITHMETIC_UTILS_HPP
 
 #include <cmath>
+#include <limits>
+
+#include "../utils/copy.hpp"
 
 /**
  * @file arithmetic_utils.hpp
@@ -36,7 +39,7 @@ enum class ArithmeticOperation : char {
 // We deliberately use an auto type so as to defer a decision on what the output
 // type should be; an appropriate coercion is left to the caller classes. 
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
-auto delayed_arithmetic(Value_ val, Scalar_ scalar) { 
+auto delayed_arithmetic(const Value_ val, const Scalar_ scalar) { 
     auto left = [&]{
         if constexpr(right_) {
             return val;
@@ -76,8 +79,8 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
     } else if constexpr(op_ == ArithmeticOperation::MODULO) {
         // Based on a floored divide, so some work is necessary to
         // get the right value when the sign is negative.
-        auto quo = left / right; 
-        if constexpr(std::numeric_limits<decltype(quo)>::is_integer) {
+        const auto quo = left / right; 
+        if constexpr(std::numeric_limits<I<decltype(quo)> >::is_integer) {
             auto rem = left % right;
             return rem + (quo < 0 && rem != 0 ? right : 0);
         } else {
@@ -86,8 +89,8 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
         }
 
     } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
-        auto out = left / right;
-        if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
+        const auto out = left / right;
+        if constexpr(std::numeric_limits<I<decltype(out)> >::is_integer) {
             // Using a floored divide. This little branch should be optimized
             // away so don't worry too much about it.
             return out - (out < 0 ? (left % right != 0) : 0);
@@ -104,7 +107,7 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
 // any '0/0' behind a constexpr to ensure that the compiler doesn't see it.
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool has_unsafe_divide_by_zero() {
-    typedef decltype(delayed_arithmetic<op_, right_>(std::declval<Value_>(), std::declval<Scalar_>())) Product;
+    typedef I<decltype(delayed_arithmetic<op_, right_>(std::declval<Value_>(), std::declval<Scalar_>()))> Product;
     if constexpr(std::numeric_limits<Product>::is_iec559) {
         return false;
     }

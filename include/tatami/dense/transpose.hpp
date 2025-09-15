@@ -35,7 +35,7 @@ namespace tatami {
  * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
-void transpose(const Input_* input, std::size_t nrow, std::size_t ncol, std::size_t input_stride, Output_* output, std::size_t output_stride) {
+void transpose(const Input_* const input, const std::size_t nrow, const std::size_t ncol, const std::size_t input_stride, Output_* const output, const std::size_t output_stride) {
     if ((nrow == 1 && output_stride == 1) || (ncol == 1 && input_stride == 1)) {
         std::copy_n(input, nrow * ncol, output);
         return;
@@ -83,7 +83,7 @@ void transpose(const Input_* input, std::size_t nrow, std::size_t ncol, std::siz
  * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
-void transpose(const Input_* input, std::size_t nrow, std::size_t ncol, Output_* output) {
+void transpose(const Input_* const input, const std::size_t nrow, const std::size_t ncol, Output_* const output) {
     transpose(input, nrow, ncol, ncol, output, nrow);
 }
 

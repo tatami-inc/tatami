@@ -39,7 +39,7 @@ using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<const Ora
  * depending on `sparse_` and `oracle_`.
  */
 template<bool sparse_, bool oracle_, typename Value_, typename Index_, typename ... Args_>
-auto new_extractor(const Matrix<Value_, Index_>& matrix, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&&... args) {
+auto new_extractor(const Matrix<Value_, Index_>& matrix, const bool row, MaybeOracle<oracle_, Index_> oracle, Args_&&... args) {
     // We could use 'sparse()' and 'dense()' directly here, but that assumes
     // that 'opt' is always supplied at the end of 'args', which might not be
     // the case... so we just spell it out and save ourselves the trouble

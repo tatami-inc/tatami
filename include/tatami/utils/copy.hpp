@@ -2,6 +2,7 @@
 #define TATAMI_COPY_HPP
 
 #include <algorithm>
+#include <type_traits>
 
 /**
  * @file copy.hpp
@@ -9,6 +10,16 @@
  */
 
 namespace tatami {
+
+/**
+ * @cond
+ */
+// Copy the type without qualifiers to wrap decltype() calls.
+template<typename Input_>
+using I = std::remove_cv_t<std::remove_reference_t<Input_> >;
+/**
+ * @endcond
+ */
 
 /**
  * @tparam Value_ Type of value being copied.
@@ -23,7 +34,7 @@ namespace tatami {
  * This is a no-op if `input == output`.
  */
 template<typename Value_, typename Size_>
-Value_* copy_n(const Value_* input, Size_ n, Value_* output) {
+Value_* copy_n(const Value_* const input, const Size_ n, Value_* const output) {
     if (input != output) {
         std::copy_n(input, n, output);
     }

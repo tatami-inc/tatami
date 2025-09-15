@@ -32,7 +32,15 @@ public:
     bool non_zero_depends_on_column() const { return false; }
 
 public:
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
+    void dense(
+        const bool,
+        const Index_,
+        const Index_,
+        const Index_ length,
+        const InputValue_* const left_buffer,
+        const InputValue_* const right_buffer,
+        OutputValue_* const output_buffer)
+    const {
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output_buffer[i];
@@ -43,8 +51,15 @@ public:
         }
     }
 
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
-        Index_ length = indices.size();
+    void dense(
+        const bool,
+        const Index_,
+        const std::vector<Index_>& indices,
+        const InputValue_* const left_buffer,
+        const InputValue_* const right_buffer,
+        OutputValue_* const output_buffer)
+    const {
+        const Index_ length = indices.size();
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output_buffer[i];
@@ -56,14 +71,14 @@ public:
     }
 
     Index_ sparse(
-        bool,
-        Index_,
+        const bool,
+        const Index_,
         const SparseRange<InputValue_, Index_>& left,
         const SparseRange<InputValue_, Index_>& right,
-        OutputValue_* value_buffer,
-        Index_* index_buffer,
-        bool needs_value,
-        bool needs_index)
+        OutputValue_* const value_buffer,
+        Index_* const index_buffer,
+        const bool needs_value,
+        const bool needs_index)
     const {
         // None of the operations will return zero if one entry is zero and the other entry is non-zero...
         // except for equality, but then, the sparse() method would never even be used.
@@ -92,7 +107,7 @@ public:
      * @endcond
      */
 
-    OutputValue_ fill(bool, Index_) const {
+    OutputValue_ fill(const bool, const Index_) const {
         if constexpr(known_sparse) {
             return 0;
         } else {
