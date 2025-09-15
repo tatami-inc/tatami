@@ -2,6 +2,7 @@
 #define TATAMI_ARITHMETIC_UTILS_HPP
 
 #include <cmath>
+#include <limits>
 
 #include "../utils/copy.hpp"
 

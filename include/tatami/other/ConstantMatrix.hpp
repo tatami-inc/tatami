@@ -111,8 +111,8 @@ private:
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(
         const bool row,
         MaybeOracle<oracle_, Index_>,
-        const Options&)
-    const {
+        const Options&
+    ) const {
         return std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(row ? my_ncol : my_nrow, my_value);
     }
 
@@ -122,8 +122,8 @@ private:
         MaybeOracle<oracle_, Index_>,
         [[maybe_unused]] const Index_ block_start,
         const Index_ block_length,
-        const Options&)
-    const {
+        const Options&
+    ) const {
         return std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(block_length, my_value);
     }
 
@@ -132,16 +132,16 @@ private:
         const bool,
         MaybeOracle<oracle_, Index_>,
         VectorPtr<Index_> indices_ptr,
-        const Options&)
-    const {
+        const Options&
+    ) const {
         return std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(indices_ptr->size(), my_value);
     }
 
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, opt);
     }
 
@@ -149,16 +149,16 @@ public:
         const bool row,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
@@ -169,8 +169,8 @@ public:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<true>(row, std::move(oracle), opt);
     }
 
@@ -179,8 +179,8 @@ public:
         std::shared_ptr<const Oracle<Index_> > oracle,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -188,8 +188,8 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return dense_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -201,8 +201,8 @@ private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_value == 0) {
             return std::make_unique<ConstantMatrix_internal::SparseFiller<oracle_, Value_, Index_> >(opt);
         } else {
@@ -220,8 +220,8 @@ private:
         MaybeOracle<oracle_, Index_> oracle,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_value == 0) {
             return std::make_unique<ConstantMatrix_internal::SparseFiller<oracle_, Value_, Index_> >(opt);
         } else {
@@ -239,8 +239,8 @@ private:
         const bool,
         MaybeOracle<oracle_, Index_>,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_value == 0) {
             return std::make_unique<ConstantMatrix_internal::SparseFiller<oracle_, Value_, Index_> >(opt);
         } else {
@@ -255,8 +255,8 @@ private:
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, opt);
     }
 
@@ -264,16 +264,16 @@ public:
         const bool row,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
@@ -284,8 +284,8 @@ public:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<true>(row, std::move(oracle), opt);
     }
 
@@ -294,8 +294,8 @@ public:
         std::shared_ptr<const Oracle<Index_> > oracle,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -303,8 +303,8 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return sparse_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 };

@@ -841,7 +841,10 @@ private:
     }
 
     template<bool oracle_, typename ... Args_>
-    std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_internal(const bool row, Args_&& ... args) const {
+    std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_internal(
+        const bool row,
+        Args_&& ... args
+    ) const {
         if (my_matrix->is_sparse()) {
             if (DelayedIsometricOperation_internal::can_dense_expand(*my_helper, row)) {
                 return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);

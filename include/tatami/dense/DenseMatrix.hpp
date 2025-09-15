@@ -118,7 +118,7 @@ public:
     SecondaryMyopicBlockDense(const Storage_& storage, const Index_ secondary, const Index_ block_start, const Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
 
-    const Value_* fetch(Index_ i, Value_* buffer) {
+    const Value_* fetch(const Index_ i, Value_* const buffer) {
         for (I<decltype(my_block_length)> x = 0; x < my_block_length; ++x) {
             buffer[x] = my_storage[sanisizer::nd_offset<I<decltype(my_storage.size())> >(i, my_secondary, my_block_start + x)];
         }
@@ -138,7 +138,7 @@ public:
     SecondaryMyopicIndexDense(const Storage_& storage, const Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
-    const Value_* fetch(Index_ i, Value_* buffer) {
+    const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto& indices = *my_indices_ptr;
         const auto nindices = indices.size();
         for (I<decltype(nindices)> x = 0; x < nindices; ++x) {
@@ -203,7 +203,7 @@ public:
 
     bool prefer_rows() const { return my_row_major; }
 
-    bool uses_oracle(bool) const { return false; }
+    bool uses_oracle(const bool) const { return false; }
 
     bool is_sparse() const { return false; }
 

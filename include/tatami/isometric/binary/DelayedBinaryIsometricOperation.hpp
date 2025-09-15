@@ -745,15 +745,27 @@ private:
     }
 
 public:
-    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(const bool row, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(
+        const bool row,
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(const bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(
+        const bool row,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(const bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<MyopicDenseExtractor<OutputValue_, Index_> > dense(
+        const bool row,
+        VectorPtr<Index_> indices_ptr,
+        const Options& opt
+    ) const {
         return dense_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
@@ -841,15 +853,27 @@ private:
     }
 
 public:
-    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(const bool row, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(
+        const bool row,
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(const bool row, const Index_ block_start, const Index_ block_length, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(
+        const bool row,
+        const Index_ block_start,
+        const Index_ block_length,
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(const bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<MyopicSparseExtractor<OutputValue_, Index_> > sparse(
+        const bool row,
+        VectorPtr<Index_> indices_ptr,
+        const Options& opt
+    ) const {
         return sparse_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 

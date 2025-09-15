@@ -41,8 +41,8 @@ Index_ initialize_parallel_block(
     const std::vector<Index_>& mapping,
     const Index_ block_start, 
     const Index_ block_length, 
-    const Initialize_ init) 
-{
+    const Initialize_ init
+) {
     if (mapping.empty()) {
         return 0;
     }
@@ -71,8 +71,8 @@ void initialize_parallel_index(
     const std::vector<Index_>& cumulative, 
     const std::vector<Index_>& mapping,
     const std::vector<Index_>& indices, 
-    const Initialize_ init) 
-{
+    const Initialize_ init
+) {
     Index_ counter = 0;
     const Index_ il = indices.size();
     while (counter < il) {
@@ -103,8 +103,8 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         my_exts.reserve(matrices.size());
         my_count.reserve(matrices.size());
         for (const auto& m : matrices) {
@@ -121,8 +121,8 @@ public:
         MaybeOracle<oracle_, Index_> oracle,
         const Index_ block_start, 
         const Index_ block_length, 
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         my_exts.reserve(matrices.size());
         my_count.reserve(matrices.size());
         initialize_parallel_block(
@@ -144,8 +144,8 @@ public:
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         my_exts.reserve(matrices.size());
         my_count.reserve(matrices.size());
         initialize_parallel_index(
@@ -190,7 +190,8 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
-        const Options& opt) : 
+        const Options& opt
+    ) : 
         my_cumulative(cumulative),
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
@@ -243,7 +244,8 @@ public:
         MaybeOracle<oracle_, Index_> oracle,
         const Index_ block_start, 
         const Index_ block_length, 
-        const Options& opt) : 
+        const Options& opt
+    ) : 
         my_cumulative(cumulative), 
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index) 
@@ -302,7 +304,8 @@ public:
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt) : 
+        const Options& opt
+    ) : 
         my_cumulative(cumulative),
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index) 
@@ -366,7 +369,8 @@ public:
         const std::vector<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row, 
-        const Args_& ... args) : 
+        const Args_& ... args
+    ) : 
         my_cumulative(cumulative),
         my_mapping(mapping)
     {
@@ -396,7 +400,8 @@ public:
         const std::vector<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
-        const Args_& ... args) : 
+        const Args_& ... args
+    ) : 
         my_cumulative(cumulative),
         my_mapping(mapping)
     {
@@ -421,11 +426,11 @@ template<typename Index_, class Initialize_>
 void initialize_perp_oracular(
     const std::vector<Index_>& cumulative, 
     const std::vector<Index_>& mapping, 
-    const Oracle<Index_>* const oracle, 
+    const Oracle<Index_>& oracle, 
     std::vector<Index_>& chosen, 
-    Initialize_ init) 
-{
-    const auto ntotal = oracle->total();
+    Initialize_ init
+) {
+    const auto ntotal = oracle.total();
     chosen.reserve(ntotal);
 
     struct Predictions {
@@ -457,7 +462,7 @@ void initialize_perp_oracular(
     const auto nmats = cumulative.size() - 1;
     auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this call is legal.
     for (I<decltype(ntotal)> i = 0; i < ntotal; ++i) {
-        const auto prediction = oracle->get(i);
+        const auto prediction = oracle.get(i);
         const Index_ choice = mapping[prediction];
         chosen.push_back(choice);
         predictions[choice].add(prediction - cumulative[choice]);
@@ -487,13 +492,13 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
-        const Args_& ... args)
-    {
+        const Args_& ... args
+    ) {
         resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an I ndex_, so this call is allowed.
         initialize_perp_oracular(
             cumulative,
             mapping,
-            ora.get(),
+            *ora,
             my_segments,
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
@@ -524,13 +529,13 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
-        const Args_& ... args)
-    {
+        const Args_& ... args
+    ) {
         resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is legal.
         initialize_perp_oracular(
             cumulative,
             mapping,
-            ora.get(),
+            *ora,
             my_segments,
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
@@ -574,7 +579,9 @@ public:
      * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, const bool by_row) : my_matrices(std::move(matrices)), my_by_row(by_row) {
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, const bool by_row) : 
+        my_matrices(std::move(matrices)), my_by_row(by_row)
+    {
         auto nmats = my_matrices.size();
         my_cumulative.reserve(sanisizer::sum<I<decltype(my_cumulative.size())> >(nmats, 1));
         I<decltype(nmats)> sofar = 0;
@@ -710,14 +717,27 @@ public:
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, opt);
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                opt
+            );
         }
     }
 
@@ -725,28 +745,60 @@ public:
         const bool row,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, block_start, block_length, opt);
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                block_start,
+                block_length,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                block_start,
+                block_length,
+                opt
+            );
         }
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(indices_ptr), opt);
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(indices_ptr),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                std::move(indices_ptr),
+                opt
+            );
         }
     }
 
@@ -756,14 +808,27 @@ public:
 private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, opt);
         } else  if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelFullSparse<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, opt);
+            return std::make_unique<DelayedBind_internal::ParallelFullSparse<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                opt
+            );
         }
     }
 
@@ -771,28 +836,60 @@ private:
         const bool row,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, block_start, block_length, opt);
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                block_start,
+                block_length,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelBlockSparse<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::ParallelBlockSparse<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                block_start,
+                block_length,
+                opt
+            );
         }
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(indices_ptr), opt);
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(indices_ptr),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelIndexSparse<false, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, false, std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::ParallelIndexSparse<false, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                false,
+                std::move(indices_ptr),
+                opt
+            );
         }
     }
 
@@ -803,16 +900,33 @@ public:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, opt));
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                dense(row, opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                opt
+            );
         }
     }
 
@@ -821,16 +935,37 @@ public:
         std::shared_ptr<const Oracle<Index_> > oracle,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), block_start, block_length, opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, block_start, block_length, opt));
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                dense(row, block_start, block_length, opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                block_start,
+                block_length,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                block_start,
+                block_length,
+                opt
+            );
         }
     }
 
@@ -838,16 +973,35 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), std::move(indices_ptr), opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(indices_ptr), opt));
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                dense(row, std::move(indices_ptr), opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(indices_ptr),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(indices_ptr),
+                opt
+            );
         }
     }
 
@@ -858,16 +1012,33 @@ private:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, opt));
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                sparse(row, opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelFullSparse<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), opt);
+            return std::make_unique<DelayedBind_internal::ParallelFullSparse<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                opt
+            );
         }
     }
 
@@ -876,16 +1047,37 @@ private:
         std::shared_ptr<const Oracle<Index_> > oracle,
         const Index_ block_start,
         const Index_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), block_start, block_length, opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, block_start, block_length, opt));
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                sparse(row, block_start, block_length, opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                block_start,
+                block_length,
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelBlockSparse<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), block_start, block_length, opt);
+            return std::make_unique<DelayedBind_internal::ParallelBlockSparse<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                block_start,
+                block_length,
+                opt
+            );
         }
     }
 
@@ -893,16 +1085,35 @@ private:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
         VectorPtr<Index_> indices_ptr,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), std::move(indices_ptr), opt);
         } else if (!my_uses_oracle[row]) {
-            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(indices_ptr), opt));
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
+                std::move(oracle),
+                sparse(row, std::move(indices_ptr), opt)
+            );
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(indices_ptr),
+                opt
+            );
         } else {
-            return std::make_unique<DelayedBind_internal::ParallelIndexSparse<true, Value_, Index_> >(my_cumulative, my_mapping, my_matrices, row, std::move(oracle), std::move(indices_ptr), opt);
+            return std::make_unique<DelayedBind_internal::ParallelIndexSparse<true, Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(indices_ptr),
+                opt
+            );
         }
     }
 };

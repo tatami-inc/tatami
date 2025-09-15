@@ -616,7 +616,7 @@ public:
             sanisizer::can_ptrdiff<I<decltype(my_indices.begin())> >(nnzero);
 
             const auto npointers = my_pointers.size(); 
-            const auto check_pointers = [&](auto dim) {
+            const auto check_pointers = [&](const auto dim) {
                 // subtracting 1 from npointers (once we know it's >= 1) instead of adding 1 to dim, as the latter might overflow.
                 return npointers >= 1 && safe_non_negative_equal(npointers - 1, dim);
             };

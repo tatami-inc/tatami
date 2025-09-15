@@ -66,8 +66,8 @@ public:
     Dense(
         const Matrix<ValueIn_, IndexIn_>& matrix, 
         const bool row, MaybeOracle<oracle_, IndexOut_> oracle, 
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(row ? matrix.ncol() : matrix.nrow());
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
     }
@@ -78,8 +78,8 @@ public:
         MaybeOracle<oracle_, IndexOut_> oracle,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(block_length);
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
@@ -89,8 +89,8 @@ public:
         const bool row,
         MaybeOracle<oracle_, IndexOut_> oracle,
         VectorPtr<IndexOut_> indices_ptr,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(indices_ptr->size());
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
@@ -126,8 +126,8 @@ public:
         const Matrix<ValueIn_, IndexIn_>& matrix,
         const bool row,
         MaybeOracle<oracle_, IndexOut_> oracle,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(row ? matrix.ncol() : matrix.nrow(), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
     }
@@ -138,8 +138,8 @@ public:
         MaybeOracle<oracle_, IndexOut_> oracle,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(block_length, opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
@@ -149,8 +149,8 @@ public:
         const bool row,
         MaybeOracle<oracle_, IndexOut_> oracle,
         VectorPtr<IndexOut_> indices_ptr,
-        const Options& opt)
-    {
+        const Options& opt
+    ) {
         allocate(indices_ptr->size(), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
@@ -279,8 +279,8 @@ private:
 public:
     std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, opt);
     }
 
@@ -288,16 +288,16 @@ public:
         const bool row,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<ValueOut_, IndexOut_> > dense(
         const bool row,
         VectorPtr<IndexOut_> indices_my_matrix,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, std::move(indices_my_matrix), opt);
     }
 
@@ -307,8 +307,8 @@ public:
 public:
     std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(
         const bool row,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, opt);
     }
 
@@ -316,16 +316,16 @@ public:
         const bool row,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<ValueOut_, IndexOut_> > sparse(
         const bool row,
         VectorPtr<IndexOut_> indices_my_matrix,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<false, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, false, std::move(indices_my_matrix), opt);
     }
 
@@ -336,8 +336,8 @@ public:
     std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), opt);
     }
 
@@ -346,8 +346,8 @@ public:
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -355,8 +355,8 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
         VectorPtr<IndexOut_> indices_my_matrix,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Dense<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), std::move(indices_my_matrix), opt);
     }
 
@@ -367,8 +367,8 @@ public:
     std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), opt);
     }
 
@@ -377,8 +377,8 @@ public:
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
         const IndexOut_ block_start,
         const IndexOut_ block_length,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -386,8 +386,8 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<IndexOut_> > oracle,
         VectorPtr<IndexOut_> indices_my_matrix,
-        const Options& opt)
-    const {
+        const Options& opt
+    ) const {
         return std::make_unique<DelayedCast_internal::Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(*my_matrix, row, std::move(oracle), std::move(indices_my_matrix), opt);
     }
 };

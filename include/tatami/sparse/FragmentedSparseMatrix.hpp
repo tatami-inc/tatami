@@ -46,7 +46,8 @@ public:
         const auto& curi = my_indices[i];
 
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        for (I<decltype(curv.size())> x = 0, end = curv.size(); x < end; ++x) {
+        const auto curnnz = curv.size();
+        for (I<decltype(curnnz)> x = 0; x < curnnz; ++x) {
             buffer[curi[x]] = curv[x];
         }
         return buffer;
@@ -73,16 +74,18 @@ public:
         my_needs_index(opt.sparse_extract_index)
     {} 
 
-    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& curv = my_values[i];
         const auto& curi = my_indices[i];
 
         SparseRange<Value_, Index_> output(curv.size(), NULL, NULL);
         if (my_needs_value) {
-            output.value = sparse_utils::extract_primary_vector(curv, static_cast<I<decltype(curv.size())> >(0), curv.size(), vbuffer);
+            const auto curnnz = curv.size();
+            output.value = sparse_utils::extract_primary_vector(curv, static_cast<I<decltype(curnnz)> >(0), curnnz, value_buffer);
         }
         if (my_needs_index) {
-            output.index = sparse_utils::extract_primary_vector(curi, static_cast<I<decltype(curi.size())> >(0), curi.size(), index_buffer);
+            const auto curnnz = curi.size();
+            output.index = sparse_utils::extract_primary_vector(curi, static_cast<I<decltype(curnnz)> >(0), curnnz, index_buffer);
         }
         return output;
     }
@@ -158,7 +161,7 @@ public:
         my_needs_index(opt.sparse_extract_index)
     {} 
 
-    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& curi = my_indices[i];
         auto iStart = curi.begin();
         auto iEnd = curi.end();
@@ -168,7 +171,7 @@ public:
 
         SparseRange<Value_, Index_> output(delta, NULL, NULL);
         if (my_needs_value) {
-            output.value = sparse_utils::extract_primary_vector(my_values[i], offset, delta, vbuffer);
+            output.value = sparse_utils::extract_primary_vector(my_values[i], offset, delta, value_buffer);
         }
         if (my_needs_index) {
             output.index = sparse_utils::extract_primary_vector(curi, offset, delta, index_buffer);
@@ -241,11 +244,11 @@ public:
         my_needs_index(opt.sparse_extract_index)
     {} 
 
-    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& curi = my_indices[i];
         const auto& curv = my_values[i];
         Index_ count = 0;
-        auto vcopy = vbuffer;
+        auto vcopy = value_buffer;
         auto icopy = index_buffer;
 
         my_retriever.populate(
@@ -264,7 +267,7 @@ public:
             }
         );
 
-        return SparseRange<Value_, Index_>(count, my_needs_value ? vbuffer : NULL, my_needs_index ? index_buffer : NULL);
+        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
     }
 
 private:
@@ -496,13 +499,13 @@ public:
         my_needs_index(opt.sparse_extract_index)
     {} 
 
-    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const index_buffer) {
+    SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         Index_ count = 0;
         my_cache.search(
             i,
             [&](const Index_ primary, const Index_, const auto ptr) -> void {
                 if (my_needs_value) {
-                    vbuffer[count] = my_values[primary][ptr];
+                    value_buffer[count] = my_values[primary][ptr];
                 }
                 if (my_needs_index) {
                     index_buffer[count] = primary;
@@ -510,7 +513,7 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? vbuffer : NULL, my_needs_index ? index_buffer : NULL);
+        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
     }
 
 private:
