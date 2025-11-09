@@ -158,7 +158,7 @@ private:
         const Store_ store,
         bool& found
     ) {
-        const auto secondaryP1 = secondary + 1;
+        const auto secondaryP1 = secondary + 1; // this is safe as 'secondary' is less than the dimension extent.
         auto& curdex = my_cached_indices[index_primary];
         if (curdex < secondaryP1) {
             return;
@@ -190,7 +190,7 @@ private:
         // to continue being the lower bound, while 'curdex' is the reverse lower bound.
         const auto iraw = my_indices_server.raw(primary);
         auto inext = iraw + curptr - 1;
-        curdex = *inext + 1;
+        curdex = sanisizer::sum_unsafe<Index_>(*inext, 1);
         if (curdex < secondaryP1) {
             return;
         }
@@ -208,7 +208,7 @@ private:
         // position.  Again, we use our own comparator to force casting and
         // avoid signed/unsigned comparisons.
         inext = std::lower_bound(iraw + startptr, inext, secondary, [](Index_ a, Index_ b) -> bool { return a < b; });
-        curdex = *inext + 1;
+        curdex = sanisizer::sum_unsafe<Index_>(*inext, 1);
         curptr = inext - iraw;
 
         if (curdex == secondaryP1) {
@@ -225,7 +225,7 @@ private:
 
         // Setting 'curdex' to the reverse lower bound again.
         --inext;
-        curdex = *inext + 1;
+        curdex = sanisizer::sum_unsafe<Index_>(*inext, 1);
         return;
     }
 
