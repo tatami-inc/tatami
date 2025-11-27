@@ -601,7 +601,7 @@ public:
             if (i == 0) {
                 my_otherdim = secondary;
             } else if (my_otherdim != secondary) {
-                throw std::runtime_error("all 'my_matrices' should have the same number of " + (my_by_row ? std::string("columns") : std::string("rows")));
+                throw std::runtime_error("all 'matrices' should have the same number of " + (my_by_row ? std::string("columns") : std::string("rows")));
             }
 
             // Removing the matrices that don't contribute anything,
