@@ -169,7 +169,8 @@
     <filename>math__helpers_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricAbsHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricSignHelper</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLogHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricFixedLogHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCustomLogHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricSqrtHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricCeilingHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricFloorHelper</class>
@@ -4166,6 +4167,99 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricCustomLogHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</filename>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Base_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricCustomLogHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a9e5317ed09c29768a53336536467cd35</anchor>
+      <arglist>(Base_ base)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>aed8fabf3053f6be11456af14be2e4ad7</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a609fa7acec0de75ec9d68048ae0b9d8c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a9068c0936818c3c9dd12e908c246277c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>af352c13390a0ea075a1646687d033e44</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a5f9e1f28a9ffbb1595cec5b4f6aa963b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a06a1183c8cd30e1e917160945ca5e99c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>aaf21185bd2a79d6f31e5b13892ae9a31</anchor>
+      <arglist>(const bool, const Index_, const Index_, const Index_ length, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a2744f08e70504826664c9ff2b80f07dc</anchor>
+      <arglist>(const bool, const Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a4f51b77b4934626942a92c26a797c9f4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>a698c60c1d8374d50e2a0fdfc49fca21d</anchor>
+      <arglist>(const bool, const Index_, const Index_ number, const InputValue_ *const input, const Index_ *const, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html</anchorfile>
+      <anchor>add96c543f8709002840f428700c9fe33</anchor>
+      <arglist>(const bool, const Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>tatami::DelayedUnaryIsometricExpHelper</name>
     <filename>classtatami_1_1DelayedUnaryIsometricExpHelper.html</filename>
     <templarg>typename OutputValue_</templarg>
@@ -4332,6 +4426,99 @@
       <name>fill</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricExpm1Helper.html</anchorfile>
       <anchor>ac70dd557dfdca3776f0bcb5d30ad4b8d</anchor>
+      <arglist>(const bool, const Index_) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricFixedLogHelper</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</filename>
+    <templarg>int base_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
+    <templarg>typename Index_</templarg>
+    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricFixedLogHelper</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a5f6a5d933f82bf44719a5a79a254b706</anchor>
+      <arglist>()=default</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a7318b679c8d328dc3e4433b23f29c942</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::optional&lt; Index_ &gt;</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a48f95c2f36e9b42e220f18ea72a33520</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a6702635225e51f581676e00afee5925c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>ab6e66ff37a7887edd0d5dd5582e72079</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>aefabb4575da083a04c223723410f7839</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a7050de2eb054f759117f0411adcba407</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a8bfd26fb52f41596ae949936e955896b</anchor>
+      <arglist>(const bool, const Index_, const Index_, const Index_ length, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>ad6de696aff3d5c88211be10ef7331a95</anchor>
+      <arglist>(const bool, const Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>is_sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>a816325739ef95b061a6e941db206b048</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>acb4a5b82fff1dd7022fa1980b0dca2e1</anchor>
+      <arglist>(const bool, const Index_, const Index_ number, const InputValue_ *const input, const Index_ *const, OutputValue_ *const output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>OutputValue_</type>
+      <name>fill</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
+      <anchor>ae8b70974475e4148d7c49cc02cd00a97</anchor>
       <arglist>(const bool, const Index_) const</arglist>
     </member>
   </compound>
@@ -4596,197 +4783,89 @@
     <templarg>typename OutputValue_</templarg>
     <templarg>typename InputValue_</templarg>
     <templarg>typename Index_</templarg>
-    <templarg>typename Base_</templarg>
     <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricLog1pHelper</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a1033abecd623ee12b173138214253fd5</anchor>
+      <anchor>a9a82a1566b8d9666bd36e7b8a1f1d32f</anchor>
       <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog1pHelper</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>ad70270c9fa2126ca5ed11e5f503ea2d2</anchor>
-      <arglist>(Base_ base)</arglist>
     </member>
     <member kind="function">
       <type>std::optional&lt; Index_ &gt;</type>
       <name>nrow</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a817389a847e00b68b540be97a5bddc20</anchor>
+      <anchor>ad0b19ffae187ec1634b51c8a191163f0</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>std::optional&lt; Index_ &gt;</type>
       <name>ncol</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a080ba90a262bf97fdc523c09a4935f77</anchor>
+      <anchor>a0b72a9d9a8917d72404eeb60e3ee0de1</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_row</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>adbb4a848e1de9170ce03870361218d08</anchor>
+      <anchor>ada7ca2c20592603a59d6dc011ceb9d96</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>zero_depends_on_column</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a9533c1e653311855237df5ef00fd7162</anchor>
+      <anchor>a9e7a91ace113e3550cef0b044cf60a0f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_row</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a5a6677e580601f082ee50b8913787e2c</anchor>
+      <anchor>ac3e15c6cd4bd83035de1e8dac541f182</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>non_zero_depends_on_column</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>aaa7b77df35faaf753cf050e0095d5074</anchor>
+      <anchor>a4a669427d94311c664ac08778b184dbb</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a634aa553a524c6de20cbc7c7d8b835ad</anchor>
+      <anchor>a8838ea8e30cc24d6a27ada8cc187f791</anchor>
       <arglist>(const bool, const Index_, const Index_, const Index_ length, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>adf0d737c74758fa1bbec17b9ae219f86</anchor>
+      <anchor>a136204266b8c32a489d26302539977c6</anchor>
       <arglist>(const bool, const Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a8e033368817076dd8f2d82d08c001875</anchor>
+      <anchor>acf6810280316a4a7a2c512155c00ff6e</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>acdc674a07c7aa4a0f2dd9a7995f210bb</anchor>
+      <anchor>a59c71fd3e1261abfbeaf15ed63c672ce</anchor>
       <arglist>(const bool, const Index_, const Index_ number, const InputValue_ *const input, const Index_ *const, OutputValue_ *const output) const</arglist>
     </member>
     <member kind="function">
       <type>OutputValue_</type>
       <name>fill</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>ab3e2737e7e44979dd81674c4b3047692</anchor>
-      <arglist>(const bool, const Index_) const</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricLogHelper</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricLogHelper.html</filename>
-    <templarg>typename OutputValue_</templarg>
-    <templarg>typename InputValue_</templarg>
-    <templarg>typename Index_</templarg>
-    <templarg>typename Base_</templarg>
-    <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLogHelper</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>aff0c56657895211b6dd9970983ab1e5d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLogHelper</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a05ab1af95c9c2eeed74efdb0fc8c6b56</anchor>
-      <arglist>(Base_ base)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::optional&lt; Index_ &gt;</type>
-      <name>nrow</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a4f9bff2b710a5e96c152106a25c2be81</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::optional&lt; Index_ &gt;</type>
-      <name>ncol</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a1dcef45a43620baf50cfce800d7c9b14</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a78b6a22ca6e060f203fd15676b7f672f</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a2c98f26393f64e3e9bf7db6875dd57a1</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>non_zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a317ec1ae86ff624376390d54e2336b3c</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>non_zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a63cc36a98ce5e429d7ce45a18ec880e1</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a83cb2b2dc7ea2a98601769f05dc309f2</anchor>
-      <arglist>(const bool, const Index_, const Index_, const Index_ length, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>dense</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>aa410b5887bec2c0a693a219adea82b92</anchor>
-      <arglist>(const bool, const Index_, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *const input, OutputValue_ *const output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>is_sparse</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>aac963f8d1b44c467440b60e73e6fdd44</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>sparse</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a36defb99cd5a325daab0d5fd929ee0ad</anchor>
-      <arglist>(const bool, const Index_, const Index_ number, const InputValue_ *const input, const Index_ *const, OutputValue_ *const output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>OutputValue_</type>
-      <name>fill</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLogHelper.html</anchorfile>
-      <anchor>a806b36b644d045ebe3b0771237c8ecb9</anchor>
+      <anchor>ae0bf3c3fefa3d22ac7be3c6de306de5c</anchor>
       <arglist>(const bool, const Index_) const</arglist>
     </member>
   </compound>
@@ -7722,13 +7801,14 @@
     <class kind="class">tatami::DelayedUnaryIsometricCompareVectorHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricCosHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricCoshHelper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricCustomLogHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricExpHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricExpm1Helper</class>
+    <class kind="class">tatami::DelayedUnaryIsometricFixedLogHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricFloorHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricGammaHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricLgammaHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricLog1pHelper</class>
-    <class kind="class">tatami::DelayedUnaryIsometricLogHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
     <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricRoundHelper</class>
@@ -8182,6 +8262,27 @@
       <name>DelayedUnaryIsometricIsfiniteHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a16e742490eb4b0300c915d47fd98e398</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricFixedLogHelper&lt;-1, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricLogHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a79e6ebd042ca74b3341c62d2fdc1540a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricFixedLogHelper&lt; 2, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricLog2Helper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acf73c27f4a9b9fb962480695e74a279b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DelayedUnaryIsometricFixedLogHelper&lt; 10, OutputValue_, InputValue_, Index_ &gt;</type>
+      <name>DelayedUnaryIsometricLog10Helper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aac2290fd5ff904922314477434a9b2a6</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">

@@ -92,7 +92,8 @@ $(function(){ initResizable(false); });
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">math_helpers.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -110,8 +111,11 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricSignHelper.html">tatami::DelayedUnaryIsometricSignHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed calculation of the sign of each matrix entry.  <a href="classtatami_1_1DelayedUnaryIsometricSignHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricLogHelper.html">tatami::DelayedUnaryIsometricLogHelper&lt; OutputValue_, InputValue_, Index_, Base_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed calculation of the logarithm of each matrix entry.  <a href="classtatami_1_1DelayedUnaryIsometricLogHelper.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html">tatami::DelayedUnaryIsometricFixedLogHelper&lt; base_, OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed calculation of a logarithm of each matrix entry.  <a href="classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html">tatami::DelayedUnaryIsometricCustomLogHelper&lt; OutputValue_, InputValue_, Index_, Base_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed calculation of a custom logarithm of each matrix entry.  <a href="classtatami_1_1DelayedUnaryIsometricCustomLogHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricSqrtHelper.html">tatami::DelayedUnaryIsometricSqrtHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed calculation of the square root of each matrix entry.  <a href="classtatami_1_1DelayedUnaryIsometricSqrtHelper.html#details">More...</a><br /></td></tr>
@@ -125,7 +129,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricTruncHelper.html">tatami::DelayedUnaryIsometricTruncHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for delayed truncation of each matrix entry to an integer.  <a href="classtatami_1_1DelayedUnaryIsometricTruncHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricLog1pHelper.html">tatami::DelayedUnaryIsometricLog1pHelper&lt; OutputValue_, InputValue_, Index_, Base_ &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricLog1pHelper.html">tatami::DelayedUnaryIsometricLog1pHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for the delayed calculation of the logarithm of each matrix entry plus 1.  <a href="classtatami_1_1DelayedUnaryIsometricLog1pHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricRoundHelper.html">tatami::DelayedUnaryIsometricRoundHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a></td></tr>
@@ -185,6 +189,18 @@ Namespaces</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
 <tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a79e6ebd042ca74b3341c62d2fdc1540a" id="r_a79e6ebd042ca74b3341c62d2fdc1540a"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a79e6ebd042ca74b3341c62d2fdc1540a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a79e6ebd042ca74b3341c62d2fdc1540a">tatami::DelayedUnaryIsometricLogHelper</a> = <a class="el" href="classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html">DelayedUnaryIsometricFixedLogHelper</a>&lt;-1, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:a79e6ebd042ca74b3341c62d2fdc1540a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf73c27f4a9b9fb962480695e74a279b" id="r_acf73c27f4a9b9fb962480695e74a279b"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:acf73c27f4a9b9fb962480695e74a279b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#acf73c27f4a9b9fb962480695e74a279b">tatami::DelayedUnaryIsometricLog2Helper</a> = <a class="el" href="classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html">DelayedUnaryIsometricFixedLogHelper</a>&lt;2, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:acf73c27f4a9b9fb962480695e74a279b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac2290fd5ff904922314477434a9b2a6" id="r_aac2290fd5ff904922314477434a9b2a6"><td class="memTemplParams" colspan="2">template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:aac2290fd5ff904922314477434a9b2a6"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aac2290fd5ff904922314477434a9b2a6">tatami::DelayedUnaryIsometricLog10Helper</a> = <a class="el" href="classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html">DelayedUnaryIsometricFixedLogHelper</a>&lt;10, OutputValue_, InputValue_, Index_&gt;</td></tr>
+<tr class="separator:aac2290fd5ff904922314477434a9b2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Helpers for unary math operations. </p>

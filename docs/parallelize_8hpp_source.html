@@ -112,7 +112,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#ifdef TATAMI_CUSTOM_PARALLEL</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        TATAMI_CUSTOM_PARALLEL(fun, tasks, threads);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <a class="code hl_functionRef" href="https://ltla.github.io/subpar/namespacesubpar.html#a9c64cc17f4f8d1fadbba6d25053a8dbe">subpar::parallelize_range</a>(threads, tasks, std::move(fun));</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <a class="code hl_functionRef" href="https://ltla.github.io/subpar/namespacesubpar.html#a6299ecb1a7d6184a37af21dfe09cc92e">subpar::parallelize_range</a>(threads, tasks, std::move(fun));</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        fun(0, 0, tasks);</div>
@@ -123,7 +123,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacesubpar_html_a9c64cc17f4f8d1fadbba6d25053a8dbe"><div class="ttname"><a href="https://ltla.github.io/subpar/namespacesubpar.html#a9c64cc17f4f8d1fadbba6d25053a8dbe">subpar::parallelize_range</a></div><div class="ttdeci">void parallelize_range(int num_workers, Task_ num_tasks, Run_ run_task_range)</div></div>
+<div class="ttc" id="anamespacesubpar_html_a6299ecb1a7d6184a37af21dfe09cc92e"><div class="ttname"><a href="https://ltla.github.io/subpar/namespacesubpar.html#a6299ecb1a7d6184a37af21dfe09cc92e">subpar::parallelize_range</a></div><div class="ttdeci">void parallelize_range(int num_workers, const Task_ num_tasks, const Run_ run_task_range)</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a3ea65e5b93eb55c03b00aca301e0396f"><div class="ttname"><a href="namespacetatami.html#a3ea65e5b93eb55c03b00aca301e0396f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, const Index_ tasks, const int threads)</div><div class="ttdef"><b>Definition</b> parallelize.hpp:42</div></div>
 <div class="ttc" id="asubpar_8hpp_html"><div class="ttname"><a href="https://ltla.github.io/subpar/subpar_8hpp.html">subpar.hpp</a></div></div>
