@@ -9,6 +9,11 @@
 
 #include "copy.hpp"
 
+/**
+ * @file Index_to_container.hpp
+ * @brief Convert index type to container size.
+ */
+
 namespace tatami {
 
 /**
