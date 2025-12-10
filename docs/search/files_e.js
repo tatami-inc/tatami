@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wrap_5fshared_5fptr_2ehpp_0',['wrap_shared_ptr.hpp',['../wrap__shared__ptr_8hpp.html',1,'']]]
+  ['tatami_2ehpp_0',['tatami.hpp',['../tatami_8hpp.html',1,'']]],
+  ['transpose_2ehpp_1',['transpose.hpp',['../transpose_8hpp.html',1,'']]]
 ];

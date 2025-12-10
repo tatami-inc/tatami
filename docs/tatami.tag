@@ -374,6 +374,12 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>Index_to_container.hpp</name>
+    <path>tatami/utils/</path>
+    <filename>Index__to__container_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>new_extractor.hpp</name>
     <path>tatami/utils/</path>
     <filename>new__extractor_8hpp.html</filename>
