@@ -225,7 +225,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Sqrt) {
 TEST_F(DelayedUnaryIsometricMathTest, Log) {
     // Trying with the natural base.
     {
-        auto op = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<double, double, int, double> >();
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<double, double, int> >();
         tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
         tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
@@ -251,9 +251,9 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         EXPECT_FALSE(op->non_zero_depends_on_column());
     }
 
-    // Trying with another base.
+    // Trying with base 2.
     {
-        auto op = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<double, double, int, double> >(2);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog2Helper<double, double, int> >();
         tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
         tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
@@ -264,7 +264,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
 
         auto refvec = simulated;
         for (auto& r : refvec) {
-            r = std::log(r) / std::log(2);
+            r = std::log2(r);
         }
         tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
@@ -272,9 +272,31 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         quick_test_all<double, int>(sparse_mod, ref);
     }
 
+    // Trying with base 10.
+    {
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog10Helper<double, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
+
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
+
+        auto refvec = simulated;
+        for (auto& r : refvec) {
+            r = std::log10(r);
+        }
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
+
+        quick_test_all<double, int>(dense_mod, ref);
+        quick_test_all<double, int>(sparse_mod, ref);
+    }
+
+
     // Checking that it works for a different output type.
     {
-        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<float, double, int, double> >();
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<float, double, int> >();
         tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
         tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
@@ -289,10 +311,55 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
     }
 }
 
+TEST_F(DelayedUnaryIsometricMathTest, CustomLog) {
+    {
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricCustomLogHelper<double, double, int, double> >(2);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
+
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
+
+        auto refvec = simulated;
+        for (auto& r : refvec) {
+            r = std::log(r) / std::log(2);
+        }
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
+
+        // Doing some light tests, assuming that log(<negative value>) => NaN and log(0) => Inf.
+        quick_test_all<double, int>(dense_mod, ref); 
+        quick_test_all<double, int>(sparse_mod, ref);
+
+        // For coverage purposes.
+        EXPECT_FALSE(op->zero_depends_on_row());
+        EXPECT_FALSE(op->non_zero_depends_on_row());
+        EXPECT_FALSE(op->zero_depends_on_column());
+        EXPECT_FALSE(op->non_zero_depends_on_column());
+    }
+
+    // Checking that it works for a different output type.
+    {
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricCustomLogHelper<float, double, int, double> >(2);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
+
+        std::vector<float> frefvec(simulated.size());
+        for (size_t i = 0; i < simulated.size(); ++i) {
+            frefvec[i] = std::log(simulated[i]) / std::log(2);
+        }
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
+
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
+    }
+}
+
 TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
     // Trying with the natural base.
     {
-        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<double, double, int, double> >();
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<double, double, int> >();
         tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
         tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
@@ -318,30 +385,9 @@ TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
         EXPECT_FALSE(op->non_zero_depends_on_column());
     }
 
-    // Trying with another base.
-    {
-        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<double, double, int, double> >(2.0);
-        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
-        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
-
-        EXPECT_FALSE(dense_mod.is_sparse());
-        EXPECT_TRUE(sparse_mod.is_sparse());
-        EXPECT_EQ(nrow, dense_mod.nrow());
-        EXPECT_EQ(ncol, dense_mod.ncol());
-
-        auto refvec = simulated;
-        for (auto& r : refvec) {
-            r = std::log1p(r) / std::log(2);
-        }
-        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
-
-        quick_test_all<double, int>(dense_mod, ref);
-        quick_test_all<double, int>(sparse_mod, ref);
-    }
-
     // Checking that it works for a different output type.
     {
-        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<float, double, int, double> >();
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<float, double, int> >();
         tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
         tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
