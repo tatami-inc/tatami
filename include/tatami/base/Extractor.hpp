@@ -88,7 +88,7 @@ public:
      * This is guaranteed to have `N` values.
      */
     const Value_* fetch(Value_* buffer) {
-        return fetch(0, buffer);
+        return fetch(static_cast<Index_>(0), buffer);
     }
 
     /**
@@ -227,7 +227,7 @@ public:
      * as predicted by the `Oracle` used to construct this instance.
      */
     SparseRange<Value_, Index_> fetch(Value_* value_buffer, Index_* index_buffer) {
-        return fetch(0, value_buffer, index_buffer);
+        return fetch(static_cast<Index_>(0), value_buffer, index_buffer);
     }
 
     /**

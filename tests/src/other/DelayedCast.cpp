@@ -12,14 +12,14 @@
 
 class CastUtils {
 protected:
-    inline static size_t nrow = 99, ncol = 179;
+    inline static int nrow = 99, ncol = 179;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 
-    inline static std::shared_ptr<tatami::Matrix<float, size_t> > fdense, fsparse;
+    inline static std::shared_ptr<tatami::Matrix<float, std::size_t> > fdense, fsparse;
     inline static std::shared_ptr<tatami::NumericMatrix> fdense_ref, fsparse_ref;
 
     inline static std::shared_ptr<tatami::Matrix<float, int> > fsparse_value;
-    inline static std::shared_ptr<tatami::Matrix<double, size_t> > sparse_index;
+    inline static std::shared_ptr<tatami::Matrix<double, std::size_t> > sparse_index;
 
     inline static std::shared_ptr<tatami::NumericMatrix> cast_dense, cast_fdense;
     inline static std::shared_ptr<tatami::NumericMatrix> cast_sparse, cast_fsparse, cast_fsparse_value, cast_sparse_index;
@@ -42,9 +42,10 @@ protected:
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
 
         // Both the value and indices are changed in type.
+        const std::size_t nrow_s = nrow, ncol_s = ncol;
         std::vector<float> fsparse_matrix(sparse_matrix.begin(), sparse_matrix.end());
-        fdense = std::shared_ptr<tatami::Matrix<float, size_t> >(new tatami::DenseRowMatrix<float, size_t>(nrow, ncol, fsparse_matrix));
-        fsparse = tatami::convert_to_compressed_sparse<false, float, size_t>(fdense.get()); // column-major.
+        fdense = std::make_shared<tatami::DenseRowMatrix<float, std::size_t> >(nrow_s, ncol_s, fsparse_matrix);
+        fsparse = tatami::convert_to_compressed_sparse<false, float, std::size_t>(fdense.get()); // column-major.
 
         // Reference with reduced precision, for comparison with double->float->double casts.
         {
@@ -61,8 +62,8 @@ protected:
 
         // Only the index is changed in type.
         {
-            auto redense = std::shared_ptr<tatami::Matrix<double, size_t> >(new tatami::DenseRowMatrix<double, size_t>(nrow, ncol, sparse_matrix));
-            sparse_index = tatami::convert_to_compressed_sparse<false, double, size_t>(redense.get()); 
+            auto redense = std::shared_ptr<tatami::Matrix<double, std::size_t> >(new tatami::DenseRowMatrix<double, std::size_t>(nrow_s, ncol_s, sparse_matrix));
+            sparse_index = tatami::convert_to_compressed_sparse<false, double, std::size_t>(redense.get()); 
         }
 
         cast_dense = tatami::make_DelayedCast<double, int>(dense);
@@ -74,8 +75,8 @@ protected:
 
         // Testing unsorted access.
         uns_cast_fsparse = tatami::make_DelayedCast<double, int>(
-            std::shared_ptr<tatami::Matrix<float, size_t> >(
-                new tatami_test::ReversedIndicesWrapper<float, size_t>(fsparse)
+            std::shared_ptr<tatami::Matrix<float, std::size_t> >(
+                new tatami_test::ReversedIndicesWrapper<float, std::size_t>(fsparse)
             )
         );
     }
@@ -121,7 +122,7 @@ TEST_F(DelayedCastTest, ConstOverload) {
 
 TEST(DelayedCastMisc, CastOracle) {
     auto out = std::make_shared<tatami::ConsecutiveOracle<int> >(10, 100);
-    auto casted = tatami::DelayedCast_internal::CastOracle<size_t, int>(out);
+    auto casted = tatami::DelayedCast_internal::CastOracle<std::size_t, int>(out);
     EXPECT_EQ(casted.total(), 100);
 }
 

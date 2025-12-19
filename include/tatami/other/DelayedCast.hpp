@@ -28,6 +28,11 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
+#ifdef TATAMI_STRICT_SIGNATURES    
+    // Not much to do here, we want to accept instances of subclasses.
+#endif
+
+public:
     IndexIn_ get(const PredictionIndex i) const {
         return my_oracle->get(i);
     }
@@ -60,6 +65,11 @@ VectorPtr<IndexIn_> convert(VectorPtr<IndexOut_> indices_ptr) {
     }
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES    
+template<typename ... Args_> 
+void convert(Args_...) = delete;
+#endif
+
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
 class Dense final : public DenseExtractor<oracle_, ValueOut_, IndexOut_> {
 public:
@@ -80,8 +90,15 @@ public:
         const IndexOut_ block_length,
         const Options& opt
     ) {
-        allocate(block_length);
-        my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
+        allocate(static_cast<IndexIn_>(block_length));
+        my_ext = new_extractor<false, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            static_cast<IndexIn_>(block_start),
+            static_cast<IndexIn_>(block_length),
+            opt
+        );
     }
 
     Dense(
@@ -91,9 +108,14 @@ public:
         VectorPtr<IndexOut_> indices_ptr,
         const Options& opt
     ) {
-        allocate(indices_ptr->size());
+        allocate(static_cast<IndexIn_>(indices_ptr->size()));
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    Dense(Args_...) = delete;
+#endif
 
 private:
     void allocate(const IndexIn_ n) {
@@ -102,12 +124,17 @@ private:
         }
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void allocate(Args_...) = delete;
+#endif
+
 public:
     const ValueOut_* fetch(const IndexOut_ i, ValueOut_* const buffer) {
         if constexpr(no_op) {
-            return my_ext->fetch(i, buffer);
+            return my_ext->fetch(static_cast<IndexIn_>(i), buffer);
         } else {
-            const auto ptr = my_ext->fetch(i, my_buffer.data());
+            const auto ptr = my_ext->fetch(static_cast<IndexIn_>(i), my_buffer.data());
             std::copy_n(ptr, my_buffer.size(), buffer);
             return buffer;
         }
@@ -140,8 +167,15 @@ public:
         const IndexOut_ block_length,
         const Options& opt
     ) {
-        allocate(block_length, opt);
-        my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
+        allocate(static_cast<IndexIn_>(block_length), opt);
+        my_ext = new_extractor<true, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            static_cast<IndexIn_>(block_start),
+            static_cast<IndexIn_>(block_length),
+            opt
+        );
     }
 
     Sparse(
@@ -151,9 +185,14 @@ public:
         VectorPtr<IndexOut_> indices_ptr,
         const Options& opt
     ) {
-        allocate(indices_ptr->size(), opt);
+        allocate(static_cast<IndexIn_>(indices_ptr->size()), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    Sparse(Args_...) = delete;
+#endif
 
 private:
     void allocate(const IndexIn_ n, const Options& opt) {
@@ -168,6 +207,11 @@ private:
             }
         }
     }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void allocate(Args_...) = delete;
+#endif
 
 public:
     SparseRange<ValueOut_, IndexOut_> fetch(const IndexOut_ i, ValueOut_* const value_buffer, IndexOut_* const index_buffer) {
@@ -187,8 +231,8 @@ public:
             }
         }();
 
-        const auto range = my_ext->fetch(i, vptr, iptr);
-        SparseRange<ValueOut_, IndexOut_> output(range.number);
+        const auto range = my_ext->fetch(static_cast<IndexIn_>(i), vptr, iptr);
+        SparseRange<ValueOut_, IndexOut_> output(static_cast<IndexOut_>(range.number));
 
         if constexpr(no_op_index) {
             output.index = range.index;
@@ -239,15 +283,23 @@ public:
     /**
      * @param matrix Pointer to the `Matrix` instance to cast from.
      */
-    DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) : my_matrix(std::move(matrix)) {}
+    DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) :
+        my_matrix(std::move(matrix)),
+        my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())), // TODO: attest that these values are positive.
+        my_ncol(sanisizer::cast<IndexOut_>(my_matrix->ncol()))
+    {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    // Not much to do here, actually; all casts to Matrix from subclasses are acceptable.
+#endif
 
 public:
     IndexOut_ nrow() const {
-        return my_matrix->nrow();
+        return my_nrow;
     }
 
     IndexOut_ ncol() const {
-        return my_matrix->ncol();
+        return my_ncol;
     }
 
     bool is_sparse() const {
@@ -272,6 +324,7 @@ public:
 
 private:
     std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > my_matrix;
+    IndexOut_ my_nrow, my_ncol;
 
     /********************
      *** Myopic dense ***

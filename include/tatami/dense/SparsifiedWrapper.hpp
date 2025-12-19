@@ -48,7 +48,7 @@ public:
      */
 #ifdef TATAMI_STRICT_SIGNATURES
     template<typename ... Args_>
-    FullSparsifiedWrapper(Args_...) = delete;
+    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
 #endif
     /**
      * @endcond
@@ -116,7 +116,7 @@ public:
      */
 #ifdef TATAMI_STRICT_SIGNATURES
     template<typename ... Args_>
-    BlockSparsifiedWrapper(Args_...) = delete;
+    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
 #endif
     /**
      * @endcond
@@ -181,7 +181,7 @@ public:
      */
 #ifdef TATAMI_STRICT_SIGNATURES
     template<typename ... Args_>
-    IndexSparsifiedWrapper(Args_...) = delete;
+    IndexSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
 #endif
     /**
      * @endcond

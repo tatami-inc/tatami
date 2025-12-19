@@ -15,6 +15,7 @@
 #include <array>
 #include <type_traits>
 #include <cstddef>
+#include <iterator>
 
 /**
  * @file DelayedBind.hpp
@@ -66,6 +67,11 @@ Index_ initialize_parallel_block(
     return start_index;
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void initialize_parallel_block(Args_...) = delete;
+#endif
+
 template<typename Index_, class Initialize_>
 void initialize_parallel_index(
     const std::vector<Index_>& cumulative, 
@@ -93,6 +99,11 @@ void initialize_parallel_index(
         init(bind_index, std::move(slice_ptr));
     }
 }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void initialize_parallel_index(Args_...) = delete;
+#endif
 
 template<bool oracle_, typename Value_, typename Index_>
 class  ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
@@ -159,6 +170,11 @@ public:
         );
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelDense(Args_...) = delete;
+#endif
+
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         auto copy = buffer;
@@ -202,6 +218,12 @@ public:
         }
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelFullSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -224,7 +246,11 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(accumulated, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
+        return SparseRange<Value_, Index_>(
+            accumulated,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -262,6 +288,12 @@ public:
         );
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelBlockSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -284,7 +316,11 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(count, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -323,6 +359,12 @@ public:
         );
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelIndexSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -346,7 +388,11 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(count, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -380,6 +426,12 @@ public:
         }
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    MyopicPerpendicularDense(Args_...) = delete;
+#endif
+
+public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const Index_ chosen = my_mapping[i];
         return my_exts[chosen]->fetch(i - my_cumulative[chosen], buffer);
@@ -411,6 +463,12 @@ public:
         }
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    MyopicPerpendicularSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const ibuffer) {
         const Index_ chosen = my_mapping[i];
         return my_exts[chosen]->fetch(i - my_cumulative[chosen], vbuffer, ibuffer);
@@ -482,6 +540,11 @@ void initialize_perp_oracular(
     }
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void initialize_perp_oracular(Args_...) = delete;
+#endif
+
 template<typename Value_, typename Index_>
 class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
@@ -506,6 +569,12 @@ public:
         );
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    OracularPerpendicularDense(Args_...) = delete;
+#endif
+
+public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto chosen = my_segments[my_used];
         const auto output = my_exts[chosen]->fetch(i, buffer);
@@ -543,6 +612,12 @@ public:
         );
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    OracularPerpendicularSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto chosen = my_segments[my_used];
         const auto output = my_exts[chosen]->fetch(i, vbuffer, ibuffer);
@@ -642,7 +717,7 @@ public:
         for (int d = 0; d < 2; ++d) {
             my_uses_oracle[d] = false;
             for (const auto& x : my_matrices) {
-                if (x->uses_oracle(d)) {
+                if (x->uses_oracle(d == 0)) {
                     my_uses_oracle[d] = true;
                     break;
                 }
@@ -651,13 +726,25 @@ public:
     }
 
     /**
-     * @param matrices Pointers to the matrices to be combined.
+     * @param matrices Vector of pointers to the matrices to be combined.
      * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
      * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& matrices, const bool by_row) : 
-        DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(matrices.begin(), matrices.end()), by_row) {}
+    DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > matrices, const bool by_row) : 
+        DelayedBind(
+            std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(
+                std::make_move_iterator(matrices.begin()),
+                std::make_move_iterator(matrices.end())
+            ),
+            by_row
+        )
+    {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    DelayedBind(Args_...) = delete;
+#endif
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > my_matrices;

@@ -43,7 +43,7 @@ void count_compressed_sparse_non_zeros_consistent(
         parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             auto wrk = consecutive_extractor<true>(matrix, row, start, length, opt);
             for (Index_ x = 0; x < length; ++x) {
-                const auto range = wrk->fetch(NULL, NULL);
+                const auto range = wrk->fetch(static_cast<Value_*>(NULL), static_cast<Index_*>(NULL));
                 output[start + x] = range.number;
             }
         }, primary, threads);
@@ -89,7 +89,7 @@ void count_compressed_sparse_non_zeros_inconsistent(
             const auto my_counts = (t > 0 ? nz_counts[t - 1].data() : output);
 
             for (Index_ x = 0; x < length; ++x) {
-                const auto range = wrk->fetch(NULL, buffer_i.data());
+                const auto range = wrk->fetch(static_cast<Value_*>(NULL), buffer_i.data());
                 for (Index_ i = 0; i < range.number; ++i) {
                     ++my_counts[range.index[i]];
                 }
