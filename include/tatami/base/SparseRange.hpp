@@ -40,6 +40,17 @@ struct SparseRange {
     SparseRange(Index_ number, const Value_* value = NULL, const Index_* index = NULL) : number(number), value(value), index(index) {}
 
     /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    SparseRange(Args_...) = delete;
+#endif
+    /**
+     * @endcond
+     */
+
+    /**
      * Default constructor.
      */
     SparseRange() = default;

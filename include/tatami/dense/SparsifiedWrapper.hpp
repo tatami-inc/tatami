@@ -44,6 +44,17 @@ public:
     {}
 
     /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    FullSparsifiedWrapper(Args_...) = delete;
+#endif
+    /**
+     * @endcond
+     */
+
+    /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -101,13 +112,24 @@ public:
     {}
 
     /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    BlockSparsifiedWrapper(Args_...) = delete;
+#endif
+    /**
+     * @endcond
+     */
+
+    /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
-        SparseRange<Value_, Index_> output(my_block_length, NULL, NULL);
+        SparseRange<Value_, Index_> output(my_block_length, static_cast<const Value_*>(NULL), static_cast<const Index_*>(NULL));
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
         }
@@ -155,6 +177,17 @@ public:
     {}
 
     /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    IndexSparsifiedWrapper(Args_...) = delete;
+#endif
+    /**
+     * @endcond
+     */
+
+    /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -162,7 +195,7 @@ public:
      */
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& ix = *my_indices_ptr;
-        SparseRange<Value_, Index_> output(ix.size());
+        SparseRange<Value_, Index_> output(static_cast<Index_>(ix.size()));
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
         }

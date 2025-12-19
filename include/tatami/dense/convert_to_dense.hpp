@@ -43,7 +43,7 @@ struct ConvertToDenseOptions {
  * On output, this is filled with values from `matrix` in row- or column-major format depending on `row_major`.
  * @param options Further options.
  */
-template <typename StoredValue_, typename InputValue_, typename InputIndex_>
+template <typename InputValue_, typename InputIndex_, typename StoredValue_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool row_major, StoredValue_* const store, const ConvertToDenseOptions& options) {
     const InputIndex_ NR = matrix.nrow();
     const InputIndex_ NC = matrix.ncol();
@@ -198,7 +198,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
 }
 
 template <typename Value_ = double, typename Index_ = int, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
-inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, int threads = 1) {
     ConvertToDenseOptions options;
     options.num_threads = threads;
     return convert_to_dense<Value_, Index_, StoredValue_>(
@@ -218,9 +218,23 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, StoredValu
 }
 
 template<bool row_, typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
-inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, int threads = 1) {
     return convert_to_dense<Value_, Index_, StoredValue_>(matrix, row_, threads);
 }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename InputValue_, typename InputIndex_, typename ... Args_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, Args_...) = delete;
+
+template<typename Value_, typename Index_, typename InputValue_, typename InputIndex_, typename ... Args_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>&, Args_...) = delete;
+
+template<bool row_, typename InputValue_, typename InputIndex_, typename ... Args_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>*, Args_...) = delete;
+
+template<bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_, typename ... Args_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>*, Args_...) = delete;
+#endif
 /**
  * @endcond
  */

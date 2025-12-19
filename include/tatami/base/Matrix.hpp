@@ -160,6 +160,17 @@ public:
      */
     virtual bool uses_oracle(bool row) const = 0;
 
+    /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void uses_oracle(Args_...) const = delete;
+#endif
+    /**
+     * @endcond
+     */
+
     /******************************
      **** Myopic dense methods ****
      ******************************/
@@ -238,7 +249,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
-        return dense_row(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return dense_row(std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
     /**
@@ -283,7 +294,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
-        return dense_column(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return dense_column(std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
 public: // ==== Default option overloads ====
@@ -447,7 +458,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
-        return sparse_row(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_row(std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
     /**
@@ -492,7 +503,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
-        return sparse_column(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_column(std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
 public: // ==== Default option overloads ====
@@ -663,7 +674,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return dense_row(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return dense_row(std::move(oracle), std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     } 
 
     /**
@@ -712,7 +723,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return dense_column(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return dense_column(std::move(oracle), std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
 public: // ==== Default option overloads ====
@@ -890,7 +901,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return sparse_row(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_row(std::move(oracle), std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
     /**
@@ -939,7 +950,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return sparse_column(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_column(std::move(oracle), std::make_shared<const std::vector<Index_> >(std::move(indices)), opt);
     }
 
 public: // ==== Default option overloads ====
@@ -1030,6 +1041,33 @@ public: // ==== Default option overloads ====
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return sparse_column(std::move(oracle), std::move(indices), Options());
     }
+
+public:
+    /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void dense(Args_...) const = delete;
+
+    template<typename ... Args_>
+    void dense_row(Args_...) const = delete;
+
+    template<typename ... Args_>
+    void dense_column(Args_...) const = delete;
+
+    template<typename ... Args_>
+    void sparse(Args_...) const = delete;
+
+    template<typename ... Args_>
+    void sparse_row(Args_...) const = delete;
+
+    template<typename ... Args_>
+    void sparse_column(Args_...) const = delete;
+#endif
+    /**
+     * @endcond
+     */
 };
 
 /**

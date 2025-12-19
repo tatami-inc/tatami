@@ -58,6 +58,11 @@ public:
     // No-op for back-compatibility only.
     template<class Oracle_>
     void set_oracle(Oracle_) {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void fetch(Args_...) = delete;
+#endif
     /**
      * @endcond
      */
@@ -126,6 +131,11 @@ public:
     // No-op for back-compatibility only.
     template<class Oracle_>
     void set_oracle(Oracle_) {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void fetch(Args_...) = delete;
+#endif
     /**
      * @endcond
      */
@@ -179,6 +189,11 @@ public:
     // No-op for back-compatibility only.
     template<class Oracle_>
     void set_oracle(Oracle_) {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void fetch(Args_...) = delete;
+#endif
     /**
      * @endcond
      */
@@ -256,6 +271,11 @@ public:
     // No-op for back-compatibility only.
     template<class Oracle_>
     void set_oracle(Oracle_) {}
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void fetch(Args_...) = delete;
+#endif
     /**
      * @endcond
      */
