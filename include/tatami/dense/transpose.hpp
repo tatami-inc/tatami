@@ -96,6 +96,17 @@ void transpose(const Input_* const input, const std::size_t nrow, const std::siz
 // (See https://gitlab.com/libeigen/eigen/-/blob/master/Eigen/src/Core/Transpose.h#L293 for the relevant code.)
 // I'm not going to optimize the square case because tatami rarely, if ever, deals in situations with square matrices.
 
+/**
+ * @cond
+ */
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void transpose(Args_...) = delete;
+#endif
+/**
+ * @endcond
+ */
+
 }
 
 #endif

@@ -84,7 +84,7 @@ public:
         const auto offset = my_pointers[i];
         I<decltype(offset)> delta = my_pointers[i+1] - offset;
 
-        SparseRange<Value_, Index_> output(delta, NULL, NULL);
+        SparseRange<Value_, Index_> output(static_cast<Index_>(delta));
         if (my_needs_value) {
             output.value = sparse_utils::extract_primary_vector(my_values, offset, delta, value_buffer);
         }
@@ -176,7 +176,7 @@ public:
         const auto offset = iStart - my_indices.begin();
         const auto delta = iEnd - iStart;
 
-        SparseRange<Value_, Index_> output(delta, NULL, NULL);
+        SparseRange<Value_, Index_> output(static_cast<Index_>(delta));
         if (my_needs_value) {
             output.value = sparse_utils::extract_primary_vector(my_values, offset, delta, value_buffer);
         }
@@ -277,7 +277,11 @@ public:
             }
         );
 
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -378,7 +382,12 @@ public:
             }
             ++count;
         });
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -454,7 +463,11 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:
@@ -528,7 +541,11 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+        return SparseRange<Value_, Index_>(
+            count,
+            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
+            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
+        );
     }
 
 private:

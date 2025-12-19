@@ -13,7 +13,7 @@ TEST_P(TransposeDenseTest, Basic) {
     auto NR = std::get<0>(params);
     auto NC = std::get<1>(params);
 
-    auto values = tatami_test::simulate_vector<double>(NR * NC, [&]{
+    const auto values = tatami_test::simulate_vector<double>(NR, NC, [&]{
         tatami_test::SimulateVectorOptions opt;
         opt.lower = 0;
         opt.upper = 100;
@@ -21,18 +21,23 @@ TEST_P(TransposeDenseTest, Basic) {
         return opt;
     }());
 
-    std::vector<double> buffer(NR * NC);
-    tatami::transpose(values.data(), NR, NC, buffer.data());
+    std::vector<double> buffer(values.size());
+    tatami::transpose(values.data(), static_cast<std::size_t>(NR), static_cast<std::size_t>(NC), buffer.data());
 
     tatami::DenseRowMatrix<double, int> original(NR, NC, std::move(values));
     tatami::DenseColumnMatrix<double, int> flipped(NR, NC, std::move(buffer));
 
     auto oext = original.dense_row();
     auto fext = flipped.dense_row();
+    sanisizer::as_size_type<std::vector<double> >(NC);
+    std::vector<double> observed(NC), expected(NC);
+
     for (int r = 0; r < NR; ++r) {
-        auto oout = tatami_test::fetch(*oext, r, NC);
-        auto fout = tatami_test::fetch(*fext, r, NC);
-        ASSERT_EQ(oout, fout);
+        auto eptr = oext->fetch(r, expected.data());
+        tatami::copy_n(eptr, NC, expected.data());
+        auto optr = fext->fetch(r, observed.data());
+        tatami::copy_n(optr, NC, observed.data());
+        ASSERT_EQ(expected, observed);
     }
 }
 
@@ -40,10 +45,10 @@ TEST_P(TransposeDenseTest, Strided) {
     auto params = GetParam();
     auto NR = std::get<0>(params);
     auto NC = std::get<1>(params);
-    auto stride_nr = NR + 17;
-    auto stride_nc = NC + 13;
+    auto input_stride = NC + 13;
+    auto output_stride = NR + 17;
 
-    auto values = tatami_test::simulate_vector<double>(NR * stride_nc, [&]{
+    const auto values = tatami_test::simulate_vector<double>(NR, input_stride, [&]{
         tatami_test::SimulateVectorOptions opt;
         opt.lower = 0;
         opt.upper = 100;
@@ -51,18 +56,39 @@ TEST_P(TransposeDenseTest, Strided) {
         return opt;
     }());
 
-    std::vector<double> buffer(stride_nr * NC);
-    tatami::transpose(values.data(), NR, NC, stride_nc, buffer.data(), stride_nr);
+    constexpr double placeholder = -123;
+    const auto full_output_size = sanisizer::product<typename std::vector<double>::size_type>(output_stride, NC);
+    std::vector<double> buffer(full_output_size, placeholder);
+    tatami::transpose(
+        values.data(),
+        static_cast<std::size_t>(NR),
+        static_cast<std::size_t>(NC),
+        static_cast<std::size_t>(input_stride),
+        buffer.data(),
+        static_cast<std::size_t>(output_stride)
+    );
 
-    tatami::DenseRowMatrix<double, int> original(NR, stride_nc, std::move(values));
-    tatami::DenseColumnMatrix<double, int> flipped(stride_nr, NC, std::move(buffer));
+    tatami::DenseRowMatrix<double, int> original(NR, input_stride, std::move(values));
+    tatami::DenseColumnMatrix<double, int> flipped(output_stride, NC, std::move(buffer));
 
-    auto oext = original.dense_row();
+    auto oext = original.dense_row(0, NC);
     auto fext = flipped.dense_row();
+    sanisizer::as_size_type<std::vector<double> >(input_stride);
+    std::vector<double> observed(input_stride), expected(input_stride);
+
     for (int r = 0; r < NR; ++r) {
-        auto oout = tatami_test::fetch(*oext, r, NC);
-        auto fout = tatami_test::fetch(*fext, r, NC);
-        ASSERT_EQ(oout, fout);
+        auto optr = oext->fetch(r, expected.data());
+        tatami::copy_n(optr, NC, expected.data());
+        auto fptr = fext->fetch(r, observed.data());
+        tatami::copy_n(fptr, NC, observed.data());
+        ASSERT_EQ(expected, observed);
+    }
+
+    for (int r = NR; r < output_stride; ++r) {
+        auto fptr = fext->fetch(r, observed.data());
+        for (int c = 0; c < NC; ++c) {
+            EXPECT_EQ(fptr[c], placeholder);
+        }
     }
 }
 

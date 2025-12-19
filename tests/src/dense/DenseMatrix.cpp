@@ -96,8 +96,7 @@ protected:
             return;
         }
 
-        const auto full_size = sanisizer::product<std::size_t>(nrow, ncol);
-        auto simulated = tatami_test::simulate_vector<double>(full_size, []{
+        auto simulated = tatami_test::simulate_vector<double>(nrow, ncol, []{
             tatami_test::SimulateVectorOptions opt;
             opt.seed = sanisizer::cap<tatami_test::SeedType>(438579088);
             return opt;

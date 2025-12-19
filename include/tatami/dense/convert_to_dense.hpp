@@ -176,7 +176,14 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValu
     const auto buffer_size = sanisizer::product<std::size_t>(NR, NC);
     auto buffer = sanisizer::create<std::vector<StoredValue_> >(buffer_size);
     convert_to_dense(matrix, row_major, buffer.data(), options);
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, I<decltype(buffer)> >(NR, NC, std::move(buffer), row_major));
+    return std::shared_ptr<Matrix<Value_, Index_> >(
+        new DenseMatrix<Value_, Index_, I<decltype(buffer)> >(
+            sanisizer::cast<Index_>(NR),
+            sanisizer::cast<Index_>(NC),
+            std::move(buffer),
+            row_major
+        )
+    );
 }
 
 /**
