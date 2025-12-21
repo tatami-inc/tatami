@@ -717,7 +717,7 @@ public:
         for (int d = 0; d < 2; ++d) {
             my_uses_oracle[d] = false;
             for (const auto& x : my_matrices) {
-                if (x->uses_oracle(d == 0)) {
+                if (x->uses_oracle(static_cast<bool>(d))) {
                     my_uses_oracle[d] = true;
                     break;
                 }
@@ -791,7 +791,7 @@ public:
     }
 
     bool uses_oracle(const bool row) const {
-        return my_uses_oracle[row];
+        return my_uses_oracle[static_cast<int>(row)];
     }
 
     using Matrix<Value_, Index_>::dense;

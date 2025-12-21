@@ -113,7 +113,7 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
     EXPECT_FALSE(bound_sparse->prefer_rows());
     EXPECT_EQ(bound_sparse->prefer_rows_proportion(), 0);
 
-    EXPECT_FALSE(bound_sparse->uses_oracle(true));
+    EXPECT_FALSE(bound_dense->uses_oracle(true));
     EXPECT_FALSE(bound_sparse->uses_oracle(true));
 }
 
