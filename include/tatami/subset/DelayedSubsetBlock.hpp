@@ -34,6 +34,11 @@ void bump_indices(VectorPtr<Index_>& indices_ptr, const Index_ subset_start) {
     }
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename Args_>
+void bump_indices(Args_...) = delete;
+#endif
+
 template<bool oracle_, typename Value_, typename Index_>
 class AlongDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
@@ -74,6 +79,12 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    AlongDense(Args_...) = delete;
+#endif
+
+public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i, buffer);
     }
@@ -126,6 +137,12 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    AlongSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto output = my_ext->fetch(i, value_buffer, index_buffer);
         if (output.index && my_shift) {
@@ -153,6 +170,12 @@ public:
         my_shift(shift)
     {}
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    SubsetOracle(std::shared_ptr<const Oracle<Index_> >, Args_...) = delete;
+#endif
+
+public:
     PredictionIndex total() const {
         return my_oracle->total();
     }
@@ -185,6 +208,12 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    AcrossDense(Args_...) = delete;
+#endif
+
+public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i + my_shift, buffer);
     }
@@ -213,6 +242,12 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    AcrossSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_ext->fetch(i + my_shift, value_buffer, index_buffer);
     }
@@ -258,6 +293,17 @@ public:
         my_subset_length(subset_length),
         my_by_row(by_row)
     {}
+
+/**
+ * @cond
+ */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename Args_>
+    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> >, Args_...) = delete;
+#endif
+/**
+ * @endcond
+ */
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
@@ -336,6 +382,11 @@ private:
         }
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<bool oracle_, typename ... Args_>
+    void dense_internal(Args_...) = delete;
+#endif
+
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
@@ -387,6 +438,11 @@ private:
             );
         }
     }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<bool oracle_, typename ... Args_>
+    void sparse_internal(Args_...) = delete;
+#endif
 
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
@@ -477,19 +533,9 @@ public:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
- *
- * @tparam Value_ Type of matrix value.
- * @tparam Index_ Integer type for the row/column indices.
- *
- * @param matrix Pointer to the underlying (pre-subset) `Matrix`.
- * @param subset_start Index of the start of the block. This should be a row index if `by_row = true` and a column index otherwise.
- * @param subset_length Index of the one-past-the-end of the block.
- * @param by_row Whether to apply the subset to the rows.
- * If false, the subset is applied to the columns.
- *
- * @return A pointer to a `DelayedSubsetBlock` instance.
+ * @cond
  */
+// Back-compatibility.
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(
     std::shared_ptr<const Matrix<Value_, Index_> > matrix,
@@ -500,20 +546,11 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
 
-/**
- * @cond
- */
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool by_row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
-/**
- * @endcond
- */
 
-/**
- * @cond
- */
 template<int margin_, typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length) {
     return make_DelayedSubsetBlock(std::move(matrix), subset_start, subset_length, margin_ == 0);

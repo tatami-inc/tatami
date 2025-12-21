@@ -58,6 +58,11 @@ DenseParallelResults<Index_> format_dense_parallel(const SubsetStorage_& indices
     return output;
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void format_dense_parallel(Args_...) = delete;
+#endif
+
 template<bool oracle_, typename Value_, typename Index_>
 class ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
@@ -101,6 +106,11 @@ public:
         initialize(matrix, std::move(processed), indices.size(), row, std::move(oracle), opt);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelDense(Args_...) = delete;
+#endif
+
 private:
     void initialize(
         const Matrix<Value_, Index_>& mat,
@@ -114,6 +124,11 @@ private:
         my_ext = new_extractor<false, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
         my_expansion = std::move(processed.expansion);
     }
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    void initialize(Args_...) = delete;
+#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -212,6 +227,11 @@ SparseParallelResults<Index_> format_sparse_parallel(const SubsetStorage_& indic
     return output;
 }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+template<typename ... Args_>
+void format_sparse_parallel(Args_...) = delete;
+#endif
+
 template<bool oracle_, typename Value_, typename Index_>
 class ParallelSparseCore {
 public:
@@ -240,6 +260,12 @@ public:
         my_expansion = std::move(processed.expansion);
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelSparseCore(Args_...) = delete;
+#endif
+
+public:
     template<class ToIndex_>
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer, const ToIndex_ to_index) {
         // Shifting so that there's enough space for my_expansion, but only doing
@@ -285,8 +311,8 @@ public:
 
         return SparseRange<Value_, Index_>(
             count, 
-            (my_needs_value ? value_buffer : NULL),
-            (my_needs_index ? index_buffer : NULL)
+            (my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL),
+            (my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL)
         );
     }
 
@@ -316,6 +342,11 @@ public:
         return my_core.fetch(i, value_buffer, index_buffer, Helper());
     }
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelFullSparse(Args_...) = delete;
+#endif
+
 private:
     ParallelSparseCore<oracle_, Value_, Index_> my_core;
 
@@ -343,6 +374,12 @@ public:
         my_block_start(block_start)
     {}
 
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelBlockSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_core.fetch(i, value_buffer, index_buffer, Helper(my_block_start));
     }
@@ -376,6 +413,13 @@ public:
         my_indices_ptr(std::move(indices_ptr))
     {}
 
+
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    ParallelIndexSparse(Args_...) = delete;
+#endif
+
+public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         return my_core.fetch(i, value_buffer, index_buffer, Helper(*my_indices_ptr));
     }
@@ -440,6 +484,17 @@ public:
             }
         }
     }
+
+    /**
+     * @cond
+     */
+#ifdef TATAMI_STRICT_SIGNATURES
+    template<typename ... Args_>
+    DelayedSubsetSorted(std::shared_ptr<const Matrix<Value_, Index_> >, Args_...) = delete;
+#endif
+    /**
+     * @endcond
+     */
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;

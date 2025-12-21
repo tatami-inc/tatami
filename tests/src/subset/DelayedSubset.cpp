@@ -13,7 +13,7 @@
 
 class SubsetCoreUtils {
 protected:
-    inline static size_t NR = 90, NC = 170;
+    inline static int NR = 90, NC = 170;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 
     static void assemble() {
@@ -34,16 +34,17 @@ protected:
 
 protected:
     template<typename INDEX>
-    static std::vector<INDEX> spawn_indices(size_t step, size_t max, bool duplicates, bool sorted) {
+    static std::vector<INDEX> spawn_indices(int step, int max, bool duplicates, bool sorted) {
         std::vector<INDEX> output;
-        for (size_t i = step; i < max; i += step) {
+        for (int i = step; i < max; i += step) {
             output.push_back(i);
         }
 
         std::mt19937_64 rng(step + max + 10 * duplicates + sorted);
 
         if (duplicates) {
-            for (size_t i = 0, end = output.size(); i < end; ++i) {
+            const std::size_t num = output.size(); 
+            for (std::size_t i = 0; i < num; ++i) {
                 output.insert(output.end(), rng() % 4, output[i]);
             }
             if (sorted) {
@@ -64,12 +65,12 @@ protected:
         auto wrk = src->dense_row();
 
         for (auto r : sub) {
-            auto src = wrk->fetch(r, ptr);
-            tatami::copy_n(src, NC, ptr);
+            auto eptr = wrk->fetch(r, ptr);
+            tatami::copy_n(eptr, NC, ptr);
             ptr += NC;
         }
 
-        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(sub.size(), NC, std::move(reference)));
+        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(static_cast<int>(sub.size()), NC, std::move(reference)));
     }
 
     template<typename V>
@@ -79,7 +80,7 @@ protected:
         std::vector<double> buffer(NC);
         auto wrk = src->dense_row();
 
-        for (size_t r = 0; r < NR; ++r) {
+        for (int r = 0; r < NR; ++r) {
             auto full = wrk->fetch(r, buffer.data());
             for (auto s : sub) {
                 *ptr = full[s];
@@ -87,13 +88,13 @@ protected:
             }
         }
 
-        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, sub.size(), std::move(reference)));
+        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, static_cast<int>(sub.size()), std::move(reference)));
     }
 };
 
 class SubsetUtils : public SubsetCoreUtils {
 public:
-    typedef std::tuple<bool, size_t, bool, bool> SimulationParameters;
+    typedef std::tuple<bool, int, bool, bool> SimulationParameters;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -107,7 +108,7 @@ public:
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_subbed, sparse_subbed, uns_sparse_subbed, ref;
     inline static SimulationParameters last_params;
-    inline static std::vector<size_t> sub;
+    inline static std::vector<int> sub;
 
     static void assemble(SimulationParameters sim_params) {
         if (ref && last_params == sim_params) {
@@ -123,14 +124,14 @@ protected:
         auto sorted = std::get<3>(sim_params);
 
         if (byrow) {
-            sub = spawn_indices<size_t>(step_size, NR, duplicates, sorted);
+            sub = spawn_indices<int>(step_size, NR, duplicates, sorted);
             ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
             dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
             sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
             uns_sparse_subbed = tatami::make_DelayedSubset<0, double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse), sub);
 
         } else {
-            sub = spawn_indices<size_t>(step_size, NC, duplicates, sorted);
+            sub = spawn_indices<int>(step_size, NC, duplicates, sorted);
             ref = SubsetCoreUtils::reference_on_columns(dense.get(), sub);
             dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
             sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
