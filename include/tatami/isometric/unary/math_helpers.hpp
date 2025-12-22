@@ -184,12 +184,6 @@ public:
 template<int base_, typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricFixedLogHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
-    /**
-     * Default constructor.
-     */
-    DelayedUnaryIsometricFixedLogHelper() = default;
-
-public:
     std::optional<Index_> nrow() const {
         return std::nullopt;
     }
@@ -669,12 +663,6 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricLog1pHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
-public:
-    /**
-     * Default constructor.
-     */
-    DelayedUnaryIsometricLog1pHelper() {}
-
 public:
     std::optional<Index_> nrow() const {
         return std::nullopt;
