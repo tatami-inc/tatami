@@ -28,7 +28,6 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
-public:
     IndexIn_ get(const PredictionIndex i) const {
         return my_oracle->get(i);
     }
@@ -81,15 +80,8 @@ public:
         const IndexOut_ block_length,
         const Options& opt
     ) {
-        allocate(static_cast<IndexIn_>(block_length));
-        my_ext = new_extractor<false, oracle_>(
-            matrix,
-            row,
-            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
-            static_cast<IndexIn_>(block_start),
-            static_cast<IndexIn_>(block_length),
-            opt
-        );
+        allocate(block_length);
+        my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
 
     Dense(
@@ -99,7 +91,7 @@ public:
         VectorPtr<IndexOut_> indices_ptr,
         const Options& opt
     ) {
-        allocate(static_cast<IndexIn_>(indices_ptr->size()));
+        allocate(indices_ptr->size());
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
@@ -113,9 +105,9 @@ private:
 public:
     const ValueOut_* fetch(const IndexOut_ i, ValueOut_* const buffer) {
         if constexpr(no_op) {
-            return my_ext->fetch(static_cast<IndexIn_>(i), buffer);
+            return my_ext->fetch(i, buffer);
         } else {
-            const auto ptr = my_ext->fetch(static_cast<IndexIn_>(i), my_buffer.data());
+            const auto ptr = my_ext->fetch(i, my_buffer.data());
             std::copy_n(ptr, my_buffer.size(), buffer);
             return buffer;
         }
@@ -148,15 +140,8 @@ public:
         const IndexOut_ block_length,
         const Options& opt
     ) {
-        allocate(static_cast<IndexIn_>(block_length), opt);
-        my_ext = new_extractor<true, oracle_>(
-            matrix,
-            row,
-            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
-            static_cast<IndexIn_>(block_start),
-            static_cast<IndexIn_>(block_length),
-            opt
-        );
+        allocate(block_length, opt);
+        my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
     }
 
     Sparse(
@@ -166,7 +151,7 @@ public:
         VectorPtr<IndexOut_> indices_ptr,
         const Options& opt
     ) {
-        allocate(static_cast<IndexIn_>(indices_ptr->size()), opt);
+        allocate(indices_ptr->size(), opt);
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
@@ -202,8 +187,8 @@ public:
             }
         }();
 
-        const auto range = my_ext->fetch(static_cast<IndexIn_>(i), vptr, iptr);
-        SparseRange<ValueOut_, IndexOut_> output(static_cast<IndexOut_>(range.number));
+        const auto range = my_ext->fetch(i, vptr, iptr);
+        SparseRange<ValueOut_, IndexOut_> output(range.number);
 
         if constexpr(no_op_index) {
             output.index = range.index;
@@ -256,7 +241,7 @@ public:
      */
     DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) :
         my_matrix(std::move(matrix)),
-        my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())), // TODO: attest that these values are positive.
+        my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())),
         my_ncol(sanisizer::cast<IndexOut_>(my_matrix->ncol()))
     {}
 

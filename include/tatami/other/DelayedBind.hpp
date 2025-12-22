@@ -15,7 +15,6 @@
 #include <array>
 #include <type_traits>
 #include <cstddef>
-#include <iterator>
 
 /**
  * @file DelayedBind.hpp
@@ -203,7 +202,6 @@ public:
         }
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -226,11 +224,7 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(
-            accumulated,
-            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
-            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
-        );
+        return SparseRange<Value_, Index_>(accumulated, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
     }
 
 private:
@@ -268,7 +262,6 @@ public:
         );
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -291,11 +284,7 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(
-            count,
-            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
-            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
-        );
+        return SparseRange<Value_, Index_>(count, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
     }
 
 private:
@@ -334,7 +323,6 @@ public:
         );
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
         auto icopy = index_buffer;
@@ -358,11 +346,7 @@ public:
             }
         }
 
-        return SparseRange<Value_, Index_>(
-            count,
-            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
-            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
-        );
+        return SparseRange<Value_, Index_>(count, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
     }
 
 private:
@@ -396,7 +380,6 @@ public:
         }
     }
 
-public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const Index_ chosen = my_mapping[i];
         return my_exts[chosen]->fetch(i - my_cumulative[chosen], buffer);
@@ -428,7 +411,6 @@ public:
         }
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const ibuffer) {
         const Index_ chosen = my_mapping[i];
         return my_exts[chosen]->fetch(i - my_cumulative[chosen], vbuffer, ibuffer);
@@ -524,7 +506,6 @@ public:
         );
     }
 
-public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto chosen = my_segments[my_used];
         const auto output = my_exts[chosen]->fetch(i, buffer);
@@ -562,7 +543,6 @@ public:
         );
     }
 
-public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto chosen = my_segments[my_used];
         const auto output = my_exts[chosen]->fetch(i, vbuffer, ibuffer);
@@ -662,7 +642,7 @@ public:
         for (int d = 0; d < 2; ++d) {
             my_uses_oracle[d] = false;
             for (const auto& x : my_matrices) {
-                if (x->uses_oracle(static_cast<bool>(d))) {
+                if (x->uses_oracle(d)) {
                     my_uses_oracle[d] = true;
                     break;
                 }
@@ -671,20 +651,14 @@ public:
     }
 
     /**
-     * @param matrices Vector of pointers to the matrices to be combined.
-     * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
-     * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
-     * If false, combining is applied by the columns.
+     * @cond
      */
-    DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > matrices, const bool by_row) : 
-        DelayedBind(
-            std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(
-                std::make_move_iterator(matrices.begin()),
-                std::make_move_iterator(matrices.end())
-            ),
-            by_row
-        )
-    {}
+    // Soft-deprecated.
+    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& matrices, const bool by_row) : 
+        DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(matrices.begin(), matrices.end()), by_row) {}
+    /**
+     * @endcond
+     */
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > my_matrices;
@@ -731,7 +705,7 @@ public:
     }
 
     bool uses_oracle(const bool row) const {
-        return my_uses_oracle[static_cast<int>(row)];
+        return my_uses_oracle[row];
     }
 
     using Matrix<Value_, Index_>::dense;

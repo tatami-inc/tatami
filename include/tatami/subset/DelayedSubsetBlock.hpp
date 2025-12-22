@@ -74,7 +74,6 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
-public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i, buffer);
     }
@@ -127,7 +126,6 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto output = my_ext->fetch(i, value_buffer, index_buffer);
         if (output.index && my_shift) {
@@ -155,7 +153,6 @@ public:
         my_shift(shift)
     {}
 
-public:
     PredictionIndex total() const {
         return my_oracle->total();
     }
@@ -188,7 +185,6 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
-public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i + my_shift, buffer);
     }
@@ -217,7 +213,6 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_ext->fetch(i + my_shift, value_buffer, index_buffer);
     }
@@ -484,14 +479,8 @@ public:
 /**
  * @cond
  */
-// Back-compatibility.
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(
-    std::shared_ptr<const Matrix<Value_, Index_> > matrix,
-    const Index_ subset_start,
-    const Index_ subset_length,
-    bool by_row
-) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, const Index_ subset_start, const Index_ subset_length, bool by_row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
 

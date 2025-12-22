@@ -240,7 +240,6 @@ public:
         my_expansion = std::move(processed.expansion);
     }
 
-public:
     template<class ToIndex_>
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer, const ToIndex_ to_index) {
         // Shifting so that there's enough space for my_expansion, but only doing
@@ -286,8 +285,8 @@ public:
 
         return SparseRange<Value_, Index_>(
             count, 
-            (my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL),
-            (my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL)
+            (my_needs_value ? value_buffer : NULL),
+            (my_needs_index ? index_buffer : NULL)
         );
     }
 
@@ -344,7 +343,6 @@ public:
         my_block_start(block_start)
     {}
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         return my_core.fetch(i, value_buffer, index_buffer, Helper(my_block_start));
     }
@@ -378,8 +376,6 @@ public:
         my_indices_ptr(std::move(indices_ptr))
     {}
 
-
-public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         return my_core.fetch(i, value_buffer, index_buffer, Helper(*my_indices_ptr));
     }

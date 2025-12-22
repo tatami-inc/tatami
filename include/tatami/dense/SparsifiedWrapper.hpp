@@ -107,7 +107,7 @@ public:
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
-        SparseRange<Value_, Index_> output(my_block_length);
+        SparseRange<Value_, Index_> output(my_block_length, NULL, NULL);
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
         }
@@ -162,7 +162,7 @@ public:
      */
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         const auto& ix = *my_indices_ptr;
-        SparseRange<Value_, Index_> output(static_cast<Index_>(ix.size()));
+        SparseRange<Value_, Index_> output(ix.size());
         if (my_needs_value) {
             output.value = my_dense->fetch(i, value_buffer);
         }

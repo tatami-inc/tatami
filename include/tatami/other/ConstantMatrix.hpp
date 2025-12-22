@@ -38,15 +38,9 @@ class SparseFiller final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseFiller(const Options& opt) : my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {}
 
-public:
     SparseRange<Value_, Index_> fetch(const Index_, Value_* const value_buffer, Index_* const index_buffer) {
-        return SparseRange<Value_, Index_>(
-            static_cast<Index_>(0),
-            my_needs_value ? static_cast<const Value_*>(value_buffer) : NULL,
-            my_needs_index ? static_cast<const Index_*>(index_buffer) : NULL
-        );
+        return SparseRange<Value_, Index_>(0, (my_needs_value ? value_buffer : NULL), (my_needs_index ? index_buffer : NULL));
     }
-
 private:
     bool my_needs_value;
     bool my_needs_index;
@@ -140,7 +134,7 @@ private:
         VectorPtr<Index_> indices_ptr,
         const Options&
     ) const {
-        return std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(static_cast<Index_>(indices_ptr->size()), my_value);
+        return std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(indices_ptr->size(), my_value);
     }
 
 public:
@@ -250,9 +244,8 @@ private:
         if (my_value == 0) {
             return std::make_unique<ConstantMatrix_internal::SparseFiller<oracle_, Value_, Index_> >(opt);
         } else {
-            const Index_ num_indices = indices_ptr->size();
             return std::make_unique<IndexSparsifiedWrapper<oracle_, Value_, Index_> >(
-                std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(num_indices, my_value),
+                std::make_unique<ConstantMatrix_internal::DenseFiller<oracle_, Value_, Index_> >(indices_ptr->size(), my_value),
                 std::move(indices_ptr),
                 opt
             );
