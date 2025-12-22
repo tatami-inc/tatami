@@ -62,7 +62,7 @@ void partial_permuter(const S& ptrs, const U& values, const V& secondary, U& val
 }
 
 TEST(compress_sparse_triplets, CompressionByColumn) {
-    size_t NR = 100, NC = 50;
+    const int NR = 100, NC = 50;
     auto simulated = tatami_test::simulate_compressed_sparse<double, int>(NC, NR, []{
         tatami_test::SimulateCompressedSparseOptions opt;
         opt.density = 0.1;
@@ -74,8 +74,8 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
     const auto& values = simulated.data;
 
     std::vector<int> cols;
-    for (size_t c = 0; c < NC; ++c) {
-        size_t n = simulated.indptr[c + 1] - simulated.indptr[c];
+    for (int c = 0; c < NC; ++c) {
+        auto n = simulated.indptr[c + 1] - simulated.indptr[c];
         cols.insert(cols.end(), n, c);
     }
 
@@ -121,7 +121,7 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
 }
 
 TEST(compress_sparse_triplets, CompressionByRow) {
-    size_t NR = 80, NC = 60;
+    const int NR = 80, NC = 60;
     auto simulated = tatami_test::simulate_compressed_sparse<double, int>(NR, NC, []{
         tatami_test::SimulateCompressedSparseOptions opt;
         opt.density = 0.1;
@@ -133,8 +133,8 @@ TEST(compress_sparse_triplets, CompressionByRow) {
     const auto& values = simulated.data;
 
     std::vector<int> rows;
-    for (size_t r = 0; r < NR; ++r) {
-        size_t n = simulated.indptr[r + 1] - simulated.indptr[r];
+    for (int r = 0; r < NR; ++r) {
+        const auto n = simulated.indptr[r + 1] - simulated.indptr[r];
         rows.insert(rows.end(), n, r);
     }
 

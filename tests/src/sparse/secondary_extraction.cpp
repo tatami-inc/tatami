@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <cstddef>
 
 #include "tatami/sparse/secondary_extraction.hpp"
 #include "tatami/utils/ElementType.hpp"
@@ -43,7 +44,7 @@ protected:
         const IndexVectorStorage_& indices;
 
     public:
-        typedef size_t Pointer;
+        typedef std::size_t Pointer;
 
         Pointer start_offset(Index_) const {
             return 0;
@@ -65,7 +66,7 @@ protected:
     }
 
 protected:
-    std::vector<size_t> results;
+    std::vector<std::size_t> results;
 
     void SetUp() {
         results.resize(3);
@@ -75,8 +76,8 @@ protected:
         std::fill(results.begin(), results.end(), -1);
     }
 
-    static std::vector<size_t> expected(size_t a, size_t b, size_t c) { 
-        return std::vector<size_t>{ a, b, c }; 
+    static std::vector<std::size_t> expected(std::size_t a, std::size_t b, std::size_t c) { 
+        return std::vector<std::size_t>{ a, b, c }; 
     };
 };
 
@@ -87,14 +88,14 @@ TEST_F(SparseSecondaryExtractionCacheTest, Increment) {
         5, 9, 10, 12, 13, 15, 17
     };
 
-    std::vector<size_t> indptrs {
+    std::vector<std::size_t> indptrs {
         0,
         5,
         9,
         16
     };
 
-    auto store_fun = [&](int, int ip, size_t offset) { results[ip] = offset; };
+    auto store_fun = [&](int, int ip, std::size_t offset) { results[ip] = offset; };
 
     // Checking consecutive or semi-consecutive increments.
     {
@@ -196,14 +197,14 @@ TEST_F(SparseSecondaryExtractionCacheTest, Decrement) {
         0, 1, 4, 8, 14
     };
 
-    std::vector<size_t> indptrs {
+    std::vector<std::size_t> indptrs {
         0,
         5,
         11,
         16
     };
 
-    auto store_fun = [&](int, int i, size_t p) { results[i] = p; };
+    auto store_fun = [&](int, int i, std::size_t p) { results[i] = p; };
 
     // Checking consecutive or semi-consecutive decrements.
     {
@@ -317,7 +318,7 @@ TEST_F(SparseSecondaryExtractionCacheTest, Alternating) {
         23
     };
 
-    auto store_fun = [&](int, int i, size_t p) { results[i] = p; };
+    auto store_fun = [&](int, int i, std::size_t p) { results[i] = p; };
 
     {
         auto test = mock_cache<int>(indices, indptrs, 19);
@@ -390,9 +391,9 @@ TEST_F(SparseSecondaryExtractionCacheTest, Alternating) {
 TEST_F(SparseSecondaryExtractionCacheTest, Empty) {
     std::vector<int> indices {};
 
-    std::vector<size_t> indptrs { 0, 0, 0, 0 };
+    std::vector<std::size_t> indptrs { 0, 0, 0, 0 };
 
-    auto store_fun = [&](int, int i, size_t p) { results[i] = p; };
+    auto store_fun = [&](int, int i, std::size_t p) { results[i] = p; };
 
     auto test = mock_cache<int>(indices, indptrs, 19);
     EXPECT_FALSE(test.search(0, store_fun));
@@ -431,7 +432,7 @@ TEST_F(SparseSecondaryExtractionCacheTest, Fragmented) {
         { 3, 8, 10, 13, 16 } 
     };
 
-    auto store_fun = [&](int, int i, size_t p) { results[i] = p; };
+    auto store_fun = [&](int, int i, std::size_t p) { results[i] = p; };
 
     // Increments.
     {
