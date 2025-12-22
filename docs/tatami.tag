@@ -1447,13 +1447,6 @@
       <arglist>(std::vector&lt; std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; &gt; matrices, const bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type></type>
-      <name>DelayedBind</name>
-      <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
-      <anchor>a79768f24f7fed44e0b6c239b57781943</anchor>
-      <arglist>(const std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; &amp;matrices, const bool by_row)</arglist>
-    </member>
-    <member kind="function">
       <type>Index_</type>
       <name>nrow</name>
       <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
@@ -2445,13 +2438,6 @@
       <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
       <anchor>a153de5beb4caa3c1639dac39464abcde</anchor>
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; matrix)</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>DelayedTranspose</name>
-      <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
-      <anchor>aaf538ed309584dff263f38805df2dd1a</anchor>
-      <arglist>(std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; matrix)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -8544,13 +8530,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>acac2470badcf668316367fdea9704035</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row, const ConvertToFragmentedSparseOptions &amp;options)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubsetBlock</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4fdae940708614108ad158f0c2590f8d</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; matrix, const Index_ subset_start, const Index_ subset_length, bool by_row)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>

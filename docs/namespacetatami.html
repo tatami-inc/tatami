@@ -717,9 +717,6 @@ Functions</h2></td></tr>
 <tr class="memitem:acac2470badcf668316367fdea9704035" id="r_acac2470badcf668316367fdea9704035"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename StoredValue_  = Value_, typename StoredIndex_  = Index_, typename InputValue_ , typename InputIndex_ &gt; </td></tr>
 <tr class="memitem:acac2470badcf668316367fdea9704035"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acac2470badcf668316367fdea9704035">convert_to_fragmented_sparse</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row, const <a class="el" href="structtatami_1_1ConvertToFragmentedSparseOptions.html">ConvertToFragmentedSparseOptions</a> &amp;options)</td></tr>
 <tr class="separator:acac2470badcf668316367fdea9704035"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fdae940708614108ad158f0c2590f8d" id="r_a4fdae940708614108ad158f0c2590f8d"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a4fdae940708614108ad158f0c2590f8d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4fdae940708614108ad158f0c2590f8d">make_DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; matrix, const Index_ subset_start, const Index_ subset_length, bool by_row)</td></tr>
-<tr class="separator:a4fdae940708614108ad158f0c2590f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af62b9d27c0c501e5b65e52ce37f0ee5d" id="r_af62b9d27c0c501e5b65e52ce37f0ee5d"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class SubsetStorage_ &gt; </td></tr>
 <tr class="memitem:af62b9d27c0c501e5b65e52ce37f0ee5d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af62b9d27c0c501e5b65e52ce37f0ee5d">make_DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; matrix, SubsetStorage_ subset, const bool by_row)</td></tr>
 <tr class="separator:af62b9d27c0c501e5b65e52ce37f0ee5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3511,57 +3508,6 @@ template&lt;typename Value_ , typename Index_ , typename StoredValue_  = Value_,
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to a new <code><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation.">tatami::FragmentedSparseMatrix</a></code>, with the same dimensions and type as the matrix referenced by <code>matrix</code>. If <code>row = true</code>, the matrix is in fragmented sparse row format, otherwise it is fragmented sparse column. </dd></dl>
-
-</div>
-</div>
-<a id="a4fdae940708614108ad158f0c2590f8d" name="a4fdae940708614108ad158f0c2590f8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fdae940708614108ad158f0c2590f8d">&#9670;&#160;</a></span>make_DelayedSubsetBlock()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedSubsetBlock </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>subset_start</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>subset_length</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">matrix</td><td>Pointer to the underlying (pre-subset) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">subset_start</td><td>Index of the start of the block. This should be a row index if <code>by_row = true</code> and a column index otherwise. </td></tr>
-    <tr><td class="paramname">subset_length</td><td>Index of the one-past-the-end of the block. </td></tr>
-    <tr><td class="paramname">by_row</td><td>Whether to apply the subset to the rows. If false, the subset is applied to the columns.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block.">DelayedSubsetBlock</a></code> instance. </dd></dl>
 
 </div>
 </div>

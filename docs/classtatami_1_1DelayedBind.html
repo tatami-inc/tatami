@@ -126,8 +126,6 @@ Collaboration diagram for tatami::DelayedBind&lt; Value_, Index_ &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a22b479c99b6034cfcab73bf05f03cc91" id="r_a22b479c99b6034cfcab73bf05f03cc91"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22b479c99b6034cfcab73bf05f03cc91">DelayedBind</a> (std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt; matrices, const bool by_row)</td></tr>
 <tr class="separator:a22b479c99b6034cfcab73bf05f03cc91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79768f24f7fed44e0b6c239b57781943" id="r_a79768f24f7fed44e0b6c239b57781943"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79768f24f7fed44e0b6c239b57781943">DelayedBind</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt; &amp;matrices, const bool by_row)</td></tr>
-<tr class="separator:a79768f24f7fed44e0b6c239b57781943"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64f90b7152def0f1a53aadbac1901687" id="r_a64f90b7152def0f1a53aadbac1901687"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64f90b7152def0f1a53aadbac1901687">nrow</a> () const</td></tr>
 <tr class="separator:a64f90b7152def0f1a53aadbac1901687"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb743be5663d4fb13624ba0502448bd8" id="r_acb743be5663d4fb13624ba0502448bd8"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb743be5663d4fb13624ba0502448bd8">ncol</a> () const</td></tr>
@@ -305,7 +303,7 @@ class tatami::DelayedBind&lt; Value_, Index_ &gt;</div><p>Delayed combining of a
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a22b479c99b6034cfcab73bf05f03cc91" name="a22b479c99b6034cfcab73bf05f03cc91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22b479c99b6034cfcab73bf05f03cc91">&#9670;&#160;</a></span>DelayedBind() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a22b479c99b6034cfcab73bf05f03cc91">&#9670;&#160;</a></span>DelayedBind()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,44 +317,6 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
           <td class="memname"><a class="el" href="classtatami_1_1DelayedBind.html">tatami::DelayedBind</a>&lt; Value_, Index_ &gt;::DelayedBind </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>matrices</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>by_row</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">matrices</td><td>Pointers to the matrices to be combined. All matrices to be combined should have the same number of columns (if <code>row = true</code>) or rows (otherwise). </td></tr>
-    <tr><td class="paramname">by_row</td><td>Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in <code>matrices</code>). If false, combining is applied by the columns. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a79768f24f7fed44e0b6c239b57781943" name="a79768f24f7fed44e0b6c239b57781943"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79768f24f7fed44e0b6c239b57781943">&#9670;&#160;</a></span>DelayedBind() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedBind.html">tatami::DelayedBind</a>&lt; Value_, Index_ &gt;::DelayedBind </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>matrices</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
