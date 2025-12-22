@@ -35,11 +35,6 @@ class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_>
 public:
     PrimaryMyopicFullDense(const Storage_& storage, const Index_ secondary) : my_storage(storage), my_secondary(secondary) {}
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    PrimaryMyopicFullDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto offset = sanisizer::product_unsafe<I<decltype(my_storage.size())> >(my_secondary, i);
@@ -61,11 +56,6 @@ class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_
 public:
     PrimaryMyopicBlockDense(const Storage_& storage, const Index_ secondary, const Index_ block_start, const Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    PrimaryMyopicBlockDense(Args_...) = delete;
-#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -90,11 +80,6 @@ public:
     PrimaryMyopicIndexDense(const Storage_& storage, const Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    PrimaryMyopicIndexDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto& indices = *my_indices_ptr;
@@ -117,11 +102,6 @@ public:
     SecondaryMyopicFullDense(const Storage_& storage, const Index_ secondary, const Index_ primary) : 
         my_storage(storage), my_secondary(secondary), my_primary(primary) {}
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    SecondaryMyopicFullDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         for (I<decltype(my_primary)> x = 0; x < my_primary; ++x) {
@@ -141,11 +121,6 @@ class SecondaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Inde
 public:
     SecondaryMyopicBlockDense(const Storage_& storage, const Index_ secondary, const Index_ block_start, const Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    SecondaryMyopicBlockDense(Args_...) = delete;
-#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -167,11 +142,6 @@ class SecondaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Inde
 public:
     SecondaryMyopicIndexDense(const Storage_& storage, const Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    SecondaryMyopicIndexDense(Args_...) = delete;
-#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -229,17 +199,6 @@ public:
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
     }
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    DenseMatrix(Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
 
 private: 
     Index_ my_nrow, my_ncol;
@@ -386,17 +345,6 @@ public:
      * @param values Vector of values of length equal to the product of `nr` and `nc`, storing the matrix in column-major format.
      */
     DenseColumnMatrix(const Index_ nrow, const Index_ ncol, Storage_ values) : DenseMatrix<Value_, Index_, Storage_>(nrow, ncol, std::move(values), false) {}
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    DenseColumnMatrix(Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
 };
 
 /**
@@ -413,17 +361,6 @@ public:
      * @param values Vector of values of length equal to the product of `nr` and `nc`, storing the matrix in row-major format.
      */
     DenseRowMatrix(const Index_ nrow, const Index_ ncol, Storage_ values) : DenseMatrix<Value_, Index_, Storage_>(nrow, ncol, std::move(values), true) {}
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    DenseRowMatrix(Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
 };
 
 }

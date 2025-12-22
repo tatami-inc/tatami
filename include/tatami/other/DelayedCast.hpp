@@ -28,10 +28,6 @@ class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
-#ifdef TATAMI_STRICT_SIGNATURES    
-    // Not much to do here, we want to accept instances of subclasses.
-#endif
-
 public:
     IndexIn_ get(const PredictionIndex i) const {
         return my_oracle->get(i);
@@ -64,11 +60,6 @@ VectorPtr<IndexIn_> convert(VectorPtr<IndexOut_> indices_ptr) {
         return std::make_shared<std::vector<IndexIn_> >(indices_ptr->begin(), indices_ptr->end());
     }
 }
-
-#ifdef TATAMI_STRICT_SIGNATURES    
-template<typename ... Args_> 
-void convert(Args_...) = delete;
-#endif
 
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
 class Dense final : public DenseExtractor<oracle_, ValueOut_, IndexOut_> {
@@ -112,22 +103,12 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    Dense(Args_...) = delete;
-#endif
-
 private:
     void allocate(const IndexIn_ n) {
         if constexpr(!no_op) {
             resize_container_to_Index_size(my_buffer, n);
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void allocate(Args_...) = delete;
-#endif
 
 public:
     const ValueOut_* fetch(const IndexOut_ i, ValueOut_* const buffer) {
@@ -189,11 +170,6 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    Sparse(Args_...) = delete;
-#endif
-
 private:
     void allocate(const IndexIn_ n, const Options& opt) {
         if constexpr(!no_op_value) {
@@ -207,11 +183,6 @@ private:
             }
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void allocate(Args_...) = delete;
-#endif
 
 public:
     SparseRange<ValueOut_, IndexOut_> fetch(const IndexOut_ i, ValueOut_* const value_buffer, IndexOut_* const index_buffer) {
@@ -288,10 +259,6 @@ public:
         my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())), // TODO: attest that these values are positive.
         my_ncol(sanisizer::cast<IndexOut_>(my_matrix->ncol()))
     {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    // Not much to do here, actually; all casts to Matrix from subclasses are acceptable.
-#endif
 
 public:
     IndexOut_ nrow() const {

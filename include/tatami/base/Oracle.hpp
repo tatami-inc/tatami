@@ -51,17 +51,6 @@ public:
      * @return The `i`-th prediction, to be interpreted as an index on the target dimension.
      */
     virtual Index_ get(PredictionIndex i) const = 0;
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void get(Args_... ) const = delete;
-#endif
-    /**
-     * @endcond
-     */
 };
 
 }

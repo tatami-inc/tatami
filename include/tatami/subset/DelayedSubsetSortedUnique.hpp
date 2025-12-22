@@ -47,11 +47,6 @@ VectorPtr<Index_> create(const SubsetStorage_& subset, const VectorPtr<Index_>& 
     return outptr;
 }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename ... Args_>
-void create(Args_...) = delete;
-#endif
-
 template<bool oracle_, typename Value_, typename Index_, class SubsetStorage_>
 std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
     const Matrix<Value_, Index_>& matrix,
@@ -87,11 +82,6 @@ std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
 {
     return new_extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt);
 }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename ... Args_>
-void create_parallel_dense(Args_...) = delete;
-#endif
 
 template<bool oracle_, typename Value_, typename Index_>
 class ParallelSparse final : public SparseExtractor<oracle_, Value_, Index_> {
@@ -137,11 +127,6 @@ public:
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt)),
         my_remapping(remap)
     {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    ParallelSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -211,17 +196,6 @@ public:
             my_mapping_single[my_subset[i]] = i;
         }
     }
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    DelayedSubsetSortedUnique(std::shared_ptr<const Matrix<Value_, Index_> >, Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
@@ -297,11 +271,6 @@ private:
         }
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void populate_myopic_dense(Args_...) = delete;
-#endif
-
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
@@ -354,11 +323,6 @@ private:
             );
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void populate_myopic_sparse(Args_...) = delete;
-#endif
 
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
@@ -413,11 +377,6 @@ private:
             );
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void populate_oracular_dense(Args_...) = delete;
-#endif
 
 public:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
@@ -476,11 +435,6 @@ private:
             );
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void populate_oracular_sparse(Args_...) = delete;
-#endif
 
 public:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(

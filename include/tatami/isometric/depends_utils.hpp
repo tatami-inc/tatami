@@ -40,6 +40,7 @@ public:
         }
     }
 
+public:
     Index_ get(const Index_ i) {
         if constexpr(oracle_) {
             if (my_oracle) {

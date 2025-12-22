@@ -160,17 +160,6 @@ public:
      */
     virtual bool uses_oracle(bool row) const = 0;
 
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void uses_oracle(Args_...) const = delete;
-#endif
-    /**
-     * @endcond
-     */
-
     /******************************
      **** Myopic dense methods ****
      ******************************/
@@ -1041,33 +1030,6 @@ public: // ==== Default option overloads ====
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return sparse_column(std::move(oracle), std::move(indices), Options());
     }
-
-public:
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    void dense(Args_...) const = delete;
-
-    template<typename ... Args_>
-    void dense_row(Args_...) const = delete;
-
-    template<typename ... Args_>
-    void dense_column(Args_...) const = delete;
-
-    template<typename ... Args_>
-    void sparse(Args_...) const = delete;
-
-    template<typename ... Args_>
-    void sparse_row(Args_...) const = delete;
-
-    template<typename ... Args_>
-    void sparse_column(Args_...) const = delete;
-#endif
-    /**
-     * @endcond
-     */
 };
 
 /**

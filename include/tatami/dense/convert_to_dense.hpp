@@ -228,14 +228,6 @@ template<bool row_, typename Value_, typename Index_, typename StoredValue_ = Va
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, int threads = 1) {
     return convert_to_dense<Value_, Index_, StoredValue_>(matrix, row_, threads);
 }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename InputValue_, typename InputIndex_, typename ... Args_>
-void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, Args_...) = delete;
-
-template<typename Value_, typename Index_, typename InputValue_, typename InputIndex_, typename ... Args_>
-void convert_to_dense(const Matrix<InputValue_, InputIndex_>&, Args_...) = delete;
-#endif
 /**
  * @endcond
  */

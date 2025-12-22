@@ -44,17 +44,6 @@ public:
     {}
 
     /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
-
-    /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -112,17 +101,6 @@ public:
     {}
 
     /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
-
-    /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -175,17 +153,6 @@ public:
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index) 
     {}
-
-    /**
-     * @cond
-     */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    IndexSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> >, Args_...) = delete;
-#endif
-    /**
-     * @endcond
-     */
 
     /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.

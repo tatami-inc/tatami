@@ -67,11 +67,6 @@ Index_ initialize_parallel_block(
     return start_index;
 }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename ... Args_>
-void initialize_parallel_block(Args_...) = delete;
-#endif
-
 template<typename Index_, class Initialize_>
 void initialize_parallel_index(
     const std::vector<Index_>& cumulative, 
@@ -99,11 +94,6 @@ void initialize_parallel_index(
         init(bind_index, std::move(slice_ptr));
     }
 }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename ... Args_>
-void initialize_parallel_index(Args_...) = delete;
-#endif
 
 template<bool oracle_, typename Value_, typename Index_>
 class  ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
@@ -170,11 +160,6 @@ public:
         );
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    ParallelDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         auto copy = buffer;
@@ -217,11 +202,6 @@ public:
             my_exts.emplace_back(new_extractor<true, oracle_>(m.get(), row, oracle, opt));
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    ParallelFullSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -287,11 +267,6 @@ public:
             }
         );
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    ParallelBlockSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -359,11 +334,6 @@ public:
         );
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    ParallelIndexSparse(Args_...) = delete;
-#endif
-
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto vcopy = value_buffer;
@@ -426,11 +396,6 @@ public:
         }
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    MyopicPerpendicularDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const Index_ chosen = my_mapping[i];
@@ -462,11 +427,6 @@ public:
             my_exts.emplace_back(m->sparse(row, args...));
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    MyopicPerpendicularSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const vbuffer, Index_* const ibuffer) {
@@ -540,11 +500,6 @@ void initialize_perp_oracular(
     }
 }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename ... Args_>
-void initialize_perp_oracular(Args_...) = delete;
-#endif
-
 template<typename Value_, typename Index_>
 class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
@@ -568,11 +523,6 @@ public:
             }
         );
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    OracularPerpendicularDense(Args_...) = delete;
-#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -611,11 +561,6 @@ public:
             }
         );
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    OracularPerpendicularSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
@@ -740,11 +685,6 @@ public:
             by_row
         )
     {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    DelayedBind(Args_...) = delete;
-#endif
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > my_matrices;

@@ -24,11 +24,6 @@ class DenseFiller final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseFiller(const Index_ length, const Value_ value) : my_length(length), my_value(value) {}
 
-#ifdef TATAMI_STRICT_SIGNATURES    
-    template<typename ... Args_>
-    DenseFiller(Args_...) = delete;
-#endif
-
     const Value_* fetch(const Index_, Value_* const buffer) {
         std::fill_n(buffer, my_length, my_value);
         return buffer;
@@ -42,11 +37,6 @@ template<bool oracle_, typename Value_, typename Index_>
 class SparseFiller final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseFiller(const Options& opt) : my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {}
-
-#ifdef TATAMI_STRICT_SIGNATURES    
-    template<typename ... Args_>
-    SparseFiller(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_, Value_* const value_buffer, Index_* const index_buffer) {
@@ -85,12 +75,6 @@ public:
      * @param value The constant value for every data element of this matrix.
      */
     ConstantMatrix(const Index_ nrow, const Index_ ncol, const Value_ value) : my_nrow(nrow), my_ncol(ncol), my_value(value) {}
-
-#ifdef TATAMI_STRICT_SIGNATURES    
-    template<typename ... Args_>
-    ConstantMatrix(Args_...) = delete;
-#endif
-
 
 private:
     Index_ my_nrow, my_ncol;

@@ -115,14 +115,6 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<Matr
     return make_DelayedSubset<Value_, Index_, SubsetStorage_>(std::shared_ptr<const Matrix<Value_, Index_> >(std::move(matrix)), std::move(subset), by_row);
 }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename Value_, typename Index_, typename ... Args_>
-void make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Args_...) = delete;
-
-template<typename Value_, typename Index_, typename ... Args_>
-void make_DelayedSubset(std::shared_ptr<Matrix<Value_, Index_> > matrix, Args_...) = delete;
-#endif
-
 // Back-compatibility only.
 template<int margin_, typename Value_, typename Index_, class SubsetStorage_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset) {

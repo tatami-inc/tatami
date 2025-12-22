@@ -34,11 +34,6 @@ void bump_indices(VectorPtr<Index_>& indices_ptr, const Index_ subset_start) {
     }
 }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-template<typename Args_>
-void bump_indices(Args_...) = delete;
-#endif
-
 template<bool oracle_, typename Value_, typename Index_>
 class AlongDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
@@ -78,11 +73,6 @@ public:
         bump_indices(indices_ptr, subset_start); 
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    AlongDense(Args_...) = delete;
-#endif
 
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -137,11 +127,6 @@ public:
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    AlongSparse(Args_...) = delete;
-#endif
-
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto output = my_ext->fetch(i, value_buffer, index_buffer);
@@ -169,11 +154,6 @@ public:
         my_oracle(std::move(oracle)),
         my_shift(shift)
     {}
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    SubsetOracle(std::shared_ptr<const Oracle<Index_> >, Args_...) = delete;
-#endif
 
 public:
     PredictionIndex total() const {
@@ -208,11 +188,6 @@ public:
         my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    AcrossDense(Args_...) = delete;
-#endif
-
 public:
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         return my_ext->fetch(i + my_shift, buffer);
@@ -241,11 +216,6 @@ public:
         }
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::forward<Args_>(args)...);
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename ... Args_>
-    AcrossSparse(Args_...) = delete;
-#endif
 
 public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -293,17 +263,6 @@ public:
         my_subset_length(subset_length),
         my_by_row(by_row)
     {}
-
-/**
- * @cond
- */
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<typename Args_>
-    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> >, Args_...) = delete;
-#endif
-/**
- * @endcond
- */
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
@@ -382,11 +341,6 @@ private:
         }
     }
 
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<bool oracle_, typename ... Args_>
-    void dense_internal(Args_...) = delete;
-#endif
-
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
@@ -438,11 +392,6 @@ private:
             );
         }
     }
-
-#ifdef TATAMI_STRICT_SIGNATURES
-    template<bool oracle_, typename ... Args_>
-    void sparse_internal(Args_...) = delete;
-#endif
 
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
