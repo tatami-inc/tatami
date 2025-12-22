@@ -239,15 +239,19 @@ public:
     /**
      * @param matrix Pointer to the `Matrix` instance to cast from.
      */
-    DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) : my_matrix(std::move(matrix)) {}
+    DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) :
+        my_matrix(std::move(matrix)),
+        my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())),
+        my_ncol(sanisizer::cast<IndexOut_>(my_matrix->ncol()))
+    {}
 
 public:
     IndexOut_ nrow() const {
-        return my_matrix->nrow();
+        return my_nrow;
     }
 
     IndexOut_ ncol() const {
-        return my_matrix->ncol();
+        return my_ncol;
     }
 
     bool is_sparse() const {
@@ -272,6 +276,7 @@ public:
 
 private:
     std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > my_matrix;
+    IndexOut_ my_nrow, my_ncol;
 
     /********************
      *** Myopic dense ***
