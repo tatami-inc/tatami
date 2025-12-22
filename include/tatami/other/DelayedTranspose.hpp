@@ -31,11 +31,6 @@ public:
      */
     DelayedTranspose(std::shared_ptr<const Matrix<Value_, Index_> > matrix) : my_matrix(std::move(matrix)) {}
 
-    /**
-     * @param matrix Pointer to the matrix to be transposed.
-     */
-    DelayedTranspose(std::shared_ptr<Matrix<Value_, Index_> > matrix) : my_matrix(std::move(matrix)) {}
-
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
 

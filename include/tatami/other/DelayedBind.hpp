@@ -651,13 +651,14 @@ public:
     }
 
     /**
-     * @param matrices Pointers to the matrices to be combined.
-     * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
-     * @param by_row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
-     * If false, combining is applied by the columns.
+     * @cond
      */
+    // Soft-deprecated.
     DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& matrices, const bool by_row) : 
         DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(matrices.begin(), matrices.end()), by_row) {}
+    /**
+     * @endcond
+     */
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > my_matrices;

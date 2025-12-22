@@ -28,8 +28,8 @@ protected:
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
-        tdense.reset(new tatami::DelayedTranspose(dense));
-        tsparse.reset(new tatami::DelayedTranspose(sparse));
+        tdense.reset(new tatami::DelayedTranspose<double, int>(dense));
+        tsparse.reset(new tatami::DelayedTranspose<double, int>(sparse));
         uns_tsparse.reset(new tatami::DelayedTranspose<double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse)));
 
         std::vector<double> refvec(nrow * ncol);

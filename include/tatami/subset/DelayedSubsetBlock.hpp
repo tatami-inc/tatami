@@ -477,43 +477,18 @@ public:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
- *
- * @tparam Value_ Type of matrix value.
- * @tparam Index_ Integer type for the row/column indices.
- *
- * @param matrix Pointer to the underlying (pre-subset) `Matrix`.
- * @param subset_start Index of the start of the block. This should be a row index if `by_row = true` and a column index otherwise.
- * @param subset_length Index of the one-past-the-end of the block.
- * @param by_row Whether to apply the subset to the rows.
- * If false, the subset is applied to the columns.
- *
- * @return A pointer to a `DelayedSubsetBlock` instance.
+ * @cond
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(
-    std::shared_ptr<const Matrix<Value_, Index_> > matrix,
-    const Index_ subset_start,
-    const Index_ subset_length,
-    bool by_row
-) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, const Index_ subset_start, const Index_ subset_length, bool by_row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
 
-/**
- * @cond
- */
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool by_row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
-/**
- * @endcond
- */
 
-/**
- * @cond
- */
 template<int margin_, typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length) {
     return make_DelayedSubsetBlock(std::move(matrix), subset_start, subset_length, margin_ == 0);
