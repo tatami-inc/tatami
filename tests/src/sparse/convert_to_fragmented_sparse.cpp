@@ -51,7 +51,7 @@ TEST_P(ConvertToFragmentedSparseTest, FromDense) {
     auto old = mat.dense_row();
     auto conv = converted2->dense_row();
     std::vector<double> obuffer(NC);
-    std::vector<int> obuffer_i, cbuffer_i(NC);
+    std::vector<int> obuffer_i(NC), cbuffer_i(NC);
     for (int i = 0; i < NR; ++i) {
         auto optr = old->fetch(i, obuffer.data());
         std::copy_n(optr, NC, obuffer_i.data());
