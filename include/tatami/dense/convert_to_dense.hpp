@@ -56,13 +56,15 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool
 
     if (row_major == pref_rows) {
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
+        can_cast_Index_to_container_size<std::vector<InputValue_> >(secondary);
+
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
             auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, start, length);
             auto temp = [&]{
                 if constexpr(same_type) {
                     return false;
                 } else {
-                    return create_container_of_Index_size<std::vector<InputValue_> >(secondary);
+                    return std::vector<InputValue_>(secondary);
                 }
             }();
 
@@ -173,10 +175,18 @@ template <
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool row_major, const ConvertToDenseOptions& options) {
     const auto NR = matrix.nrow();
     const auto NC = matrix.ncol();
-    const auto buffer_size = sanisizer::product<std::size_t>(NR, NC);
-    auto buffer = sanisizer::create<std::vector<StoredValue_> >(buffer_size);
+    const auto buffer_size = sanisizer::product<typename std::vector<StoredValue_>::size_type>(NR, NC);
+    std::vector<StoredValue_> buffer(buffer_size);
     convert_to_dense(matrix, row_major, buffer.data(), options);
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, I<decltype(buffer)> >(NR, NC, std::move(buffer), row_major));
+
+    return std::shared_ptr<Matrix<Value_, Index_> >(
+        new DenseMatrix<Value_, Index_, I<decltype(buffer)> >(
+            sanisizer::cast<Index_>(NR),
+            sanisizer::cast<Index_>(NC),
+            std::move(buffer),
+            row_major
+        )
+    );
 }
 
 /**
