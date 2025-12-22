@@ -52,11 +52,12 @@ TEST_P(ConvertToCompressedSparseTest, FromDense) {
     auto old = mat.dense_row();
     auto conv = converted2->dense_row();
     std::vector<double> obuffer(NC), cbuffer(NC);
+    std::vector<int> cbuffer_i(NC);
     for (int i = 0; i < NR; ++i) {
         auto optr = old->fetch(i, obuffer.data());
         tatami::copy_n(optr, NC, obuffer.data());
-        auto cptr = conv->fetch(i, cbuffer.data());
-        tatami::copy_n(cptr, NC, cbuffer.data());
+        auto cptr = conv->fetch(i, cbuffer_i.data());
+        std::copy_n(cptr, NC, cbuffer.data());
         EXPECT_EQ(obuffer, cbuffer);
     }
 }
@@ -102,11 +103,12 @@ TEST_P(ConvertToCompressedSparseTest, FromSparse) {
     auto wrk = mat.dense_column();
     auto wrk2 = converted2->dense_column();
     std::vector<double> buffer(NR), buffer2(NR);
+    std::vector<int> buffer2_i(NR);
     for (int i = 0; i < NC; ++i) {
         auto ptr = wrk->fetch(i, buffer.data());
         tatami::copy_n(ptr, NR, buffer.data());
-        auto ptr2 = wrk2->fetch(i, buffer2.data());
-        tatami::copy_n(ptr2, NR, buffer2.data());
+        auto ptr2 = wrk2->fetch(i, buffer2_i.data());
+        std::copy_n(ptr2, NR, buffer2.data());
         EXPECT_EQ(buffer, buffer2);
     }
 }
@@ -183,7 +185,7 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
     {
         auto wrk = mat->dense_row();
         auto spwrk = spmat.dense_row();
-        std::vector<double> buffer(NC), spbuffer(NC), 
+        std::vector<double> buffer(NC), spbuffer(NC);
         for (int i = 0; i < NR; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());
             tatami::copy_n(ptr, NC, buffer.data());
@@ -237,7 +239,7 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
     {
         auto wrk = mat->dense_column();
         auto spwrk = spmat.dense_column();
-        std::vector<double> buffer(NR), spbuffer(NR), 
+        std::vector<double> buffer(NR), spbuffer(NR);
         for (int i = 0; i < NC; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());
             tatami::copy_n(ptr, NR, buffer.data());
