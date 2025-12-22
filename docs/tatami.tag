@@ -4444,13 +4444,6 @@
     <templarg>typename Index_</templarg>
     <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
     <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricFixedLogHelper</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
-      <anchor>a5f6a5d933f82bf44719a5a79a254b706</anchor>
-      <arglist>()=default</arglist>
-    </member>
-    <member kind="function">
       <type>std::optional&lt; Index_ &gt;</type>
       <name>nrow</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricFixedLogHelper.html</anchorfile>
@@ -4790,13 +4783,6 @@
     <templarg>typename InputValue_</templarg>
     <templarg>typename Index_</templarg>
     <base>tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</base>
-    <member kind="function">
-      <type></type>
-      <name>DelayedUnaryIsometricLog1pHelper</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricLog1pHelper.html</anchorfile>
-      <anchor>a9a82a1566b8d9666bd36e7b8a1f1d32f</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function">
       <type>std::optional&lt; Index_ &gt;</type>
       <name>nrow</name>
