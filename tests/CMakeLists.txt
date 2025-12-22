@@ -17,6 +17,7 @@ macro(decorate_executable target)
     target_link_libraries(${target} tatami tatami_test)
 
     target_compile_definitions(${target} PRIVATE DEBUG=1)
+
     target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
     if(DO_CODE_COVERAGE)

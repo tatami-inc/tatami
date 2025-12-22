@@ -29,7 +29,7 @@ public:
     }
 
 protected:
-    inline static size_t otherdim = 97;
+    inline static int otherdim = 97;
     inline static std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual;
     inline static std::shared_ptr<tatami::NumericMatrix> forced_bound_dense, forced_bound_sparse;
     inline static std::shared_ptr<tatami::NumericMatrix> uns_bound_dense, uns_bound_sparse;
@@ -45,13 +45,14 @@ protected:
         bool row = std::get<1>(sim_params);
 
         std::vector<double> concat;
-        size_t n_total = 0;
+        int n_total = 0;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > forced_collected_dense, forced_collected_sparse;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > uns_collected_sparse;
 
-        for (size_t i = 0; i < lengths.size(); ++i) {
-            auto to_add = tatami_test::simulate_vector<double>(lengths[i] * otherdim, [&]{
+        const std::size_t num_mats = lengths.size();
+        for (std::size_t i = 0; i < num_mats; ++i) {
+            auto to_add = tatami_test::simulate_vector<double>(lengths[i], otherdim, [&]{
                 tatami_test::SimulateVectorOptions opt;
                 opt.density = 0.2;
                 opt.lower = -10;
@@ -112,7 +113,7 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
     EXPECT_FALSE(bound_sparse->prefer_rows());
     EXPECT_EQ(bound_sparse->prefer_rows_proportion(), 0);
 
-    EXPECT_FALSE(bound_sparse->uses_oracle(true));
+    EXPECT_FALSE(bound_dense->uses_oracle(true));
     EXPECT_FALSE(bound_sparse->uses_oracle(true));
 }
 

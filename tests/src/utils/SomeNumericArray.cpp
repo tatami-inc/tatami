@@ -16,13 +16,13 @@ void check_getters(typename tatami::SomeNumericType t) {
     // Checking the basic methods.
     tatami::SomeNumericArray<O> vec(static_cast<void*>(stuff.data()), stuff.size(), t);
     EXPECT_EQ(vec.size(), stuff.size());
-    for (size_t i = 0; i < stuff.size(); ++i) {
+    for (std::size_t i = 0; i < stuff.size(); ++i) {
         EXPECT_EQ(stuff[i], vec[i]);
     }
 
     tatami::SomeNumericArray<O> uncast(stuff.data(), stuff.size()); // alternative constructor.
     EXPECT_EQ(uncast.size(), stuff.size());
-    for (size_t i = 0; i < stuff.size(); ++i) {
+    for (std::size_t i = 0; i < stuff.size(); ++i) {
         EXPECT_EQ(stuff[i], uncast[i]);
     }
 
@@ -126,9 +126,9 @@ TEST(SomeNumericArray, SparseMatrix) {
     std::vector<uint32_t> indptrs { 0, 3, 6, 8, 9, 11, 12 };
     tatami::CompressedSparseColumnMatrix<double, int, decltype(values), decltype(indices), decltype(indptrs)> ref(nr, nc, values, indices, indptrs);
 
-    tatami::SomeNumericArray<double> varr  (values.data(), values.size());
-    tatami::SomeNumericArray<int>    iarr  (indices.data(), indices.size());
-    tatami::SomeNumericArray<size_t> indarr(indptrs.data(), indptrs.size());
+    tatami::SomeNumericArray<double> varr(values.data(), values.size());
+    tatami::SomeNumericArray<int> iarr(indices.data(), indices.size());
+    tatami::SomeNumericArray<std::size_t> indarr(indptrs.data(), indptrs.size());
     tatami::CompressedSparseColumnMatrix<double, int, decltype(varr), decltype(iarr), decltype(indarr)> alt(nr, nc, varr, iarr, indarr);
 
     tatami_test::test_simple_row_access(alt, ref);

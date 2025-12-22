@@ -5,6 +5,7 @@
 #include <numeric>
 
 #include "tatami/dense/DenseMatrix.hpp"
+#include "tatami/utils/copy.hpp"
 #include "tatami_test/tatami_test.hpp"
 
 TEST(DenseMatrix, Basic) {
@@ -19,28 +20,40 @@ TEST(DenseMatrix, Basic) {
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.prefer_rows_proportion(), 0);
 
-    EXPECT_EQ(mat.nrow(), 10);
-    EXPECT_EQ(mat.ncol(), 20);
+    const int NR = mat.nrow();
+    EXPECT_EQ(NR, 10);
+    const int NC = mat.ncol();
+    EXPECT_EQ(NC, 20);
 
     {
         auto wrk = mat.dense_column();
-        for (size_t i = 0, end = mat.ncol(); i < end; ++i) {
-            auto start = contents.begin() + i * mat.nrow();
-            std::vector<double> expected(start, start + mat.nrow());
-            auto observed = tatami_test::fetch<double, int>(*wrk, i, mat.nrow());
-            EXPECT_EQ(observed, expected);
+        std::vector<double> expected;
+        auto buffer = sanisizer::create<std::vector<double> >(NR);
+
+        for (int c = 0; c < NC; ++c) {
+            auto start = contents.begin() + sanisizer::product_unsafe<std::size_t>(c, NR);
+            expected.clear();
+            expected.insert(expected.end(), start, start + NR);
+
+            auto observed = wrk->fetch(c, buffer.data());
+            tatami::copy_n(observed, NR, buffer.data());
+            EXPECT_EQ(expected, buffer);
         }
     }
 
     {
         auto wrk = mat.dense_row();
-        for (size_t i = 0, end = mat.nrow(); i < end; ++i) {
-            std::vector<double> expected(mat.ncol());
-            for (size_t j = 0, jend = mat.ncol(); j < jend; ++j) {
-                expected[j] = contents[j * mat.nrow() + i];
+        sanisizer::as_size_type<std::vector<double> >(NC);
+        std::vector<double> expected(NC), buffer(NC);
+
+        for (int r = 0; r < NR; ++r) {
+            for (int c = 0; c < NC; ++c) {
+                expected[c] = contents[sanisizer::nd_offset<std::size_t>(r, NR, c)];
             }
-            auto observed = tatami_test::fetch<double, int>(*wrk, i, mat.ncol());
-            EXPECT_EQ(observed, expected);
+
+            auto observed = wrk->fetch(r, buffer.data());
+            tatami::copy_n(observed, NC, buffer.data());
+            EXPECT_EQ(expected, buffer);
         }
     }
 
@@ -75,7 +88,7 @@ TEST(DenseMatrix, Errors) {
 
 class DenseTestMethods {
 protected:
-    inline static size_t nrow = 200, ncol = 100;
+    inline static int nrow = 200, ncol = 100;
     inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column;
 
     static void assemble() {
@@ -83,16 +96,16 @@ protected:
             return;
         }
 
-        auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+        auto simulated = tatami_test::simulate_vector<double>(nrow, ncol, []{
             tatami_test::SimulateVectorOptions opt;
-            opt.seed = 438579088;
+            opt.seed = sanisizer::cap<tatami_test::SeedType>(438579088);
             return opt;
         }());
 
-        auto transposed = std::vector<double>(nrow * ncol);
-        for (size_t c = 0; c < ncol; ++c) {
-            for (size_t r = 0; r < nrow; ++r) {
-                transposed[c * nrow + r] = simulated[r * ncol + c];
+        std::vector<double> transposed(simulated.size());
+        for (int c = 0; c < ncol; ++c) {
+            for (int r = 0; r < nrow; ++r) {
+                transposed[sanisizer::nd_offset<std::size_t>(r, nrow, c)] = simulated[sanisizer::nd_offset<std::size_t>(c, ncol, r)];
             }
         }
 
@@ -109,7 +122,7 @@ protected:
 };
 
 TEST_F(DenseUtilsTest, Basic) {
-    size_t NC = dense_column->ncol(), NR = dense_column->nrow();
+    const auto NC = dense_column->ncol(), NR = dense_column->nrow();
     EXPECT_EQ(NC, ncol);
     EXPECT_EQ(NR, nrow);
 
@@ -221,18 +234,24 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
 
-    tatami::DenseColumnMatrix<double, int> ref(100, 200, contents);
-    tatami::DenseColumnMatrix<double, unsigned char> limited(100, 200, contents);
+    const int NR = 100, NC = 200;
+    tatami::DenseColumnMatrix<double, int> ref(NR, NC, contents);
+    tatami::DenseColumnMatrix<double, unsigned char> limited(static_cast<unsigned char>(NR), static_cast<unsigned char>(NC), contents);
 
-    EXPECT_EQ(limited.nrow(), 100);
-    EXPECT_EQ(limited.ncol(), 200);
+    EXPECT_EQ(limited.nrow(), NR);
+    EXPECT_EQ(limited.ncol(), NC);
 
     {
         auto rwrk = ref.dense_column();
         auto lwrk = limited.dense_column();
-        for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
+        sanisizer::as_size_type<std::vector<double> >(NR);
+        std::vector<double> expected(NR), observed(NR);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, NR, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(c), observed.data());
+            tatami::copy_n(optr, NR, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -240,29 +259,46 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     {
         auto rwrk = ref.dense_row();
         auto lwrk = limited.dense_row();
-        for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
+        sanisizer::as_size_type<std::vector<double> >(NC);
+        std::vector<double> expected(NC), observed(NC);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, NC, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(r), observed.data());
+            tatami::copy_n(optr, NC, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
 
     {
-        auto rwrk = ref.dense_column(59, 189);
-        auto lwrk = limited.dense_column(59, 189);
-        for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
+        const int start = 59, len = 130;
+        auto rwrk = ref.dense_column(start, len);
+        auto lwrk = limited.dense_column(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
+        sanisizer::as_size_type<std::vector<double> >(len);
+        std::vector<double> expected(len), observed(len);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, len, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(c), observed.data());
+            tatami::copy_n(optr, len, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
 
     {
-        auto rwrk = ref.dense_row(59, 89);
-        auto lwrk = limited.dense_row(59, 89);
-        for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
+        const int start = 59, len = 20;
+        auto rwrk = ref.dense_row(start, len);
+        auto lwrk = limited.dense_row(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
+        sanisizer::as_size_type<std::vector<double> >(len);
+        std::vector<double> expected(len), observed(len);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, len, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(r), observed.data());
+            tatami::copy_n(optr, len, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -270,12 +306,18 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     {
         std::vector<int> indices{ 11, 33, 55, 99, 111, 122, 155, 177, 199 };
         std::vector<unsigned char> uindices(indices.begin(), indices.end());
+        const auto num_i = indices.size();
 
         auto rwrk = ref.dense_column(std::move(indices));
         auto lwrk = limited.dense_column(std::move(uindices));
-        for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
+        sanisizer::as_size_type<std::vector<double> >(num_i);
+        std::vector<double> expected(num_i), observed(num_i);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, num_i, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(c), observed.data());
+            tatami::copy_n(optr, num_i, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -283,12 +325,18 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     {
         std::vector<int> indices{ 10, 20, 40, 60, 80, 99 };
         std::vector<unsigned char> uindices(indices.begin(), indices.end());
+        const auto num_i = indices.size();
 
         auto rwrk = ref.dense_row(std::move(indices));
         auto lwrk = limited.dense_row(std::move(uindices));
-        for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
+        sanisizer::as_size_type<std::vector<double> >(num_i);
+        std::vector<double> expected(num_i), observed(num_i);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, num_i, expected.data());
+            auto optr = lwrk->fetch(static_cast<unsigned char>(r), observed.data());
+            tatami::copy_n(optr, num_i, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -300,18 +348,24 @@ TEST(DenseMatrix, DifferentValueType) {
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
 
-    tatami::DenseColumnMatrix<double, int> ref(100, 200, std::vector<double>(contents.begin(), contents.end()));
-    tatami::DenseColumnMatrix<double, int, decltype(contents)> vstore(100, 200, contents);
+    const int NR = 100, NC = 200;
+    tatami::DenseColumnMatrix<double, int> ref(NR, NC, std::vector<double>(contents.begin(), contents.end()));
+    tatami::DenseColumnMatrix<double, int, decltype(contents)> vstore(NR, NC, contents);
 
-    EXPECT_EQ(vstore.nrow(), 100);
-    EXPECT_EQ(vstore.ncol(), 200);
+    EXPECT_EQ(vstore.nrow(), NR);
+    EXPECT_EQ(vstore.ncol(), NC);
 
     {
         auto rwrk = ref.dense_column();
         auto lwrk = vstore.dense_column();
-        for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
-            auto observed = tatami_test::fetch<double, int>(*lwrk, i, vstore.nrow());
+        sanisizer::as_size_type<std::vector<double> >(NR);
+        std::vector<double> expected(NR), observed(NR);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, NR, expected.data());
+            auto optr = lwrk->fetch(c, observed.data());
+            tatami::copy_n(optr, NR, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -319,30 +373,84 @@ TEST(DenseMatrix, DifferentValueType) {
     {
         auto rwrk = ref.dense_row();
         auto lwrk = vstore.dense_row();
-        for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
-            auto observed = tatami_test::fetch<double, int>(*lwrk, i, vstore.ncol());
+        sanisizer::as_size_type<std::vector<double> >(NC);
+        std::vector<double> expected(NC), observed(NC);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, NC, expected.data());
+            auto optr = lwrk->fetch(r, observed.data());
+            tatami::copy_n(optr, NC, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
 
-    // Same for blocks, just to make sure we get test coverage.
+    // Same for blocks, just to get some coverage.
     {
-        auto rwrk = ref.dense_column(55, 45);
-        auto lwrk = vstore.dense_column(55, 45);
-        for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, 45);
-            auto observed = tatami_test::fetch<double, int>(*lwrk, i, 45);
+        const int start = 55, len = 45;
+        auto rwrk = ref.dense_column(start, len);
+        auto lwrk = vstore.dense_column(start, len);
+        sanisizer::as_size_type<std::vector<double> >(len);
+        std::vector<double> expected(len), observed(len);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, len, expected.data());
+            auto optr = lwrk->fetch(c, observed.data());
+            tatami::copy_n(optr, len, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }
 
     {
-        auto rwrk = ref.dense_row(10, 70);
-        auto lwrk = vstore.dense_row(10, 70);
-        for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(*rwrk, i, 70);
-            auto observed = tatami_test::fetch<double, int>(*lwrk, i, 70);
+        const int start = 10, len = 70;
+        auto rwrk = ref.dense_row(start, len);
+        auto lwrk = vstore.dense_row(start, len);
+        sanisizer::as_size_type<std::vector<double> >(len);
+        std::vector<double> expected(len), observed(len);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, len, expected.data());
+            auto optr = lwrk->fetch(r, observed.data());
+            tatami::copy_n(optr, len, observed.data());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Same for indices, just to get some coverage.
+    {
+        std::vector<int> indices{ 12, 24, 25, 48, 50, 75, 96 };
+        const auto num_i = indices.size();
+
+        auto rwrk = ref.dense_column(indices);
+        auto lwrk = vstore.dense_column(std::move(indices));
+        sanisizer::as_size_type<std::vector<double> >(num_i);
+        std::vector<double> expected(num_i), observed(num_i);
+
+        for (int c = 0; c < NC; ++c) {
+            auto eptr = rwrk->fetch(c, expected.data());
+            tatami::copy_n(eptr, num_i, expected.data());
+            auto optr = lwrk->fetch(c, observed.data());
+            tatami::copy_n(optr, num_i, observed.data());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    {
+        std::vector<int> indices{ 10, 15, 20, 25, 30, 35, 40, 45, 50, 96, 97, 98, 99 };
+        const auto num_i = indices.size();
+
+        auto rwrk = ref.dense_row(indices);
+        auto lwrk = vstore.dense_row(std::move(indices));
+        sanisizer::as_size_type<std::vector<double> >(num_i);
+        std::vector<double> expected(num_i), observed(num_i);
+
+        for (int r = 0; r < NR; ++r) {
+            auto eptr = rwrk->fetch(r, expected.data());
+            tatami::copy_n(eptr, num_i, expected.data());
+            auto optr = lwrk->fetch(r, observed.data());
+            tatami::copy_n(optr, num_i, observed.data());
             EXPECT_EQ(expected, observed);
         }
     }

@@ -369,6 +369,7 @@ public:
             }
         }
 
+        // Construct my_ext here, because we need to get the size for my_extent before moving indices_ptr.
         my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), std::move(indices_ptr), opt);
 
         if constexpr(!same_value) {
@@ -578,6 +579,8 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(opt, indices_ptr->size());
+
+        // Construct my_ext here, because we need to get the number of indices first before moving indices_ptr.
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 

@@ -12,7 +12,7 @@
 TEST(CompressedSparseMatrix, ConstructionEmpty) {
     std::vector<double> values;
     std::vector<int> indices;
-    std::vector<size_t> indptr(21);
+    std::vector<std::size_t> indptr(21);
 
     tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr);
     EXPECT_TRUE(mat.is_sparse());
@@ -38,14 +38,20 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 TEST(CompressedSparseMatrix, ConstructionFail) {
     std::vector<double> values { 0 };
     std::vector<int> indices;
-    std::vector<size_t> indptr(21);
+    std::vector<std::size_t> indptr(21);
     tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "same length");
 
     indices.push_back(0);
     tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 10, values, indices, indptr); }, "should be equal to 'ncol");
     tatami_test::throws_error([&]() { tatami::CompressedSparseRowMatrix<double, int> mat(10, 10, values, indices, indptr); }, "should be equal to 'nrow");
-    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(0, 0, std::vector<double>(), std::vector<int>(), std::vector<std::size_t>() ); }, "should be equal to 'ncol");
-    tatami_test::throws_error([&]() { tatami::CompressedSparseRowMatrix<double, int> mat(0, 0, std::vector<double>(), std::vector<int>(), std::vector<std::size_t>() ); }, "should be equal to 'nrow");
+    tatami_test::throws_error([&]() {
+        tatami::CompressedSparseColumnMatrix<double, int> mat(0, 0, std::vector<double>(), std::vector<int>(), std::vector<std::size_t>() ); },
+        "should be equal to 'ncol"
+    );
+    tatami_test::throws_error([&]() {
+        tatami::CompressedSparseRowMatrix<double, int> mat(0, 0, std::vector<double>(), std::vector<int>(), std::vector<std::size_t>() ); },
+        "should be equal to 'nrow"
+    );
 
     indptr[0] = 1;
     tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "should be zero");
@@ -94,7 +100,7 @@ TEST(CompressedSparseMatrix, OddTypes) {
 
 class SparseUtils {
 protected:
-    inline static size_t nrow = 200, ncol = 100;
+    inline static int nrow = 200, ncol = 100;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
 
     static void assemble() {
@@ -123,7 +129,7 @@ protected:
 };
 
 TEST_F(SparseTest, Basic) {
-    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
+    const int NC = sparse_column->ncol(), NR = sparse_column->nrow();
     EXPECT_EQ(NC, ncol);
     EXPECT_EQ(NR, nrow);
     EXPECT_EQ(sparse_row->ncol(), ncol);
@@ -266,11 +272,12 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     {
         int all_zero = 0;
         auto wrk = dense.dense_row();
+        std::vector<double> buffer(ncol);
         for (int r = 0; r < nrow; ++r) {
-            auto extracted = tatami_test::fetch(*wrk, r, ncol);
+            auto ptr = wrk->fetch(r, buffer.data());
             int non_zero = false;
-            for (auto x : extracted) {
-                non_zero += x != 0;
+            for (int c = 0; c < ncol; ++c) {
+                non_zero += ptr[c] != 0;
             }
             all_zero += (non_zero == 0);
         }

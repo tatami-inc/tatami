@@ -45,7 +45,7 @@ TEST(ParallelizeTest, BasicCheck) {
 
     EXPECT_EQ(sorted_parts.front().first, 0);
     int last = sorted_parts.front().second;
-    for (size_t i = 1; i < sorted_parts.size(); ++i) {
+    for (std::size_t i = 1; i < sorted_parts.size(); ++i) {
         const auto& sp = sorted_parts[i];
         EXPECT_EQ(last, sp.first);
         last += sp.second;

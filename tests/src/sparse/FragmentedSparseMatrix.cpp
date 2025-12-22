@@ -65,7 +65,7 @@ TEST(FragmentedSparseMatrix, ConstructionFail) {
 
 class FragmentedSparseUtils {
 protected:
-    inline static size_t nrow = 200, ncol = 100;
+    inline static int nrow = 200, ncol = 100;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
 
     static void assemble() {
@@ -87,9 +87,9 @@ protected:
             std::vector<double> buffer(ncol);
 
             auto wrk = dense->dense_row();
-            for (size_t r = 0; r < nrow; ++r) {
+            for (int r = 0; r < nrow; ++r) {
                 auto content = wrk->fetch(r, buffer.data());
-                for (size_t c = 0; c < ncol; ++c) {
+                for (int c = 0; c < ncol; ++c) {
                     if (content[c]) {
                         values[r].push_back(content[c]);
                         indices[r].push_back(c);
@@ -106,9 +106,9 @@ protected:
             std::vector<double> buffer(nrow);
 
             auto wrk = dense->dense_column();
-            for (size_t c = 0; c < ncol; ++c) {
+            for (int c = 0; c < ncol; ++c) {
                 auto content = wrk->fetch(c, buffer.data());
-                for (size_t r = 0; r < nrow; ++r) {
+                for (int r = 0; r < nrow; ++r) {
                     if (content[r]) {
                         values[c].push_back(content[r]);
                         indices[c].push_back(r);
@@ -133,7 +133,7 @@ protected:
 };
 
 TEST_F(FragmentedSparseTest, Basic) {
-    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
+    const auto NC = sparse_column->ncol(), NR = sparse_column->nrow();
     EXPECT_EQ(NC, ncol);
     EXPECT_EQ(NR, nrow);
     EXPECT_EQ(sparse_row->ncol(), ncol);

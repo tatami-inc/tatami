@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "tatami/dense/DenseMatrix.hpp"
+#include "tatami/dense/transpose.hpp"
 #include "tatami/other/DelayedTranspose.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
@@ -11,7 +12,7 @@
 
 class TransposeUtils {
 protected:
-    inline static size_t nrow = 199, ncol = 201;
+    inline static int nrow = 199, ncol = 201;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, uns_tsparse, ref;
 
     static void assemble() {
@@ -19,7 +20,7 @@ protected:
             return;
         }
 
-        auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+        const auto simulated = tatami_test::simulate_vector<double>(nrow, ncol, []{
             tatami_test::SimulateVectorOptions opt;
             opt.density = 0.06;
             opt.seed = 12301231;
@@ -32,12 +33,8 @@ protected:
         tsparse.reset(new tatami::DelayedTranspose<double, int>(sparse));
         uns_tsparse.reset(new tatami::DelayedTranspose<double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse)));
 
-        std::vector<double> refvec(nrow * ncol);
-        for (size_t r = 0; r < nrow; ++r) {
-            for (size_t c = 0; c < ncol; ++c) {
-                refvec[c * nrow + r] = simulated[r * ncol + c];
-            }
-        }
+        std::vector<double> refvec(simulated.size());
+        tatami::transpose(simulated.data(), static_cast<std::size_t>(nrow), static_cast<std::size_t>(ncol), refvec.data());
         ref.reset(new tatami::DenseRowMatrix<double, int>(ncol, nrow, refvec));
     }
 };
