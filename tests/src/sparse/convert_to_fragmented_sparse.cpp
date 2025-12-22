@@ -50,14 +50,14 @@ TEST_P(ConvertToFragmentedSparseTest, FromDense) {
 
     auto old = mat.dense_row();
     auto conv = converted2->dense_row();
-    std::vector<double> obuffer(NC), cbuffer(NC);
-    std::vector<int> cbuffer_i(NC);
+    std::vector<double> obuffer(NC);
+    std::vector<int> obuffer_i, cbuffer_i(NC);
     for (int i = 0; i < NR; ++i) {
         auto optr = old->fetch(i, obuffer.data());
-        tatami::copy_n(optr, NC, obuffer.data());
+        std::copy_n(optr, NC, obuffer_i.data());
         auto cptr = conv->fetch(i, cbuffer_i.data());
-        std::copy_n(cptr, NC, cbuffer.data());
-        EXPECT_EQ(obuffer, cbuffer);
+        tatami::copy_n(cptr, NC, cbuffer_i.data());
+        EXPECT_EQ(obuffer_i, cbuffer_i);
     }
 }
 
@@ -101,14 +101,14 @@ TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
 
     auto wrk = spmat.dense_column();
     auto wrk2 = converted2->dense_column();
-    std::vector<double> buffer(NR), buffer2(NR);
-    std::vector<int> buffer2_i(NR);
+    std::vector<double> buffer(NR);
+    std::vector<int> buffer_i(NR), buffer2_i(NR);
     for (int i = 0; i < NC; ++i) {
         auto ptr = wrk->fetch(i, buffer.data());
-        tatami::copy_n(ptr, NR, buffer.data());
+        std::copy_n(ptr, NR, buffer_i.data());
         auto ptr2 = wrk2->fetch(i, buffer2_i.data());
-        std::copy_n(ptr2, NR, buffer2.data());
-        EXPECT_EQ(buffer, buffer2);
+        tatami::copy_n(ptr2, NR, buffer2_i.data());
+        EXPECT_EQ(buffer_i, buffer2_i);
     }
 }
 
