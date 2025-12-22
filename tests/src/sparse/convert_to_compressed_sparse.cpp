@@ -50,12 +50,14 @@ TEST_P(ConvertToCompressedSparseTest, FromDense) {
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
     auto old = mat.dense_row();
-    std::vector<double> buffer(NC);
-    auto wrk2 = converted2->dense_row();
+    auto conv = converted2->dense_row();
+    std::vector<double> obuffer(NC), cbuffer(NC);
     for (int i = 0; i < NR; ++i) {
-        auto ptr = old->fetch(i, buffer.data());
-        std::vector<int> expected(ptr, ptr + NC);
-        EXPECT_EQ(tatami_test::fetch(*wrk2, i, NC), expected);
+        auto optr = old->fetch(i, obuffer.data());
+        tatami::copy_n(optr, NC, obuffer.data());
+        auto cptr = conv->fetch(i, cbuffer.data());
+        tatami::copy_n(cptr, NC, cbuffer.data());
+        EXPECT_EQ(obuffer, cbuffer);
     }
 }
 
@@ -99,10 +101,13 @@ TEST_P(ConvertToCompressedSparseTest, FromSparse) {
 
     auto wrk = mat.dense_column();
     auto wrk2 = converted2->dense_column();
+    std::vector<double> buffer(NR), buffer2(NR);
     for (int i = 0; i < NC; ++i) {
-        auto expected = tatami_test::fetch(*wrk, static_cast<int>(i), NR);
-        std::vector<int> expected2(expected.begin(), expected.end());
-        EXPECT_EQ(tatami_test::fetch(*wrk2, i, NR), expected2);
+        auto ptr = wrk->fetch(i, buffer.data());
+        tatami::copy_n(ptr, NR, buffer.data());
+        auto ptr2 = wrk2->fetch(i, buffer2.data());
+        tatami::copy_n(ptr2, NR, buffer2.data());
+        EXPECT_EQ(buffer, buffer2);
     }
 }
 
@@ -141,11 +146,12 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
 
     {
         auto wrk = mat->dense_row();
+        std::vector<double> buffer(NC);
         for (int i = 0; i < NR; ++i) {
-            auto row = tatami_test::fetch(*wrk, static_cast<int>(i), NC);
+            auto ptr = wrk->fetch(i, buffer.data());
             std::size_t expected = 0;
-            for (auto x : row) {
-                expected += (x != 0);
+            for (int c = 0; c < NC; ++c) {
+                expected += (ptr[c] != 0);
             }
             EXPECT_EQ(expected, pointers[i + 1]);
         }
@@ -177,10 +183,13 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
     {
         auto wrk = mat->dense_row();
         auto spwrk = spmat.dense_row();
+        std::vector<double> buffer(NC), spbuffer(NC), 
         for (int i = 0; i < NR; ++i) {
-            auto expected = tatami_test::fetch(*wrk, static_cast<int>(i), NC);
-            auto observed = tatami_test::fetch(*spwrk, static_cast<int>(i), NC);
-            EXPECT_EQ(expected, observed);
+            auto ptr = wrk->fetch(i, buffer.data());
+            tatami::copy_n(ptr, NC, buffer.data());
+            auto spptr = spwrk->fetch(i, spbuffer.data());
+            tatami::copy_n(spptr, NC, spbuffer.data());
+            EXPECT_EQ(buffer, spbuffer);
         }
     }
 }
@@ -191,11 +200,12 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
 
     {
         auto wrk = mat->dense_column();
+        std::vector<double> buffer(NR);
         for (int i = 0; i < NC; ++i) {
-            auto column = tatami_test::fetch(*wrk, static_cast<int>(i), NR);
+            auto ptr = wrk->fetch(i, buffer.data());
             std::size_t expected = 0;
-            for (auto x : column) {
-                expected += (x != 0);
+            for (int r = 0; r < NR; ++r) {
+                expected += (ptr[r] != 0);
             }
             EXPECT_EQ(expected, pointers[i + 1]);
         }
@@ -227,10 +237,13 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
     {
         auto wrk = mat->dense_column();
         auto spwrk = spmat.dense_column();
+        std::vector<double> buffer(NR), spbuffer(NR), 
         for (int i = 0; i < NC; ++i) {
-            auto expected= tatami_test::fetch(*wrk, static_cast<int>(i), NR);
-            auto observed = tatami_test::fetch(*spwrk, static_cast<int>(i), NR);
-            EXPECT_EQ(expected, observed);
+            auto ptr = wrk->fetch(i, buffer.data());
+            tatami::copy_n(ptr, NR, buffer.data());
+            auto spptr = spwrk->fetch(i, spbuffer.data());
+            tatami::copy_n(spptr, NR, spbuffer.data());
+            EXPECT_EQ(buffer, spbuffer);
         }
     }
 }

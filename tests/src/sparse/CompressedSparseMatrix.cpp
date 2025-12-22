@@ -272,11 +272,12 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     {
         int all_zero = 0;
         auto wrk = dense.dense_row();
+        std::vector<double> buffer(ncol);
         for (int r = 0; r < nrow; ++r) {
-            auto extracted = tatami_test::fetch(*wrk, r, ncol);
+            auto ptr = wrk->fetch(r, buffer.data());
             int non_zero = false;
-            for (auto x : extracted) {
-                non_zero += x != 0;
+            for (int c = 0; c < ncol; ++c) {
+                non_zero += ptr[c] != 0;
             }
             all_zero += (non_zero == 0);
         }
