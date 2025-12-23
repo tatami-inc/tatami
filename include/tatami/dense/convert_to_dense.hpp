@@ -175,14 +175,14 @@ template <
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool row_major, const ConvertToDenseOptions& options) {
     const auto NR = matrix.nrow();
     const auto NC = matrix.ncol();
-    const auto buffer_size = sanisizer::product<typename std::vector<StoredValue_>::size_type>(NR, NC);
+    const auto buffer_size = sanisizer::product<typename std::vector<StoredValue_>::size_type>(attest_for_Index(NR), attest_for_Index(NC));
     std::vector<StoredValue_> buffer(buffer_size);
     convert_to_dense(matrix, row_major, buffer.data(), options);
 
     return std::shared_ptr<Matrix<Value_, Index_> >(
         new DenseMatrix<Value_, Index_, I<decltype(buffer)> >(
-            sanisizer::cast<Index_>(NR),
-            sanisizer::cast<Index_>(NC),
+            sanisizer::cast<Index_>(attest_for_Index(NR)),
+            sanisizer::cast<Index_>(attest_for_Index(NC)),
             std::move(buffer),
             row_major
         )

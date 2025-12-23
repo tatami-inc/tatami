@@ -610,7 +610,7 @@ public:
                 if (sofar != i) {
                     my_matrices[sofar] = std::move(current);
                 }
-                my_cumulative.push_back(sanisizer::sum<Index_>(my_cumulative.back(), primary));
+                my_cumulative.push_back(sanisizer::sum<Index_>(attest_for_Index(my_cumulative.back()), attest_for_Index(primary)));
                 ++sofar;
             }
         }

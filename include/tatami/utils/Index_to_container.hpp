@@ -23,6 +23,14 @@ template<typename Left_, typename Right_> // provided only for back-compatibilit
 bool safe_non_negative_equal(const Left_ l, const Right_ r) {
     return l >= 0 && r >= 0 && sanisizer::is_equal(l, r);
 }
+
+// By the time we get any kind of Index_ in a tatami context, it should represent a dimension extent, so we can assume that 'x' is non-negative. 
+// We also know that all uses of Index_ must fit into a size_t in order for the Extractor::fetch calls to address the user-supplied arrays.
+// By casting away larger types, we allow sanisizer functions to eliminate the run-time overflow checks completely.
+template<typename Index_> 
+auto attest_for_Index(Index_ x) {
+    return sanisizer::attest_gez(sanisizer::attest_max_by_type<std::size_t>(x));
+}
 /**
  * @endcond
  */
@@ -39,11 +47,7 @@ bool safe_non_negative_equal(const Left_ l, const Right_ r) {
  */
 template<typename Container_, typename Index_>
 Index_ can_cast_Index_to_container_size(const Index_ x) {
-    // If the Index_ type is larger than size_t, we cast it to size_t to provide can_cast() with some opportunities for compile-time optimization.
-    // This is because we know that all uses of Index_ must fit into a size_t in order for the Extractor::fetch calls to address the user-supplied arrays.
-    // By casting away larger types, we allow can_cast() to eliminate the run-time overflow checks completely.
-    typedef typename std::conditional<std::numeric_limits<std::size_t>::max() < std::numeric_limits<Index_>::max(), std::size_t, Index_>::type Intermediate;
-    sanisizer::can_cast<I<decltype(std::declval<Container_>().size())> >(static_cast<Intermediate>(x));
+    sanisizer::can_cast<I<decltype(std::declval<Container_>().size())> >(attest_for_Index(x));
     return x;
 }
 
@@ -76,9 +80,7 @@ I<decltype(std::declval<Container_>().size())> cast_Index_to_container_size(cons
  */
 template<typename Container_, typename Index_, typename ... Args_>
 Container_ create_container_of_Index_size(const Index_ x, Args_&& ... args) {
-    // Same logic as described above.
-    typedef typename std::conditional<std::numeric_limits<std::size_t>::max() < std::numeric_limits<Index_>::max(), std::size_t, Index_>::type Intermediate;
-    return sanisizer::create<Container_>(static_cast<Intermediate>(x), std::forward<Args_>(args)...);
+    return sanisizer::create<Container_>(attest_for_Index(x), std::forward<Args_>(args)...);
 }
 
 /**

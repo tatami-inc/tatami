@@ -181,7 +181,7 @@ SparseParallelResults<Index_> format_sparse_parallel_base(const SubsetStorage_& 
         // 'offset' defines the lower bound that must be subtracted from the array indices to get an index into 'pool_ptrs'.
         output.reindex.offset = first;
         const Index_ allocation = collected.back().first - output.reindex.offset + 1;
-        output.reindex.pool_ptrs.resize(sanisizer::sum<I<decltype(output.reindex.pool_ptrs.size())> >(allocation, 1));
+        output.reindex.pool_ptrs.resize(sanisizer::sum<I<decltype(output.reindex.pool_ptrs.size())> >(attest_for_Index(allocation), 1));
 
         Index_ counter = 0; // this can never be larger than 'len', so using Index_ will not lead to overflows.
         output.reindex.pool_ptrs[counter] = 0; 
@@ -453,6 +453,7 @@ public:
         my_subset(std::move(subset)),
         my_by_row(by_row)
     {
+        // Check that we can still report the dimension extents of the subsetted matrix.
         sanisizer::can_cast<Index_>(my_subset.size());
     }
 

@@ -405,7 +405,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
     const InputIndex_ primary = (row ? NR : NC);
     const InputIndex_ secondary = (row ? NC : NR);
 
-    output_p.resize(sanisizer::sum<I<decltype(output_p.size())> >(primary, 1));
+    output_p.resize(sanisizer::sum<I<decltype(output_p.size())> >(attest_for_Index(primary), 1));
 
     if (!options.two_pass) {
         // Doing a single fragmented run and then concatenating everything together.

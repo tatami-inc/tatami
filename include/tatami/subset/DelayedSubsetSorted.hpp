@@ -430,7 +430,9 @@ public:
         my_subset(std::move(subset)),
         my_by_row(by_row) 
     {
+        // Check that we can still report the dimension extents of the subsetted matrix.
         sanisizer::can_cast<Index_>(my_subset.size());
+
         if (check) {
             const Index_ nsub = my_subset.size();
             for (Index_ i = 1; i < nsub; ++i) {

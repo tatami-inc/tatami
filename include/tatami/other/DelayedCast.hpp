@@ -241,8 +241,8 @@ public:
      */
     DelayedCast(std::shared_ptr<const Matrix<ValueIn_, IndexIn_> > matrix) :
         my_matrix(std::move(matrix)),
-        my_nrow(sanisizer::cast<IndexOut_>(my_matrix->nrow())),
-        my_ncol(sanisizer::cast<IndexOut_>(my_matrix->ncol()))
+        my_nrow(sanisizer::cast<IndexOut_>(attest_for_Index(my_matrix->nrow()))),
+        my_ncol(sanisizer::cast<IndexOut_>(attest_for_Index(my_matrix->ncol())))
     {}
 
 public:
