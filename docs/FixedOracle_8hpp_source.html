@@ -105,73 +105,73 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
-<div class="foldopen" id="foldopen00025" data-start="{" data-end="};">
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html">   25</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FixedViewOracle.html">FixedViewOracle</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#a23a1a11f22a90b8246deeb8f53616a68">   32</a></span>    <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#a23a1a11f22a90b8246deeb8f53616a68">FixedViewOracle</a>(<span class="keyword">const</span> Index_* <span class="keyword">const</span> ptr, <span class="keyword">const</span> <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> number) : my_reference(ptr), my_length(number) {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        sanisizer::can_cast&lt;std::size_t&gt;(number); <span class="comment">// make sure that array is addressable by all [0, number).</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Po<span class="keywordtype">int</span>er_ = const Index_*&gt;</div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html">   26</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FixedViewOracle.html">FixedViewOracle</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#adfc7a18f719e23c45253984db43ce004">   33</a></span>    <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#adfc7a18f719e23c45253984db43ce004">FixedViewOracle</a>(Pointer_ ptr, <span class="keyword">const</span> <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> number) : my_reference(ptr), my_length(number) {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        sanisizer::can_cast&lt;std::size_t&gt;(number); <span class="comment">// make sure that array is addressable by all [0, number).</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    }</div>
 </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#a0a45dcb056b99b8db17946d7ab6a2d0b">   36</a></span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#a0a45dcb056b99b8db17946d7ab6a2d0b">total</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">return</span> my_length;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="foldopen" id="foldopen00037" data-start="{" data-end="}">
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#a921fdde7b01e104fa3121cb7feb222c9">   37</a></span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#a921fdde7b01e104fa3121cb7feb222c9">total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">return</span> my_length;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    }</div>
 </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#ab6ce3a0e85a2aa147ba9db53bce291e3">   40</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#ab6ce3a0e85a2aa147ba9db53bce291e3">get</a>(<a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> i)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">return</span> my_reference[i];</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="foldopen" id="foldopen00041" data-start="{" data-end="}">
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedViewOracle.html#a3077e679927ce5cd1f481defe41c5917">   41</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FixedViewOracle.html#a3077e679927ce5cd1f481defe41c5917">get</a>(<a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keywordflow">return</span> my_reference[i];</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
 </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">const</span> Index_* my_reference;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> my_length;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>};</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    Pointer_ my_reference;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> my_length;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>};</div>
 </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
-<div class="foldopen" id="foldopen00055" data-start="{" data-end="};">
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html">   55</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FixedVectorOracle.html">FixedVectorOracle</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#a6bb84b35ef43559b85579e902d9463dc">   60</a></span>    <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#a6bb84b35ef43559b85579e902d9463dc">FixedVectorOracle</a>(std::vector&lt;Index_&gt; vector) : my_sequence(std::move(vector)) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        sanisizer::can_cast&lt;PredictionIndex&gt;(my_sequence.size()); <span class="comment">// make sure that total() will return a sensible value.</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_, <span class="keyword">class</span> Container_ = std::vector&lt;Index_&gt; &gt;</div>
+<div class="foldopen" id="foldopen00058" data-start="{" data-end="};">
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html">   58</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FixedVectorOracle.html">FixedVectorOracle</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00063" data-start="{" data-end="}">
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#ac78c200bd3c7137e0d103c9943ef7c7b">   63</a></span>    <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#ac78c200bd3c7137e0d103c9943ef7c7b">FixedVectorOracle</a>(Container_ sequence) : my_sequence(std::move(sequence)) {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        sanisizer::can_cast&lt;PredictionIndex&gt;(my_sequence.size()); <span class="comment">// make sure that total() will return a sensible value.</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    }</div>
 </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#a4e0d5965f608f2f127bafb90bf9e6573">   64</a></span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#a4e0d5965f608f2f127bafb90bf9e6573">total</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">return</span> my_sequence.size();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#a4b4289288a982d49435e1e413d0c6ecb">   67</a></span>    <a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#a4b4289288a982d49435e1e413d0c6ecb">total</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> my_sequence.size();</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#a56fa1a71451f7aa6cc2543632437c8a2">   68</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#a56fa1a71451f7aa6cc2543632437c8a2">get</a>(<a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> i)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordflow">return</span> my_sequence[i];</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    }</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classtatami_1_1FixedVectorOracle.html#a540a89c203ff0bad398fb96d498f3b6f">   71</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FixedVectorOracle.html#a540a89c203ff0bad398fb96d498f3b6f">get</a>(<a class="code hl_typedef" href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">PredictionIndex</a> i)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">return</span> my_sequence[i];</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    }</div>
 </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::vector&lt;Index_&gt; my_sequence;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>};</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    Container_ my_sequence;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>};</div>
 </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aOracle_8hpp_html"><div class="ttname"><a href="Oracle_8hpp.html">Oracle.hpp</a></div><div class="ttdoc">Oracle for data access.</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html">tatami::FixedVectorOracle</a></div><div class="ttdoc">Predict future accesses from a vector containing a fixed sequence.</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:55</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_a4e0d5965f608f2f127bafb90bf9e6573"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#a4e0d5965f608f2f127bafb90bf9e6573">tatami::FixedVectorOracle::total</a></div><div class="ttdeci">PredictionIndex total() const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:64</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_a56fa1a71451f7aa6cc2543632437c8a2"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#a56fa1a71451f7aa6cc2543632437c8a2">tatami::FixedVectorOracle::get</a></div><div class="ttdeci">Index_ get(PredictionIndex i) const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:68</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_a6bb84b35ef43559b85579e902d9463dc"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#a6bb84b35ef43559b85579e902d9463dc">tatami::FixedVectorOracle::FixedVectorOracle</a></div><div class="ttdeci">FixedVectorOracle(std::vector&lt; Index_ &gt; vector)</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:60</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html">tatami::FixedViewOracle</a></div><div class="ttdoc">Predict future accesses from a view on a fixed sequence.</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:25</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_a0a45dcb056b99b8db17946d7ab6a2d0b"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#a0a45dcb056b99b8db17946d7ab6a2d0b">tatami::FixedViewOracle::total</a></div><div class="ttdeci">PredictionIndex total() const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:36</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_a23a1a11f22a90b8246deeb8f53616a68"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#a23a1a11f22a90b8246deeb8f53616a68">tatami::FixedViewOracle::FixedViewOracle</a></div><div class="ttdeci">FixedViewOracle(const Index_ *const ptr, const PredictionIndex number)</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:32</div></div>
-<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_ab6ce3a0e85a2aa147ba9db53bce291e3"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#ab6ce3a0e85a2aa147ba9db53bce291e3">tatami::FixedViewOracle::get</a></div><div class="ttdeci">Index_ get(PredictionIndex i) const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:40</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html">tatami::FixedVectorOracle</a></div><div class="ttdoc">Predict future accesses from a vector containing a fixed sequence.</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:58</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_a4b4289288a982d49435e1e413d0c6ecb"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#a4b4289288a982d49435e1e413d0c6ecb">tatami::FixedVectorOracle::total</a></div><div class="ttdeci">PredictionIndex total() const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:67</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_a540a89c203ff0bad398fb96d498f3b6f"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#a540a89c203ff0bad398fb96d498f3b6f">tatami::FixedVectorOracle::get</a></div><div class="ttdeci">Index_ get(PredictionIndex i) const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:71</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedVectorOracle_html_ac78c200bd3c7137e0d103c9943ef7c7b"><div class="ttname"><a href="classtatami_1_1FixedVectorOracle.html#ac78c200bd3c7137e0d103c9943ef7c7b">tatami::FixedVectorOracle::FixedVectorOracle</a></div><div class="ttdeci">FixedVectorOracle(Container_ sequence)</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:63</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html">tatami::FixedViewOracle</a></div><div class="ttdoc">Predict future accesses from a view on a fixed sequence.</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:26</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_a3077e679927ce5cd1f481defe41c5917"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#a3077e679927ce5cd1f481defe41c5917">tatami::FixedViewOracle::get</a></div><div class="ttdeci">Index_ get(PredictionIndex i) const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:41</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_a921fdde7b01e104fa3121cb7feb222c9"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#a921fdde7b01e104fa3121cb7feb222c9">tatami::FixedViewOracle::total</a></div><div class="ttdeci">PredictionIndex total() const</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:37</div></div>
+<div class="ttc" id="aclasstatami_1_1FixedViewOracle_html_adfc7a18f719e23c45253984db43ce004"><div class="ttname"><a href="classtatami_1_1FixedViewOracle.html#adfc7a18f719e23c45253984db43ce004">tatami::FixedViewOracle::FixedViewOracle</a></div><div class="ttdeci">FixedViewOracle(Pointer_ ptr, const PredictionIndex number)</div><div class="ttdef"><b>Definition</b> FixedOracle.hpp:33</div></div>
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_acdedcc902be98f3bd38f3507b906971c"><div class="ttname"><a href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></div><div class="ttdeci">std::size_t PredictionIndex</div><div class="ttdef"><b>Definition</b> Oracle.hpp:18</div></div>

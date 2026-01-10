@@ -6330,26 +6330,27 @@
     <name>tatami::FixedVectorOracle</name>
     <filename>classtatami_1_1FixedVectorOracle.html</filename>
     <templarg>typename Index_</templarg>
+    <templarg>class Container_</templarg>
     <base>tatami::Oracle&lt; Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FixedVectorOracle</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>a6bb84b35ef43559b85579e902d9463dc</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; vector)</arglist>
+      <anchor>ac78c200bd3c7137e0d103c9943ef7c7b</anchor>
+      <arglist>(Container_ sequence)</arglist>
     </member>
     <member kind="function">
       <type>PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>a4e0d5965f608f2f127bafb90bf9e6573</anchor>
+      <anchor>a4b4289288a982d49435e1e413d0c6ecb</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedVectorOracle.html</anchorfile>
-      <anchor>a56fa1a71451f7aa6cc2543632437c8a2</anchor>
+      <anchor>a540a89c203ff0bad398fb96d498f3b6f</anchor>
       <arglist>(PredictionIndex i) const</arglist>
     </member>
   </compound>
@@ -6357,26 +6358,27 @@
     <name>tatami::FixedViewOracle</name>
     <filename>classtatami_1_1FixedViewOracle.html</filename>
     <templarg>typename Index_</templarg>
+    <templarg>typename Pointer_</templarg>
     <base>tatami::Oracle&lt; Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FixedViewOracle</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a23a1a11f22a90b8246deeb8f53616a68</anchor>
-      <arglist>(const Index_ *const ptr, const PredictionIndex number)</arglist>
+      <anchor>adfc7a18f719e23c45253984db43ce004</anchor>
+      <arglist>(Pointer_ ptr, const PredictionIndex number)</arglist>
     </member>
     <member kind="function">
       <type>PredictionIndex</type>
       <name>total</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>a0a45dcb056b99b8db17946d7ab6a2d0b</anchor>
+      <anchor>a921fdde7b01e104fa3121cb7feb222c9</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>get</name>
       <anchorfile>classtatami_1_1FixedViewOracle.html</anchorfile>
-      <anchor>ab6ce3a0e85a2aa147ba9db53bce291e3</anchor>
+      <anchor>a3077e679927ce5cd1f481defe41c5917</anchor>
       <arglist>(PredictionIndex i) const</arglist>
     </member>
   </compound>
