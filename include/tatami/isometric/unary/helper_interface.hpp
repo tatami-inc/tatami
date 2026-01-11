@@ -115,7 +115,7 @@ public:
      * @return The result of the operation being applied on zeros from the `i`-th row/column of the matrix.
      *
      * This function will never be called by `DelayedUnaryIsometricOperation` if the operation depends on the dimension that is not specified by `row`,
-     * i.e., when `row = true && zero_depends_on_column()` or `row = false && zero_depends_on_row()`.
+     * i.e., when `row == true && zero_depends_on_column()` or `row == false && zero_depends_on_row()`.
      * In such cases, no single fill value would exist.
      */
     virtual OutputValue_ fill(bool row, Index_ i) const = 0; 
@@ -136,7 +136,7 @@ public:
      *
      * This method is only called when `is_sparse()` returns false.
      * It is not necessary to explicitly return `false` here for sparsity-preserving operations,
-     * as `DelayedUnaryIsometricOperation` will automatically recognize such operations as being row-independent.
+     * as `DelayedUnaryIsometricOperation` will automatically recognize such operations as being column-independent.
      */
     virtual bool zero_depends_on_column() const = 0;
 

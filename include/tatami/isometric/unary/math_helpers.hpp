@@ -13,7 +13,7 @@
 namespace tatami {
 
 /**
- * @brief Helper for delayed calculation of the sign of each matrix entry.
+ * @brief Helper for delayed calculation of the absolute value of each matrix entry.
  *
  * This class takes the absolute value of each element of a `Matrix`.
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
