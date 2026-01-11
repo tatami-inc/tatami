@@ -31,11 +31,17 @@ TEST(DenseMatrix, Basic) {
         auto buffer = sanisizer::create<std::vector<double> >(NR);
 
         for (int c = 0; c < NC; ++c) {
-            auto start = contents.begin() + sanisizer::product_unsafe<std::size_t>(c, NR);
+            auto start = contents.data() + sanisizer::product_unsafe<std::size_t>(c, NR);
             expected.clear();
             expected.insert(expected.end(), start, start + NR);
 
             auto observed = wrk->fetch(c, buffer.data());
+#ifndef TATAMI_DEBUG_FORCE_COPY
+            EXPECT_NE(observed, buffer.data());
+#else
+            EXPECT_EQ(observed, buffer.data());
+#endif
+
             tatami::copy_n(observed, NR, buffer.data());
             EXPECT_EQ(expected, buffer);
         }
@@ -52,6 +58,7 @@ TEST(DenseMatrix, Basic) {
             }
 
             auto observed = wrk->fetch(r, buffer.data());
+            EXPECT_EQ(observed, buffer.data());
             tatami::copy_n(observed, NC, buffer.data());
             EXPECT_EQ(expected, buffer);
         }
@@ -365,7 +372,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(c, expected.data());
             tatami::copy_n(eptr, NR, expected.data());
             auto optr = lwrk->fetch(c, observed.data());
-            tatami::copy_n(optr, NR, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened.
             EXPECT_EQ(expected, observed);
         }
     }
@@ -380,7 +387,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(r, expected.data());
             tatami::copy_n(eptr, NC, expected.data());
             auto optr = lwrk->fetch(r, observed.data());
-            tatami::copy_n(optr, NC, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened for a different type.
             EXPECT_EQ(expected, observed);
         }
     }
@@ -397,7 +404,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(c, expected.data());
             tatami::copy_n(eptr, len, expected.data());
             auto optr = lwrk->fetch(c, observed.data());
-            tatami::copy_n(optr, len, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened for a different type.
             EXPECT_EQ(expected, observed);
         }
     }
@@ -413,7 +420,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(r, expected.data());
             tatami::copy_n(eptr, len, expected.data());
             auto optr = lwrk->fetch(r, observed.data());
-            tatami::copy_n(optr, len, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened for a different type.
             EXPECT_EQ(expected, observed);
         }
     }
@@ -432,7 +439,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(c, expected.data());
             tatami::copy_n(eptr, num_i, expected.data());
             auto optr = lwrk->fetch(c, observed.data());
-            tatami::copy_n(optr, num_i, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened for a different type.
             EXPECT_EQ(expected, observed);
         }
     }
@@ -450,7 +457,7 @@ TEST(DenseMatrix, DifferentValueType) {
             auto eptr = rwrk->fetch(r, expected.data());
             tatami::copy_n(eptr, num_i, expected.data());
             auto optr = lwrk->fetch(r, observed.data());
-            tatami::copy_n(optr, num_i, observed.data());
+            EXPECT_EQ(optr, observed.data()); // a copy must have happened for a different type.
             EXPECT_EQ(expected, observed);
         }
     }

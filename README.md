@@ -157,9 +157,9 @@ for (int r = 0; r < NR; ++r) {
 ```
 
 The `tatami::MyopicDenseExtractor::fetch()` method returns a pointer to the row's contents.
-In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store.
-However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents can be stored;
-if this buffer is used, the returned pointer refers to the start of the buffer.
+In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store for maximum efficiency.
+However, this is not the case in general, so we provide a buffer of appropriate length (`buffer`) in which the row contents may be stored upon extraction from the matrix.
+If this buffer is used, the returned pointer will refer to the start of the buffer.
 
 Alternatively, we could extract sparse columns via `tatami::MyopicSparseExtractor::fetch()`, 
 which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
@@ -190,6 +190,12 @@ auto bext = mat->dense_column(5, 12);
 // Get these columns from each row.
 auto iext = mat->sparse_row(std::vector<int>{ 1, 3, 5, 7 });
 ```
+
+When developing **tatami**-based applications, we suggest compiling the test suite with and without the `TATAMI_DEBUG_FORCE_COPY` macro.
+When set, this macro forces **tatami** to copy data into `buffer`, even if it could omit the copy by directly returning pointers to the internal data structures.
+This gives our tests an opportunity to check that a valid buffer is actually supplied to `fetch()`.
+Conversely, when the macro is unset and a representation like `DenseMatrix` is used in the test suite,
+we can check that our application correctly handles scenarios where `fetch()` does not populate the buffers.
 
 ### Handling different access patterns
 

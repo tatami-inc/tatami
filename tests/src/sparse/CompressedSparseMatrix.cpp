@@ -149,6 +149,80 @@ TEST_F(SparseTest, Basic) {
     EXPECT_FALSE(sparse_row->uses_oracle(true));
 }
 
+TEST_F(SparseTest, QuickRow) {
+    std::vector<double> rvbuffer(ncol), cvbuffer(ncol);
+    std::vector<int> ribuffer(ncol), cibuffer(ncol);
+    auto rext = sparse_row->sparse_row();
+    auto cext = sparse_column->sparse_row();
+
+    for (int r = 0; r < nrow; ++r) {
+        auto rout = rext->fetch(r, rvbuffer.data(), ribuffer.data());
+#ifndef TATAMI_DEBUG_FORCE_COPY
+        EXPECT_NE(rout.value, rvbuffer.data());
+        EXPECT_NE(rout.index, ribuffer.data());
+        std::copy_n(rout.value, rout.number, rvbuffer.data());
+        std::copy_n(rout.index, rout.number, ribuffer.data());
+#else
+        EXPECT_EQ(rout.value, rvbuffer.data());
+        EXPECT_EQ(rout.index, ribuffer.data());
+#endif
+
+        auto cout = cext->fetch(r, cvbuffer.data(), cibuffer.data());
+        EXPECT_EQ(cout.value, cvbuffer.data());
+        EXPECT_EQ(cout.index, cibuffer.data());
+
+        rvbuffer.resize(rout.number);
+        cvbuffer.resize(cout.number);
+        EXPECT_EQ(rvbuffer, cvbuffer);
+
+        ribuffer.resize(rout.number);
+        cibuffer.resize(cout.number);
+        EXPECT_EQ(ribuffer, cibuffer);
+
+        rvbuffer.resize(ncol);
+        ribuffer.resize(ncol);
+        cvbuffer.resize(ncol);
+        cibuffer.resize(ncol);
+    }
+}
+
+TEST_F(SparseTest, QuickColumn) {
+    std::vector<double> rvbuffer(nrow), cvbuffer(nrow);
+    std::vector<int> ribuffer(nrow), cibuffer(nrow);
+    auto rext = sparse_row->sparse_column();
+    auto cext = sparse_column->sparse_column();
+
+    for (int c = 0; c < ncol; ++c) {
+        auto rout = rext->fetch(c, rvbuffer.data(), ribuffer.data());
+        EXPECT_EQ(rout.value, rvbuffer.data());
+        EXPECT_EQ(rout.index, ribuffer.data());
+
+        auto cout = cext->fetch(c, cvbuffer.data(), cibuffer.data());
+#ifndef TATAMI_DEBUG_FORCE_COPY
+        EXPECT_NE(cout.value, cvbuffer.data());
+        EXPECT_NE(cout.index, cibuffer.data());
+        std::copy_n(cout.value, cout.number, cvbuffer.data());
+        std::copy_n(cout.index, cout.number, cibuffer.data());
+#else
+        EXPECT_EQ(cout.value, cvbuffer.data());
+        EXPECT_EQ(cout.index, cibuffer.data());
+#endif
+
+        rvbuffer.resize(rout.number);
+        cvbuffer.resize(cout.number);
+        EXPECT_EQ(rvbuffer, cvbuffer);
+
+        ribuffer.resize(rout.number);
+        cibuffer.resize(cout.number);
+        EXPECT_EQ(ribuffer, cibuffer);
+
+        rvbuffer.resize(nrow);
+        ribuffer.resize(nrow);
+        cvbuffer.resize(nrow);
+        cibuffer.resize(nrow);
+    }
+}
+
 /*************************************
  *************************************/
 

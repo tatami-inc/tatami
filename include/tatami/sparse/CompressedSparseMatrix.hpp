@@ -12,7 +12,6 @@
 
 #include "../base/Matrix.hpp"
 #include "../utils/ElementType.hpp"
-#include "../utils/has_data.hpp"
 #include "../utils/copy.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 

@@ -13,10 +13,15 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(DO_CODE_COVERAGE ON)
 endif()
 
+set(FORCE_COPY OFF CACHE BOOL "Force copy to buffers in fetch()")
+
 macro(decorate_executable target)
     target_link_libraries(${target} tatami tatami_test)
 
     target_compile_definitions(${target} PRIVATE DEBUG=1)
+    if (FORCE_COPY)
+        target_compile_definitions(${target} PRIVATE TATAMI_DEBUG_FORCE_COPY=1)
+    endif()
 
     target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
@@ -28,9 +33,8 @@ macro(decorate_executable target)
     gtest_discover_tests(${target} DISCOVERY_MODE PRE_TEST)
 endmacro()
 
-# Main test executable.
 add_executable(
-    dense_test
+    dense_test 
     src/dense/DenseMatrix.cpp
     src/dense/convert_to_dense.cpp
     src/dense/transpose.cpp

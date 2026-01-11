@@ -37,12 +37,16 @@ public:
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto offset = sanisizer::product_unsafe<I<decltype(my_storage.size())> >(my_secondary, i);
+#ifndef TATAMI_DEBUG_FORCE_COPY
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
+#endif
             std::copy_n(my_storage.begin() + offset, my_secondary, buffer);
             return buffer;
+#ifndef TATAMI_DEBUG_FORCE_COPY
         }
+#endif
     }
 
 private:
@@ -58,12 +62,16 @@ public:
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         const auto offset = sanisizer::nd_offset<I<decltype(my_storage.size())> >(my_block_start, my_secondary, i);
+#ifndef TATAMI_DEBUG_FORCE_COPY
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
+#endif
             std::copy_n(my_storage.begin() + offset, my_block_length, buffer);
             return buffer;
+#ifndef TATAMI_DEBUG_FORCE_COPY
         }
+#endif
     }
 
 private:

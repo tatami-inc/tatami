@@ -20,6 +20,11 @@ jobs:
             cov: true
           }
         - {
+            name: "Ubuntu Latest GCC, force copy", 
+            os: ubuntu-latest,
+            force-copy: true
+          }
+        - {
             name: "macOS Latest Clang", 
             os: macos-latest
           }
@@ -37,6 +42,10 @@ jobs:
     - name: Configure the build with coverage
       if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.cov }}
       run: cmake -S . -B build -DCODE_COVERAGE=ON 
+
+    - name: Configure the build with forced copy 
+      if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.force-copy }}
+      run: cmake -S . -B build -DFORCE_COPY=ON 
 
     - name: Run the build
       run: cmake --build build -j 2

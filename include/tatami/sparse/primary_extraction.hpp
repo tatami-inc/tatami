@@ -12,13 +12,17 @@ namespace sparse_utils {
 
 template<class Storage_, typename Offset_, typename Data_>
 const Data_* extract_primary_vector(const Storage_& input, const Offset_ offset, const Offset_ delta, Data_* const buffer) {
+#ifndef TATAMI_DEBUG_FORCE_COPY
     if constexpr(has_data<Data_, Storage_>::value) {
         return input.data() + offset;
     } else {
+#endif
         const auto it = input.begin() + offset;
         std::copy_n(it, delta, buffer);
         return buffer;
+#ifndef TATAMI_DEBUG_FORCE_COPY
     }
+#endif
 }
 
 template<class IndexIt_, typename Index_>
