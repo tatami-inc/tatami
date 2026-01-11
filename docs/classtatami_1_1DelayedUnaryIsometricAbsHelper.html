@@ -97,7 +97,7 @@ $(function(){ initResizable(false); });
 </div><!--header-->
 <div class="contents">
 
-<p>Helper for delayed calculation of the sign of each matrix entry.  
+<p>Helper for delayed calculation of the absolute value of each matrix entry.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a>&gt;</code></p>
@@ -106,7 +106,7 @@ Inheritance diagram for tatami::DelayedUnaryIsometricAbsHelper&lt; OutputValue_,
 <div class="dyncontent">
 <div class="center"><img src="classtatami_1_1DelayedUnaryIsometricAbsHelper__inherit__graph.png" border="0" usemap="#atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_inherit__map" id="atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_inherit__map">
-<area shape="rect" title="Helper for delayed calculation of the sign of each matrix entry." alt="" coords="252,5,449,61"/>
+<area shape="rect" title="Helper for delayed calculation of the absolute value of each matrix entry." alt="" coords="252,5,449,61"/>
 <area shape="rect" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html" title="Helper operation interface for DelayedUnaryIsometricOperation." alt="" coords="5,5,204,61"/>
 <area shape="poly" title=" " alt="" coords="219,30,251,30,251,36,219,36"/>
 </map>
@@ -116,7 +116,7 @@ Collaboration diagram for tatami::DelayedUnaryIsometricAbsHelper&lt; OutputValue
 <div class="dyncontent">
 <div class="center"><img src="classtatami_1_1DelayedUnaryIsometricAbsHelper__coll__graph.png" border="0" usemap="#atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_coll__map" id="atatami_1_1DelayedUnaryIsometricAbsHelper_3_01OutputValue___00_01InputValue___00_01Index___01_4_coll__map">
-<area shape="rect" title="Helper for delayed calculation of the sign of each matrix entry." alt="" coords="252,5,449,61"/>
+<area shape="rect" title="Helper for delayed calculation of the absolute value of each matrix entry." alt="" coords="252,5,449,61"/>
 <area shape="rect" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html" title="Helper operation interface for DelayedUnaryIsometricOperation." alt="" coords="5,5,204,61"/>
 <area shape="poly" title=" " alt="" coords="219,30,251,30,251,36,219,36"/>
 </map>
@@ -150,7 +150,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename OutputValue_, typename InputValue_, typename Index_&gt;<br />
-class tatami::DelayedUnaryIsometricAbsHelper&lt; OutputValue_, InputValue_, Index_ &gt;</div><p>Helper for delayed calculation of the sign of each matrix entry. </p>
+class tatami::DelayedUnaryIsometricAbsHelper&lt; OutputValue_, InputValue_, Index_ &gt;</div><p>Helper for delayed calculation of the absolute value of each matrix entry. </p>
 <p>This class takes the absolute value of each element of a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. It should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -277,7 +277,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Whether the operation will convert a structural zero to a non-zero value, in a manner that depends on the identity of the column in which the structural zero occurs.</dd></dl>
-<p>This method is only called when <code><a class="el" href="#a2e9db0fecd627387c3499baf69ed6a48">is_sparse()</a></code> returns false. It is not necessary to explicitly return <code>false</code> here for sparsity-preserving operations, as <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> will automatically recognize such operations as being row-independent. </p>
+<p>This method is only called when <code><a class="el" href="#a2e9db0fecd627387c3499baf69ed6a48">is_sparse()</a></code> returns false. It is not necessary to explicitly return <code>false</code> here for sparsity-preserving operations, as <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> will automatically recognize such operations as being column-independent. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a5bfefbca29262790c0524333b591dbd5">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 
@@ -600,7 +600,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the operation being applied on zeros from the <code>i</code>-th row/column of the matrix.</dd></dl>
-<p>This function will never be called by <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> if the operation depends on the dimension that is not specified by <code>row</code>, i.e., when <code>row = true &amp;&amp; <a class="el" href="#a7874be4d81275cdf5b7e2b3b4de5ce60">zero_depends_on_column()</a></code> or <code>row = false &amp;&amp; <a class="el" href="#ae35ed52026e73b43bb47a79d6ac38858">zero_depends_on_row()</a></code>. In such cases, no single fill value would exist. </p>
+<p>This function will never be called by <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> if the operation depends on the dimension that is not specified by <code>row</code>, i.e., when <code>row == true &amp;&amp; <a class="el" href="#a7874be4d81275cdf5b7e2b3b4de5ce60">zero_depends_on_column()</a></code> or <code>row == false &amp;&amp; <a class="el" href="#ae35ed52026e73b43bb47a79d6ac38858">zero_depends_on_row()</a></code>. In such cases, no single fill value would exist. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a545f431c53f329988d8e495e90851888">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 

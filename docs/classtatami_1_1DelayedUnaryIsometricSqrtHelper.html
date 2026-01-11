@@ -277,7 +277,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Whether the operation will convert a structural zero to a non-zero value, in a manner that depends on the identity of the column in which the structural zero occurs.</dd></dl>
-<p>This method is only called when <code><a class="el" href="#aaf7afcfb380c4af4561a6ce905ca04bf">is_sparse()</a></code> returns false. It is not necessary to explicitly return <code>false</code> here for sparsity-preserving operations, as <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> will automatically recognize such operations as being row-independent. </p>
+<p>This method is only called when <code><a class="el" href="#aaf7afcfb380c4af4561a6ce905ca04bf">is_sparse()</a></code> returns false. It is not necessary to explicitly return <code>false</code> here for sparsity-preserving operations, as <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> will automatically recognize such operations as being column-independent. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a5bfefbca29262790c0524333b591dbd5">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 
@@ -600,7 +600,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; 
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The result of the operation being applied on zeros from the <code>i</code>-th row/column of the matrix.</dd></dl>
-<p>This function will never be called by <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> if the operation depends on the dimension that is not specified by <code>row</code>, i.e., when <code>row = true &amp;&amp; <a class="el" href="#a752bdc719f1c86e43ece147fca95864a">zero_depends_on_column()</a></code> or <code>row = false &amp;&amp; <a class="el" href="#af399d8b5c782ca7c6c5be65a87d772fa">zero_depends_on_row()</a></code>. In such cases, no single fill value would exist. </p>
+<p>This function will never be called by <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> if the operation depends on the dimension that is not specified by <code>row</code>, i.e., when <code>row == true &amp;&amp; <a class="el" href="#a752bdc719f1c86e43ece147fca95864a">zero_depends_on_column()</a></code> or <code>row == false &amp;&amp; <a class="el" href="#af399d8b5c782ca7c6c5be65a87d772fa">zero_depends_on_row()</a></code>. In such cases, no single fill value would exist. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a545f431c53f329988d8e495e90851888">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
 

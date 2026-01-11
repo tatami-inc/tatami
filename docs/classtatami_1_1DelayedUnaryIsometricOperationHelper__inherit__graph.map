@@ -1,6 +1,6 @@
 <map id="tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;" name="tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;">
 <area shape="rect" id="Node000001" title="Helper operation interface for DelayedUnaryIsometricOperation." alt="" coords="5,1569,204,1625"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedUnaryIsometricAbsHelper.html" title="Helper for delayed calculation of the sign of each matrix entry." alt="" coords="272,5,469,61"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedUnaryIsometricAbsHelper.html" title="Helper for delayed calculation of the absolute value of each matrix entry." alt="" coords="272,5,469,61"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,1553,117,1239,144,769,164,531,188,321,216,161,232,106,250,72,270,54,273,58,254,75,237,108,221,162,193,322,169,532,150,769,123,1239,110,1554"/>
 <area shape="rect" id="Node000003" href="$classtatami_1_1DelayedUnaryIsometricAcosHelper.html" title="Helper for delayed calculation of the inverse cosine of each matrix entry." alt="" coords="272,85,469,141"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="105,1554,119,1254,147,810,166,585,190,387,218,236,233,184,250,152,270,134,273,138,254,155,238,186,223,237,195,388,172,586,152,810,124,1254,110,1554"/>
