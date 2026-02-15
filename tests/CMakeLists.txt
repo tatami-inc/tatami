@@ -38,6 +38,7 @@ add_executable(
     src/dense/DenseMatrix.cpp
     src/dense/convert_to_dense.cpp
     src/dense/transpose.cpp
+    src/dense/ForcedDense.cpp
 )
 decorate_executable(dense_test)
 
