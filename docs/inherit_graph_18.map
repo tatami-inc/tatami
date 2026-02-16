@@ -1,43 +1,45 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,564,148,604"/>
+<area shape="rect" id="Node000000" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,596,148,636"/>
 <area shape="rect" id="Node000001" href="$classtatami_1_1CompressedSparseMatrix.html" title=" " alt="" coords="215,5,405,91"/>
-<area shape="poly" id="edge44_Node000000_Node000001" title=" " alt="" coords="74,548,77,461,92,343,107,280,128,217,157,156,194,101,212,83,216,87,198,105,161,159,133,219,112,281,97,344,82,461,79,548"/>
+<area shape="poly" id="edge44_Node000000_Node000001" title=" " alt="" coords="79,580,94,473,118,331,152,194,172,140,194,101,212,83,216,87,198,104,176,142,157,196,124,332,99,473,85,581"/>
 <area shape="rect" id="Node000002" href="$classtatami_1_1DenseMatrix.html" title=" " alt="" coords="239,115,381,171"/>
-<area shape="poly" id="edge45_Node000000_Node000002" title=" " alt="" coords="75,548,81,473,98,375,113,323,133,272,160,224,194,181,214,165,237,154,239,159,217,170,198,185,164,227,138,274,118,325,103,376,86,474,81,548"/>
+<area shape="poly" id="edge45_Node000000_Node000002" title=" " alt="" coords="74,580,78,500,94,393,109,337,130,281,158,228,194,181,214,165,237,154,240,158,217,169,198,185,162,231,135,283,114,338,99,395,83,500,80,580"/>
 <area shape="rect" id="Node000003" href="$classtatami_1_1FragmentedSparseMatrix.html" title=" " alt="" coords="223,195,397,280"/>
-<area shape="poly" id="edge46_Node000000_Node000003" title=" " alt="" coords="81,548,94,493,115,425,148,354,169,321,194,290,221,268,224,273,198,294,173,324,153,357,120,427,99,494,86,549"/>
+<area shape="poly" id="edge46_Node000000_Node000003" title=" " alt="" coords="79,580,90,519,111,443,145,363,167,325,194,290,220,268,224,272,198,294,171,328,149,365,116,445,95,520,85,581"/>
 <area shape="rect" id="Node000004" href="$classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="208,305,412,376"/>
-<area shape="poly" id="edge47_Node000000_Node000004" title=" " alt="" coords="88,549,105,511,128,468,158,425,194,386,211,374,214,378,197,390,162,428,133,471,110,514,93,551"/>
+<area shape="poly" id="edge47_Node000000_Node000004" title=" " alt="" coords="85,580,100,536,123,485,154,433,194,386,210,374,213,378,198,390,159,436,128,487,105,538,90,582"/>
 <area shape="rect" id="Node000007" href="$classtatami_1_1ConstantMatrix.html" title="Matrix containing a constant value." alt="" coords="235,400,385,440"/>
-<area shape="poly" id="edge50_Node000000_Node000007" title=" " alt="" coords="98,549,139,499,165,473,194,451,233,433,235,438,197,456,168,477,143,502,102,553"/>
+<area shape="poly" id="edge50_Node000000_Node000007" title=" " alt="" coords="92,580,132,515,161,480,194,451,233,432,235,437,197,456,165,484,137,518,96,583"/>
 <area shape="rect" id="Node000008" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="242,465,378,506"/>
-<area shape="poly" id="edge51_Node000000_Node000008" title=" " alt="" coords="122,553,195,516,241,500,243,505,197,521,125,558"/>
+<area shape="poly" id="edge51_Node000000_Node000008" title=" " alt="" coords="107,583,147,548,194,516,241,498,243,503,197,521,150,553,110,587"/>
 <area shape="rect" id="Node000009" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="196,530,424,571"/>
-<area shape="poly" id="edge52_Node000000_Node000009" title=" " alt="" coords="163,569,195,565,195,570,164,574"/>
+<area shape="poly" id="edge52_Node000000_Node000009" title=" " alt="" coords="162,589,234,569,235,574,164,595"/>
 <area shape="rect" id="Node000010" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="218,596,402,636"/>
-<area shape="poly" id="edge53_Node000000_Node000010" title=" " alt="" coords="164,593,218,601,217,606,163,599"/>
+<area shape="poly" id="edge53_Node000000_Node000010" title=" " alt="" coords="163,614,218,614,218,619,163,619"/>
 <area shape="rect" id="Node000011" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="196,661,424,702"/>
-<area shape="poly" id="edge54_Node000000_Node000011" title=" " alt="" coords="126,610,197,646,231,658,229,663,195,651,123,615"/>
+<area shape="poly" id="edge54_Node000000_Node000011" title=" " alt="" coords="164,638,235,658,234,663,162,643"/>
 <area shape="rect" id="Node000012" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="216,726,404,781"/>
-<area shape="poly" id="edge55_Node000000_Node000012" title=" " alt="" coords="103,616,144,665,169,690,197,711,217,723,215,727,194,716,166,694,140,668,99,619"/>
+<area shape="poly" id="edge55_Node000000_Node000012" title=" " alt="" coords="111,645,150,679,197,711,220,723,218,728,194,716,147,684,107,649"/>
 <area shape="rect" id="Node000013" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="196,805,424,846"/>
-<area shape="poly" id="edge56_Node000000_Node000013" title=" " alt="" coords="91,618,106,659,129,706,159,752,197,791,215,802,212,807,194,796,155,755,124,708,101,661,86,620"/>
+<area shape="poly" id="edge56_Node000000_Node000013" title=" " alt="" coords="94,649,111,684,134,722,163,759,197,791,216,802,213,807,194,796,159,763,129,725,106,686,89,652"/>
 <area shape="rect" id="Node000014" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="225,870,395,911"/>
-<area shape="poly" id="edge57_Node000000_Node000014" title=" " alt="" coords="86,619,98,672,119,736,152,800,173,830,197,855,225,873,223,877,194,860,169,833,147,803,114,738,93,673,81,621"/>
+<area shape="poly" id="edge57_Node000000_Node000014" title=" " alt="" coords="88,651,102,698,124,753,155,808,175,833,197,855,226,872,223,877,194,860,171,837,151,811,119,755,97,699,83,653"/>
 <area shape="rect" id="Node000015" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="216,936,404,976"/>
-<area shape="poly" id="edge58_Node000000_Node000015" title=" " alt="" coords="83,620,91,684,110,765,125,808,144,849,168,887,197,921,217,935,214,939,194,925,164,890,139,851,120,810,105,767,86,685,77,620"/>
-<area shape="rect" id="Node000018" href="$classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation." alt="" coords="223,1001,396,1072"/>
-<area shape="poly" id="edge61_Node000000_Node000018" title=" " alt="" coords="81,620,87,695,105,792,120,844,140,895,165,943,198,986,225,1008,221,1012,194,990,161,946,135,897,115,845,100,793,82,696,76,621"/>
+<area shape="poly" id="edge58_Node000000_Node000015" title=" " alt="" coords="84,651,94,710,114,783,129,820,148,857,170,891,197,921,217,935,214,939,194,925,166,894,143,860,124,823,109,784,89,711,79,652"/>
+<area shape="rect" id="Node000018" href="$classtatami_1_1ForcedDense.html" title="Forced dense representation." alt="" coords="240,1001,380,1042"/>
+<area shape="poly" id="edge61_Node000000_Node000018" title=" " alt="" coords="81,652,88,722,105,812,120,859,140,905,166,948,197,986,217,1001,241,1010,239,1015,215,1005,194,990,161,952,135,908,115,861,100,813,82,723,76,652"/>
+<area shape="rect" id="Node000019" href="$classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation." alt="" coords="223,1066,396,1137"/>
+<area shape="poly" id="edge62_Node000000_Node000019" title=" " alt="" coords="80,652,84,732,101,838,116,895,136,951,163,1004,198,1052,224,1073,221,1077,194,1055,159,1007,131,953,110,896,96,839,79,733,75,652"/>
 <area shape="rect" id="Node000005" href="$classtatami_1_1CompressedSparseColumnMatrix.html" title="Compressed sparse column matrix." alt="" coords="472,258,690,329"/>
 <area shape="poly" id="edge48_Node000004_Node000005" title=" " alt="" coords="426,317,471,310,472,315,427,323"/>
 <area shape="rect" id="Node000006" href="$classtatami_1_1CompressedSparseRowMatrix.html" title="Compressed sparse row matrix." alt="" coords="480,353,683,424"/>
 <area shape="poly" id="edge49_Node000004_Node000006" title=" " alt="" coords="427,358,479,368,478,373,427,363"/>
-<area shape="rect" id="Node000016" href="$classtatami_1_1DenseColumnMatrix.html" title="Dense column&#45;major matrix." alt="" coords="488,870,675,911"/>
-<area shape="poly" id="edge59_Node000015_Node000016" title=" " alt="" coords="411,929,493,909,494,914,413,934"/>
-<area shape="rect" id="Node000017" href="$classtatami_1_1DenseRowMatrix.html" title="Dense row&#45;major matrix." alt="" coords="488,936,675,976"/>
-<area shape="poly" id="edge60_Node000015_Node000017" title=" " alt="" coords="419,954,487,954,487,959,419,959"/>
-<area shape="rect" id="Node000019" href="$classtatami_1_1FragmentedSparseColumnMatrix.html" title="Fragmented sparse column matrix." alt="" coords="488,1001,674,1072"/>
-<area shape="poly" id="edge62_Node000018_Node000019" title=" " alt="" coords="412,1034,488,1034,488,1039,412,1039"/>
-<area shape="rect" id="Node000020" href="$classtatami_1_1FragmentedSparseRowMatrix.html" title="Fragmented sparse row matrix." alt="" coords="494,1096,668,1166"/>
-<area shape="poly" id="edge63_Node000018_Node000020" title=" " alt="" coords="412,1069,495,1098,493,1103,410,1074"/>
+<area shape="rect" id="Node000016" href="$classtatami_1_1DenseColumnMatrix.html" title="Dense column&#45;major matrix." alt="" coords="488,886,675,927"/>
+<area shape="poly" id="edge59_Node000015_Node000016" title=" " alt="" coords="418,934,487,921,487,927,419,939"/>
+<area shape="rect" id="Node000017" href="$classtatami_1_1DenseRowMatrix.html" title="Dense row&#45;major matrix." alt="" coords="488,952,675,992"/>
+<area shape="poly" id="edge60_Node000015_Node000017" title=" " alt="" coords="419,960,487,964,487,969,419,965"/>
+<area shape="rect" id="Node000020" href="$classtatami_1_1FragmentedSparseColumnMatrix.html" title="Fragmented sparse column matrix." alt="" coords="488,1049,674,1120"/>
+<area shape="poly" id="edge63_Node000019_Node000020" title=" " alt="" coords="412,1092,488,1087,488,1093,412,1098"/>
+<area shape="rect" id="Node000021" href="$classtatami_1_1FragmentedSparseRowMatrix.html" title="Fragmented sparse row matrix." alt="" coords="494,1144,668,1214"/>
+<area shape="poly" id="edge64_Node000019_Node000021" title=" " alt="" coords="412,1128,495,1152,493,1157,411,1133"/>
 </map>

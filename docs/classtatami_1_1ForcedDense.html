@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt; Class Template Reference</title>
+<title>tatami: tatami::ForcedDense&lt; Value_, Index_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,77 +85,85 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacetatami.html">tatami</a></li><li class="navelem"><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami.html">tatami</a></li><li class="navelem"><a class="el" href="classtatami_1_1ForcedDense.html">ForcedDense</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classtatami_1_1FragmentedSparseMatrix-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt; Class Template Reference</div></div>
+<a href="classtatami_1_1ForcedDense-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">tatami::ForcedDense&lt; Value_, Index_ &gt; Class Template Reference<span class="mlabels"><span class="mlabel">final</span></span></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Fragmented sparse matrix representation.  
+<p>Forced dense representation.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="FragmentedSparseMatrix_8hpp_source.html">FragmentedSparseMatrix.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="ForcedDense_8hpp_source.html">ForcedDense.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;:</div>
+Inheritance diagram for tatami::ForcedDense&lt; Value_, Index_ &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classtatami_1_1FragmentedSparseMatrix__inherit__graph.png" border="0" usemap="#atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_inherit__map" id="atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_inherit__map">
-<area shape="rect" title="Fragmented sparse matrix representation." alt="" coords="196,53,369,124"/>
-<area shape="rect" href="classtatami_1_1FragmentedSparseColumnMatrix.html" title="Fragmented sparse column matrix." alt="" coords="417,5,602,76"/>
-<area shape="poly" title=" " alt="" coords="383,65,416,58,417,63,385,70"/>
-<area shape="rect" href="classtatami_1_1FragmentedSparseRowMatrix.html" title="Fragmented sparse row matrix." alt="" coords="423,100,596,171"/>
-<area shape="poly" title=" " alt="" coords="385,107,423,115,422,120,384,112"/>
-<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,68,148,109"/>
-<area shape="poly" title=" " alt="" coords="163,86,195,86,195,91,163,91"/>
+<div class="center"><img src="classtatami_1_1ForcedDense__inherit__graph.png" border="0" usemap="#atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_inherit__map" id="atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_inherit__map">
+<area shape="rect" title="Forced dense representation." alt="" coords="6,94,147,135"/>
+<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,5,148,46"/>
+<area shape="poly" title=" " alt="" coords="79,62,79,94,74,94,74,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;:</div>
+Collaboration diagram for tatami::ForcedDense&lt; Value_, Index_ &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classtatami_1_1FragmentedSparseMatrix__coll__graph.png" border="0" usemap="#atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_coll__map" id="atatami_1_1FragmentedSparseMatrix_3_01Value___00_01Index___00_01ValueVectorStorage___00_01IndexVectorStorage___01_4_coll__map">
-<area shape="rect" title="Fragmented sparse matrix representation." alt="" coords="5,94,179,165"/>
-<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="21,5,163,46"/>
-<area shape="poly" title=" " alt="" coords="95,62,95,93,89,93,89,62"/>
+<div class="center"><img src="classtatami_1_1ForcedDense__coll__graph.png" border="0" usemap="#atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_coll__map" id="atatami_1_1ForcedDense_3_01Value___00_01Index___01_4_coll__map">
+<area shape="rect" title="Forced dense representation." alt="" coords="6,94,147,135"/>
+<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,5,148,46"/>
+<area shape="poly" title=" " alt="" coords="79,62,79,94,74,94,74,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a29e95c0b514065a4fba907e727967f49" id="r_a29e95c0b514065a4fba907e727967f49"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29e95c0b514065a4fba907e727967f49">FragmentedSparseMatrix</a> (const Index_ <a class="el" href="#a9632369fd9488210695dbd05b13a8ab5">nrow</a>, const Index_ <a class="el" href="#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a>, ValueVectorStorage_ values, IndexVectorStorage_ indices, const bool row_sparse, const <a class="el" href="structtatami_1_1FragmentedSparseMatrixOptions.html">FragmentedSparseMatrixOptions</a> &amp;options)</td></tr>
-<tr class="separator:a29e95c0b514065a4fba907e727967f49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9632369fd9488210695dbd05b13a8ab5" id="r_a9632369fd9488210695dbd05b13a8ab5"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9632369fd9488210695dbd05b13a8ab5">nrow</a> () const</td></tr>
-<tr class="separator:a9632369fd9488210695dbd05b13a8ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a427e1a6ab4a1eded1374b30c3d6f05ae" id="r_a427e1a6ab4a1eded1374b30c3d6f05ae"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a> () const</td></tr>
-<tr class="separator:a427e1a6ab4a1eded1374b30c3d6f05ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c14f99e0ef86e41742aec9d5c086996" id="r_a9c14f99e0ef86e41742aec9d5c086996"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9c14f99e0ef86e41742aec9d5c086996">is_sparse</a> () const</td></tr>
-<tr class="separator:a9c14f99e0ef86e41742aec9d5c086996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9190434e706cbb52a9765ff827735f6f" id="r_a9190434e706cbb52a9765ff827735f6f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9190434e706cbb52a9765ff827735f6f">is_sparse_proportion</a> () const</td></tr>
-<tr class="separator:a9190434e706cbb52a9765ff827735f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8415def9c366ffa6ec1713210b518b6" id="r_ab8415def9c366ffa6ec1713210b518b6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8415def9c366ffa6ec1713210b518b6">prefer_rows</a> () const</td></tr>
-<tr class="separator:ab8415def9c366ffa6ec1713210b518b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bc5cb7ee33045f37312445007f487f0" id="r_a5bc5cb7ee33045f37312445007f487f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bc5cb7ee33045f37312445007f487f0">prefer_rows_proportion</a> () const</td></tr>
-<tr class="separator:a5bc5cb7ee33045f37312445007f487f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7d7676ce5f820dce27bfd7096439832" id="r_ac7d7676ce5f820dce27bfd7096439832"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac7d7676ce5f820dce27bfd7096439832">uses_oracle</a> (const bool) const</td></tr>
-<tr class="separator:ac7d7676ce5f820dce27bfd7096439832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab179019a74b0b7ae15a4422d5cbb8512" id="r_ab179019a74b0b7ae15a4422d5cbb8512"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab179019a74b0b7ae15a4422d5cbb8512">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:ab179019a74b0b7ae15a4422d5cbb8512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a927624b2f520d71741fbeeb9225b057c" id="r_a927624b2f520d71741fbeeb9225b057c"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a927624b2f520d71741fbeeb9225b057c">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a927624b2f520d71741fbeeb9225b057c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39c911d6d93fe5739a753a3141e6d12b" id="r_a39c911d6d93fe5739a753a3141e6d12b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39c911d6d93fe5739a753a3141e6d12b">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; subset_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a39c911d6d93fe5739a753a3141e6d12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ee38f8591689b3dd787382f7234caf1" id="r_a0ee38f8591689b3dd787382f7234caf1"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ee38f8591689b3dd787382f7234caf1">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a0ee38f8591689b3dd787382f7234caf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a807e5bd3ebd1e2995f84354461bc0664" id="r_a807e5bd3ebd1e2995f84354461bc0664"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a807e5bd3ebd1e2995f84354461bc0664">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a807e5bd3ebd1e2995f84354461bc0664"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c63dc6dda894c284385f7ea2d4d239a" id="r_a6c63dc6dda894c284385f7ea2d4d239a"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c63dc6dda894c284385f7ea2d4d239a">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; subset_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a6c63dc6dda894c284385f7ea2d4d239a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe38acc9185abbcd13b1aa8156804635" id="r_abe38acc9185abbcd13b1aa8156804635"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe38acc9185abbcd13b1aa8156804635">ForcedDense</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; matrix)</td></tr>
+<tr class="separator:abe38acc9185abbcd13b1aa8156804635"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabeb724c641ae371cea7b2e0b65d75dd" id="r_aabeb724c641ae371cea7b2e0b65d75dd"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabeb724c641ae371cea7b2e0b65d75dd">nrow</a> () const</td></tr>
+<tr class="separator:aabeb724c641ae371cea7b2e0b65d75dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe7e6b1aac9a48060ad5b7eb37919967" id="r_abe7e6b1aac9a48060ad5b7eb37919967"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe7e6b1aac9a48060ad5b7eb37919967">ncol</a> () const</td></tr>
+<tr class="separator:abe7e6b1aac9a48060ad5b7eb37919967"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a543e530d485d64b076dbcb82b20c5444" id="r_a543e530d485d64b076dbcb82b20c5444"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a543e530d485d64b076dbcb82b20c5444">prefer_rows</a> () const</td></tr>
+<tr class="separator:a543e530d485d64b076dbcb82b20c5444"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad92e3a944a8f878aba133380ae000845" id="r_ad92e3a944a8f878aba133380ae000845"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad92e3a944a8f878aba133380ae000845">uses_oracle</a> (const bool row) const</td></tr>
+<tr class="separator:ad92e3a944a8f878aba133380ae000845"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af89f0e213125b0260a333430169225e4" id="r_af89f0e213125b0260a333430169225e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af89f0e213125b0260a333430169225e4">is_sparse</a> () const</td></tr>
+<tr class="separator:af89f0e213125b0260a333430169225e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81beb2a29b4ead2df95bcac12cbf327e" id="r_a81beb2a29b4ead2df95bcac12cbf327e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81beb2a29b4ead2df95bcac12cbf327e">is_sparse_proportion</a> () const</td></tr>
+<tr class="separator:a81beb2a29b4ead2df95bcac12cbf327e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5feccd9585a8d0dc82b5974324f00e75" id="r_a5feccd9585a8d0dc82b5974324f00e75"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5feccd9585a8d0dc82b5974324f00e75">prefer_rows_proportion</a> () const</td></tr>
+<tr class="separator:a5feccd9585a8d0dc82b5974324f00e75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9fae07a1544ab20c2551cae56aecd43" id="r_ab9fae07a1544ab20c2551cae56aecd43"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9fae07a1544ab20c2551cae56aecd43">dense</a> (const bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ab9fae07a1544ab20c2551cae56aecd43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52d5ad3e0bc2bb4cd8c75ba72c626da8" id="r_a52d5ad3e0bc2bb4cd8c75ba72c626da8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a52d5ad3e0bc2bb4cd8c75ba72c626da8">dense</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a52d5ad3e0bc2bb4cd8c75ba72c626da8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a672ee65e2556523857f27d4c2c83149c" id="r_a672ee65e2556523857f27d4c2c83149c"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a672ee65e2556523857f27d4c2c83149c">dense</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a672ee65e2556523857f27d4c2c83149c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8d800ba1d79526b01cef67300232750" id="r_ab8d800ba1d79526b01cef67300232750"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8d800ba1d79526b01cef67300232750">sparse</a> (const bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ab8d800ba1d79526b01cef67300232750"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3cb4538cb4872cec3c653eea6372174" id="r_aa3cb4538cb4872cec3c653eea6372174"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa3cb4538cb4872cec3c653eea6372174">sparse</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:aa3cb4538cb4872cec3c653eea6372174"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a859dc577dbd11873b5812dea928e9a3d" id="r_a859dc577dbd11873b5812dea928e9a3d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a859dc577dbd11873b5812dea928e9a3d">sparse</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a859dc577dbd11873b5812dea928e9a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a261dfe07d33d275b38e5bf00769207cc" id="r_a261dfe07d33d275b38e5bf00769207cc"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a261dfe07d33d275b38e5bf00769207cc">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a261dfe07d33d275b38e5bf00769207cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7d7d789f19bcedf0c6c205c1fd5f352" id="r_ae7d7d789f19bcedf0c6c205c1fd5f352"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7d7d789f19bcedf0c6c205c1fd5f352">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ae7d7d789f19bcedf0c6c205c1fd5f352"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a788e88e726741ae9ba9398d90432274c" id="r_a788e88e726741ae9ba9398d90432274c"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a788e88e726741ae9ba9398d90432274c">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a788e88e726741ae9ba9398d90432274c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8db4976771ac39cedd50a55fe1fce265" id="r_a8db4976771ac39cedd50a55fe1fce265"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8db4976771ac39cedd50a55fe1fce265">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a8db4976771ac39cedd50a55fe1fce265"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f3214f96a9f8ace80dd4d8c7aa7fac2" id="r_a8f3214f96a9f8ace80dd4d8c7aa7fac2"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f3214f96a9f8ace80dd4d8c7aa7fac2">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a8f3214f96a9f8ace80dd4d8c7aa7fac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a997a50a188540b2e1f92a2905ce3e725" id="r_a997a50a188540b2e1f92a2905ce3e725"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a997a50a188540b2e1f92a2905ce3e725">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a997a50a188540b2e1f92a2905ce3e725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix&lt; Value_, Index_ &gt;</a></td></tr>
 <tr class="memitem:a168f0e932b5503c9bfc5dbd42754a7a5 inherit pub_methods_classtatami_1_1Matrix" id="r_a168f0e932b5503c9bfc5dbd42754a7a5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">dense_row</a> (const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a168f0e932b5503c9bfc5dbd42754a7a5 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -295,59 +303,35 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a7575110444f4b58efcf0fb1a1060541c inherit pub_types_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_&gt;<br />
-class tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</div><p>Fragmented sparse matrix representation. </p>
-<p>In a fragmented sparse matrix, each element of the primary dimension has its own vector of indices and data values. This differs from a compressed sparse matrix (see <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code>) where the index/value vectors are concatenated across all elements. For row sparse matrices, the rows are the primary dimension, while for column sparse matrices, the columns are the primary dimension. This representation is equivalent to SciPy's list-of-lists sparse matrix (Python), or SparseArray's SVT_SparseMatrix class (R/Bioconductor).</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_&gt;<br />
+class tatami::ForcedDense&lt; Value_, Index_ &gt;</div><p>Forced dense representation. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of the matrix values. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">ValueVectorStorage_</td><td>Vector class used to store the matrix value vectors. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. Each inner vector should also have methods for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const Value_*</code>, it will also be used. The inner vector does not necessarily have to contain <code>Value_</code>, as long as the type is convertible to <code>Value_</code>. </td></tr>
-    <tr><td class="paramname">IndexVectorStorage_</td><td>Vector class used to store the row/column indices internally. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. Each inner vector should also have methods for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const Index*</code>, it will also be used. The inner vector does not necessarily have to contain <code>Index_</code>, as long as the type is convertible to <code>Index_</code>. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
+<p>Override <code><a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">Matrix::is_sparse()</a></code> to always return false. Similarly, <code><a class="el" href="classtatami_1_1Matrix.html#aa72c81add2701b7e484a7855b0e62b12">Matrix::is_sparse_proportion()</a></code> will always return zero. This is occasionally helpful to indicate that downstream applications should ignore structural sparsity in the input <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>.</p>
+<p>To illustrate, consider a structurally sparse matrix like a <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code>. When performing calculations on such a matrix, we can take advantage of sparsity and only process its non-zero elements for greater efficiency. However, if the <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code> has a high density of non-zero values, the sparsity-aware algorithm may be less efficient than its dense counterpart, e.g., due to non-contiguous and unpredictable memory look-ups based on the index of the non-zero element. In such cases, it may be better to ignore the sparsity and treat it as a dense matrix, which can be achieved by wrapping the <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code> in a <code><a class="el" href="classtatami_1_1ForcedDense.html" title="Forced dense representation.">ForcedDense</a></code> layer.</p>
+<p>Aside from <code><a class="el" href="#af89f0e213125b0260a333430169225e4">is_sparse()</a></code> and <code><a class="el" href="#a81beb2a29b4ead2df95bcac12cbf327e">is_sparse_proportion()</a></code>, calls to any other method are simply forwarded to the corresponding method of the input <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In particular, calls to <code><a class="el" href="#ab8d800ba1d79526b01cef67300232750">ForcedDense::sparse()</a></code> may return a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> where the number of non-zero elements is not equal to the non-target extraction length. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a29e95c0b514065a4fba907e727967f49" name="a29e95c0b514065a4fba907e727967f49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29e95c0b514065a4fba907e727967f49">&#9670;&#160;</a></span>FragmentedSparseMatrix()</h2>
+<a id="abe38acc9185abbcd13b1aa8156804635" name="abe38acc9185abbcd13b1aa8156804635"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe38acc9185abbcd13b1aa8156804635">&#9670;&#160;</a></span>ForcedDense()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::FragmentedSparseMatrix </td>
+          <td class="memname"><a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::ForcedDense </td>
           <td>(</td>
-          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>nrow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;</td>          <td class="paramname"><span class="paramname"><em>matrix</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>ncol</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ValueVectorStorage_</td>          <td class="paramname"><span class="paramname"><em>values</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">IndexVectorStorage_</td>          <td class="paramname"><span class="paramname"><em>indices</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row_sparse</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1FragmentedSparseMatrixOptions.html">FragmentedSparseMatrixOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -358,12 +342,7 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">nrow</td><td>Number of rows. </td></tr>
-    <tr><td class="paramname">ncol</td><td>Number of columns. </td></tr>
-    <tr><td class="paramname">values</td><td>Vector of vectors of non-zero elements. </td></tr>
-    <tr><td class="paramname">indices</td><td>Vector of vectors of row indices (if <code>row_sparse = false</code>) or column indices (if <code>row_sparse = true</code>) for the non-zero elements. </td></tr>
-    <tr><td class="paramname">row_sparse</td><td>Whether this is a row sparse representation. If <code>false</code>, a column sparse representation is assumed instead. </td></tr>
-    <tr><td class="paramname">options</td><td>Further options. </td></tr>
+    <tr><td class="paramname">matrix</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a> to be wrapped. </td></tr>
   </table>
   </dd>
 </dl>
@@ -371,19 +350,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9632369fd9488210695dbd05b13a8ab5" name="a9632369fd9488210695dbd05b13a8ab5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9632369fd9488210695dbd05b13a8ab5">&#9670;&#160;</a></span>nrow()</h2>
+<a id="aabeb724c641ae371cea7b2e0b65d75dd" name="aabeb724c641ae371cea7b2e0b65d75dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabeb724c641ae371cea7b2e0b65d75dd">&#9670;&#160;</a></span>nrow()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::nrow </td>
+          <td class="memname">Index_ <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::nrow </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -402,19 +381,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a427e1a6ab4a1eded1374b30c3d6f05ae" name="a427e1a6ab4a1eded1374b30c3d6f05ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a427e1a6ab4a1eded1374b30c3d6f05ae">&#9670;&#160;</a></span>ncol()</h2>
+<a id="abe7e6b1aac9a48060ad5b7eb37919967" name="abe7e6b1aac9a48060ad5b7eb37919967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe7e6b1aac9a48060ad5b7eb37919967">&#9670;&#160;</a></span>ncol()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::ncol </td>
+          <td class="memname">Index_ <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::ncol </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -433,81 +412,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a9c14f99e0ef86e41742aec9d5c086996" name="a9c14f99e0ef86e41742aec9d5c086996"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c14f99e0ef86e41742aec9d5c086996">&#9670;&#160;</a></span>is_sparse()</h2>
+<a id="a543e530d485d64b076dbcb82b20c5444" name="a543e530d485d64b076dbcb82b20c5444"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a543e530d485d64b076dbcb82b20c5444">&#9670;&#160;</a></span>prefer_rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::is_sparse </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether this matrix is sparse.</dd></dl>
-<p>This can be used to choose between dense and sparse outputs. </p>
-
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
-
-</div>
-</div>
-<a id="a9190434e706cbb52a9765ff827735f6f" name="a9190434e706cbb52a9765ff827735f6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9190434e706cbb52a9765ff827735f6f">&#9670;&#160;</a></span>is_sparse_proportion()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::is_sparse_proportion </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
-<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="#a9c14f99e0ef86e41742aec9d5c086996">is_sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
-
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa72c81add2701b7e484a7855b0e62b12">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
-
-</div>
-</div>
-<a id="ab8415def9c366ffa6ec1713210b518b6" name="ab8415def9c366ffa6ec1713210b518b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8415def9c366ffa6ec1713210b518b6">&#9670;&#160;</a></span>prefer_rows()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::prefer_rows </td>
+          <td class="memname">bool <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::prefer_rows </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -525,50 +442,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a5bc5cb7ee33045f37312445007f487f0" name="a5bc5cb7ee33045f37312445007f487f0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bc5cb7ee33045f37312445007f487f0">&#9670;&#160;</a></span>prefer_rows_proportion()</h2>
+<a id="ad92e3a944a8f878aba133380ae000845" name="ad92e3a944a8f878aba133380ae000845"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad92e3a944a8f878aba133380ae000845">&#9670;&#160;</a></span>uses_oracle()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::prefer_rows_proportion </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that prefers row-level access.</dd></dl>
-<p>This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access. It is useful for determining the return value of <code><a class="el" href="#ab8415def9c366ffa6ec1713210b518b6">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference. (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.) </p>
-
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2ddcc730155ca894df1c58b0a963d5e7">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
-
-</div>
-</div>
-<a id="ac7d7676ce5f820dce27bfd7096439832" name="ac7d7676ce5f820dce27bfd7096439832"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7d7676ce5f820dce27bfd7096439832">&#9670;&#160;</a></span>uses_oracle()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::uses_oracle </td>
+          <td class="memname">bool <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::uses_oracle </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span></td><td>)</td>
           <td> const</td>
@@ -593,19 +479,394 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="ab179019a74b0b7ae15a4422d5cbb8512" name="ab179019a74b0b7ae15a4422d5cbb8512"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab179019a74b0b7ae15a4422d5cbb8512">&#9670;&#160;</a></span>dense() <span class="overload">[1/3]</span></h2>
+<a id="af89f0e213125b0260a333430169225e4" name="af89f0e213125b0260a333430169225e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af89f0e213125b0260a333430169225e4">&#9670;&#160;</a></span>is_sparse()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::dense </td>
+          <td class="memname">bool <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::is_sparse </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether this matrix is sparse.</dd></dl>
+<p>This can be used to choose between dense and sparse outputs. </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a81beb2a29b4ead2df95bcac12cbf327e" name="a81beb2a29b4ead2df95bcac12cbf327e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81beb2a29b4ead2df95bcac12cbf327e">&#9670;&#160;</a></span>is_sparse_proportion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::is_sparse_proportion </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
+<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="#af89f0e213125b0260a333430169225e4">is_sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa72c81add2701b7e484a7855b0e62b12">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a5feccd9585a8d0dc82b5974324f00e75" name="a5feccd9585a8d0dc82b5974324f00e75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5feccd9585a8d0dc82b5974324f00e75">&#9670;&#160;</a></span>prefer_rows_proportion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::prefer_rows_proportion </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that prefers row-level access.</dd></dl>
+<p>This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access. It is useful for determining the return value of <code><a class="el" href="#a543e530d485d64b076dbcb82b20c5444">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference. (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.) </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2ddcc730155ca894df1c58b0a963d5e7">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ab9fae07a1544ab20c2551cae56aecd43" name="ab9fae07a1544ab20c2551cae56aecd43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9fae07a1544ab20c2551cae56aecd43">&#9670;&#160;</a></span>dense() <span class="overload">[1/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves the full extent of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a0b6b1ae7819fad55cf7bf5587b7e5a4b">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a52d5ad3e0bc2bb4cd8c75ba72c626da8" name="a52d5ad3e0bc2bb4cd8c75ba72c626da8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52d5ad3e0bc2bb4cd8c75ba72c626da8">&#9670;&#160;</a></span>dense() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a51bb7a480d2fd0cc0337577ca98840dc">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a672ee65e2556523857f27d4c2c83149c" name="a672ee65e2556523857f27d4c2c83149c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a672ee65e2556523857f27d4c2c83149c">&#9670;&#160;</a></span>dense() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a06803687627cc35e5ef41a887f5e5fad">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ab8d800ba1d79526b01cef67300232750" name="ab8d800ba1d79526b01cef67300232750"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8d800ba1d79526b01cef67300232750">&#9670;&#160;</a></span>sparse() <span class="overload">[1/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves the full extent of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="aa3cb4538cb4872cec3c653eea6372174" name="aa3cb4538cb4872cec3c653eea6372174"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3cb4538cb4872cec3c653eea6372174">&#9670;&#160;</a></span>sparse() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_start</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Index_</td>          <td class="paramname"><span class="paramname"><em>block_length</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#af802c74c510eff3316ce0eea99c08810">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a859dc577dbd11873b5812dea928e9a3d" name="a859dc577dbd11873b5812dea928e9a3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a859dc577dbd11873b5812dea928e9a3d">&#9670;&#160;</a></span>sparse() <span class="overload">[3/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
+          <td>(</td>
+          <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a59d055aed809a2036c10c1fce92bd036">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a261dfe07d33d275b38e5bf00769207cc" name="a261dfe07d33d275b38e5bf00769207cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a261dfe07d33d275b38e5bf00769207cc">&#9670;&#160;</a></span>dense() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -640,19 +901,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a927624b2f520d71741fbeeb9225b057c" name="a927624b2f520d71741fbeeb9225b057c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a927624b2f520d71741fbeeb9225b057c">&#9670;&#160;</a></span>dense() <span class="overload">[2/3]</span></h2>
+<a id="ae7d7d789f19bcedf0c6c205c1fd5f352" name="ae7d7d789f19bcedf0c6c205c1fd5f352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7d7d789f19bcedf0c6c205c1fd5f352">&#9670;&#160;</a></span>dense() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -699,19 +960,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a39c911d6d93fe5739a753a3141e6d12b" name="a39c911d6d93fe5739a753a3141e6d12b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39c911d6d93fe5739a753a3141e6d12b">&#9670;&#160;</a></span>dense() <span class="overload">[3/3]</span></h2>
+<a id="a788e88e726741ae9ba9398d90432274c" name="a788e88e726741ae9ba9398d90432274c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a788e88e726741ae9ba9398d90432274c">&#9670;&#160;</a></span>dense() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -752,19 +1013,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a0ee38f8591689b3dd787382f7234caf1" name="a0ee38f8591689b3dd787382f7234caf1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ee38f8591689b3dd787382f7234caf1">&#9670;&#160;</a></span>sparse() <span class="overload">[1/3]</span></h2>
+<a id="a8db4976771ac39cedd50a55fe1fce265" name="a8db4976771ac39cedd50a55fe1fce265"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8db4976771ac39cedd50a55fe1fce265">&#9670;&#160;</a></span>sparse() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -799,19 +1060,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a807e5bd3ebd1e2995f84354461bc0664" name="a807e5bd3ebd1e2995f84354461bc0664"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a807e5bd3ebd1e2995f84354461bc0664">&#9670;&#160;</a></span>sparse() <span class="overload">[2/3]</span></h2>
+<a id="a8f3214f96a9f8ace80dd4d8c7aa7fac2" name="a8f3214f96a9f8ace80dd4d8c7aa7fac2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f3214f96a9f8ace80dd4d8c7aa7fac2">&#9670;&#160;</a></span>sparse() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -858,19 +1119,19 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 
 </div>
 </div>
-<a id="a6c63dc6dda894c284385f7ea2d4d239a" name="a6c63dc6dda894c284385f7ea2d4d239a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c63dc6dda894c284385f7ea2d4d239a">&#9670;&#160;</a></span>sparse() <span class="overload">[3/3]</span></h2>
+<a id="a997a50a188540b2e1f92a2905ce3e725" name="a997a50a188540b2e1f92a2905ce3e725"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a997a50a188540b2e1f92a2905ce3e725">&#9670;&#160;</a></span>sparse() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , class IndexVectorStorage_ &gt; </div>
+template&lt;typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a>&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense</a>&lt; Value_, Index_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">const bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -912,7 +1173,7 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_ , clas
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>tatami/sparse/<a class="el" href="FragmentedSparseMatrix_8hpp_source.html">FragmentedSparseMatrix.hpp</a></li>
+<li>tatami/dense/<a class="el" href="ForcedDense_8hpp_source.html">ForcedDense.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

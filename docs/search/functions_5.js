@@ -5,8 +5,9 @@ var searchData=
   ['fill_5fcompressed_5fsparse_5fcontents_2',['fill_compressed_sparse_contents',['../namespacetatami.html#ac8dd052eda49e8b530947753c24f1178',1,'tatami']]],
   ['fixedvectororacle_3',['FixedVectorOracle',['../classtatami_1_1FixedVectorOracle.html#ac78c200bd3c7137e0d103c9943ef7c7b',1,'tatami::FixedVectorOracle']]],
   ['fixedvieworacle_4',['FixedViewOracle',['../classtatami_1_1FixedViewOracle.html#adfc7a18f719e23c45253984db43ce004',1,'tatami::FixedViewOracle']]],
-  ['fragmentedsparsecolumnmatrix_5',['FragmentedSparseColumnMatrix',['../classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62',1,'tatami::FragmentedSparseColumnMatrix']]],
-  ['fragmentedsparsematrix_6',['FragmentedSparseMatrix',['../classtatami_1_1FragmentedSparseMatrix.html#a29e95c0b514065a4fba907e727967f49',1,'tatami::FragmentedSparseMatrix']]],
-  ['fragmentedsparserowmatrix_7',['FragmentedSparseRowMatrix',['../classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b',1,'tatami::FragmentedSparseRowMatrix']]],
-  ['fullsparsifiedwrapper_8',['FullSparsifiedWrapper',['../classtatami_1_1FullSparsifiedWrapper.html#a96aa1d5f7956bf32c288d8d0a83ab6db',1,'tatami::FullSparsifiedWrapper']]]
+  ['forceddense_5',['ForcedDense',['../classtatami_1_1ForcedDense.html#abe38acc9185abbcd13b1aa8156804635',1,'tatami::ForcedDense']]],
+  ['fragmentedsparsecolumnmatrix_6',['FragmentedSparseColumnMatrix',['../classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62',1,'tatami::FragmentedSparseColumnMatrix']]],
+  ['fragmentedsparsematrix_7',['FragmentedSparseMatrix',['../classtatami_1_1FragmentedSparseMatrix.html#a29e95c0b514065a4fba907e727967f49',1,'tatami::FragmentedSparseMatrix']]],
+  ['fragmentedsparserowmatrix_8',['FragmentedSparseRowMatrix',['../classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b',1,'tatami::FragmentedSparseRowMatrix']]],
+  ['fullsparsifiedwrapper_9',['FullSparsifiedWrapper',['../classtatami_1_1FullSparsifiedWrapper.html#a96aa1d5f7956bf32c288d8d0a83ab6db',1,'tatami::FullSparsifiedWrapper']]]
 ];

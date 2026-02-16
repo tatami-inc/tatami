@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: Class Members</title>
+<title>tatami: tatami/dense/ForcedDense.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -57,8 +57,6 @@ $(function() {
 /* @license-end */
 </script>
 <div id="main-nav"></div>
-</div><!-- top -->
-<div id="doc-content">
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
 $(function(){ initResizable(false); });
@@ -85,13 +83,40 @@ $(function(){ initResizable(false); });
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_776bab3a9c6b4d59f3341d631b784a68.html">dense</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
+  <div class="headertitle"><div class="title">ForcedDense.hpp File Reference</div></div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
-<h3><a id="index_u" name="index_u"></a>- u -</h3><ul>
-<li>uses_oracle()&#160;:&#160;<a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6703b840e50ab473d95aaf324965ba8a">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1ConstantMatrix.html#aa482d7ca177873f1c06ad7413a80b563">tatami::ConstantMatrix&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOperation.html#a9af739894c981f020662c7ebd50c9c02">tatami::DelayedBinaryIsometricOperation&lt; OutputValue_, InputValue_, Index_, Helper_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a11efb3f8a15be935bf9d1f4650dcc0a1">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa033835a7c5700ec01b2ff0ba34994b4">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a17fa80702e54fb231bc0dd317063ec04">tatami::DelayedSubset&lt; Value_, Index_, SubsetStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a2a2136a612eeec1fe79474e9f2a3896b">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aa5211a17c6fc95bbdc2b61bc97b41b35">tatami::DelayedSubsetSorted&lt; Value_, Index_, SubsetStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a5413d71a3e7d650ffa6e8918f484a54c">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, SubsetStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a8df0bbd1d49c4a2d9db1a48aed03975c">tatami::DelayedSubsetUnique&lt; Value_, Index_, SubsetStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a9816844db5d1de41bef1bc0f956f8e6d">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a32b9bddadf8d65dc1c79477c6be20873">tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, InputValue_, Index_, Helper_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a80c9e44e268abc55d9d8cfcb10d7ea63">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1ForcedDense.html#ad92e3a944a8f878aba133380ae000845">tatami::ForcedDense&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1Matrix.html#a68da21245203cf9349648c5452cdb2ca">tatami::Matrix&lt; Value_, Index_ &gt;</a></li>
-</ul>
-</div><!-- contents -->
+<p>Forced dense representation.  
+<a href="#details">More...</a></p>
+
+<p><a href="ForcedDense_8hpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1ForcedDense.html">tatami::ForcedDense&lt; Value_, Index_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forced dense representation.  <a href="classtatami_1_1ForcedDense.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Forced dense representation. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.12.0
