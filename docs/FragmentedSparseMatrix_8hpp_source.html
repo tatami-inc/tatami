@@ -671,294 +671,289 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;my_indices should be strictly increasing within each element of &#39;indices&#39;&quot;</span>);</div>
 <div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>                    }</div>
 <div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>                }</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span> </div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                <span class="comment">// Check that iterator subtraction is safe.</span></div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                <span class="comment">// Various functions in &#39;sparse_utils&#39; will subtract iterators when converting the lower_bound return value to an index.</span></div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                <span class="comment">// We cast to Index_ as it gives us a chance to skip the check at compile time, given that the size is no greater than the dimension extents.</span></div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                sanisizer::can_ptrdiff&lt;I&lt;<span class="keyword">decltype</span>(curi.begin())&gt; &gt;(attest_for_Index(<span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(curnnz)));</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>            }</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>        }</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    }</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>            }</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>        }</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    }</div>
 </div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    <span class="comment">// Back-compatibility only.</span></div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> row_sparse, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) :</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>        FragmentedSparseMatrix(</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>            nrow,</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>            ncol,</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>            std::move(values),</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>            std::move(indices),</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>            row_sparse,</div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>            [&amp;]{</div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>                FragmentedSparseMatrixOptions fopt;</div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>                fopt.check = check;</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>                <span class="keywordflow">return</span> fopt;</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>            }()</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>        )</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    {}</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    Index_ my_nrow, my_ncol;</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>    ValueVectorStorage_ my_values;</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>    IndexVectorStorage_ my_indices;</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    <span class="keywordtype">bool</span> my_row_sparse;</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span> </div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    <span class="comment">// Back-compatibility only.</span></div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> row_sparse, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) :</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>        FragmentedSparseMatrix(</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>            nrow,</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>            ncol,</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>            std::move(values),</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>            std::move(indices),</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>            row_sparse,</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>            [&amp;]{</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>                FragmentedSparseMatrixOptions fopt;</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>                fopt.check = check;</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>                <span class="keywordflow">return</span> fopt;</div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>            }()</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>        )</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>    {}</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>    Index_ my_nrow, my_ncol;</div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    ValueVectorStorage_ my_values;</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    IndexVectorStorage_ my_indices;</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>    <span class="keywordtype">bool</span> my_row_sparse;</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">  664</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">nrow</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_nrow; }</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">  666</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_ncol; }</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span> </div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">  669</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">nrow</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_nrow; }</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span> </div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">  671</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_ncol; }</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span> </div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">  673</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">is_sparse</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span> </div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">  675</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">is_sparse_proportion</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 1; }</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span> </div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">  677</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">prefer_rows</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_row_sparse; }</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span> </div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">  679</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">prefer_rows_proportion</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(my_row_sparse); }</div>
-<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span> </div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">  681</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">uses_oracle</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span>)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
-<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span> </div>
-<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt;::dense;</div>
-<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span> </div>
-<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt;::sparse;</div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span> </div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    Index_ secondary()<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>        <span class="keywordflow">if</span> (my_row_sparse) {</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>            <span class="keywordflow">return</span> my_ncol;</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>            <span class="keywordflow">return</span> my_nrow;</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>        }</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    }</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span> </div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span><span class="comment">    /*****************************</span></div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span><span class="comment">     ******* Dense myopic ********</span></div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span><span class="comment">     *****************************/</span></div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>        <span class="keyword">const</span> Options&amp;</div>
-<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicFullDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>                my_values, my_indices, secondary()</div>
-<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>            );</div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicFullDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>                my_values, my_indices, secondary()</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>            ); </div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        }</div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    }</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span> </div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>        <span class="keyword">const</span> Index_ block_start,</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>        <span class="keyword">const</span> Options&amp;</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicBlockDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>                my_values, my_indices, secondary(), block_start, block_length</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>            );</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicBlockDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>                my_values, my_indices, secondary(), block_start, block_length</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>            );</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>        }</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    }</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>        <span class="keyword">const</span> Options&amp;</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>            );</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>            );</div>
-<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>        }</div>
-<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>    }</div>
-<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span><span class="comment">    /******************************</span></div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="comment">     ******* Sparse myopic ********</span></div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment">     ******************************/</span></div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>        <span class="keyword">const</span> Options&amp; opt</div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicFullSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>                my_values, my_indices, secondary(), opt</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>            );</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicFullSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>                my_values, my_indices, secondary(), opt</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>            ); </div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        }</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    }</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        <span class="keyword">const</span> Index_ block_start,</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>        <span class="keyword">const</span> Options&amp; opt</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicBlockSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>                my_values, my_indices, secondary(), block_start, block_length, opt</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>            );</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicBlockSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                my_values, my_indices, secondary(), block_start, block_length, opt</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            );</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        }</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    }</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span> </div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>        <span class="keyword">const</span> Options&amp; opt</div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>            );</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
-<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            );</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>        }</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>    }</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span> </div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment">    /*******************************</span></div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment">     ******* Dense oracular ********</span></div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment">     *******************************/</span></div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00804" data-start="{" data-end="}">
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">  804</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">dense</a>(</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, opt));</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>    }</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">  668</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">is_sparse</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">true</span>; }</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span> </div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">  670</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">is_sparse_proportion</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 1; }</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span> </div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">  672</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">prefer_rows</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> my_row_sparse; }</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">  674</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">prefer_rows_proportion</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(my_row_sparse); }</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span> </div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">  676</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">uses_oracle</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span>)<span class="keyword"> const </span>{ <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span> </div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt;::dense;</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span> </div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt;::sparse;</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span> </div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    Index_ secondary()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>        <span class="keywordflow">if</span> (my_row_sparse) {</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>            <span class="keywordflow">return</span> my_ncol;</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>            <span class="keywordflow">return</span> my_nrow;</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>        }</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    }</div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span> </div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span><span class="comment">    /*****************************</span></div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span><span class="comment">     ******* Dense myopic ********</span></div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span><span class="comment">     *****************************/</span></div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>        <span class="keyword">const</span> Options&amp;</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicFullDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>                my_values, my_indices, secondary()</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>            );</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicFullDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>                my_values, my_indices, secondary()</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>            ); </div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>        }</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    }</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span> </div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        <span class="keyword">const</span> Index_ block_start,</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>        <span class="keyword">const</span> Index_ block_length,</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>        <span class="keyword">const</span> Options&amp;</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicBlockDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                my_values, my_indices, secondary(), block_start, block_length</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>            );</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicBlockDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>                my_values, my_indices, secondary(), block_start, block_length</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>            );</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>        }</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    }</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>        <span class="keyword">const</span> Options&amp;</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>            );</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>            );</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>        }</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    }</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span><span class="comment">    /******************************</span></div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span><span class="comment">     ******* Sparse myopic ********</span></div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span><span class="comment">     ******************************/</span></div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicFullSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>                my_values, my_indices, secondary(), opt</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>            );</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicFullSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>                my_values, my_indices, secondary(), opt</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>            ); </div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        }</div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>    }</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span> </div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        <span class="keyword">const</span> Index_ block_start,</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>        <span class="keyword">const</span> Index_ block_length,</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicBlockSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>                my_values, my_indices, secondary(), block_start, block_length, opt</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>            );</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicBlockSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>                my_values, my_indices, secondary(), block_start, block_length, opt</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>            );</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>        }</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    }</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span> </div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>            );</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>            );</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        }</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    }</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span> </div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span><span class="comment">    /*******************************</span></div>
+<div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span><span class="comment">     ******* Dense oracular ********</span></div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="comment">     *******************************/</span></div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00799" data-start="{" data-end="}">
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">  799</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">dense</a>(</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, opt));</div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>    }</div>
 </div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span> </div>
-<div class="foldopen" id="foldopen00812" data-start="{" data-end="}">
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">  812</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">dense</a>(</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>        <span class="keyword">const</span> Index_ block_start,</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, block_start, block_length, opt));</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    }</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span> </div>
+<div class="foldopen" id="foldopen00807" data-start="{" data-end="}">
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">  807</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">dense</a>(</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>        <span class="keyword">const</span> Index_ block_start,</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>        <span class="keyword">const</span> Index_ block_length,</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, block_start, block_length, opt));</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    }</div>
 </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span> </div>
-<div class="foldopen" id="foldopen00822" data-start="{" data-end="}">
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">  822</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">dense</a>(</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> subset_ptr,</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, std::move(subset_ptr), opt));</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    }</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span> </div>
+<div class="foldopen" id="foldopen00817" data-start="{" data-end="}">
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">  817</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">dense</a>(</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> subset_ptr,</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, std::move(subset_ptr), opt));</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    }</div>
 </div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span><span class="comment">    /********************************</span></div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">     ******* Sparse oracular ********</span></div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span><span class="comment">     ********************************/</span></div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00835" data-start="{" data-end="}">
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">  835</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">sparse</a>(</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, opt));</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>    }</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span> </div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span><span class="comment">    /********************************</span></div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><span class="comment">     ******* Sparse oracular ********</span></div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span><span class="comment">     ********************************/</span></div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00830" data-start="{" data-end="}">
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">  830</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">sparse</a>(</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, opt));</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>    }</div>
 </div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span> </div>
-<div class="foldopen" id="foldopen00843" data-start="{" data-end="}">
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">  843</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">sparse</a>(</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>        <span class="keyword">const</span> Index_ block_start,</div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, block_start, block_length, opt));</div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>    }</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span> </div>
+<div class="foldopen" id="foldopen00838" data-start="{" data-end="}">
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">  838</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">sparse</a>(</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>        <span class="keyword">const</span> Index_ block_start,</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>        <span class="keyword">const</span> Index_ block_length,</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, block_start, block_length, opt));</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>    }</div>
 </div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
-<div class="foldopen" id="foldopen00853" data-start="{" data-end="}">
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">  853</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">sparse</a>(</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> subset_ptr,</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, std::move(subset_ptr), opt));</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    }</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span> </div>
+<div class="foldopen" id="foldopen00848" data-start="{" data-end="}">
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">  848</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">sparse</a>(</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> subset_ptr,</div>
+<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
+<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>    )<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, std::move(subset_ptr), opt));</div>
+<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    }</div>
 </div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>};</div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>};</div>
 </div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span> </div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_ = std::vector&lt;std::vector&lt;Value_&gt; &gt;, <span class="keyword">class</span> IndexVectorStorage_ = std::vector&lt;std::vector&lt;Index_&gt; &gt; &gt;</div>
-<div class="foldopen" id="foldopen00869" data-start="{" data-end="};">
-<div class="line"><a id="l00869" name="l00869"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseColumnMatrix.html">  869</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FragmentedSparseColumnMatrix.html">FragmentedSparseColumnMatrix</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; {</div>
-<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00878" data-start="{" data-end="}">
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">  878</a></span>    <a class="code hl_function" href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">FragmentedSparseColumnMatrix</a>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) : </div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;(nrow, ncol, std::move(values), std::move(indices), false, check) {}</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span> </div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_ = std::vector&lt;std::vector&lt;Value_&gt; &gt;, <span class="keyword">class</span> IndexVectorStorage_ = std::vector&lt;std::vector&lt;Index_&gt; &gt; &gt;</div>
+<div class="foldopen" id="foldopen00864" data-start="{" data-end="};">
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseColumnMatrix.html">  864</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FragmentedSparseColumnMatrix.html">FragmentedSparseColumnMatrix</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; {</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00873" data-start="{" data-end="}">
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">  873</a></span>    <a class="code hl_function" href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">FragmentedSparseColumnMatrix</a>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) : </div>
+<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>        <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;(nrow, ncol, std::move(values), std::move(indices), false, check) {}</div>
 </div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>};</div>
+<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>};</div>
 </div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span> </div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_ = std::vector&lt;std::vector&lt;Value_&gt; &gt;, <span class="keyword">class</span> IndexVectorStorage_ = std::vector&lt;std::vector&lt;Index_&gt; &gt; &gt;</div>
-<div class="foldopen" id="foldopen00888" data-start="{" data-end="};">
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseRowMatrix.html">  888</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FragmentedSparseRowMatrix.html">FragmentedSparseRowMatrix</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; {</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00897" data-start="{" data-end="}">
-<div class="line"><a id="l00897" name="l00897"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">  897</a></span>    <a class="code hl_function" href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">FragmentedSparseRowMatrix</a>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) : </div>
-<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span>        <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;(nrow, ncol, std::move(values), std::move(indices), true, check) {}</div>
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span> </div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_ = std::vector&lt;std::vector&lt;Value_&gt; &gt;, <span class="keyword">class</span> IndexVectorStorage_ = std::vector&lt;std::vector&lt;Index_&gt; &gt; &gt;</div>
+<div class="foldopen" id="foldopen00883" data-start="{" data-end="};">
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseRowMatrix.html">  883</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1FragmentedSparseRowMatrix.html">FragmentedSparseRowMatrix</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; {</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00892" data-start="{" data-end="}">
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno"><a class="line" href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">  892</a></span>    <a class="code hl_function" href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">FragmentedSparseRowMatrix</a>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, <span class="keywordtype">bool</span> check = <span class="keyword">true</span>) : </div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>        <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;(nrow, ncol, std::move(values), std::move(indices), true, check) {}</div>
 </div>
-<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span>};</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>};</div>
 </div>
-<div class="line"><a id="l00900" name="l00900"></a><span class="lineno">  900</span> </div>
-<div class="line"><a id="l00901" name="l00901"></a><span class="lineno">  901</span> </div>
-<div class="line"><a id="l00902" name="l00902"></a><span class="lineno">  902</span>}</div>
-<div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span> </div>
-<div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span> </div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span> </div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span>}</div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span> </div>
+<div class="line"><a id="l00899" name="l00899"></a><span class="lineno">  899</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aElementType_8hpp_html"><div class="ttname"><a href="ElementType_8hpp.html">ElementType.hpp</a></div><div class="ttdoc">Get type of elements in an array.</div></div>
 <div class="ttc" id="aIndex__to__container_8hpp_html"><div class="ttname"><a href="Index__to__container_8hpp.html">Index_to_container.hpp</a></div><div class="ttdoc">Convert index type to container size.</div></div>
 <div class="ttc" id="aMatrix_8hpp_html"><div class="ttname"><a href="Matrix_8hpp.html">Matrix.hpp</a></div><div class="ttdoc">Virtual class for a matrix of some numeric type.</div></div>
 <div class="ttc" id="aPseudoOracularExtractor_8hpp_html"><div class="ttname"><a href="PseudoOracularExtractor_8hpp.html">PseudoOracularExtractor.hpp</a></div><div class="ttdoc">Mimic the oracle-aware extractor interface.</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseColumnMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseColumnMatrix.html">tatami::FragmentedSparseColumnMatrix</a></div><div class="ttdoc">Fragmented sparse column matrix.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:869</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseColumnMatrix_html_abfec31e832a4f939d8f55b07a5b2ec62"><div class="ttname"><a href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">tatami::FragmentedSparseColumnMatrix::FragmentedSparseColumnMatrix</a></div><div class="ttdeci">FragmentedSparseColumnMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool check=true)</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:878</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseColumnMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseColumnMatrix.html">tatami::FragmentedSparseColumnMatrix</a></div><div class="ttdoc">Fragmented sparse column matrix.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:864</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseColumnMatrix_html_abfec31e832a4f939d8f55b07a5b2ec62"><div class="ttname"><a href="classtatami_1_1FragmentedSparseColumnMatrix.html#abfec31e832a4f939d8f55b07a5b2ec62">tatami::FragmentedSparseColumnMatrix::FragmentedSparseColumnMatrix</a></div><div class="ttdeci">FragmentedSparseColumnMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool check=true)</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:873</div></div>
 <div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a></div><div class="ttdoc">Fragmented sparse matrix representation.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:570</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a0ee38f8591689b3dd787382f7234caf1"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:835</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a0ee38f8591689b3dd787382f7234caf1"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a0ee38f8591689b3dd787382f7234caf1">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:830</div></div>
 <div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a29e95c0b514065a4fba907e727967f49"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a29e95c0b514065a4fba907e727967f49">tatami::FragmentedSparseMatrix::FragmentedSparseMatrix</a></div><div class="ttdeci">FragmentedSparseMatrix(const Index_ nrow, const Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, const bool row_sparse, const FragmentedSparseMatrixOptions &amp;options)</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:581</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a39c911d6d93fe5739a753a3141e6d12b"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:822</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a427e1a6ab4a1eded1374b30c3d6f05ae"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">tatami::FragmentedSparseMatrix::ncol</a></div><div class="ttdeci">Index_ ncol() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:671</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a5bc5cb7ee33045f37312445007f487f0"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">tatami::FragmentedSparseMatrix::prefer_rows_proportion</a></div><div class="ttdeci">double prefer_rows_proportion() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:679</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a6c63dc6dda894c284385f7ea2d4d239a"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:853</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a807e5bd3ebd1e2995f84354461bc0664"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:843</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9190434e706cbb52a9765ff827735f6f"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">tatami::FragmentedSparseMatrix::is_sparse_proportion</a></div><div class="ttdeci">double is_sparse_proportion() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:675</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a927624b2f520d71741fbeeb9225b057c"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:812</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9632369fd9488210695dbd05b13a8ab5"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">tatami::FragmentedSparseMatrix::nrow</a></div><div class="ttdeci">Index_ nrow() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:669</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9c14f99e0ef86e41742aec9d5c086996"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">tatami::FragmentedSparseMatrix::is_sparse</a></div><div class="ttdeci">bool is_sparse() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:673</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ab179019a74b0b7ae15a4422d5cbb8512"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:804</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ab8415def9c366ffa6ec1713210b518b6"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">tatami::FragmentedSparseMatrix::prefer_rows</a></div><div class="ttdeci">bool prefer_rows() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:677</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ac7d7676ce5f820dce27bfd7096439832"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">tatami::FragmentedSparseMatrix::uses_oracle</a></div><div class="ttdeci">bool uses_oracle(const bool) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:681</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseRowMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseRowMatrix.html">tatami::FragmentedSparseRowMatrix</a></div><div class="ttdoc">Fragmented sparse row matrix.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:888</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseRowMatrix_html_a6dd64418cc9fd8561a045006e91dcd1b"><div class="ttname"><a href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">tatami::FragmentedSparseRowMatrix::FragmentedSparseRowMatrix</a></div><div class="ttdeci">FragmentedSparseRowMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool check=true)</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:897</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a39c911d6d93fe5739a753a3141e6d12b"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a39c911d6d93fe5739a753a3141e6d12b">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:817</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a427e1a6ab4a1eded1374b30c3d6f05ae"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">tatami::FragmentedSparseMatrix::ncol</a></div><div class="ttdeci">Index_ ncol() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:666</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a5bc5cb7ee33045f37312445007f487f0"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">tatami::FragmentedSparseMatrix::prefer_rows_proportion</a></div><div class="ttdeci">double prefer_rows_proportion() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:674</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a6c63dc6dda894c284385f7ea2d4d239a"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a6c63dc6dda894c284385f7ea2d4d239a">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:848</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a807e5bd3ebd1e2995f84354461bc0664"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a807e5bd3ebd1e2995f84354461bc0664">tatami::FragmentedSparseMatrix::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:838</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9190434e706cbb52a9765ff827735f6f"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9190434e706cbb52a9765ff827735f6f">tatami::FragmentedSparseMatrix::is_sparse_proportion</a></div><div class="ttdeci">double is_sparse_proportion() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:670</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a927624b2f520d71741fbeeb9225b057c"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a927624b2f520d71741fbeeb9225b057c">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:807</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9632369fd9488210695dbd05b13a8ab5"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">tatami::FragmentedSparseMatrix::nrow</a></div><div class="ttdeci">Index_ nrow() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:664</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_a9c14f99e0ef86e41742aec9d5c086996"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#a9c14f99e0ef86e41742aec9d5c086996">tatami::FragmentedSparseMatrix::is_sparse</a></div><div class="ttdeci">bool is_sparse() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:668</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ab179019a74b0b7ae15a4422d5cbb8512"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ab179019a74b0b7ae15a4422d5cbb8512">tatami::FragmentedSparseMatrix::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:799</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ab8415def9c366ffa6ec1713210b518b6"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">tatami::FragmentedSparseMatrix::prefer_rows</a></div><div class="ttdeci">bool prefer_rows() const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:672</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html_ac7d7676ce5f820dce27bfd7096439832"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html#ac7d7676ce5f820dce27bfd7096439832">tatami::FragmentedSparseMatrix::uses_oracle</a></div><div class="ttdeci">bool uses_oracle(const bool) const</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:676</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseRowMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseRowMatrix.html">tatami::FragmentedSparseRowMatrix</a></div><div class="ttdoc">Fragmented sparse row matrix.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:883</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseRowMatrix_html_a6dd64418cc9fd8561a045006e91dcd1b"><div class="ttname"><a href="classtatami_1_1FragmentedSparseRowMatrix.html#a6dd64418cc9fd8561a045006e91dcd1b">tatami::FragmentedSparseRowMatrix::FragmentedSparseRowMatrix</a></div><div class="ttdeci">FragmentedSparseRowMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool check=true)</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:892</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix.</div><div class="ttdef"><b>Definition</b> Matrix.hpp:59</div></div>
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="acopy_8hpp_html"><div class="ttname"><a href="copy_8hpp.html">copy.hpp</a></div><div class="ttdoc">Copy data from one buffer to another.</div></div>
