@@ -628,11 +628,6 @@ public:
                         throw std::runtime_error("my_indices should be strictly increasing within each element of 'indices'");
                     }
                 }
-
-                // Check that iterator subtraction is safe.
-                // Various functions in 'sparse_utils' will subtract iterators when converting the lower_bound return value to an index.
-                // We cast to Index_ as it gives us a chance to skip the check at compile time, given that the size is no greater than the dimension extents.
-                sanisizer::can_ptrdiff<I<decltype(curi.begin())> >(attest_for_Index(static_cast<Index_>(curnnz)));
             }
         }
     }

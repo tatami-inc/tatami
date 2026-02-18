@@ -610,10 +610,6 @@ public:
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
 
-            // Check that iterator subtraction is safe.
-            // Various functions in 'sparse_utils' will subtract iterators when converting the lower_bound return value to an index.
-            sanisizer::can_ptrdiff<I<decltype(my_indices.begin())> >(nnzero);
-
             const auto npointers = my_pointers.size(); 
             const auto check_pointers = [&](const auto dim) {
                 // subtracting 1 from npointers (once we know it's >= 1) instead of adding 1 to dim, as the latter might overflow.
