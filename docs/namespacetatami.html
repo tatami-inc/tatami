@@ -3907,7 +3907,7 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. This will be called once in each worker with a different non-overlapping range, where the union of all ranges will cover <code>[0, tasks)</code>. </td></tr>
+    <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. This will be called no more than once in each worker with a different non-overlapping range, where the union of all ranges will cover <code>[0, tasks)</code>. </td></tr>
     <tr><td class="paramname">tasks</td><td>Number of tasks. This should be non-negative. </td></tr>
     <tr><td class="paramname">workers</td><td>Number of workers. This should be positive.</td></tr>
   </table>
