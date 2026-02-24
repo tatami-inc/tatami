@@ -21,8 +21,8 @@ option(TATAMI_FETCH_EXTERN "Automatically fetch tatami's external dependencies."
 if(TATAMI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(ltla_subpar 0.4.0 CONFIG REQUIRED)
-    find_package(ltla_sanisizer 0.1.0 CONFIG REQUIRED)
+    find_package(ltla_subpar 0.5.0 CONFIG REQUIRED)
+    find_package(ltla_sanisizer 0.2.0 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(tatami INTERFACE ltla::subpar ltla::sanisizer)

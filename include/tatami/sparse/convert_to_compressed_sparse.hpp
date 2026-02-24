@@ -74,19 +74,25 @@ void count_compressed_sparse_non_zeros_inconsistent(
     const int threads
 ) {
     auto nz_counts = sanisizer::create<std::vector<std::vector<Count_> > >(threads - 1);
-    for (auto& x : nz_counts) {
-        x.resize(primary);
-    }
+    const auto get_ptr = [&](const int t) -> Count_* {
+        if (t == 0) {
+            return output;
+        }
+        auto& buffer = nz_counts[t - 1];
+        sanisizer::resize(buffer, primary);
+        return buffer.data();
+    };
 
+    int num_used;
     if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
         opt.sparse_ordered_index = false;
 
-        parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
+        num_used = parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
             auto wrk = consecutive_extractor<true>(matrix, !row, start, length, opt);
             auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(primary);
-            const auto my_counts = (t > 0 ? nz_counts[t - 1].data() : output);
+            const auto my_counts = get_ptr(t);
 
             for (Index_ x = 0; x < length; ++x) {
                 const auto range = wrk->fetch(NULL, buffer_i.data());
@@ -97,10 +103,10 @@ void count_compressed_sparse_non_zeros_inconsistent(
         }, secondary, threads);
 
     } else {
-        parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
+        num_used = parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
             auto wrk = consecutive_extractor<false>(matrix, !row, start, length);
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(primary);
-            const auto my_counts = (t > 0 ? nz_counts[t - 1].data() : output);
+            const auto my_counts = get_ptr(t);
 
             for (Index_ x = 0; x < length; ++x) {
                 const auto ptr = wrk->fetch(buffer_v.data());
@@ -111,7 +117,8 @@ void count_compressed_sparse_non_zeros_inconsistent(
         }, secondary, threads);
     }
 
-    for (auto& y : nz_counts) {
+    for (int i = 1; i < num_used; ++i) {
+        const auto& y = nz_counts[i - 1];
         for (Index_ p = 0; p < primary; ++p) {
             output[p] += y[p];
         }
