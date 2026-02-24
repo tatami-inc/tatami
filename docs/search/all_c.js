@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['parallelize_0',['parallelize',['../namespacetatami.html#a3ea65e5b93eb55c03b00aca301e0396f',1,'tatami']]],
+  ['parallelize_0',['parallelize',['../namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97',1,'tatami']]],
   ['parallelize_2ehpp_1',['parallelize.hpp',['../parallelize_8hpp.html',1,'']]],
-  ['parallelize_5frange_2',['parallelize_range',['https://ltla.github.io/subpar/namespacesubpar.html#a6299ecb1a7d6184a37af21dfe09cc92e',1,'subpar']]],
+  ['parallelize_5frange_2',['parallelize_range',['https://ltla.github.io/subpar/namespacesubpar.html#aa2ea2594f895ea5837bd3df8ad31af14',1,'subpar']]],
   ['parallelize_5fsimple_3',['parallelize_simple',['https://ltla.github.io/subpar/namespacesubpar.html#ab039ee0d9f8d12394d4c59bb994c98ca',1,'subpar']]],
   ['pointer_4',['pointer',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a613940ff1968b36ce461efb2cb6b7d25',1,'tatami::SomeNumericArray::Iterator']]],
   ['pointers_5',['pointers',['../structtatami_1_1CompressedSparseContents.html#ad9410e8d3b32bc97086bebf2322c0ef8',1,'tatami::CompressedSparseContents']]],
