@@ -3896,9 +3896,9 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
   <table class="tparams">
     <tr><td class="paramname">parallel_</td><td>Whether the tasks should be run in parallel. If <code>false</code>, no parallelization is performed and all tasks are run on the current worker. </td></tr>
     <tr><td class="paramname">Function_</td><td>Function to be applied for a contiguous range of tasks. This should accept three arguments:<ul>
-<li><code>worker</code>, the worker number executing this task range. This will be passed as an <code>int</code>.</li>
-<li><code>task_start</code>, the start index of the task range. This will be passed as an <code>Index_</code>.</li>
-<li><code>task_length</code>, the number of tasks in the task range. This will be passed as an <code>Index_</code>. </li>
+<li><code>worker</code>, the worker ID executing this task range. This will be passed as an <code>int</code> in <code>[0, workers)</code>.</li>
+<li><code>task_start</code>, the start index of the task range. This will be passed as an <code>Index_</code> in <code>[0, tasks)</code>.</li>
+<li><code>task_length</code>, the number of tasks in the task range. This will be passed as an <code>Index_</code> in <code>(0, tasks)</code>, i.e., it is always positive. </li>
 </ul>
 </td></tr>
     <tr><td class="paramname">Index_</td><td>Integer type for the number of tasks.</td></tr>
@@ -3907,13 +3907,13 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. </td></tr>
+    <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. This will be called once in each worker with a different non-overlapping range, where the union of all ranges will cover <code>[0, tasks)</code>. </td></tr>
     <tr><td class="paramname">tasks</td><td>Number of tasks. This should be non-negative. </td></tr>
     <tr><td class="paramname">workers</td><td>Number of workers. This should be positive.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of workers (<code>K</code>) that were actually used. <code>K</code> is guaranteed to be no greater than <code>workers</code>. <code>fun()</code> will have been called once for each of <code>[0, ..., K - 1]</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of workers (<code>K</code>) that were actually used. <code>K</code> is guaranteed to be no greater than <code>workers</code>. <code>fun()</code> will have been called once for each of the worker IDs <code>[0, ..., K - 1]</code>. </dd></dl>
 
 </div>
 </div>
