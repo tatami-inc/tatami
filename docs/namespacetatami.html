@@ -3908,8 +3908,8 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. </td></tr>
-    <tr><td class="paramname">tasks</td><td>Number of tasks. </td></tr>
-    <tr><td class="paramname">workers</td><td>Number of workers.</td></tr>
+    <tr><td class="paramname">tasks</td><td>Number of tasks. This should be non-negative. </td></tr>
+    <tr><td class="paramname">workers</td><td>Number of workers. This should be positive.</td></tr>
   </table>
   </dd>
 </dl>
