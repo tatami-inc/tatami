@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <cstddef>
+#include <optional>
 
 #include "CompressedSparseMatrix.hpp"
 #include "convert_to_fragmented_sparse.hpp"
@@ -73,52 +74,66 @@ void count_compressed_sparse_non_zeros_inconsistent(
     Count_* const output,
     const int threads
 ) {
+    // To minimize false sharing, we allocate each buffer as a per-thread vector before moving it into the nz_counts for serial use.
+    // We skip the allocation for the first thread as this is allowed to use the (presumably zeroed) output array directly.
+    // Needless to say, the number of threads had better be positive.
     auto nz_counts = sanisizer::create<std::vector<std::vector<Count_> > >(threads - 1);
-    const auto get_ptr = [&](const int t) -> Count_* {
-        if (t == 0) {
+    const auto get_ptr = [&](const int t, std::optional<std::vector<Count_> >& nz_tmp) -> Count_* {
+        if (t) {
+            nz_tmp.emplace(cast_Index_to_container_size<std::vector<Count_> >(primary));
+            return nz_tmp->data();
+        } else {
             return output;
         }
-        auto& buffer = nz_counts[t - 1];
-        sanisizer::resize(buffer, primary);
-        return buffer.data();
     };
-
+    const auto save_output = [&](const int t, std::optional<std::vector<Count_> >& nz_tmp) {
+        if (t) {
+            nz_counts[t - 1] = std::move(*nz_tmp);
+        }
+    };
     int num_used;
+
     if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
         opt.sparse_ordered_index = false;
 
         num_used = parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
+            std::optional<std::vector<Count_> > nz_tmp;
+            Count_* cur_counts = get_ptr(t, nz_tmp);
+
             auto wrk = consecutive_extractor<true>(matrix, !row, start, length, opt);
             auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(primary);
-            const auto my_counts = get_ptr(t);
-
             for (Index_ x = 0; x < length; ++x) {
                 const auto range = wrk->fetch(NULL, buffer_i.data());
                 for (Index_ i = 0; i < range.number; ++i) {
-                    ++my_counts[range.index[i]];
+                    ++cur_counts[range.index[i]];
                 }
             }
+
+            save_output(t, nz_tmp);
         }, secondary, threads);
 
     } else {
         num_used = parallelize([&](const int t, const Index_ start, const Index_ length) -> void {
+            std::optional<std::vector<Count_> > nz_tmp;
+            Count_* cur_counts = get_ptr(t, nz_tmp);
+
             auto wrk = consecutive_extractor<false>(matrix, !row, start, length);
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(primary);
-            const auto my_counts = get_ptr(t);
-
             for (Index_ x = 0; x < length; ++x) {
                 const auto ptr = wrk->fetch(buffer_v.data());
                 for (Index_ p = 0; p < primary; ++p) {
-                    my_counts[p] += (ptr[p] != 0);
+                    cur_counts[p] += (ptr[p] != 0);
                 }
             }
+
+            save_output(t, nz_tmp);
         }, secondary, threads);
     }
 
-    for (int i = 1; i < num_used; ++i) {
-        const auto& y = nz_counts[i - 1];
+    for (int t = 1; t < num_used; ++t) {
+        const auto& y = nz_counts[t - 1];
         for (Index_ p = 0; p < primary; ++p) {
             output[p] += y[p];
         }
