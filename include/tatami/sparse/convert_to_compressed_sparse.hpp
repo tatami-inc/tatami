@@ -77,7 +77,7 @@ void count_compressed_sparse_non_zeros_inconsistent(
     // To minimize false sharing, we allocate each buffer as a per-thread vector before moving it into the nz_counts for serial use.
     // We skip the allocation for the first thread as this is allowed to use the (presumably zeroed) output array directly.
     // Needless to say, the number of threads had better be positive.
-    auto nz_counts = sanisizer::create<std::vector<std::vector<Count_> > >(threads - 1);
+    auto nz_counts = sanisizer::create<std::vector<std::optional<std::vector<Count_> > > >(threads - 1);
     const auto get_ptr = [&](const int t, std::optional<std::vector<Count_> >& nz_tmp) -> Count_* {
         if (t) {
             nz_tmp.emplace(cast_Index_to_container_size<std::vector<Count_> >(primary));
@@ -88,7 +88,7 @@ void count_compressed_sparse_non_zeros_inconsistent(
     };
     const auto save_output = [&](const int t, std::optional<std::vector<Count_> >& nz_tmp) {
         if (t) {
-            nz_counts[t - 1] = std::move(*nz_tmp);
+            nz_counts[t - 1] = std::move(nz_tmp);
         }
     };
     int num_used;
@@ -133,7 +133,7 @@ void count_compressed_sparse_non_zeros_inconsistent(
     }
 
     for (int t = 1; t < num_used; ++t) {
-        const auto& y = nz_counts[t - 1];
+        const auto& y = *(nz_counts[t - 1]);
         for (Index_ p = 0; p < primary; ++p) {
             output[p] += y[p];
         }

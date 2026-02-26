@@ -249,3 +249,36 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
         }
     }
 }
+
+class ConvertToCompressedSparseEmptyTest : public ::testing::TestWithParam<std::tuple<std::pair<int, int>, bool, bool, bool> > {};
+
+TEST_P(ConvertToCompressedSparseEmptyTest, Empty) {
+    auto params = GetParam();
+    auto dims = std::get<0>(params);
+    bool row_major_source = std::get<1>(params);
+    bool row_major_target = std::get<2>(params);
+    bool row_major_target2 = std::get<3>(params);
+
+    tatami::DenseMatrix<double, int, std::vector<double> > mat(dims.first, dims.second, std::vector<double>(), row_major_source);
+    auto spmat = tatami::convert_to_compressed_sparse<double, int>(mat, row_major_target, {});
+    EXPECT_EQ(spmat->nrow(), dims.first);
+    EXPECT_EQ(spmat->ncol(), dims.second);
+
+    auto spmat2 = tatami::convert_to_compressed_sparse<double, int>(mat, row_major_target2, {});
+    EXPECT_EQ(spmat2->nrow(), dims.first);
+    EXPECT_EQ(spmat2->ncol(), dims.second);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ConvertToCompressedSparse,
+    ConvertToCompressedSparseEmptyTest,
+    ::testing::Combine(
+        ::testing::Values(
+            std::make_pair(10, 0),
+            std::make_pair(0, 10)
+        ),
+        ::testing::Values(true, false), // whether the input dense matrix is row-major.
+        ::testing::Values(true, false), // whether the first converted sparse matrix is row-major.
+        ::testing::Values(true, false) // whether the second re-converted sparse matrix is row-major.
+    )
+);
