@@ -18,14 +18,18 @@ namespace tatami {
 
 /**
  * Apply a function to a set of tasks in parallel, usually for iterating over a dimension of a `Matrix`.
- * By default, this uses `subpar::parallelize_range()` internally, which splits the integer sequence `[0, tasks)` into `K` non-overlapping ranges where `K <= workers`.
- * Each range of tasks is passed to `fun()` for parallel execution using OpenMP if available and `<thread>` otherwise.
- * Task splitting is deterministic, i.e., given the same `tasks` and `workers`, `fun()` will be called with the same combinations of worker IDs and task ranges.
+ *
+ * This function splits the integer sequence `[0, tasks)` into `K` non-overlapping ranges where `K <= workers`, 
+ * passes each range to `fun()` for parallel execution, and returns the number of used workers `K`.
+ * By default, `parallelize()` is just an alias for `subpar::parallelize_range()`.
+ * (The order of arguments is different only for historical reasons.)
+ * Its purpose is to enable **tatami**-specific customization to the parallelization scheme without affecting other libraries that use **subpar**.
  *
  * Advanced users can override the default parallelization mechanism by defining `TATAMI_CUSTOM_PARALLEL`.
- * This should be a function-like macro or the name of a function that accepts the `fun`, `tasks` and `workers` arguments (see below),
- * deterministically splits tasks into a set of ranges, calls `fun()` on each range with any parallelization scheme, and then returns the number of used workers.
- * Once `TATAMI_CUSTOM_PARALLEL` is defined (and if `parallel_ = true`), any call to `parallelize()` will invoke the user-defined scheme instead.
+ * This should be a function-like macro or the name of a function that accepts the same `fun`, `tasks` and `workers` arguments below,
+ * deterministically splits tasks into a set of ranges, calls `fun()` on each range, and returns the number of used workers.
+ * (See the expectations for the `SUBPAR_CUSTOM_PARALLELIZE_RANGE` macro in `subpar::parallelize_range()` for details.)
+ * If `TATAMI_CUSTOM_PARALLEL` is defined and `parallel_ = true`, any call to `parallelize()` will invoke the user-defined scheme instead.
  *
  * @tparam parallel_ Whether the tasks should be run in parallel.
  * If `false`, no parallelization is performed and all tasks are run on the current worker.
