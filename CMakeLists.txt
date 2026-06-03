@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(tatami
-    VERSION 4.1.0
+    VERSION 4.1.1
     DESCRIPTION "A C++ interface for assorted matrix representations"
-    LANGUAGES CXX)
+    LANGUAGES CXX
+)
 
 add_library(tatami INTERFACE)
 add_library(tatami::tatami ALIAS tatami)
