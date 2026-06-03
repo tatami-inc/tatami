@@ -39,7 +39,7 @@ void refine_primary_limits(IndexIt_& indices_start, IndexIt_& indices_end, const
 
 template<class IndexIt_, typename Index_>
 void refine_primary_block_limits(IndexIt_& indices_start, IndexIt_& indices_end, const Index_ extent, const Index_ block_start, const Index_ block_length) {
-    refine_primary_limits(indices_start, indices_end, extent, block_start, block_start + block_length);
+    refine_primary_limits(indices_start, indices_end, extent, block_start, static_cast<Index_>(block_start + block_length));
 }
 
 template<typename Index_>
