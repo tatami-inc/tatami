@@ -9,7 +9,6 @@
 
 #include "sanisizer/sanisizer.hpp"
 
-#include "../utils/Index_to_container.hpp"
 #include "../utils/copy.hpp"
 
 /**
@@ -21,88 +20,18 @@
 namespace tatami {
 
 /**
- * @cond
- */
-namespace compress_triplets {
-
-template<class Primary_, class Secondary_>
-int is_ordered(const Primary_& primary, const Secondary_& secondary) {
-    if (!std::is_sorted(primary.begin(), primary.end())) {
-        return 2;
-    }
-
-    const auto nprimary = primary.size();
-    I<decltype(nprimary)> start = 0;
-    while (start < nprimary) {
-        I<decltype(nprimary)> end = start + 1;
-        while (end < nprimary && primary[end] == primary[start]) {
-            if (secondary[end] < secondary[end - 1]) {
-                // Quit on first failure; we've seen enough.
-                return 1;
-            }
-            ++end;
-        }
-        start = end;
-    }
-
-    return 0;
-}
-
-template<typename Size_, class Primary_, class Secondary_>
-void order(const int status, std::vector<Size_>& indices, const Primary_& primary, const Secondary_& secondary) {
-    if (status == 1) {
-        const auto nprimary = primary.size();
-        I<decltype(nprimary)> start = 0;
-        while (start < nprimary) {
-            I<decltype(nprimary)> end = start + 1;
-            while (end < nprimary && primary[end] == primary[start]) {
-                ++end;
-            }
-
-            // Checking if this particular run can be skipped.
-            if (!std::is_sorted(secondary.begin() + start, secondary.begin() + end)) {
-                std::sort(
-                    indices.begin() + start,
-                    indices.begin() + end,
-                    [&](const Size_ left, const Size_ right) -> bool {
-                        return secondary[left] < secondary[right];
-                    }
-                );
-            }
-            start = end;
-        }
-
-    } else if (status == 2) {
-        std::sort(
-            indices.begin(),
-            indices.end(),
-            [&](const Size_ left, const Size_ right) -> bool {
-                if (primary[left] == primary[right]) {
-                    return (secondary[left] < secondary[right]);
-                }
-                return (primary[left] < primary[right]);
-            }
-        );
-    }
-}
-
-}
-/**
- * @endcond
- */
-
-/**
  * For compressed sparse matrices, we consider the "primary" dimension to be that along which the structural non-zero elements are grouped in memory,
  * e.g., the columns and rows for compressed sparse row and column matrices, respectively.
  * Thus, the matrix only needs to retain the indices of structural non-zeros along the other (i.e., "secondary") dimension.
  *
+ * @tparam Pointer_ Integer type of the output index pointers. 
+ * @tparam Extent_ Integer type of the dimension extent.
  * @tparam Values_ Random-access container for the values.
  * This should have a `size()` method and a `[` access operator.
- * @tparam Pointer_ Integer type of the index pointers in the output.
  * @tparam PrimaryIndices_ Random access container for the primary indices.
- * This should have a `size()` method and a `[` access operator.
+ * This should have a `size()` method, a `begin()` and `end()` method, and a `[` access operator.
  * @tparam SecondaryIndices_ Random access container for the secondary indices.
- * This should have a `size()` method and a `[` access operator.
+ * This should have a `size()` method, a `begin()` and `end()` method, and a `[` access operator.
  *
  * @param num_primary Extent of the primary dimension.
  * @param values Values of the structural non-zeros.
@@ -119,48 +48,79 @@ void order(const int status, std::vector<Size_>& indices, const Primary_& primar
  * Note that `primary_indices` is not modified inside this function for efficiency.
  * If needed, a sorted `primary_indices` can be easily created by simply filling `primary_indices` based on the differences between consecutive index pointers.
  */
-template<class Values_, typename Pointer_ = I<decltype(std::declval<Values_>().size())>, class PrimaryIndices_, class SecondaryIndices_>
-std::vector<Pointer_> compress_sparse_triplets(std::size_t num_primary, Values_& values, const PrimaryIndices_& primary_indices, SecondaryIndices_& secondary_indices) {
-    const auto N = values.size();
-    if (!safe_non_negative_equal(N, primary_indices.size()) || !safe_non_negative_equal(N, secondary_indices.size())) {
+template<typename Pointer_ = std::size_t, typename Extent_, class Values_, class PrimaryIndices_, class SecondaryIndices_>
+std::vector<Pointer_> compress_sparse_triplets(const Extent_ num_primary, Values_& values, const PrimaryIndices_& primary_indices, SecondaryIndices_& secondary_indices) {
+    const auto num_triplets = values.size();
+    if (!sanisizer::is_equal(num_triplets, primary_indices.size()) || !sanisizer::is_equal(num_triplets, secondary_indices.size())) {
         throw std::runtime_error("'primary_indices', 'secondary_indices' and 'values' should have the same length");
     }
-
-    const int order_status = compress_triplets::is_ordered(primary_indices, secondary_indices);
-    if (order_status != 0) {
-        auto indices = sanisizer::create<std::vector<I<decltype(N)> > >(N);
-        std::iota(indices.begin(), indices.end(), static_cast<I<decltype(N)> >(0));
-        compress_triplets::order(order_status, indices, primary_indices, secondary_indices);
-
-        // Reordering values in place. This saves memory and allows us to work with Values_, RowIndices_, etc. that may not have well-defined copy constructors.
-        auto used = sanisizer::create<std::vector<unsigned char> >(N);
-        for (I<decltype(N)> i = 0; i < N; ++i) {
-            if (used[i]) {
-                continue;
-            }
-            auto current = i, replacement = indices[i];
-            used[i] = 1;
-
-            while (replacement != i) {
-                std::swap(secondary_indices[current], secondary_indices[replacement]);
-                std::swap(values[current], values[replacement]);
-                current = replacement;
-                used[current] = 1;
-                replacement = indices[replacement];
-            }
-        }
-    }
+    sanisizer::cast<Pointer_>(num_triplets); // check that additions and cumulative sums will not overflow the Pointer_ type.
 
     typedef std::vector<Pointer_> Output;
     typedef typename Output::size_type OutputSize;
-    Output output(sanisizer::sum<OutputSize>(num_primary, 1));
-    sanisizer::cast<Pointer_>(N); // check that additions and cumulative sums will not overflow the Pointer_ type.
-    for (const auto t : primary_indices) {
-        ++(output[sanisizer::sum_unsafe<OutputSize>(t, 1)]);
+    Output ptrs(sanisizer::sum<OutputSize>(num_primary, 1));
+    for (const auto p : primary_indices) {
+        ++ptrs[sanisizer::sum_unsafe<OutputSize>(p, 1)];
     }
-    std::partial_sum(output.begin(), output.end(), output.begin());
+    std::partial_sum(ptrs.begin(), ptrs.end(), ptrs.begin());
 
-    return output;
+    if (!std::is_sorted(primary_indices.begin(), primary_indices.end())) {
+        std::vector<Pointer_> copy(ptrs.begin(), ptrs.begin() + num_primary); // don't need the last element.
+        auto triplet_indices = sanisizer::create<std::vector<I<decltype(num_triplets)> > >(num_triplets);
+        for (I<decltype(num_triplets)> t = 0; t < num_triplets; ++t) {
+            auto& offset = copy[primary_indices[t]];
+            triplet_indices[offset] = t;
+            ++offset;
+        }
+
+        // Reordering in-place so that triplets are sorted by primary index.
+        // Ordering of secondary_indices is not yet guaranteed and will be handled later.
+        for (I<decltype(num_triplets)> i = 0; i < num_triplets; ++i) {
+            if (triplet_indices[i] == num_triplets) {
+                continue;
+            }
+
+            const auto cur_second = secondary_indices[i];
+            const auto cur_value = values[i];
+            auto current = i, replacement = triplet_indices[current];
+
+            while (replacement != i) {
+                secondary_indices[current] = secondary_indices[replacement];
+                values[current] = values[replacement];
+                triplet_indices[current] = num_triplets;
+                current = replacement;
+                replacement = triplet_indices[replacement];
+            }
+
+            secondary_indices[current] = cur_second;
+            values[current] = cur_value;
+            triplet_indices[current] = num_triplets;
+        }
+    }
+
+    std::vector<std::pair<I<decltype(secondary_indices[0])>, I<decltype(values[0])> > > sortspace;
+    for (Extent_ p = 0; p < num_primary; ++p) {
+        const auto start = ptrs[p];
+        const auto end = ptrs[p + 1]; // + 1 is safe as p < num_primary, which fits in an Extent_.
+        if (std::is_sorted(secondary_indices.begin() + start, secondary_indices.begin() + end)) {
+            continue; 
+        }
+
+        sortspace.clear();
+        sortspace.reserve(end - start);
+        for (Pointer_ x = start; x < end; ++x) {
+            sortspace.emplace_back(secondary_indices[x], values[x]);
+        }
+        std::sort(sortspace.begin(), sortspace.end());
+
+        auto ssIt = sortspace.begin();
+        for (Pointer_ x = start; x < end; ++x, ++ssIt) {
+            secondary_indices[x] = ssIt->first;
+            values[x] = ssIt->second;
+        }
+    }
+
+    return ptrs;
 }
 
 /**
