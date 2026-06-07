@@ -8643,8 +8643,8 @@
       <type>std::vector&lt; Pointer_ &gt;</type>
       <name>compress_sparse_triplets</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb624f8a5bc844d3e902cde63b84001f</anchor>
-      <arglist>(std::size_t num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</arglist>
+      <anchor>ab0d27353312d3a07a4415c7438398526</anchor>
+      <arglist>(const Extent_ num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

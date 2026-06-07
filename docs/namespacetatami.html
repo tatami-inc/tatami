@@ -699,9 +699,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ab4c8b88eeaa5fcbb1e5d47d020eb98ea" id="r_ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memTemplParams" colspan="2">template&lt;typename ValueOut_ , typename IndexOut_ , typename ValueIn_ , typename IndexIn_ &gt; </td></tr>
 <tr class="memitem:ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; ValueOut_, IndexOut_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab4c8b88eeaa5fcbb1e5d47d020eb98ea">make_DelayedCast</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; ValueIn_, IndexIn_ &gt; &gt; p)</td></tr>
 <tr class="separator:ab4c8b88eeaa5fcbb1e5d47d020eb98ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f" id="r_abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplParams" colspan="2">template&lt;class Values_ , typename Pointer_  = I&lt;decltype(std::declval&lt;Values_&gt;().size())&gt;, class PrimaryIndices_ , class SecondaryIndices_ &gt; </td></tr>
-<tr class="memitem:abb624f8a5bc844d3e902cde63b84001f"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Pointer_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abb624f8a5bc844d3e902cde63b84001f">compress_sparse_triplets</a> (std::size_t num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</td></tr>
-<tr class="separator:abb624f8a5bc844d3e902cde63b84001f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0d27353312d3a07a4415c7438398526" id="r_ab0d27353312d3a07a4415c7438398526"><td class="memTemplParams" colspan="2">template&lt;typename Pointer_  = std::size_t, typename Extent_ , class Values_ , class PrimaryIndices_ , class SecondaryIndices_ &gt; </td></tr>
+<tr class="memitem:ab0d27353312d3a07a4415c7438398526"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Pointer_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab0d27353312d3a07a4415c7438398526">compress_sparse_triplets</a> (const Extent_ num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</td></tr>
+<tr class="separator:ab0d27353312d3a07a4415c7438398526"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a305c49810ea7cad498399ad7c9dd0ee0" id="r_a305c49810ea7cad498399ad7c9dd0ee0"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , typename Count_ &gt; </td></tr>
 <tr class="memitem:a305c49810ea7cad498399ad7c9dd0ee0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a305c49810ea7cad498399ad7c9dd0ee0">count_compressed_sparse_non_zeros</a> (const <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; Value_, Index_ &gt; &amp;matrix, const bool row, Count_ *const output, const <a class="el" href="structtatami_1_1CountCompressedSparseNonZerosOptions.html">CountCompressedSparseNonZerosOptions</a> &amp;options)</td></tr>
 <tr class="separator:a305c49810ea7cad498399ad7c9dd0ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3154,18 +3154,18 @@ template&lt;typename ValueOut_ , typename IndexOut_ , typename ValueIn_ , typena
 
 </div>
 </div>
-<a id="abb624f8a5bc844d3e902cde63b84001f" name="abb624f8a5bc844d3e902cde63b84001f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb624f8a5bc844d3e902cde63b84001f">&#9670;&#160;</a></span>compress_sparse_triplets()</h2>
+<a id="ab0d27353312d3a07a4415c7438398526" name="ab0d27353312d3a07a4415c7438398526"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0d27353312d3a07a4415c7438398526">&#9670;&#160;</a></span>compress_sparse_triplets()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Values_ , typename Pointer_  = I&lt;decltype(std::declval&lt;Values_&gt;().size())&gt;, class PrimaryIndices_ , class SecondaryIndices_ &gt; </div>
+template&lt;typename Pointer_  = std::size_t, typename Extent_ , class Values_ , class PrimaryIndices_ , class SecondaryIndices_ &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt; Pointer_ &gt; tatami::compress_sparse_triplets </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>num_primary</em></span>, </td>
+          <td class="paramtype">const Extent_</td>          <td class="paramname"><span class="paramname"><em>num_primary</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -3187,10 +3187,11 @@ template&lt;class Values_ , typename Pointer_  = I&lt;decltype(std::declval&lt;V
 <p>For compressed sparse matrices, we consider the "primary" dimension to be that along which the structural non-zero elements are grouped in memory, e.g., the columns and rows for compressed sparse row and column matrices, respectively. Thus, the matrix only needs to retain the indices of structural non-zeros along the other (i.e., "secondary") dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">Pointer_</td><td>Integer type of the output index pointers. </td></tr>
+    <tr><td class="paramname">Extent_</td><td>Integer type of the dimension extent. </td></tr>
     <tr><td class="paramname">Values_</td><td>Random-access container for the values. This should have a <code>size()</code> method and a <code>[</code> access operator. </td></tr>
-    <tr><td class="paramname">Pointer_</td><td>Integer type of the index pointers in the output. </td></tr>
-    <tr><td class="paramname">PrimaryIndices_</td><td>Random access container for the primary indices. This should have a <code>size()</code> method and a <code>[</code> access operator. </td></tr>
-    <tr><td class="paramname">SecondaryIndices_</td><td>Random access container for the secondary indices. This should have a <code>size()</code> method and a <code>[</code> access operator.</td></tr>
+    <tr><td class="paramname">PrimaryIndices_</td><td>Random access container for the primary indices. This should have a <code>size()</code> method, a <code>begin()</code> and <code>end()</code> method, and a <code>[</code> access operator. </td></tr>
+    <tr><td class="paramname">SecondaryIndices_</td><td>Random access container for the secondary indices. This should have a <code>size()</code> method, a <code>begin()</code> and <code>end()</code> method, and a <code>[</code> access operator.</td></tr>
   </table>
   </dd>
 </dl>
