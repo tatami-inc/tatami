@@ -154,6 +154,7 @@ std::vector<Pointer_> compress_sparse_triplets(std::size_t num_primary, Values_&
     typedef std::vector<Pointer_> Output;
     typedef typename Output::size_type OutputSize;
     Output output(sanisizer::sum<OutputSize>(num_primary, 1));
+    sanisizer::cast<Pointer_>(N); // check that additions and cumulative sums will not overflow the Pointer_ type.
     for (const auto t : primary_indices) {
         ++(output[sanisizer::sum_unsafe<OutputSize>(t, 1)]);
     }

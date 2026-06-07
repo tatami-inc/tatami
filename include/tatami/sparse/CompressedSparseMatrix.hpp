@@ -636,7 +636,9 @@ public:
             const ElementType<IndexStorage_> max_index = (my_csr ? my_ncol : my_nrow);
             for (I<decltype(npointers)> i = 1; i < npointers; ++i) {
                 const auto start = my_pointers[i - 1], end = my_pointers[i];
-                if (end < start || end > last) {
+                if (start == end) {
+                    continue;
+                } else if (end < start) {
                     throw std::runtime_error("'pointers' should be in non-decreasing order");
                 }
 
@@ -646,7 +648,7 @@ public:
                     }
                 }
 
-                for (I<decltype(start)> j = start + 1; j < end; ++j) {
+                for (I<decltype(start)> j = start + 1; j < end; ++j) { // +1 is safe as we know start < end.
                     if (my_indices[j] <= my_indices[j - 1]) {
                         throw std::runtime_error("'indices' should be strictly increasing within each " + (my_csr ? std::string("row") : std::string("column")));
                     }

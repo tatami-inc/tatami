@@ -35,6 +35,8 @@ void count_compressed_sparse_non_zeros_consistent(
     Count_* const output,
     const int threads)
 {
+    sanisizer::cast<Count_>(secondary); // confirm that the counts don't overflow the Count_.
+
     if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
@@ -74,6 +76,8 @@ void count_compressed_sparse_non_zeros_inconsistent(
     Count_* const output,
     const int threads
 ) {
+    sanisizer::cast<Count_>(secondary); // confirm that the counts don't overflow the Count_.
+
     // To minimize false sharing, we allocate each buffer as a per-thread vector before moving it into the nz_counts for serial use.
     // We skip the allocation for the first thread as this is allowed to use the (presumably zeroed) output array directly.
     // Needless to say, the number of threads had better be positive.
@@ -444,7 +448,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
         const auto& store_i = frag.index;
 
         for (InputIndex_ p = 0; p < primary; ++p) {
-            output_p[p + 1] = output_p[p] + store_v[p].size();
+            output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p], store_v[p].size());
         }
 
         output_v.reserve(output_p.back());
@@ -458,7 +462,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
         // First pass to figure out how many non-zeros there are.
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
-            output_p[i] += output_p[i - 1];
+            output_p[i] = sanisizer::sum<StoredPointer_>(output_p[i], output_p[i - 1]);
         }
 
         // Second pass to actually fill our vectors.
