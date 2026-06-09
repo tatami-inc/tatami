@@ -13,6 +13,5 @@ var searchData=
   ['convert_5fto_5fdense_10',['convert_to_dense',['../namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd',1,'tatami::convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row_major, StoredValue_ *const store, const ConvertToDenseOptions &amp;options)'],['../namespacetatami.html#a512b86bd654884abaa4b42f0640b30e9',1,'tatami::convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row_major, const ConvertToDenseOptions &amp;options)']]],
   ['convert_5fto_5ffragmented_5fsparse_11',['convert_to_fragmented_sparse',['../namespacetatami.html#acac2470badcf668316367fdea9704035',1,'tatami']]],
   ['copy_5fn_12',['copy_n',['../namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7',1,'tatami']]],
-  ['count_5fcompressed_5fsparse_5fnon_5fzeros_13',['count_compressed_sparse_non_zeros',['../namespacetatami.html#a305c49810ea7cad498399ad7c9dd0ee0',1,'tatami']]],
-  ['create_5fcontainer_5fof_5findex_5fsize_14',['create_container_of_Index_size',['../namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc',1,'tatami']]]
+  ['create_5fcontainer_5fof_5findex_5fsize_13',['create_container_of_Index_size',['../namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc',1,'tatami']]]
 ];

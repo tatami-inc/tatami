@@ -259,8 +259,6 @@
     <name>convert_to_compressed_sparse.hpp</name>
     <path>tatami/sparse/</path>
     <filename>convert__to__compressed__sparse_8hpp.html</filename>
-    <class kind="struct">tatami::CountCompressedSparseNonZerosOptions</class>
-    <class kind="struct">tatami::FillCompressedSparseContentsOptions</class>
     <class kind="struct">tatami::CompressedSparseContents</class>
     <class kind="struct">tatami::RetrieveCompressedSparseContentsOptions</class>
     <class kind="struct">tatami::ConvertToCompressedSparseOptions</class>
@@ -935,17 +933,6 @@
       <name>num_threads</name>
       <anchorfile>structtatami_1_1ConvertToFragmentedSparseOptions.html</anchorfile>
       <anchor>a98c990f0656707334f81da2b129f6cad</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::CountCompressedSparseNonZerosOptions</name>
-    <filename>structtatami_1_1CountCompressedSparseNonZerosOptions.html</filename>
-    <member kind="variable">
-      <type>int</type>
-      <name>num_threads</name>
-      <anchorfile>structtatami_1_1CountCompressedSparseNonZerosOptions.html</anchorfile>
-      <anchor>a1764988e0ed3731f56d68e4682c50128</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -6322,17 +6309,6 @@
       <arglist>(const Index_ nrow, const Index_ ncol, Storage_ values)</arglist>
     </member>
   </compound>
-  <compound kind="struct">
-    <name>tatami::FillCompressedSparseContentsOptions</name>
-    <filename>structtatami_1_1FillCompressedSparseContentsOptions.html</filename>
-    <member kind="variable">
-      <type>int</type>
-      <name>num_threads</name>
-      <anchorfile>structtatami_1_1FillCompressedSparseContentsOptions.html</anchorfile>
-      <anchor>ac697de3dd7e7463b69af668560741145</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
   <compound kind="class">
     <name>tatami::FixedVectorOracle</name>
     <filename>classtatami_1_1FixedVectorOracle.html</filename>
@@ -7903,7 +7879,6 @@
     <class kind="struct">tatami::ConvertToCompressedSparseOptions</class>
     <class kind="struct">tatami::ConvertToDenseOptions</class>
     <class kind="struct">tatami::ConvertToFragmentedSparseOptions</class>
-    <class kind="struct">tatami::CountCompressedSparseNonZerosOptions</class>
     <class kind="class">tatami::DelayedBinaryIsometricArithmeticHelper</class>
     <class kind="struct">tatami::DelayedBinaryIsometricBooleanHelper</class>
     <class kind="struct">tatami::DelayedBinaryIsometricCompareHelper</class>
@@ -7960,7 +7935,6 @@
     <class kind="class">tatami::DenseColumnMatrix</class>
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="class">tatami::DenseRowMatrix</class>
-    <class kind="struct">tatami::FillCompressedSparseContentsOptions</class>
     <class kind="class">tatami::FixedVectorOracle</class>
     <class kind="class">tatami::FixedViewOracle</class>
     <class kind="class">tatami::ForcedDense</class>
@@ -8645,20 +8619,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab0d27353312d3a07a4415c7438398526</anchor>
       <arglist>(const Extent_ num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>count_compressed_sparse_non_zeros</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a305c49810ea7cad498399ad7c9dd0ee0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, Count_ *const output, const CountCompressedSparseNonZerosOptions &amp;options)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>fill_compressed_sparse_contents</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac8dd052eda49e8b530947753c24f1178</anchor>
-      <arglist>(const tatami::Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row, const Pointer_ *const pointers, StoredValue_ *const output_value, StoredIndex_ *const output_index, const FillCompressedSparseContentsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_, StoredPointer_ &gt;</type>

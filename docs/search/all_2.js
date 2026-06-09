@@ -33,7 +33,5 @@ var searchData=
   ['converttofragmentedsparseoptions_30',['ConvertToFragmentedSparseOptions',['../structtatami_1_1ConvertToFragmentedSparseOptions.html',1,'tatami']]],
   ['copy_2ehpp_31',['copy.hpp',['../copy_8hpp.html',1,'']]],
   ['copy_5fn_32',['copy_n',['../namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7',1,'tatami']]],
-  ['count_5fcompressed_5fsparse_5fnon_5fzeros_33',['count_compressed_sparse_non_zeros',['../namespacetatami.html#a305c49810ea7cad498399ad7c9dd0ee0',1,'tatami']]],
-  ['countcompressedsparsenonzerosoptions_34',['CountCompressedSparseNonZerosOptions',['../structtatami_1_1CountCompressedSparseNonZerosOptions.html',1,'tatami']]],
-  ['create_5fcontainer_5fof_5findex_5fsize_35',['create_container_of_Index_size',['../namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc',1,'tatami']]]
+  ['create_5fcontainer_5fof_5findex_5fsize_33',['create_container_of_Index_size',['../namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc',1,'tatami']]]
 ];
