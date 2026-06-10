@@ -104,12 +104,29 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a591cb6f5a549ccfaa705ba627e05fb73" id="r_a591cb6f5a549ccfaa705ba627e05fb73"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a591cb6f5a549ccfaa705ba627e05fb73">two_pass</a> = false</td></tr>
+<tr class="separator:a591cb6f5a549ccfaa705ba627e05fb73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98c990f0656707334f81da2b129f6cad" id="r_a98c990f0656707334f81da2b129f6cad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a98c990f0656707334f81da2b129f6cad">num_threads</a> = 1</td></tr>
 <tr class="separator:a98c990f0656707334f81da2b129f6cad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for <code><a class="el" href="namespacetatami.html#acac2470badcf668316367fdea9704035">convert_to_fragmented_sparse()</a></code>. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a591cb6f5a549ccfaa705ba627e05fb73" name="a591cb6f5a549ccfaa705ba627e05fb73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a591cb6f5a549ccfaa705ba627e05fb73">&#9670;&#160;</a></span>two_pass</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tatami::ConvertToFragmentedSparseOptions::two_pass = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether to possibly perform the retrieval in two passes. Setting this to <code>true</code> allows the function to perform a preliminary pass through <code>matrix</code> to determine the memory allocation. This aims to reduce memory consumption at the cost of some speed. </p>
+
+</div>
+</div>
 <a id="a98c990f0656707334f81da2b129f6cad" name="a98c990f0656707334f81da2b129f6cad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a98c990f0656707334f81da2b129f6cad">&#9670;&#160;</a></span>num_threads</h2>
 

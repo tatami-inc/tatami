@@ -929,6 +929,13 @@
     <name>tatami::ConvertToFragmentedSparseOptions</name>
     <filename>structtatami_1_1ConvertToFragmentedSparseOptions.html</filename>
     <member kind="variable">
+      <type>bool</type>
+      <name>two_pass</name>
+      <anchorfile>structtatami_1_1ConvertToFragmentedSparseOptions.html</anchorfile>
+      <anchor>a591cb6f5a549ccfaa705ba627e05fb73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>int</type>
       <name>num_threads</name>
       <anchorfile>structtatami_1_1ConvertToFragmentedSparseOptions.html</anchorfile>
@@ -7704,6 +7711,13 @@
   <compound kind="struct">
     <name>tatami::RetrieveFragmentedSparseContentsOptions</name>
     <filename>structtatami_1_1RetrieveFragmentedSparseContentsOptions.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>two_pass</name>
+      <anchorfile>structtatami_1_1RetrieveFragmentedSparseContentsOptions.html</anchorfile>
+      <anchor>a71e7fad8aa3e5355ff39854136e5bd2a</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="variable">
       <type>int</type>
       <name>num_threads</name>
