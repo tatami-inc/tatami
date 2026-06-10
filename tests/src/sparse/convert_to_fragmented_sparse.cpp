@@ -7,10 +7,10 @@
 
 #include "tatami_test/tatami_test.hpp"
 
-class ConvertToFragmentedSparseTest : public ::testing::TestWithParam<std::tuple<int, int, bool, bool, int> > {
+class ConvertToFragmentedSparseTest : public ::testing::TestWithParam<std::tuple<int, int, bool, bool, bool, int> > {
 protected:
     int NR, NC;
-    bool from_row, to_row;
+    bool from_row, to_row, two_pass;
     int nthreads;
 
     template<class Param>
@@ -19,7 +19,8 @@ protected:
         NC = std::get<1>(param);
         from_row = std::get<2>(param);
         to_row = std::get<3>(param);
-        nthreads = std::get<4>(param);
+        two_pass = std::get<4>(param);
+        nthreads = std::get<5>(param);
     }
 };
 
@@ -120,6 +121,7 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(10, 50, 100), // number of columns
         ::testing::Values(true, false), // from row major?
         ::testing::Values(true, false), // to row major?
+        ::testing::Values(true, false), // two-pass?
         ::testing::Values(1, 3)         // number of threads
     )
 );
