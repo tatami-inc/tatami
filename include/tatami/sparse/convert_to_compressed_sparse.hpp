@@ -65,64 +65,40 @@ void count_compressed_sparse_non_zeros_consistent(
     }
 }
 
-template<typename Index_, typename Count_>
-struct CountCompressedSparseNonZerosInconsistentWorkerResult {
-    CountCompressedSparseNonZerosInconsistentWorkerResult(const Index_ start, const Index_ length, const Index_ dim) : 
-        start(start),
-        length(length),
-        counts(sanisizer::cast<I<decltype(counts.size())> >(dim))
-    {}
-
-    Index_ start; 
-    Index_ length; 
-    std::vector<Count_> counts;
-};
-
-template<typename Index_, typename Count_>
-struct CountCompressedSparseNonZerosInconsistentResult {
-    Index_ start_main;
-    Index_ length_main;
-    std::optional<std::vector<std::optional<CountCompressedSparseNonZerosInconsistentWorkerResult<Index_, Count_> > > > workers;
-    int num_used;
-};
-
 template<typename Value_, typename Index_, typename Count_>
-CountCompressedSparseNonZerosInconsistentResult<Index_, Count_> count_compressed_sparse_non_zeros_inconsistent(
+void count_compressed_sparse_non_zeros_inconsistent(
     const tatami::Matrix<Value_, Index_>& matrix,
     const Index_ primary,
     const Index_ secondary,
     const bool row,
-    Count_* const nnz_main,
+    Count_* const nnz_inconsistent,
+    Index_* const nnz_consistent,
     const int threads
 ) {
     sanisizer::cast<Count_>(secondary); // confirm that the counts don't overflow the Count_.
     const bool is_sparse = matrix.is_sparse();
 
-    CountCompressedSparseNonZerosInconsistentResult<Index_, Count_> output;
-    std::fill_n(nnz_main, primary, 0);
-
     const bool do_parallel = threads > 1;
+    std::optional<std::vector<std::optional<std::vector<Count_> > > > all_partial_counts;
     if (do_parallel) {
-        output.workers.emplace(sanisizer::cast<I<decltype(output.workers->size())> >(threads - 1));
+        all_partial_counts.emplace(sanisizer::cast<I<decltype(all_partial_counts->size())> >(threads - 1));
     }
 
-    output.num_used = parallelize([&](const int thread, const Index_ start, const Index_ length) -> void {
+    std::fill_n(nnz_inconsistent, primary, 0);
+
+    const int num_used = parallelize([&](const int thread, const Index_ start, const Index_ length) -> void {
         // To minimize false sharing, we allocate each buffer as a per-thread vector before moving it into the nnz_workers for serial use.
         // We skip the allocation for the first thread as this is allowed to use the (presumably zeroed) nnz array directly.
         Count_* cur_counts;
-        std::optional<CountCompressedSparseNonZerosInconsistentWorkerResult<Index_, Count_> > count_holder;
+        std::optional<std::vector<Count_> > count_holder;
         if (!do_parallel) {
-            cur_counts = nnz_main;
-            output.start_main = start;
-            output.length_main = length;
+            cur_counts = nnz_inconsistent;
         } else {
             if (thread == 0) {
-                cur_counts = nnz_main;
-                output.start_main = start;
-                output.length_main = length;
+                cur_counts = nnz_inconsistent;
             } else {
-                count_holder.emplace(start, length, primary);
-                cur_counts = count_holder->counts.data();
+                count_holder.emplace(cast_Index_to_container_size<std::vector<Count_> >(primary));
+                cur_counts = count_holder->data();
             }
         }
 
@@ -138,6 +114,9 @@ CountCompressedSparseNonZerosInconsistentResult<Index_, Count_> count_compressed
                 for (Index_ i = 0; i < range.number; ++i) {
                     ++cur_counts[range.index[i]];
                 }
+                if (nnz_consistent != NULL) {
+                    nnz_consistent[start + x] = range.number;
+                }
             }
 
         } else {
@@ -145,20 +124,33 @@ CountCompressedSparseNonZerosInconsistentResult<Index_, Count_> count_compressed
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(primary);
             for (Index_ x = 0; x < length; ++x) {
                 const auto ptr = wrk->fetch(buffer_v.data());
+                Index_ count = 0;
                 for (Index_ p = 0; p < primary; ++p) {
-                    cur_counts[p] += (ptr[p] != 0);
+                    const bool is_nz = (ptr[p] != 0);
+                    cur_counts[p] += is_nz;
+                    count += is_nz;
+                }
+                if (nnz_consistent != NULL) {
+                    nnz_consistent[start + x] = count;
                 }
             }
         }
 
         if (do_parallel) {
             if (thread > 0) {
-                (*(output.workers))[thread - 1] = std::move(count_holder);
+                (*all_partial_counts)[thread - 1] = std::move(count_holder);
             }
         }
     }, secondary, threads);
 
-    return output;
+    if (do_parallel) {
+        for (int t = 1; t < num_used; ++t) {
+            const auto& y = *((*all_partial_counts)[t - 1]);
+            for (Index_ p = 0; p < primary; ++p) {
+                nnz_inconsistent[p] += y[p];
+            }
+        }
+    }
 }
 
 // For back-compatiblity only, this functionality should probably not have been exported.
@@ -184,15 +176,7 @@ void count_compressed_sparse_non_zeros(
     if (row == matrix.prefer_rows()) {
         count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output, options.num_threads);
     } else {
-        const auto res = count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output, options.num_threads);
-        if (res.workers.has_value()) {
-            for (int t = 1; t < res.num_used; ++t) {
-                const auto& y = (*(res.workers))[t - 1]->counts;
-                for (Index_ p = 0; p < primary; ++p) {
-                    output[p] += y[p];
-                }
-            }
-        }
+        count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output, static_cast<Index_*>(NULL), options.num_threads);
     }
 }
 
@@ -250,19 +234,6 @@ void fill_compressed_sparse_matrix_consistent(
     }
 }
 
-template<typename InputIndex_, typename Offset_>
-struct FillCompressedSparseMatrixInconsistentOffsets {
-    FillCompressedSparseMatrixInconsistentOffsets(const InputIndex_ start, const InputIndex_ length, std::vector<Offset_> offsets) :
-        start(start),
-        length(length),
-        offsets(std::move(offsets))
-    {}
-
-    InputIndex_ start;
-    InputIndex_ length;
-    std::vector<Offset_> offsets;
-};
-
 // Here, the general strategy is to store all non-zero elements in thread-specific containers, and then stitch them together into the output buffers in the serial section.
 // This avoids false sharing at the cost of almost doubling the memory usage as the number of threads increases - I think this is mostly acceptable.
 // (There is no penalty for single-threaded use as we just use the output buffers directly.) 
@@ -270,59 +241,35 @@ struct FillCompressedSparseMatrixInconsistentOffsets {
 // Contrast this to the previous approach, where we take a different slice of each primary dimension element in each thread.
 // This tends to be a suboptimal extraction strategy as each thread would need to do some indexing to find the slice.
 // Depending on the representation, the work done in each thread might be significant, e.g., a full read of the indices from file in a HDF5-backed sparse matrix.
-//
-// Each 'offsets' is basically an array of indptr (i.e. of length primary + 1).
-// For 'main_offsets', this represents the indptr of the entire matrix. 
-// For 'worker_offsets', each entry represents the indptr of the '[start, length)' submatrix (see members of the Offsets class above) along the secondary dimension.
-// Remember, we only use the worker offsets to fill up a thread-specific buffer, then we'll copy it to the main output buffers outside of the thread.
-template<typename InputValue_, typename InputIndex_, typename Offset_, typename StoredValue_, typename StoredIndex_>
+template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
 void fill_compressed_sparse_matrix_inconsistent(
     const tatami::Matrix<InputValue_, InputIndex_>& matrix,
     const InputIndex_ primary,
+    const InputIndex_ secondary,
     const bool row,
-    FillCompressedSparseMatrixInconsistentOffsets<InputIndex_, Offset_> main_offset,
-    std::optional<std::vector<FillCompressedSparseMatrixInconsistentOffsets<InputIndex_, Offset_> > > worker_offsets,
+    std::vector<Pointer_> offsets, // indptrs of the entire matrix. We'll need to modify this, so we take a copy.
+    const std::vector<InputIndex_>& secondary_counts, // count of the number of non-zero elements in each secondary dimension element, for buffer allocations.
     StoredValue_* const output_value,
     StoredIndex_* const output_index,
     const int threads
 ) {
-    int num_tasks = 1;
-    std::optional<std::vector<std::vector<StoredValue_> > > all_partial_values;
-    std::optional<std::vector<std::vector<StoredIndex_> > > all_partial_indices;
-    const bool do_parallel = worker_offsets.has_value();
+    const bool do_parallel = threads > 0;
+    InputIndex_ last_secondary_added = 0;
+    std::optional<std::vector<int> > secondary_thread_assignment;
+    std::optional<std::vector<std::optional<std::vector<StoredValue_> > > > all_partial_values;
+    std::optional<std::vector<std::optional<std::vector<StoredIndex_> > > > all_partial_primary_indices;
     if (do_parallel) {
-        const auto num_workers = worker_offsets->size();
-        assert(sanisizer::is_less_than(num_workers, threads));
-        num_tasks += num_workers; // this should be less than 'threads', so will fit in an int without further checks.
-        all_partial_values.emplace(sanisizer::cast<I<decltype(all_partial_values->size())> >(num_workers));
-        all_partial_indices.emplace(sanisizer::cast<I<decltype(all_partial_indices->size())> >(num_workers));
+        // Don't subtract 1 for the threads, thread 0 might not be processing start == 0.
+        // We aren't guaranteed that thread numbers are positive when storing the intermediate results. 
+        secondary_thread_assignment.emplace(cast_Index_to_container_size<std::vector<int> >(secondary));
+        all_partial_values.emplace(sanisizer::cast<I<decltype(all_partial_values->size())> >(threads));
+        all_partial_primary_indices.emplace(sanisizer::cast<I<decltype(all_partial_primary_indices->size())> >(threads));
     }
 
     const bool is_sparse = matrix.is_sparse();
-    parallelize([&](const int, const int task_start, const int task_length) -> void {
-        for (int task = task_start, task_end = task_start + task_length; task < task_end; ++task) {
-            InputIndex_ start, length;
-            Offset_* offset;
-            StoredValue_* vout;
-            StoredIndex_* iout;
-            std::optional<std::vector<StoredValue_> > tmp_values;
-            std::optional<std::vector<StoredIndex_> > tmp_indices;
-            if (task == 0) {
-                start = main_offset.start;
-                length = main_offset.length;
-                offset = main_offset.offsets.data();
-                vout = output_value;
-                iout = output_index;
-            } else {
-                auto& work = (*worker_offsets)[task - 1];
-                start = work.start;
-                length = work.length;
-                offset = work.offsets.data();
-                tmp_values.emplace(sanisizer::cast<I<decltype(tmp_values->size())> >(offset[primary]));
-                tmp_indices.emplace(sanisizer::cast<I<decltype(tmp_indices->size())> >(offset[primary]));
-                vout = tmp_values->data();
-                iout = tmp_indices->data();
-            }
+    parallelize([&](const int thread, const InputIndex_ start, const InputIndex_ length) -> void {
+        if (start == 0) {
+            last_secondary_added = start + length;
 
             if (is_sparse){ 
                 Options opt;
@@ -333,9 +280,9 @@ void fill_compressed_sparse_matrix_inconsistent(
                 for (InputIndex_ x = 0; x < length; ++x) {
                     const auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i) {
-                        auto& pos = offset[range.index[i]];
-                        vout[pos] = range.value[i];
-                        iout[pos] = start + x; 
+                        auto& pos = offsets[range.index[i]];
+                        output_value[pos] = range.value[i];
+                        output_index[pos] = x; // start == 0, so no need to add it.
                         ++pos;
                     }
                 }
@@ -348,38 +295,79 @@ void fill_compressed_sparse_matrix_inconsistent(
                     for (InputIndex_ p = 0; p < primary; ++p) {
                         const auto val = ptr[p]; 
                         if (val != 0) {
-                            auto& pos = offset[p];
-                            vout[pos] = val;
-                            iout[pos] = start + x;
+                            auto& pos = offsets[p];
+                            output_value[pos] = val;
+                            output_index[pos] = x; // start == 0, so no need to add it.
                             ++pos;
                         }
                     }
                 }
             }
 
-            if (task != 0) {
-                (*all_partial_values)[task - 1] = std::move(*tmp_values);
-                (*all_partial_indices)[task - 1] = std::move(*tmp_indices);
+        } else {
+            Pointer_ cur_nnz = 0;
+            for (InputIndex_ s = start, end = start + length; s < end; ++s) {
+                // This summation is known to be safe as Pointer_ can hold the total number of non-zeros in the entire matrix.
+                cur_nnz += secondary_counts[s];
             }
+            auto cur_values = sanisizer::create<std::vector<StoredValue_> >(cur_nnz);
+            auto cur_primary_indices = sanisizer::create<std::vector<StoredIndex_> >(cur_nnz);
+
+            if (is_sparse){ 
+                Options opt;
+                opt.sparse_ordered_index = false;
+                auto wrk = consecutive_extractor<true>(matrix, !row, start, length, opt);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
+                auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
+                Pointer_ position = 0;
+                for (InputIndex_ x = 0; x < length; ++x) {
+                    const auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
+                    std::copy_n(range.index, range.number, cur_primary_indices.begin() + position);
+                    std::copy_n(range.value, range.number, cur_values.begin() + position);
+                    position += range.number;
+                    (*secondary_thread_assignment)[start + x] = thread;
+                }
+
+            } else {
+                auto wrk = consecutive_extractor<false>(matrix, !row, start, length);
+                auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
+                Pointer_ position = 0;
+                for (InputIndex_ x = 0; x < length; ++x) {
+                    const auto ptr = wrk->fetch(buffer_v.data());
+                    for (InputIndex_ p = 0; p < primary; ++p) {
+                        const auto val = ptr[p]; 
+                        if (val != 0) {
+                            cur_primary_indices[position] = p;
+                            cur_values[position] = val;
+                            ++position;
+                        }
+                    }
+                    (*secondary_thread_assignment)[start + x] = thread;
+                }
+            }
+
+            (*all_partial_primary_indices)[thread] = std::move(cur_primary_indices);
+            (*all_partial_values)[thread] = std::move(cur_values);
         }
-    }, num_tasks, threads);
+    }, secondary, threads);
 
     if (do_parallel) {
-        for (int task = 1; task < num_tasks; ++task) {
-            Offset_ src_position = 0;
-            const auto& src_values = (*all_partial_values)[task - 1];
-            const auto& src_indices = (*all_partial_indices)[task - 1];
-            const auto& src_offsets = (*worker_offsets)[task - 1].offsets;
+        auto positions = sanisizer::create<std::vector<Pointer_> >(threads);
+        for (InputIndex_ s = last_secondary_added; s < secondary; ++s) {
+            const auto t = (*secondary_thread_assignment)[s];
+            const auto& cur_primary_indices = *((*all_partial_primary_indices)[t]);
+            const auto& cur_values = *((*all_partial_values)[t]);
+            auto& src_pos = positions[t];
 
-            for (InputIndex_ p = 0; p < primary; ++p) {
-                Offset_& dest_position = main_offset.offsets[p];
-                const auto next_src_position = src_offsets[p];
-                const auto src_len = next_src_position - src_position;
-                std::copy_n(src_values.begin() + src_position, src_len, output_value + dest_position);
-                std::copy_n(src_indices.begin() + src_position, src_len, output_index + dest_position);
-                dest_position += src_len;
-                src_position = next_src_position;
+            const auto cur_count = secondary_counts[s];
+            for (InputIndex_ i = 0; i < cur_count; ++i) {
+                auto& dest_pos = offsets[cur_primary_indices[i + src_pos]];
+                output_value[dest_pos] = cur_values[i + src_pos];
+                output_index[dest_pos] = s; 
+                ++dest_pos;
             }
+
+            src_pos += cur_count;;
         }
     }
 }
@@ -412,12 +400,9 @@ void fill_compressed_sparse_contents(
         fill_compressed_sparse_matrix_inconsistent(
             matrix,
             primary,
+            secondary,
             row,
-            FillCompressedSparseMatrixInconsistentOffsets<InputIndex_, Pointer_>(
-                0,
-                secondary,
-                std::vector<Pointer_>(pointers, pointers + sanisizer::sum<std::size_t>(primary, 1)) // making a copy because this is modified on input.
-            ),
+            std::vector<Pointer_>(pointers, pointers + sanisizer::sum<std::size_t>(primary, 1)), // making a copy because this is modified on input.
             {},
             output_value,
             output_index,
@@ -559,27 +544,8 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 
     } else {
         // First pass to figure out how many non-zeros there are.
-        std::optional<std::vector<FillCompressedSparseMatrixInconsistentOffsets<InputIndex_, StoredPointer_> > > worker_offsets;
-        auto count_res = count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, options.num_threads);
-
-        // Constructing the primary pointers to use as offsets for filling.
-        if (count_res.workers.has_value()) {
-            worker_offsets.emplace();
-            worker_offsets->reserve(count_res.num_used - 1); 
-
-            for (int i = 1; i < count_res.num_used; ++i) {
-                std::vector<StoredPointer_> cur_pointers(primary_p1); 
-                auto& cur_res = (*(count_res.workers))[i - 1];
-                for (InputIndex_ i = 0; i < primary; ++i) {
-                    output_p[i + 1] += cur_res->counts[i]; // this should still be safe as it has an upper limit of Index_.
-                    cur_pointers[i + 1] = sanisizer::sum<StoredPointer_>(cur_pointers[i], cur_res->counts[i]);
-                }
-                worker_offsets->emplace_back(cur_res->start, cur_res->length, std::move(cur_pointers));
-            }
-
-            count_res.workers->clear(); // free up some memory. 
-        }
-
+        auto secondary_counts = create_container_of_Index_size<std::vector<InputIndex_> >(secondary);
+        count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, secondary_counts.data(), options.num_threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] = sanisizer::sum<StoredPointer_>(output_p[i], output_p[i - 1]);
         }
@@ -590,13 +556,10 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
         fill_compressed_sparse_matrix_inconsistent(
             matrix,
             primary,
+            secondary,
             row,
-            FillCompressedSparseMatrixInconsistentOffsets<InputIndex_, StoredPointer_>(
-                count_res.start_main,
-                count_res.length_main,
-                output_p // making a copy because this is modified on output.
-            ),
-            std::move(worker_offsets),
+            output_p,
+            secondary_counts,
             output_v.data(),
             output_i.data(),
             options.num_threads
