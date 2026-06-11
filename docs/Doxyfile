@@ -997,6 +997,7 @@ RECURSIVE              = YES
 EXCLUDE                = ../include/tatami/subset/utils.hpp \
                          ../include/tatami/sparse/secondary_extraction.hpp \
                          ../include/tatami/sparse/primary_extraction.hpp \
+                         ../include/tatami/sparse/convert_to_sparse_utils.hpp \
                          ../include/tatami/isometric/binary/utils.hpp \
                          ../include/tatami/isometric/depends_utils.hpp
 
