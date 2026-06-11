@@ -322,32 +322,58 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
     const InputIndex_ primary = (row ? NR : NC);
     const InputIndex_ secondary = (row ? NC : NR);
 
-    const auto primary_p1 = sanisizer::sum<I<decltype(output_p.size())> >(attest_for_Index(primary), 1);
-    output_p.resize(primary_p1);
+    output_p.resize(sanisizer::sum<I<decltype(output_p.size())> >(attest_for_Index(primary), 1));
 
     if (!options.two_pass) {
-        // Doing a single fragmented run and then concatenating everything together.
-        const auto frag = retrieve_fragmented_sparse_contents<InputValue_, InputIndex_>(
+        const bool use_rows = matrix.prefer_rows();
+        const auto frag = retrieve_fragmented_sparse_contents_consistent<InputValue_, InputIndex_>(
             matrix,
-            row,
+            use_rows,
             [&]{
                 RetrieveFragmentedSparseContentsOptions roptions;
                 roptions.num_threads = options.num_threads;
                 return roptions;
             }()
         );
-        const auto& store_v = frag.value;
-        const auto& store_i = frag.index;
 
-        for (InputIndex_ p = 0; p < primary; ++p) {
-            output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p], store_v[p].size());
-        }
+        if (use_rows == row) {
+            // Now concatenating everything together, if we're fortunate enough that the dimensions are consistent.
+            for (InputIndex_ p = 0; p < primary; ++p) {
+                output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p], frag.value[p].size());
+            }
 
-        output_v.reserve(output_p.back());
-        output_i.reserve(output_p.back());
-        for (InputIndex_ p = 0; p < primary; ++p) {
-            output_v.insert(output_v.end(), store_v[p].begin(), store_v[p].end());
-            output_i.insert(output_i.end(), store_i[p].begin(), store_i[p].end());
+            output_v.reserve(output_p.back());
+            output_i.reserve(output_p.back());
+            for (InputIndex_ p = 0; p < primary; ++p) {
+                output_v.insert(output_v.end(), frag.value[p].begin(), frag.value[p].end());
+                output_i.insert(output_i.end(), frag.index[p].begin(), frag.index[p].end());
+            }
+
+        } else {
+            // Otherwise we need to compute the non-zeros on the inconsistent dimension before populating the output vectors.
+            for (InputIndex_ s = 0; s < secondary; ++s) {
+                for (const auto p : frag.index[s]) {
+                    output_p[p + 1] += 1; // increments are safe at this point: p < primary and the total count must be less than 'secondary'.
+                }
+            }
+            for (InputIndex_ p = 0; p < primary; ++p) {
+                output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p + 1], output_p[p]);
+            }
+
+            sanisizer::resize(output_v, output_p.back());
+            sanisizer::resize(output_i, output_p.back());
+            std::vector<StoredPointer_> offsets(output_p.begin(), output_p.begin() + primary);
+            for (InputIndex_ s = 0; s < secondary; ++s) {
+                const auto& cur_i = frag.index[s];
+                const auto& cur_v = frag.value[s];
+                const auto nnz = cur_i.size();
+                for (I<decltype(nnz)> i = 0; i < nnz; ++i) {
+                    auto& pos = offsets[cur_i[i]];
+                    output_v[pos] = cur_v[i];
+                    output_i[pos] = s;
+                    ++pos;
+                }
+            }
         }
 
     } else if (row == matrix.prefer_rows()) {
