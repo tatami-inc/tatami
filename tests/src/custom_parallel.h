@@ -3,19 +3,14 @@
 
 // Put this before any tatami imports.
 #ifdef CUSTOM_PARALLEL_TEST
-#include "subpar/subpar.hpp"
-#define TATAMI_CUSTOM_PARALLEL(fun, ntasks, nthreads) ::subpar::parallelize_range(nthreads, ntasks, std::move(fun))
-#endif
-
-#ifdef CONVERT_SPARSE_CUSTOM_PARALLEL_TEST
 #include <thread>
 #include <vector>
 
 #include "sanisizer/sanisizer.hpp"
 
-// convert_to_compressed_sparse() has an unusual work-sharing arrangement when filling the output arrays.
+// To test the override capabilities, we create a new function where the first worker gets the last range.
+// This is because some of our conversion functions have unusual work-sharing arrangements when filling the output arrays.
 // We need to check that we are not making assumptions about the first range being assigned to thread 0,
-// This code is largely copied from subpar::parallelize_range but the first worker gets the last range.
 template<class Function_, typename Task_>
 int weird_parallelize(Function_ run_task_range, const Task_ num_tasks, const int num_workers) {
     if (num_tasks <= 0) {

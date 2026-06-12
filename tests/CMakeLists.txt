@@ -122,11 +122,3 @@ add_executable(
 )
 decorate_executable(cuspar_test)
 target_compile_definitions(cuspar_test PRIVATE CUSTOM_PARALLEL_TEST=1)
-
-add_executable(
-    cuspar_convert_sparse_test
-    src/sparse/convert_to_compressed_sparse.cpp
-    src/sparse/convert_to_fragmented_sparse.cpp
-)
-decorate_executable(cuspar_convert_sparse_test)
-target_compile_definitions(cuspar_convert_sparse_test PRIVATE CONVERT_COMPRESSED_SPARSE_CUSTOM_PARALLEL_TEST=1)
