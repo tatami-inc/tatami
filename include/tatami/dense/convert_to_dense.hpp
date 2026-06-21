@@ -191,16 +191,12 @@ void convert_to_dense_running_from_dense(const Matrix<InputValue_, InputIndex_>&
             const InputIndex_ alloc = std::min(length, block_size);
             std::vector<InputValue_> bigbuffer(sanisizer::product_unsafe<typename std::vector<InputValue_>::size_type>(primary, alloc));
             std::vector<const InputValue_*> ptrs(alloc); // no need for protection here, we know that alloc <= 16.
-            std::vector<InputValue_*> buf_ptrs(alloc);
-            for (InputIndex_ i = 0; i < alloc; ++i) {
-                buf_ptrs[i] = bigbuffer.data() + sanisizer::product_unsafe<std::size_t>(primary, i);
-            }
 
             InputIndex_ sec_i = 0;
             while (sec_i < length) {
                 const InputIndex_ sec_to_process = std::min(static_cast<InputIndex_>(length - sec_i), block_size);
                 for (InputIndex_ x = 0; x < sec_to_process; ++x) {
-                    ptrs[x] = wrk->fetch(buf_ptrs[x]);
+                    ptrs[x] = wrk->fetch(bigbuffer.data() + sanisizer::product_unsafe<std::size_t>(primary, x));
                 }
 
                 InputIndex_ prim_i = 0;
