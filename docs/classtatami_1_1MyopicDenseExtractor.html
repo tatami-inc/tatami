@@ -146,7 +146,6 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p><code>buffer</code> may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store. This can be checked by comparing the returned pointer to <code>buffer</code>; if they are the same, <code>buffer</code> has been filled.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the target dimension element, i.e., the row or column index. </td></tr>
@@ -160,7 +159,9 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the values from the <code>i</code>-th dimension element. This is guaranteed to hold <code>N</code> values. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the values from the <code>i</code>-th dimension element. This is guaranteed to be filled with <code>N</code> values.</dd></dl>
+<p>If the returned pointer is equal to <code>buffer</code>, this means that <code>buffer</code> has been filled with the contents of the <code>i</code>-th dimension element.</p>
+<p>If the returned pointer is not equal to <code>buffer</code>, it should refer to another array of length <code>N</code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>buffer</code>. </p>
 
 </div>
 </div>

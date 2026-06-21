@@ -161,7 +161,9 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next element of the target dimension, as predicted by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to have <code>N</code> values. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next element of the target dimension, as predicted by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to be filled with <code>N</code> values.</dd></dl>
+<p>If the returned pointer is equal to <code>buffer</code>, this means that <code>buffer</code> has been filled with the contents of the <code>i</code>-th dimension element.</p>
+<p>If the returned pointer is not equal to <code>buffer</code>, it should refer to another array of length <code>N</code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>buffer</code>. </p>
 
 </div>
 </div>
@@ -202,7 +204,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next dimension element, as predicted by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to have <code>N</code> values. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next dimension element, see the other <code><a class="el" href="#ae0376a4c48d7f4d55632ed42fd166fa1">fetch()</a></code> overload for more details. </dd></dl>
 
 <p>Implemented in <a class="el" href="structtatami_1_1PseudoOracularDenseExtractor.html#a2fafc47daf67364fdae457f7cf7acac4">tatami::PseudoOracularDenseExtractor&lt; Value_, Index_ &gt;</a>.</p>
 
