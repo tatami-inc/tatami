@@ -273,134 +273,130 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            <span class="keyword">const</span> InputIndex_ alloc = std::min(length, block_size);</div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            std::vector&lt;InputValue_&gt; bigbuffer(sanisizer::product_unsafe&lt;<span class="keyword">typename</span> std::vector&lt;InputValue_&gt;::size_type&gt;(primary, alloc));</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            std::vector&lt;const InputValue_*&gt; ptrs(alloc); <span class="comment">// no need for protection here, we know that alloc &lt;= 16.</span></div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            std::vector&lt;InputValue_*&gt; buf_ptrs(alloc);</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>            <span class="keywordflow">for</span> (InputIndex_ i = 0; i &lt; alloc; ++i) {</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                buf_ptrs[i] = bigbuffer.data() + sanisizer::product_unsafe&lt;std::size_t&gt;(primary, i);</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            }</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            InputIndex_ sec_i = 0;</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            <span class="keywordflow">while</span> (sec_i &lt; length) {</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                <span class="keyword">const</span> InputIndex_ sec_to_process = std::min(<span class="keyword">static_cast&lt;</span>InputIndex_<span class="keyword">&gt;</span>(length - sec_i), block_size);</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; sec_to_process; ++x) {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                    ptrs[x] = wrk-&gt;fetch(buf_ptrs[x]);</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                }</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                InputIndex_ prim_i = 0;</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                <span class="keywordflow">while</span> (prim_i &lt; primary) {</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                    <span class="keyword">const</span> InputIndex_ prim_end = prim_i + std::min(<span class="keyword">static_cast&lt;</span>InputIndex_<span class="keyword">&gt;</span>(primary - prim_i), block_size);</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                    <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; sec_to_process; ++x) {</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                        <span class="keyword">const</span> <span class="keyword">auto</span> input = ptrs[x];</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                        <span class="keywordflow">for</span> (InputIndex_ p = prim_i; p &lt; prim_end; ++p) {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                            store[sanisizer::nd_offset&lt;std::size_t&gt;(start + sec_i + x, secondary, p)] = input[p];</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                        }</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>                    }</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                    prim_i = prim_end;</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                }</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                sec_i += sec_to_process;</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            }</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            ThreadSpecificHolder tmp(start, length, primary);</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; length; ++x) {</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                <span class="keyword">const</span> <span class="keyword">auto</span> buffer = tmp.values.data() + sanisizer::product_unsafe&lt;std::size_t&gt;(x, primary);</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                <span class="keyword">const</span> <span class="keyword">auto</span> ptr = wrk-&gt;fetch(buffer);</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                <a class="code hl_function" href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">copy_n</a>(ptr, primary, buffer);</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            }</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            (*all_partial_contents)[thread - 1] = std::move(tmp);</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        }</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    }, secondary, options.num_threads);</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    <span class="comment">// Our reduction step performs the transposition to the output array.</span></div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    <span class="keywordflow">if</span> (do_parallel) {</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> u = 1; u &lt; num_used; ++u) {</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tmp_start = (*all_partial_contents)[u - 1]-&gt;start;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tmp_length = (*all_partial_contents)[u - 1]-&gt;length;</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; tmp_values = (*all_partial_contents)[u - 1]-&gt;values;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            <a class="code hl_function" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">transpose</a>(tmp_values.data(), tmp_length, primary, primary, store + tmp_start, secondary);</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        }</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    }</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>}</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="foldopen" id="foldopen00257" data-start="{" data-end="}">
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno"><a class="line" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">  257</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row_major, StoredValue_* <span class="keyword">const</span> store, <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToDenseOptions.html">ConvertToDenseOptions</a>&amp; options) {</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="keywordflow">if</span> (row_major == matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        convert_to_dense_direct(matrix, row_major, store, options);</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">is_sparse</a>()) {</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        convert_to_dense_running_from_sparse(matrix, row_major, store, options);</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        convert_to_dense_running_from_dense(matrix, row_major, store, options);</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    }</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>}</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>            InputIndex_ sec_i = 0;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            <span class="keywordflow">while</span> (sec_i &lt; length) {</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                <span class="keyword">const</span> InputIndex_ sec_to_process = std::min(<span class="keyword">static_cast&lt;</span>InputIndex_<span class="keyword">&gt;</span>(length - sec_i), block_size);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; sec_to_process; ++x) {</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                    ptrs[x] = wrk-&gt;fetch(bigbuffer.data() + sanisizer::product_unsafe&lt;std::size_t&gt;(primary, x));</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                }</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                InputIndex_ prim_i = 0;</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                <span class="keywordflow">while</span> (prim_i &lt; primary) {</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                    <span class="keyword">const</span> InputIndex_ prim_end = prim_i + std::min(<span class="keyword">static_cast&lt;</span>InputIndex_<span class="keyword">&gt;</span>(primary - prim_i), block_size);</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                    <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; sec_to_process; ++x) {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                        <span class="keyword">const</span> <span class="keyword">auto</span> input = ptrs[x];</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                        <span class="keywordflow">for</span> (InputIndex_ p = prim_i; p &lt; prim_end; ++p) {</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                            store[sanisizer::nd_offset&lt;std::size_t&gt;(start + sec_i + x, secondary, p)] = input[p];</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                        }</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                    }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                    prim_i = prim_end;</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                }</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                sec_i += sec_to_process;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            }</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>            ThreadSpecificHolder tmp(start, length, primary);</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">for</span> (InputIndex_ x = 0; x &lt; length; ++x) {</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                <span class="keyword">const</span> <span class="keyword">auto</span> buffer = tmp.values.data() + sanisizer::product_unsafe&lt;std::size_t&gt;(x, primary);</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                <span class="keyword">const</span> <span class="keyword">auto</span> ptr = wrk-&gt;fetch(buffer);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                <a class="code hl_function" href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">copy_n</a>(ptr, primary, buffer);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            }</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            (*all_partial_contents)[thread - 1] = std::move(tmp);</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        }</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    }, secondary, options.num_threads);</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span> </div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    <span class="comment">// Our reduction step performs the transposition to the output array.</span></div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <span class="keywordflow">if</span> (do_parallel) {</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> u = 1; u &lt; num_used; ++u) {</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tmp_start = (*all_partial_contents)[u - 1]-&gt;start;</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            <span class="keyword">const</span> <span class="keyword">auto</span> tmp_length = (*all_partial_contents)[u - 1]-&gt;length;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            <span class="keyword">const</span> <span class="keyword">auto</span>&amp; tmp_values = (*all_partial_contents)[u - 1]-&gt;values;</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            <a class="code hl_function" href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">transpose</a>(tmp_values.data(), tmp_length, primary, primary, store + tmp_start, secondary);</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>    }</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>}</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="foldopen" id="foldopen00253" data-start="{" data-end="}">
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">  253</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row_major, StoredValue_* <span class="keyword">const</span> store, <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToDenseOptions.html">ConvertToDenseOptions</a>&amp; options) {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    <span class="keywordflow">if</span> (row_major == matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a>()) {</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        convert_to_dense_direct(matrix, row_major, store, options);</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">is_sparse</a>()) {</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        convert_to_dense_running_from_sparse(matrix, row_major, store, options);</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        convert_to_dense_running_from_dense(matrix, row_major, store, options);</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    }</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>}</div>
 </div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="keyword">template</span> &lt;</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <span class="keyword">typename</span> Value_,</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    <span class="keyword">typename</span> Index_,</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    <span class="keyword">typename</span> StoredValue_ = Value_, </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    <span class="keyword">typename</span> InputValue_,</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keyword">typename</span> InputIndex_</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>&gt;</div>
-<div class="foldopen" id="foldopen00288" data-start="{" data-end="}">
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno"><a class="line" href="namespacetatami.html#a512b86bd654884abaa4b42f0640b30e9">  288</a></span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row_major, <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToDenseOptions.html">ConvertToDenseOptions</a>&amp; options) {</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <span class="keyword">const</span> <span class="keyword">auto</span> NR = matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    <span class="keyword">const</span> <span class="keyword">auto</span> NC = matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keyword">const</span> <span class="keyword">auto</span> buffer_size = sanisizer::product&lt;typename std::vector&lt;StoredValue_&gt;::size_type&gt;(attest_for_Index(NR), attest_for_Index(NC));</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    std::vector&lt;StoredValue_&gt; buffer(buffer_size);</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(matrix, row_major, buffer.data(), options);</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt;(</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(buffer)&gt; &gt;(</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            sanisizer::cast&lt;Index_&gt;(attest_for_Index(NR)),</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>            sanisizer::cast&lt;Index_&gt;(attest_for_Index(NC)),</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            std::move(buffer),</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            row_major</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        )</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    );</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>}</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="keyword">template</span> &lt;</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    <span class="keyword">typename</span> Value_,</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <span class="keyword">typename</span> Index_,</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keyword">typename</span> StoredValue_ = Value_, </div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    <span class="keyword">typename</span> InputValue_,</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <span class="keyword">typename</span> InputIndex_</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>&gt;</div>
+<div class="foldopen" id="foldopen00284" data-start="{" data-end="}">
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno"><a class="line" href="namespacetatami.html#a512b86bd654884abaa4b42f0640b30e9">  284</a></span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row_major, <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToDenseOptions.html">ConvertToDenseOptions</a>&amp; options) {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    <span class="keyword">const</span> <span class="keyword">auto</span> NR = matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>();</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keyword">const</span> <span class="keyword">auto</span> NC = matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>();</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <span class="keyword">const</span> <span class="keyword">auto</span> buffer_size = sanisizer::product&lt;typename std::vector&lt;StoredValue_&gt;::size_type&gt;(attest_for_Index(NR), attest_for_Index(NC));</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    std::vector&lt;StoredValue_&gt; buffer(buffer_size);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(matrix, row_major, buffer.data(), options);</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt;(</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;Value_, Index_, I&lt;<span class="keyword">decltype</span>(buffer)&gt; &gt;(</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            sanisizer::cast&lt;Index_&gt;(attest_for_Index(NR)),</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            sanisizer::cast&lt;Index_&gt;(attest_for_Index(NC)),</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            std::move(buffer),</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            row_major</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        )</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    );</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>}</div>
 </div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="comment">// Backwards compatbility.</span></div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row_major, StoredValue_* store, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(</div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>        *matrix,</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        row_major,</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        store,</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        [&amp;]{</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>            ConvertToDenseOptions options;</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>            options.num_threads = threads;</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>            <span class="keywordflow">return</span> options;</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>        }()</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    );</div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>}</div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span> </div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Index_ = <span class="keywordtype">int</span>, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row_major, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>    ConvertToDenseOptions options;</div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    options.num_threads = threads;</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense&lt;Value_, Index_, StoredValue_&gt;</a>(</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>        *matrix,</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>        row_major,</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        [&amp;]{</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>            ConvertToDenseOptions options;</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>            options.num_threads = threads;</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>            <span class="keywordflow">return</span> options;</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        }()</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    );</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>}</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span> </div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, StoredValue_* store, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(matrix, row_, store, threads);</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>}</div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span> </div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense&lt;Value_, Index_, StoredValue_&gt;</a>(matrix, row_, threads);</div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>}</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>}</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span> </div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span><span class="comment">// Backwards compatbility.</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row_major, StoredValue_* store, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        *matrix,</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        row_major,</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        store,</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        [&amp;]{</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>            ConvertToDenseOptions options;</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>            options.num_threads = threads;</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>            <span class="keywordflow">return</span> options;</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>        }()</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    );</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>}</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span> </div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Value_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Index_ = <span class="keywordtype">int</span>, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row_major, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>    ConvertToDenseOptions options;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    options.num_threads = threads;</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense&lt;Value_, Index_, StoredValue_&gt;</a>(</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>        *matrix,</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>        row_major,</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>        [&amp;]{</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            ConvertToDenseOptions options;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>            options.num_threads = threads;</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>            <span class="keywordflow">return</span> options;</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        }()</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    );</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>}</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span> </div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, StoredValue_* store, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(matrix, row_, store, threads);</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>}</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">convert_to_dense&lt;Value_, Index_, StoredValue_&gt;</a>(matrix, row_, threads);</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>}</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>}</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span> </div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aDenseMatrix_8hpp_html"><div class="ttname"><a href="DenseMatrix_8hpp.html">DenseMatrix.hpp</a></div><div class="ttdoc">Dense matrix representation.</div></div>
 <div class="ttc" id="aIndex__to__container_8hpp_html"><div class="ttname"><a href="Index__to__container_8hpp.html">Index_to_container.hpp</a></div><div class="ttdoc">Convert index type to container size.</div></div>
 <div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:180</div></div>
@@ -415,7 +411,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacetatami_html_a4d15fa0c5213ad27fc0c99c3dd5c02ad"><div class="ttname"><a href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">tatami::can_cast_Index_to_container_size</a></div><div class="ttdeci">Index_ can_cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:49</div></div>
 <div class="ttc" id="anamespacetatami_html_a559b03571aa5f2e9a3cef60723d9ff96"><div class="ttname"><a href="namespacetatami.html#a559b03571aa5f2e9a3cef60723d9ff96">tatami::transpose</a></div><div class="ttdeci">void transpose(const Input_ *const input, const std::size_t nrow, const std::size_t ncol, const std::size_t input_stride, Output_ *const output, const std::size_t output_stride)</div><div class="ttdef"><b>Definition</b> transpose.hpp:38</div></div>
 <div class="ttc" id="anamespacetatami_html_a9c3979c60e3d7e066be533f7ee3a2f97"><div class="ttname"><a href="namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize</a></div><div class="ttdeci">int parallelize(Function_ fun, const Index_ tasks, const int workers)</div><div class="ttdef"><b>Definition</b> parallelize.hpp:58</div></div>
-<div class="ttc" id="anamespacetatami_html_ac5f5ff476ecb172e59c3535cedb966cd"><div class="ttname"><a href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense</a></div><div class="ttdeci">void convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row_major, StoredValue_ *const store, const ConvertToDenseOptions &amp;options)</div><div class="ttdef"><b>Definition</b> convert_to_dense.hpp:257</div></div>
+<div class="ttc" id="anamespacetatami_html_ac5f5ff476ecb172e59c3535cedb966cd"><div class="ttname"><a href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense</a></div><div class="ttdeci">void convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, const bool row_major, StoredValue_ *const store, const ConvertToDenseOptions &amp;options)</div><div class="ttdef"><b>Definition</b> convert_to_dense.hpp:253</div></div>
 <div class="ttc" id="anamespacetatami_html_ac6d0f6694ab914f57229b925641779d4"><div class="ttname"><a href="namespacetatami.html#ac6d0f6694ab914f57229b925641779d4">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">I&lt; decltype(std::declval&lt; Container_ &gt;().size())&gt; cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:65</div></div>
 <div class="ttc" id="anamespacetatami_html_aca84df9f6331751c29b0bcc0ca656af7"><div class="ttname"><a href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *const input, const Size_ n, Value_ *const output)</div><div class="ttdef"><b>Definition</b> copy.hpp:37</div></div>
 <div class="ttc" id="anamespacetatami_html_ada885a7e7ae9dcafcaf98cde30622afc"><div class="ttname"><a href="namespacetatami.html#ada885a7e7ae9dcafcaf98cde30622afc">tatami::create_container_of_Index_size</a></div><div class="ttdeci">Container_ create_container_of_Index_size(const Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:82</div></div>
