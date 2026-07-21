@@ -70,121 +70,39 @@ void convert_to_dense_direct(const Matrix<InputValue_, InputIndex_>& matrix, con
 }
 
 template <typename StoredValue_, typename InputValue_, typename InputIndex_>
-void convert_to_dense_running_from_sparse(const Matrix<InputValue_, InputIndex_>& matrix, const bool row, StoredValue_* const store, const ConvertToDenseOptions& options) {
+void convert_to_dense_running(const Matrix<InputValue_, InputIndex_>& matrix, const bool row, StoredValue_* const store, const ConvertToDenseOptions& options) {
     const InputIndex_ NR = matrix.nrow();
     const InputIndex_ NC = matrix.ncol();
     const auto primary = (row ? NR : NC);
     const auto secondary = (row ? NC : NR);
 
-    // Here, our parallelization strategy is to directly put values into the output store for the main thread,
-    // while all other threads just store the structural non-zeros in a separate per-thread data structure. 
-    // This aims to reduce false sharing at the cost of some extra allocations.
-    //
-    // Previously, each thread used to process a slice of each secondary dimension element and store it in the output.
-    // This avoided false sharing without requiring more memory usage, but was suboptimal in terms of memory locality as adjacent memory was processed by different threads.
-    // Each thread also needed to do more calculations to find its slice within each secondary dimension element.
-    struct ThreadSpecificHolder {
-        ThreadSpecificHolder(const InputIndex_ start, const InputIndex_ length) : 
-            start(start),
-            values(cast_Index_to_container_size<I<decltype(values)> >(length)),
-            indices(cast_Index_to_container_size<I<decltype(indices)> >(length))
-        {}
-        InputIndex_ start; 
-        std::vector<std::vector<InputValue_> > values;
-        std::vector<std::vector<InputIndex_> > indices;
-    };
+    // We're going to completely ignore the potential for false sharing here.
+    // False sharing would only be a risk for very fat/thin matrices (depending on row= and num_threads=),
+    // and if the input matrix is sparse, this further lowers the chance of contention between threads.
+    // The alternative would be to allocate a per-thread buffer to store all of the values,
+    // but then we need to do lots of interleaved copies and at that point the cure is worse than the disease.
 
-    const bool do_parallel = options.num_threads > 1;
-    std::optional<std::vector<std::optional<ThreadSpecificHolder> > > all_partial_contents;
-    if (do_parallel) {
-        // -1, as we don't need to store the results of the main thread.
-        all_partial_contents.emplace(sanisizer::cast<I<decltype(all_partial_contents->size())> >(options.num_threads - 1));
-    }
+    if (matrix.is_sparse()) {
+        // We assume that 'store' was allocated correctly, in which case the product of 'primary' and 'secondary' is known to fit inside a std::size_t.
+        // This saves us from various checks when computing related products. 
+        std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
 
-    // We assume that 'store' was allocated correctly, in which case the product of 'primary' and 'secondary' is known to fit inside a std::size_t.
-    // This saves us from various checks when computing related products. 
-    std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
-
-    const auto num_used = parallelize([&](const int thread, const InputIndex_ start, const InputIndex_ length) -> void {
-        auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, !row, start, length);
-        auto vtemp = create_container_of_Index_size<std::vector<InputValue_> >(primary);
-        auto itemp = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
-
-        if (!do_parallel || thread == 0) {
+        parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
+            auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, !row, start, length);
+            auto vtemp = create_container_of_Index_size<std::vector<InputValue_> >(primary);
+            auto itemp = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
             for (InputIndex_ x = 0; x < length; ++x) {
                 const auto range = wrk->fetch(vtemp.data(), itemp.data());
                 for (InputIndex_ i = 0; i < range.number; ++i) {
                     store[sanisizer::nd_offset<std::size_t>(start + x, secondary, range.index[i])] = range.value[i];
                 }
             }
+        }, secondary, options.num_threads);
 
-        } else {
-            ThreadSpecificHolder tmp(start, length);
-            for (InputIndex_ x = 0; x < length; ++x) {
-                const auto range = wrk->fetch(vtemp.data(), itemp.data());
-                tmp.values[x] = std::vector<InputValue_>(range.value, range.value + range.number);
-                tmp.indices[x] = std::vector<InputIndex_>(range.index, range.index + range.number);
-            }
-            (*all_partial_contents)[thread - 1] = std::move(tmp);
-        }
-    }, secondary, options.num_threads);
+    } else {
+        parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
+            auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, !row, start, length);
 
-    // Our reduction step takes the structural non-zeros from other threads and adds them to the output store.
-    if (do_parallel) {
-        for (int u = 1; u < num_used; ++u) {
-            const auto start = (*all_partial_contents)[u - 1]->start;
-            const auto& tmp_values = (*all_partial_contents)[u - 1]->values;
-            const auto& tmp_indices = (*all_partial_contents)[u - 1]->indices;
-            const auto length = tmp_indices.size();
-            for (I<decltype(length)> x = 0; x < length ; ++x) {
-                const auto& cur_values = tmp_values[x];
-                const auto& cur_indices = tmp_indices[x];
-                const auto cur_count = cur_indices.size();
-                for (I<decltype(cur_count)> i = 0; i < cur_count; ++i) {
-                    store[sanisizer::nd_offset<std::size_t>(start + x, secondary, cur_indices[i])] = cur_values[i];
-                }
-            }
-        }
-    }
-}
-
-template <typename StoredValue_, typename InputValue_, typename InputIndex_>
-void convert_to_dense_running_from_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool row, StoredValue_* const store, const ConvertToDenseOptions& options) {
-    const InputIndex_ NR = matrix.nrow();
-    const InputIndex_ NC = matrix.ncol();
-    const auto primary = (row ? NR : NC);
-    const auto secondary = (row ? NC : NR);
-
-    // Here, our parallelization strategy is to directly put values into the output store for the main thread,
-    // while all other threads just store the submatrix values in a separate per-thread data structure. 
-    // This aims to reduce false sharing at the cost of some extra allocations.
-    //
-    // Previously, each thread used to process a slice of each secondary dimension element and store it in the output.
-    // This avoided false sharing without requiring more memory usage, but was suboptimal in terms of memory locality as adjacent memory was processed by different threads.
-    // Each thread also needed to do more calculations to find its slice within each secondary dimension element.
-    const bool do_parallel = options.num_threads > 1;
-    struct ThreadSpecificHolder {
-        ThreadSpecificHolder(const InputIndex_ start, const InputIndex_ length, const InputIndex_ primary) : 
-            start(start),
-            length(length),
-            values(sanisizer::product<I<decltype(values.size())> >(length, primary)) // still need to check size here, as vector's size_type might be less than size_t.
-        {}
-        InputIndex_ start, length; 
-        std::vector<InputValue_> values;
-    };
-    std::optional<std::vector<std::optional<ThreadSpecificHolder> > > all_partial_contents;
-    if (do_parallel) {
-        all_partial_contents.emplace(sanisizer::cast<I<decltype(all_partial_contents->size())> >(options.num_threads - 1));
-    }
-
-    // We assume that 'store' was allocated correctly, in which case the product of 'primary' and 'secondary' is known to fit inside a std::size_t.
-    // This saves us from various checks when computing related products. 
-    std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
-
-    const auto num_used = parallelize([&](const int thread, const InputIndex_ start, const InputIndex_ length) -> void {
-        auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, !row, start, length);
-
-        if (!do_parallel || thread == 0) {
             // Performing a blocked transposition to be more cache-friendly.
             // This involves collecting several consecutive primary dimension elements so that we can transpose by blocks along the secondary dimension.
             constexpr InputIndex_ block_size = 16;
@@ -212,31 +130,13 @@ void convert_to_dense_running_from_dense(const Matrix<InputValue_, InputIndex_>&
                 }
                 sec_i += sec_to_process;
             }
-
-        } else {
-            ThreadSpecificHolder tmp(start, length, primary);
-            for (InputIndex_ x = 0; x < length; ++x) {
-                const auto buffer = tmp.values.data() + sanisizer::product_unsafe<std::size_t>(x, primary);
-                const auto ptr = wrk->fetch(buffer);
-                copy_n(ptr, primary, buffer);
-            }
-            (*all_partial_contents)[thread - 1] = std::move(tmp);
-        }
-    }, secondary, options.num_threads);
-
-    // Our reduction step performs the transposition to the output array.
-    if (do_parallel) {
-        for (int u = 1; u < num_used; ++u) {
-            const auto tmp_start = (*all_partial_contents)[u - 1]->start;
-            const auto tmp_length = (*all_partial_contents)[u - 1]->length;
-            const auto& tmp_values = (*all_partial_contents)[u - 1]->values;
-            transpose(tmp_values.data(), tmp_length, primary, primary, store + tmp_start, secondary);
-        }
+        }, secondary, options.num_threads);
     }
 }
 /**
  * @endcond
  */
+
 
 /**
  * @tparam StoredValue_ Type of data values to be stored in the output.
@@ -253,10 +153,8 @@ template <typename StoredValue_, typename InputValue_, typename InputIndex_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, const bool row_major, StoredValue_* const store, const ConvertToDenseOptions& options) {
     if (row_major == matrix.prefer_rows()) {
         convert_to_dense_direct(matrix, row_major, store, options);
-    } else if (matrix.is_sparse()) {
-        convert_to_dense_running_from_sparse(matrix, row_major, store, options);
     } else {
-        convert_to_dense_running_from_dense(matrix, row_major, store, options);
+        convert_to_dense_running(matrix, row_major, store, options);
     }
 }
 
