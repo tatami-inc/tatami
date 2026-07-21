@@ -312,6 +312,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
 ) {
     // We use size_t as the default pointer type here, as our output consists of vectors
     // with the default allocator, for which the size_type is unlikely to be bigger than size_t. 
+
     CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> output;
     auto& output_v = output.value;
     auto& output_i = output.index;
@@ -325,35 +326,31 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
     output_p.resize(sanisizer::sum<I<decltype(output_p.size())> >(attest_for_Index(primary), 1));
 
     if (!options.two_pass) {
-        const bool use_rows = matrix.prefer_rows();
-        const auto frag = retrieve_fragmented_sparse_contents_consistent<InputValue_, InputIndex_>(
-            matrix,
-            use_rows,
-            [&]{
-                RetrieveFragmentedSparseContentsOptions roptions;
-                roptions.num_threads = options.num_threads;
-                return roptions;
-            }()
-        );
+        // In the one-pass strategy, we load matrix contents along the preferred dimension first, then we transform it in serial.
+        std::vector<std::vector<InputValue_> > store_v;
+        std::vector<std::vector<InputIndex_> > store_i;
+        auto original_ranges = extract_sparse_matrix(matrix, store_v, store_i, options.num_threads);
 
+        const bool use_rows = matrix.prefer_rows();
         if (use_rows == row) {
             // Now concatenating everything together, if we're fortunate enough that the dimensions are consistent.
             for (InputIndex_ p = 0; p < primary; ++p) {
-                output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p], frag.value[p].size());
+                output_p[p + 1] = sanisizer::sum<StoredPointer_>(output_p[p], original_ranges[p].number);
             }
 
             output_v.reserve(output_p.back());
             output_i.reserve(output_p.back());
             for (InputIndex_ p = 0; p < primary; ++p) {
-                output_v.insert(output_v.end(), frag.value[p].begin(), frag.value[p].end());
-                output_i.insert(output_i.end(), frag.index[p].begin(), frag.index[p].end());
+                output_v.insert(output_v.end(), original_ranges[p].value, original_ranges[p].value + original_ranges[p].number);
+                output_i.insert(output_i.end(), original_ranges[p].index, original_ranges[p].index + original_ranges[p].number);
             }
 
         } else {
             // Otherwise we need to compute the non-zeros on the inconsistent dimension before populating the output vectors.
             for (InputIndex_ s = 0; s < secondary; ++s) {
-                for (const auto p : frag.index[s]) {
-                    output_p[p + 1] += 1; // increments are safe at this point: p < primary and the total count must be less than 'secondary'.
+                const auto& range = original_ranges[s];
+                for (InputIndex_ x = 0; x < range.number; ++x) {
+                    output_p[range.index[x] + 1] += 1; // increments are safe at this point: p < primary and the total count must be less than 'secondary'.
                 }
             }
             for (InputIndex_ p = 0; p < primary; ++p) {
@@ -364,12 +361,10 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
             sanisizer::resize(output_i, output_p.back());
             std::vector<StoredPointer_> offsets(output_p.begin(), output_p.begin() + primary);
             for (InputIndex_ s = 0; s < secondary; ++s) {
-                const auto& cur_i = frag.index[s];
-                const auto& cur_v = frag.value[s];
-                const auto nnz = cur_i.size();
-                for (I<decltype(nnz)> i = 0; i < nnz; ++i) {
-                    auto& pos = offsets[cur_i[i]];
-                    output_v[pos] = cur_v[i];
+                const auto& range = original_ranges[s];
+                for (InputIndex_ i = 0; i < range.number; ++i) {
+                    auto& pos = offsets[range.index[i]];
+                    output_v[pos] = range.value[i];
                     output_i[pos] = s;
                     ++pos;
                 }

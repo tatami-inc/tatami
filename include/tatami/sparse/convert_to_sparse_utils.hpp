@@ -109,6 +109,79 @@ void count_sparse_non_zeros_inconsistent(
     }
 }
 
+template<typename Value_, typename Index_> 
+std::vector<SparseRange<Value_, Index_> > extract_sparse_matrix(
+    const tatami::Matrix<Value_, Index_>& matrix,
+    std::vector<std::vector<Value_> >& store_v,
+    std::vector<std::vector<Index_> >& store_i,
+    const int num_threads
+) {
+    const bool row = matrix.prefer_rows();
+    const Index_ NR = matrix.nrow();
+    const Index_ NC = matrix.ncol();
+    const Index_ primary = (row ? NR : NC);
+    const Index_ secondary = (row ? NC : NR);
+
+    resize_container_to_Index_size(store_v, primary);
+    resize_container_to_Index_size(store_i, primary);
+    auto original_ranges = create_container_of_Index_size<std::vector<SparseRange<Value_, Index_> > >(primary);
+
+    if (matrix.is_sparse()) {
+        parallelize([&](const int, const Index_ start, const Index_ length) -> void {
+            auto wrk = consecutive_extractor<true>(matrix, row, start, length);
+            auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(secondary);
+            auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(secondary);
+
+            // Only make a copy of the underlying buffers if we don't have any choice.
+            for (Index_ p = start, pend = start + length; p < pend; ++p) {
+                auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
+                if (range.value == buffer_v.data()) {
+                    auto& sv = store_v[p];
+                    sv.insert(sv.end(), range.value, range.value + range.number);
+                    range.value = sv.data();
+                }
+                if (range.index == buffer_i.data()) {
+                    auto& si = store_i[p];
+                    si.insert(si.end(), range.index, range.index + range.number);
+                    range.index = si.data();
+                }
+                original_ranges[p] = std::move(range);
+            }
+        }, primary, num_threads);
+
+    } else {
+        parallelize([&](const int, const Index_ start, const Index_ length) -> void {
+            auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+            auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(secondary);
+
+            for (Index_ p = start, pend = start + length; p < pend; ++p) {
+                const auto ptr = wrk->fetch(buffer_v.data());
+                auto& sv = store_v[p];
+                auto& si = store_i[p];
+
+                // For dense, we do treat zero values as structural zeros and remove them, otherwise the output wouldn't actually be sparse.
+                Index_ nnz = 0;
+                for (Index_ s = 0; s < secondary; ++s) {
+                    nnz += (ptr[s] != 0);
+                }
+                sv.reserve(nnz);
+                si.reserve(nnz);
+                for (Index_ s = 0; s < secondary; ++s) {
+                    const auto val = ptr[s];
+                    if (val) {
+                        sv.push_back(val);
+                        si.push_back(s);
+                    }
+                }
+
+                original_ranges[p] = SparseRange<Value_, Index_>(sv.size(), sv.data(), si.data());
+            }
+        }, primary, num_threads);
+    }
+
+    return original_ranges;
+}
+
 // Here, the general strategy is to store all non-zero elements in thread-specific containers, and then stitch them together into the output buffers in the serial section.
 // This avoids false sharing at the cost of almost doubling the memory usage as the number of threads increases - I think this is mostly acceptable.
 // (There is no penalty for single-threaded use as we just use the output buffers directly.) 

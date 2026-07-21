@@ -120,15 +120,15 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
             auto wrk = consecutive_extractor<false>(matrix, row, start, length);
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
 
-            // Special conversion from dense to save ourselves from having to make
-            // indices that we aren't really interested in.
             for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                 const auto ptr = wrk->fetch(buffer_v.data());
                 auto& sv = store_v[p];
                 auto& si = store_i[p];
 
+                // For dense, we do treat zero values as structural zeros and remove them, otherwise the output wouldn't actually be sparse.
                 for (InputIndex_ s = 0; s < secondary; ++s) {
                     const auto val = ptr[s];
+
                     if (val) {
                         sv.push_back(val);
                         si.push_back(s);
@@ -140,74 +140,68 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
     return output;
 }
-/**
- * @endcond
- */
 
-/**
- * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam StoredIndex_ Integer type for storing the indices in the output. 
- * @tparam InputValue_ Type of data values in the input interface.
- * @tparam InputIndex_ Integer type for indices in the input interface.
- *
- * @param matrix Pointer to a `tatami::Matrix`. 
- * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a fragmented sparse row matrix.
- * @param options Further options.
- *
- * @return Contents of the sparse matrix in fragmented form, see `FragmentedSparseContents`.
- */
 template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
-FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(
-    const Matrix<InputValue_, InputIndex_>& matrix,
+FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_inconsistent_one_pass(
+    const tatami::Matrix<InputValue_, InputIndex_>& matrix,
     const bool row,
-    const RetrieveFragmentedSparseContentsOptions& options
+    const int num_threads
 ) {
-    if (row == matrix.prefer_rows()) {
-        return retrieve_fragmented_sparse_contents_consistent<StoredValue_, StoredIndex_>(matrix, row, options);
-    }
-
     const InputIndex_ NR = matrix.nrow();
     const InputIndex_ NC = matrix.ncol();
     const InputIndex_ primary = (row ? NR : NC);
     const InputIndex_ secondary = (row ? NC : NR);
 
-    if (!options.two_pass) {
-        // In the one-pass strategy, we load everything in a nice format first, then we transpose it in serial.
-        // This avoids messy reallocations when trying to expand vectors on an inconsistent dimension.
-        auto tmp = retrieve_fragmented_sparse_contents_consistent<StoredValue_, StoredIndex_>(matrix, !row, options);
-        auto primary_counts = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
-        for (I<decltype(secondary)> s = 0; s < secondary; ++s) {
-            const auto& sec_indices = tmp.index[s];
-            const auto num = sec_indices.size();
-            for (I<decltype(num)> n = 0; n < num; ++n) {
-                primary_counts[sec_indices[n]] += 1; // addition must be space, this cannot exceed dimension extents.
-            }
-        }
+    // In the one-pass strategy, we load everything in a nice format first, then we transpose it in serial.
+    // This avoids messy reallocations when trying to expand vectors on an inconsistent dimension.
+    std::vector<std::vector<InputValue_> > store_v;
+    std::vector<std::vector<InputIndex_> > store_i;
+    auto original_ranges = extract_sparse_matrix(matrix, store_v, store_i, num_threads);
 
-        FragmentedSparseContents<StoredValue_, StoredIndex_> output(primary);
-        for (InputIndex_ p = 0; p < primary; ++p) {
-            output.index[p].reserve(primary_counts[p]);
-            output.value[p].reserve(primary_counts[p]);
+    auto primary_counts = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
+    for (I<decltype(secondary)> s = 0; s < secondary; ++s) {
+        const auto& sec_indices = original_ranges[s].index;
+        const auto num = original_ranges[s].number;
+        for (I<decltype(num)> n = 0; n < num; ++n) {
+            primary_counts[sec_indices[n]] += 1; // addition must be safe as this cannot exceed dimension extents.
         }
-
-        for (I<decltype(secondary)> s = 0; s < secondary; ++s) {
-            const auto& sec_values = tmp.value[s];
-            const auto& sec_indices = tmp.index[s];
-            const auto num = sec_indices.size();
-            for (I<decltype(num)> n = 0; n < num; ++n) {
-                const auto curp = sec_indices[n];
-                output.value[curp].push_back(sec_values[n]);
-                output.index[curp].push_back(s);
-            }
-        }
-
-        return output;
     }
+
+    FragmentedSparseContents<StoredValue_, StoredIndex_> output(primary);
+    for (InputIndex_ p = 0; p < primary; ++p) {
+        output.index[p].reserve(primary_counts[p]);
+        output.value[p].reserve(primary_counts[p]);
+    }
+
+    for (I<decltype(secondary)> s = 0; s < secondary; ++s) {
+        const auto& sec_values = original_ranges[s].value;
+        const auto& sec_indices = original_ranges[s].index;
+        const auto num = original_ranges[s].number;
+        for (I<decltype(num)> n = 0; n < num; ++n) {
+            const auto curp = sec_indices[n];
+            output.value[curp].push_back(sec_values[n]);
+            output.index[curp].push_back(s);
+        }
+    }
+
+    return output;
+}
+
+template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
+FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_inconsistent_two_pass(
+    const tatami::Matrix<InputValue_, InputIndex_>& matrix,
+    const bool row,
+    const int num_threads
+) {
+    const InputIndex_ NR = matrix.nrow();
+    const InputIndex_ NC = matrix.ncol();
+    const InputIndex_ primary = (row ? NR : NC);
+    const InputIndex_ secondary = (row ? NC : NR);
 
     // In the two-pass strategy, we count the number of non-zeros first, then we fill it up in the second pass.
     std::optional<std::vector<InputIndex_> > nnz_consistent;
     auto nnz_inconsistent = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
-    count_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, nnz_inconsistent.data(), nnz_consistent, options.num_threads);
+    count_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, nnz_inconsistent.data(), nnz_consistent, num_threads);
 
     FragmentedSparseContents<StoredValue_, StoredIndex_> output(primary);
     for (InputIndex_ p = 0; p < primary; ++p) {
@@ -244,10 +238,42 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                 output.index[primary].push_back(s); 
             }
         },
-        options.num_threads
+        num_threads
     );
 
     return output;
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam InputValue_ Type of data values in the input interface.
+ * @tparam InputIndex_ Integer type for indices in the input interface.
+ *
+ * @param matrix Pointer to a `tatami::Matrix`. 
+ * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a fragmented sparse row matrix.
+ * @param options Further options.
+ *
+ * @return Contents of the sparse matrix in fragmented form, see `FragmentedSparseContents`.
+ */
+template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
+FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(
+    const Matrix<InputValue_, InputIndex_>& matrix,
+    const bool row,
+    const RetrieveFragmentedSparseContentsOptions& options
+) {
+    if (row == matrix.prefer_rows()) {
+        return retrieve_fragmented_sparse_contents_consistent<StoredValue_, StoredIndex_>(matrix, row, options);
+    }
+
+    if (!options.two_pass) {
+        return retrieve_fragmented_sparse_inconsistent_one_pass<StoredValue_, StoredIndex_>(matrix, row, options.num_threads);
+    }
+
+    return retrieve_fragmented_sparse_inconsistent_two_pass<StoredValue_, StoredIndex_>(matrix, row, options.num_threads);
 }
 
 /**
