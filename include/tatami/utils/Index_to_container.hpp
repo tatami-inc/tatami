@@ -29,7 +29,7 @@ bool safe_non_negative_equal(const Left_ l, const Right_ r) {
 // By casting away larger types, we allow sanisizer functions to eliminate the run-time overflow checks completely.
 template<typename Index_> 
 auto attest_for_Index(Index_ x) {
-    return sanisizer::attest_gez(sanisizer::attest_max_by_type<std::size_t>(x));
+    return sanisizer::set_bound_by_type_unsafe<std::size_t>(x);
 }
 /**
  * @endcond
@@ -47,7 +47,7 @@ auto attest_for_Index(Index_ x) {
  */
 template<typename Container_, typename Index_>
 Index_ can_cast_Index_to_container_size(const Index_ x) {
-    sanisizer::can_cast<I<decltype(std::declval<Container_>().size())> >(attest_for_Index(x));
+    sanisizer::cast<I<decltype(std::declval<Container_>().size())> >(attest_for_Index(x));
     return x;
 }
 
@@ -62,7 +62,7 @@ Index_ can_cast_Index_to_container_size(const Index_ x) {
  * An error is raised if the cast would result in overflow.
  */
 template<typename Container_, typename Index_>
-I<decltype(std::declval<Container_>().size())> cast_Index_to_container_size(const Index_ x) {
+auto cast_Index_to_container_size(const Index_ x) {
     return can_cast_Index_to_container_size<Container_>(x);
 }
 
