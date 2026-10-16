@@ -8691,10 +8691,10 @@
       <arglist>(const Index_ x)</arglist>
     </member>
     <member kind="function">
-      <type>I&lt; decltype(std::declval&lt; Container_ &gt;().size())&gt;</type>
+      <type>auto</type>
       <name>cast_Index_to_container_size</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac6d0f6694ab914f57229b925641779d4</anchor>
+      <anchor>a32d5ae83f932e5ef00b12e7caf9a7cdc</anchor>
       <arglist>(const Index_ x)</arglist>
     </member>
     <member kind="function">

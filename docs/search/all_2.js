@@ -2,7 +2,7 @@ var searchData=
 [
   ['c_20api_20for_20all_20sorts_20of_20matrices_0',['A C++ API for all sorts of matrices',['../index.html',1,'']]],
   ['can_5fcast_5findex_5fto_5fcontainer_5fsize_1',['can_cast_Index_to_container_size',['../namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad',1,'tatami']]],
-  ['cast_5findex_5fto_5fcontainer_5fsize_2',['cast_Index_to_container_size',['../namespacetatami.html#ac6d0f6694ab914f57229b925641779d4',1,'tatami']]],
+  ['cast_5findex_5fto_5fcontainer_5fsize_2',['cast_Index_to_container_size',['../namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc',1,'tatami']]],
   ['check_3',['check',['../structtatami_1_1CompressedSparseMatrixOptions.html#a88f4bdb918e8ce35bf07e6a16c464bfc',1,'tatami::CompressedSparseMatrixOptions::check'],['../structtatami_1_1FragmentedSparseMatrixOptions.html#ad0bd65e9fafe7060867db6e048b1919d',1,'tatami::FragmentedSparseMatrixOptions::check']]],
   ['compare_5fhelpers_2ehpp_4',['compare_helpers.hpp',['../binary_2compare__helpers_8hpp.html',1,'(Global Namespace)'],['../unary_2compare__helpers_8hpp.html',1,'(Global Namespace)']]],
   ['compare_5futils_2ehpp_5',['compare_utils.hpp',['../compare__utils_8hpp.html',1,'']]],
