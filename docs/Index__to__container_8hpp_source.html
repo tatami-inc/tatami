@@ -116,12 +116,12 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">// By casting away larger types, we allow sanisizer functions to eliminate the run-time overflow checks completely.</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt; </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">auto</span> attest_for_Index(Index_ x) {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> sanisizer::set_bound_by_type&lt;std::size_t&gt;(x);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> sanisizer::set_bound_by_type_unsafe&lt;std::size_t&gt;(x);</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Container_, <span class="keyword">typename</span> Index_&gt;</div>
 <div class="foldopen" id="foldopen00049" data-start="{" data-end="}">
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">   49</a></span>Index_ <a class="code hl_function" href="namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad">can_cast_Index_to_container_size</a>(<span class="keyword">const</span> Index_ x) {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    sanisizer::pre_cast&lt;I&lt;decltype(std::declval&lt;Container_&gt;().size())&gt; &gt;(attest_for_Index(x));</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    sanisizer::cast&lt;I&lt;decltype(std::declval&lt;Container_&gt;().size())&gt; &gt;(attest_for_Index(x));</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">return</span> x;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
 </div>
