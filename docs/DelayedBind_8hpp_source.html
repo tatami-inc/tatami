@@ -160,7 +160,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                ++pos;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            }</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="comment">// We compute the gap between the start of the bin and its right-side boundary.</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            <span class="comment">// We compute the gap between the start of the bin and the cumulative boundary immediately to its right.</span></div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="comment">// This is the number of elements in the bin that are assigned to the &#39;pos - 1&#39;-th matrix.</span></div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keyword">const</span> <span class="keyword">auto</span> until_next = sanisizer::min(cumulative[pos] - lower, bin_size);</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
@@ -170,13 +170,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>            <span class="comment">// - The total cumulative dimension is less than &#39;2^X&#39; where &#39;X&#39; is the number of digits of &#39;Index_&#39;.</span></div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>            <span class="comment">// - The minimum size of each matrix is greater than or equal to &#39;2^Y&#39;, where &#39;Y&#39; is &#39;my_shift&#39;.</span></div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            <span class="comment">//   We note that &#39;X &gt; Y&#39; as the minimum size cannot be greater than the total cumulative dimension.</span></div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="comment">// - The maximum possible value of the number of matrices must be less than &#39;2^(X - Y)&#39;.</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            <span class="comment">// - Thus, the maximum possible value of the number of matrices must be less than &#39;2^(X - Y)&#39;.</span></div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="comment">//   This implies that the matrix index must fit into a &#39;(X - Y)&#39;-bit unsigned integer.</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="comment">// - We also know that &#39;until_next&#39; must be less than or equal to &#39;2^Y&#39;.</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="comment">//   This implies that &#39;until_next - 1&#39; must fit into a Y-bit unsigned integer.</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="comment">//</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            <span class="comment">// Thus, we can shift the matrix index by &#39;Y&#39; and use the cleared bits to store &#39;until_next - 1&#39;.</span></div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="comment">// We effectively use &#39;Index_&#39; to pack the two unsigned integers.</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <span class="comment">// - We know that &#39;until_next&#39; must be less than or equal to &#39;2^Y&#39;.</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="comment">//   We also know it must be positive as the cumulative boundary exceeds the bin start.</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>            <span class="comment">//   This implies that &#39;until_next - 1&#39; must fit into a Y-bit unsigned integer.</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            <span class="comment">//</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="comment">// Thus, we can shift the matrix index by &#39;Y&#39; and use the cleared bits to store &#39;until_next - 1&#39;.</span></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            <span class="keyword">const</span> Index_ encoding = (<span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(pos - 1) &lt;&lt; my_shift) | <span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(until_next - 1);</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>            my_bins.push_back(encoding);</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        }</div>
@@ -184,9 +184,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    Index_ operator[](<span class="keyword">const</span> Index_ i)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="keyword">const</span> <span class="keyword">auto</span> encoded = my_bins[i &gt;&gt; my_shift];</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="comment">// &#39;encoded &gt;&gt; my_shift&#39; recovers &#39;pos - 1&#39;.</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="comment">// &#39;encoded &gt;&gt; my_shift&#39; recovers the matrix index.</span></div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <span class="comment">// &#39;encoded &amp; my_mask&#39; recovers &#39;until_next - 1&#39;.</span></div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        <span class="comment">// We want to know if &#39;i &amp; my_mask &gt;= until_next&#39;, which is the same as &#39;i &amp; my_mask &gt; until_next - 1&#39;.</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        <span class="comment">// We want to know if &#39;i &amp; my_mask &gt;= until_next&#39;, which is the same as &#39;i &amp; my_mask &gt; until_next - 1&#39;, saving us an addition.</span></div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <span class="keywordflow">return</span> sanisizer::sum_unsafe&lt;Index_&gt;(encoded &gt;&gt; my_shift, sanisizer::is_greater_than(i &amp; my_mask, encoded &amp; my_mask)); </div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    }</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
