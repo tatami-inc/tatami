@@ -83,6 +83,25 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>DelayedBinaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arithmetic__helpers_8hpp.html</filename>
@@ -131,10 +150,10 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedBinaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
+    <name>DelayedUnaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -149,25 +168,6 @@
     <path>tatami/isometric/unary/</path>
     <filename>unary_2helper__interface_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>DelayedUnaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
