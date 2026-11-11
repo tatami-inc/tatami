@@ -2,12 +2,156 @@
 
 #include <vector>
 #include <memory>
+#include <cstdint>
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/other/DelayedBind.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
+
+class DelayedBindCompressedMappingTest : public ::testing::TestWithParam<std::tuple<int, std::vector<int> > > {};
+
+TEST_P(DelayedBindCompressedMappingTest, Basic) {
+    auto params = GetParam();
+    const auto min_size = std::get<0>(params);
+    const auto& cumulative = std::get<1>(params);
+
+    tatami::DelayedBind_internal::CompressedMapping<int> mapping(min_size, cumulative);
+    for (int i = 0, end = cumulative.back(); i < end; ++i) {
+        auto startp1 = cumulative.begin() + 1;
+        EXPECT_EQ(mapping[i], std::upper_bound(startp1, cumulative.end(), i) - startp1);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindCompressedMappingTest,
+    ::testing::Values(
+        std::make_pair(4, std::vector<int>{ 0, 5, 9, 15, 24, 30, 47 }), // irregular boundaries, power of 2.
+        std::make_pair(11, std::vector<int>{ 0, 13, 25, 42, 55, 71, 90 }), // irregular boundaries, not power of 2.
+        std::make_pair(1, std::vector<int>{ 0, 1, 2, 3, 4, 10, 11, 12, 13, 20, 21 }), // many 1's.
+        std::make_pair(10, std::vector<int>{ 0, 10, 20, 30, 40, 50 }), // regularly spaced boundaries, not power of 2.
+        std::make_pair(8, std::vector<int>{ 0, 8, 16, 24, 32, 40 }), // regularly spaced boundaries, power of 2.
+        std::make_pair(20, std::vector<int>{ 0, 20, 44, 80, 100, 122 }) // some bigger numbers.
+    )
+);
+
+TEST(DelayedBind, CompressedMappingSmallType) {
+    // Here we try to push the limits of what we can compact into the storage type.
+    // Specifically, we try a bunch of bin sizes up to the maximum possible value for the cumulative size .
+
+    // - Bin size is 64.
+    // - Bin encodings are [0 << 6, 64 - 1], [0 << 6, 63 - 1]
+    {
+        std::int8_t min_size = 127;
+        std::vector<std::int8_t> cumulative{ 0, 127 };
+        tatami::DelayedBind_internal::CompressedMapping<std::int8_t> mapping(min_size, cumulative);
+        for (int i = 0, end = cumulative.back(); i < end; ++i) {
+            EXPECT_EQ(mapping[i], 0);
+        }
+    }
+
+    // - Bin size is 32.
+    // - Bin encodings are [0 << 5, 32 - 1], [0 << 5, 28 - 1], [1 << 5, 32 - 1], [1 << 5, 31 - 1]
+    {
+        std::int8_t min_size = 60;
+        std::vector<std::int8_t> cumulative{ 0, 60, 127 };
+        tatami::DelayedBind_internal::CompressedMapping<std::int8_t> mapping(min_size, cumulative);
+        for (int i = 0, end = cumulative.back(); i < end; ++i) {
+            auto startp1 = cumulative.begin() + 1;
+            EXPECT_EQ(mapping[i], std::upper_bound(startp1, cumulative.end(), i) - startp1);
+        }
+    }
+
+    // - Bin size is 16.
+    // - Bin encodings are [0 << 4, 16 - 1], [0 << 4, 5 - 1],
+    //                     [1 << 4, 12 - 1],
+    //                     [2 << 4, 16 - 1], [2 << 4, 16 - 1], [2 << 4, 2 - 1],
+    //                     [3 << 4, 7 - 1],
+    //                     [4 << 4, 15 - 1]
+    {
+        std::int8_t min_size = 20;
+        std::vector<std::int8_t> cumulative{ 0, 21, 44, 82, 103, 127 };
+        tatami::DelayedBind_internal::CompressedMapping<std::int8_t> mapping(min_size, cumulative);
+        for (int i = 0, end = cumulative.back(); i < end; ++i) {
+            auto startp1 = cumulative.begin() + 1;
+            EXPECT_EQ(mapping[i], std::upper_bound(startp1, cumulative.end(), i) - startp1);
+        }
+    }
+
+    // - Bin size is 2.
+    // - Bin encodings are [i << 1, 2 - 1] for all i in [0, 63), and then [63 << 1, 0].
+    {
+        std::int8_t min_size = 2;
+        std::vector<std::int8_t> cumulative;
+        for (int i = 0; i < 64; ++i) {
+            cumulative.push_back(i * 2);
+        }
+        cumulative.push_back(127);
+        tatami::DelayedBind_internal::CompressedMapping<std::int8_t> mapping(min_size, cumulative);
+        for (int i = 0, end = cumulative.back(); i < end; ++i) {
+            EXPECT_EQ(mapping[i], i / 2);
+        }
+    }
+
+    // - Bin size is 1.
+    // - Bin encodings are [i << 0, 0] for all i in [0, 127).
+    {
+        std::int8_t min_size = 1;
+        std::vector<std::int8_t> cumulative(128);
+        std::iota(cumulative.begin(), cumulative.end(), 0);
+        tatami::DelayedBind_internal::CompressedMapping<std::int8_t> mapping(min_size, cumulative);
+        for (int i = 0, end = cumulative.back(); i < end; ++i) {
+            EXPECT_EQ(mapping[i], i);
+        }
+    }
+
+    // Handles empty inputs safely.
+    tatami::DelayedBind_internal::CompressedMapping<int>(0, { 0 });
+}
+
+TEST(DelayedBind, CompressedMappingBigType) {
+    // Checking that the binning approach still works when the numbers get pretty large.
+    // Now the bin size is 2^19.
+    {
+        std::uint32_t min_size = 1000000;
+        std::vector<std::uint32_t> cumulative{ 0, 1000000, 4000000, 6000000, 10000000 };
+        tatami::DelayedBind_internal::CompressedMapping<std::uint32_t> mapping(min_size, cumulative);
+        EXPECT_EQ(mapping[0], 0);
+        EXPECT_EQ(mapping[999999], 0);
+        EXPECT_EQ(mapping[1000000], 1);
+        EXPECT_EQ(mapping[1000001], 1);
+        EXPECT_EQ(mapping[2000000], 1);
+        EXPECT_EQ(mapping[3999999], 1);
+        EXPECT_EQ(mapping[4000000], 2);
+        EXPECT_EQ(mapping[4000001], 2);
+        EXPECT_EQ(mapping[5000000], 2);
+        EXPECT_EQ(mapping[5999999], 2);
+        EXPECT_EQ(mapping[6000000], 3);
+        EXPECT_EQ(mapping[6000001], 3);
+        EXPECT_EQ(mapping[8000000], 3);
+        EXPECT_EQ(mapping[9999999], 3);
+    }
+
+    // Even bigger, bin size is now 2^28.
+    {
+        std::int32_t min_size = 500000000;
+        std::vector<std::int32_t> cumulative{ 0, 1000000000, 2000000000, 2147483647 };
+        tatami::DelayedBind_internal::CompressedMapping<std::int32_t> mapping(min_size, cumulative);
+        EXPECT_EQ(mapping[0], 0);
+        EXPECT_EQ(mapping[999999999], 0);
+        EXPECT_EQ(mapping[1000000000], 1);
+        EXPECT_EQ(mapping[1000000001], 1);
+        EXPECT_EQ(mapping[1999999999], 1);
+        EXPECT_EQ(mapping[2000000000], 2);
+        EXPECT_EQ(mapping[2000000001], 2);
+        EXPECT_EQ(mapping[2147483646], 2);
+    }
+}
+
+/****************************
+ ****************************/
 
 class DelayedBindUtils {
 public:

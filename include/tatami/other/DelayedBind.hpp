@@ -15,6 +15,8 @@
 #include <array>
 #include <type_traits>
 #include <cstddef>
+#include <limits>
+#include <cassert>
 
 /**
  * @file DelayedBind.hpp
@@ -31,6 +33,85 @@ namespace tatami {
  */
 namespace DelayedBind_internal {
 
+/*
+ * Consider the problem of mapping an index 'i' of the combined dimension of the DelayedBind object to the component matrix.
+ * The simplest approach is to do a binary search on 'cumulative' but that has O(log(n)) scaling for 'n' component matrices.
+ * Another approach is to create a look-up table that can be indexed directly by 'i', which has O(1) runtime but consumes a lot of memory.
+ *
+ * The CompressedMapping class is a compromise that breaks up the combined dimensions into bins of regular size no greater than the extent of the smallest component matrix.
+ * Each bin stores the identity the component matrix in which it starts, plus the length of that component matrix covered by that bin.
+ * Given 'i', we can divide by the bin size to find its matching bin; we then compare the remainder to the covered length to assign it to the starting or next matrix.
+ * This has O(1) runtime while being much more memory efficient for a minimum bin size >> 1.
+ *
+ * In practice, the bin size is set to the largest power of 2 that is no greater than the small matrix extent.
+ * This allows for (i) some very fast division via bit shifting, and (ii) bitpacking to store both the matrix identity and the covered length in a single integer.
+ */
+template<typename Index_>
+class CompressedMapping {
+public:
+    CompressedMapping() = default;
+
+    CompressedMapping(Index_ min_size, const std::vector<Index_>& cumulative) {
+        // Define bin size as the smallest power of 2 that is no greater than 'min_size'.
+        // This means that 'my_shift' must be less than the number of binary digits of 'Index_'.
+        while (min_size > 1) {
+            ++my_shift;
+            min_size /= 2;
+        }
+        assert(sanisizer::is_less_than(min_size, std::numeric_limits<Index_>::digits));
+        const auto bin_size = static_cast<Index_>(1) << my_shift;
+        my_mask = (bin_size - 1);
+
+        const auto total_dim = cumulative.back();
+        assert(min_size <= total_dim);
+        const auto total_bins = (total_dim >> my_shift) + ((total_dim & my_mask) > 0);
+        my_bins.reserve(total_bins);
+
+        Index_ pos = 1;
+        for (I<decltype(total_bins)> b = 0; b < total_bins; ++b) {
+            // Find the first cumulative boundary that exceeds the start of the bin.
+            // 'pos - 1' is the index of the matrix covering the start of the bin.
+            Index_ lower = b << my_shift;
+            while (cumulative[pos] <= lower) {
+                ++pos;
+            }
+
+            // We compute the gap between the start of the bin and the cumulative boundary immediately to its right.
+            // This is the number of elements in the bin that are assigned to the 'pos - 1'-th matrix.
+            const auto until_next = sanisizer::min(cumulative[pos] - lower, bin_size);
+
+            // Now we pack both of these values into a single integer to save some space.
+            // This is possible based on the following logic:
+            //
+            // - The total cumulative dimension is less than '2^X' where 'X' is the number of digits of 'Index_'.
+            // - The minimum size of each matrix is greater than or equal to '2^Y', where 'Y' is 'my_shift'.
+            //   We note that 'X > Y' as the minimum size cannot be greater than the total cumulative dimension.
+            // - Thus, the maximum possible value of the number of matrices must be less than '2^(X - Y)'.
+            //   This implies that the matrix index must fit into a '(X - Y)'-bit unsigned integer.
+            // - We know that 'until_next' must be less than or equal to '2^Y'.
+            //   We also know it must be positive as the cumulative boundary exceeds the bin start.
+            //   This implies that 'until_next - 1' must fit into a Y-bit unsigned integer.
+            //
+            // Thus, we can shift the matrix index by 'Y' and use the cleared bits to store 'until_next - 1'.
+            const Index_ encoding = (static_cast<Index_>(pos - 1) << my_shift) | static_cast<Index_>(until_next - 1);
+            my_bins.push_back(encoding);
+        }
+    }
+
+    Index_ operator[](const Index_ i) const {
+        const auto encoded = my_bins[i >> my_shift];
+        // 'encoded >> my_shift' recovers the matrix index.
+        // 'encoded & my_mask' recovers 'until_next - 1'.
+        // We want to know if 'i & my_mask >= until_next', which is the same as 'i & my_mask > until_next - 1', saving us an addition.
+        return sanisizer::sum_unsafe<Index_>(encoded >> my_shift, sanisizer::is_greater_than(i & my_mask, encoded & my_mask)); 
+    }
+
+public:
+    std::vector<Index_> my_bins;
+    Index_ my_shift = 0; 
+    Index_ my_mask;
+};
+
 /**********************
  *** Dense parallel ***
  **********************/
@@ -38,12 +119,13 @@ namespace DelayedBind_internal {
 template<typename Index_, class Initialize_>
 Index_ initialize_parallel_block(
     const std::vector<Index_>& cumulative, 
-    const std::vector<Index_>& mapping,
+    const CompressedMapping<Index_>& mapping,
     const Index_ block_start, 
     const Index_ block_length, 
     const Initialize_ init
 ) {
-    if (mapping.empty()) {
+    const Index_ nmats = cumulative.size() - 1; // Number of matrices is guaranteed to fit in Index_, see reasoning in the DelayedBind constructor.
+    if (nmats == 0) {
         return 0;
     }
 
@@ -51,7 +133,6 @@ Index_ initialize_parallel_block(
     Index_ actual_start = block_start - cumulative[start_index];
     const Index_ block_end = block_start + block_length;
 
-    const Index_ nmats = cumulative.size() - 1; // Number of matrices is guaranteed to fit in Index_, see reasoning in the DelayedBind constructor.
     for (Index_ index = start_index; index < nmats; ++index) {
         const Index_ submat_end = cumulative[index + 1]; 
         bool not_final = (block_end > submat_end);
@@ -69,7 +150,7 @@ Index_ initialize_parallel_block(
 template<typename Index_, class Initialize_>
 void initialize_parallel_index(
     const std::vector<Index_>& cumulative, 
-    const std::vector<Index_>& mapping,
+    const CompressedMapping<Index_>& mapping,
     const std::vector<Index_>& indices, 
     const Initialize_ init
 ) {
@@ -99,7 +180,7 @@ class  ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     ParallelDense(
         const std::vector<Index_>&, // Not used, just provided for consistency with other constructors.
-        const std::vector<Index_>&,
+        const CompressedMapping<Index_>&, // Ditto.
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -115,7 +196,7 @@ public:
 
     ParallelDense(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping,
+        const CompressedMapping<Index_>& mapping,
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -139,7 +220,7 @@ public:
 
     ParallelDense(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping,
+        const CompressedMapping<Index_>& mapping,
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -186,7 +267,7 @@ class ParallelFullSparse final : public SparseExtractor<oracle_, Value_, Index_>
 public:
     ParallelFullSparse(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>&, // not actually used, just provided for consistency with the other constructors.
+        const CompressedMapping<Index_>&, // not actually used, just provided for consistency with the other constructors.
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -238,7 +319,7 @@ class ParallelBlockSparse final : public SparseExtractor<oracle_, Value_, Index_
 public:
     ParallelBlockSparse(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping,
+        const CompressedMapping<Index_>& mapping,
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -299,7 +380,7 @@ class ParallelIndexSparse final : public SparseExtractor<oracle_, Value_, Index_
 public:
     ParallelIndexSparse(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping,
+        const CompressedMapping<Index_>& mapping,
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -366,7 +447,7 @@ public:
     template<typename ... Args_>
     MyopicPerpendicularDense(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping, 
+        const CompressedMapping<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row, 
         const Args_& ... args
@@ -387,7 +468,7 @@ public:
 
 private:
     const std::vector<Index_>& my_cumulative;
-    const std::vector<Index_>& my_mapping;
+    const CompressedMapping<Index_>& my_mapping;
     std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > my_exts;
 };
 
@@ -397,7 +478,7 @@ public:
     template<typename ... Args_>
     MyopicPerpendicularSparse(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping, 
+        const CompressedMapping<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         const Args_& ... args
@@ -418,14 +499,14 @@ public:
 
 private:
     const std::vector<Index_>& my_cumulative;
-    const std::vector<Index_>& my_mapping;
+    const CompressedMapping<Index_>& my_mapping;
     std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > my_exts;
 };
 
 template<typename Index_, class Initialize_>
 void initialize_perp_oracular(
     const std::vector<Index_>& cumulative, 
-    const std::vector<Index_>& mapping, 
+    const CompressedMapping<Index_>& mapping, 
     const Oracle<Index_>& oracle, 
     std::vector<Index_>& chosen, 
     Initialize_ init
@@ -488,7 +569,7 @@ public:
     template<typename ... Args_>
     OracularPerpendicularDense(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping, 
+        const CompressedMapping<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
@@ -525,7 +606,7 @@ public:
     template<typename ... Args_>
     OracularPerpendicularSparse(
         const std::vector<Index_>& cumulative, 
-        const std::vector<Index_>& mapping, 
+        const CompressedMapping<Index_>& mapping, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
@@ -586,6 +667,7 @@ public:
         my_cumulative.reserve(sanisizer::sum<I<decltype(my_cumulative.size())> >(nmats, 1));
         I<decltype(nmats)> sofar = 0;
         my_cumulative.push_back(0);
+        Index_ min_extent = std::numeric_limits<Index_>::max();
 
         for (I<decltype(nmats)> i = 0; i < nmats; ++i) {
             auto& current = my_matrices[i];
@@ -611,6 +693,7 @@ public:
                     my_matrices[sofar] = std::move(current);
                 }
                 my_cumulative.push_back(sanisizer::sum<Index_>(attest_for_Index(my_cumulative.back()), attest_for_Index(primary)));
+                min_extent = std::min(min_extent, primary);
                 ++sofar;
             }
         }
@@ -618,14 +701,10 @@ public:
         my_matrices.resize(sofar);
         nmats = sofar;
 
-        // At this point, the number of matrices must be no greater than the
-        // number of rows/columns of the combined matrix (as we've removed all
-        // non-contributing submatrices) and thus should fit into 'Index_';
-        // hence, using Index_ for the mapping should not overflow.
-        my_mapping.reserve(my_cumulative.back());
-        for (I<decltype(nmats)> i = 0; i < nmats; ++i) {
-            my_mapping.insert(my_mapping.end(), (my_by_row ? my_matrices[i]->nrow() : my_matrices[i]->ncol()), i);
+        if (nmats == 0) {
+            min_extent = 0;
         }
+        my_mapping = DelayedBind_internal::CompressedMapping(min_extent, my_cumulative);
 
         double denom = 0;
         for (const auto& x : my_matrices) {
@@ -666,7 +745,7 @@ private:
 
     Index_ my_otherdim = 0;
     std::vector<Index_> my_cumulative;
-    std::vector<Index_> my_mapping;
+    DelayedBind_internal::CompressedMapping<Index_> my_mapping;
 
     double my_sparse_prop = 0, my_by_row_prop = 0;
     std::array<bool, 2> my_uses_oracle;
