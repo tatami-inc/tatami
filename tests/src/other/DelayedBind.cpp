@@ -203,6 +203,7 @@ TEST_P(DelayedBindPerpendicularOracleTest, Basic) {
 
     for (std::size_t x = 0; x < nmats; ++x) {
         if (fragmented[x].size()) {
+            ASSERT_TRUE(split[x]);
             const auto npreds = split[x]->total();
             EXPECT_EQ(fragmented[x].size(), npreds);
             for (tatami::PredictionIndex p = 0; p < npreds; ++p) {
@@ -210,6 +211,7 @@ TEST_P(DelayedBindPerpendicularOracleTest, Basic) {
             }
         } else {
             EXPECT_FALSE(split[x]);
+            continue;
         }
 
         // Check that the correct classes are used.
@@ -256,7 +258,10 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple((std::vector<int>{ 0, 5, 13, 22 }), (std::vector<int>{ 0, 10, 1,2, 8, 20,20,15,12, 3, 7,6, 4, }), (std::vector<int>{ 0, 4, 1 })),
 
         // mixed (II)
-        std::make_tuple((std::vector<int>{ 0, 5, 13, 22 }), (std::vector<int>{ 20,19,17,16,15, 1,2,2,1, 7,8,9,10,11, 3,4, 13,16,20, 6,5 }), (std::vector<int>{ 3, 2, 3 }))
+        std::make_tuple((std::vector<int>{ 0, 5, 13, 22 }), (std::vector<int>{ 20,19,17,16,15, 1,2,2,1, 7,8,9,10,11, 3,4, 13,16,20, 6,5 }), (std::vector<int>{ 3, 2, 3 })),
+
+        // some empty
+        std::make_tuple((std::vector<int>{ 0, 5, 13, 22 }), (std::vector<int>{ 7,8,9,10,12,11 }), (std::vector<int>{ 0, 1, 0 }))
     )
 );
 
