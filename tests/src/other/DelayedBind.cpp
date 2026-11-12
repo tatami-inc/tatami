@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <random>
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/other/DelayedBind.hpp"
@@ -10,12 +11,34 @@
 
 #include "tatami_test/tatami_test.hpp"
 
-class DelayedBindCompressedMappingTest : public ::testing::TestWithParam<std::tuple<int, std::vector<int> > > {};
+class DelayedBindCompressedMappingTest : public ::testing::TestWithParam<std::tuple<int, int, int> > {};
 
 TEST_P(DelayedBindCompressedMappingTest, Basic) {
     auto params = GetParam();
-    const auto min_size = std::get<0>(params);
-    const auto& cumulative = std::get<1>(params);
+    auto min_size = std::get<0>(params);
+    auto total_dim = std::get<1>(params); 
+    auto variation = std::get<2>(params);
+
+    // i.e., intervals range from [min_size, (variation + 1)*min_size].
+    const int extra = variation * min_size + 1;
+
+    std::mt19937_64 rng(min_size + total_dim * 13 + variation * 103);
+    std::vector<int> cumulative(1);
+    while (cumulative.back() != total_dim) {
+        const int last = cumulative.back();
+        const int chosen = min_size + (rng() % extra);
+        auto actual = std::min(chosen, total_dim - last); 
+        cumulative.push_back(last + actual);
+        std::cout <<cumulative.back() << std::endl;
+    }
+
+    // Merging the last interval with the second-last interval if it's too small.
+    ASSERT_GE(cumulative.size(), 2);
+    if (cumulative.back() - cumulative[cumulative.size() - 2] < min_size) {
+        cumulative.pop_back();
+        cumulative.back() = total_dim;
+    }
+    ASSERT_GE(cumulative.size(), 2);
 
     tatami::DelayedBind_internal::CompressedMapping<int> mapping(min_size, cumulative);
     for (int i = 0, end = cumulative.back(); i < end; ++i) {
@@ -27,13 +50,10 @@ TEST_P(DelayedBindCompressedMappingTest, Basic) {
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindCompressedMappingTest,
-    ::testing::Values(
-        std::make_pair(4, std::vector<int>{ 0, 5, 9, 15, 24, 30, 47 }), // irregular boundaries, power of 2.
-        std::make_pair(11, std::vector<int>{ 0, 13, 25, 42, 55, 71, 90 }), // irregular boundaries, not power of 2.
-        std::make_pair(1, std::vector<int>{ 0, 1, 2, 3, 4, 10, 11, 12, 13, 20, 21 }), // many 1's.
-        std::make_pair(10, std::vector<int>{ 0, 10, 20, 30, 40, 50 }), // regularly spaced boundaries, not power of 2.
-        std::make_pair(8, std::vector<int>{ 0, 8, 16, 24, 32, 40 }), // regularly spaced boundaries, power of 2.
-        std::make_pair(20, std::vector<int>{ 0, 20, 44, 80, 100, 122 }) // some bigger numbers.
+    ::testing::Combine(
+        ::testing::Values(1, 2, 4, 5, 8, 11, 16, 20, 32, 51), // min size, alternating between powers of 2 and not.
+        ::testing::Values(100, 256, 333), // total dimensions. We try even, powers of two, and odd.
+        ::testing::Values(0, 2) // variation in intervals
     )
 );
 
@@ -137,7 +157,7 @@ TEST(DelayedBind, CompressedMappingBigType) {
     // Even bigger, bin size is now 2^28.
     {
         std::int32_t min_size = 500000000;
-        std::vector<std::int32_t> cumulative{ 0, 1000000000, 2000000000, 2147483647 };
+        std::vector<std::int32_t> cumulative{ 0, 1000000000, 1600000000, 2147483647 };
         tatami::DelayedBind_internal::CompressedMapping<std::int32_t> mapping(min_size, cumulative);
         EXPECT_EQ(mapping[0], 0);
         EXPECT_EQ(mapping[999999999], 0);
