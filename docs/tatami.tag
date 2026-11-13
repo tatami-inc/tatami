@@ -1538,6 +1538,27 @@
       <anchor>a121d4c98b9138ac176641de8b7c48540</anchor>
       <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
+      <anchor>a28058596b9449bc590ed56cb31fc2751</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
+      <anchor>abb39b0d51f7d1af87055f0e53db92d03</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
+      <anchor>a1d36396b4955bb22b81738b5aa18ddc4</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedCast</name>
