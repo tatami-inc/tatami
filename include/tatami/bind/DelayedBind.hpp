@@ -3,11 +3,12 @@
 
 #include "../base/Matrix.hpp"
 #include "../utils/new_extractor.hpp"
-#include "../utils/ConsecutiveOracle.hpp"
-#include "../utils/FixedOracle.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 #include "../utils/copy.hpp"
 #include "../utils/Index_to_container.hpp"
+
+#include "CompressedMapping.hpp"
+#include "split_oracles.hpp"
 
 #include <numeric>
 #include <algorithm>
@@ -16,8 +17,6 @@
 #include <type_traits>
 #include <cstddef>
 #include <limits>
-#include <cassert>
-#include <optional>
 
 /**
  * @file DelayedBind.hpp
@@ -33,85 +32,6 @@ namespace tatami {
  * @cond
  */
 namespace DelayedBind_internal {
-
-/*
- * Consider the problem of mapping an index 'i' of the combined dimension of the DelayedBind object to the component matrix.
- * The simplest approach is to do a binary search on 'cumulative' but that has O(log(n)) scaling for 'n' component matrices.
- * Another approach is to create a look-up table that can be indexed directly by 'i', which has O(1) runtime but consumes a lot of memory.
- *
- * The CompressedMapping class is a compromise that breaks up the combined dimensions into bins of regular size no greater than the extent of the smallest component matrix.
- * Each bin stores the identity the component matrix in which it starts, plus the length of that component matrix covered by that bin.
- * Given 'i', we can divide by the bin size to find its matching bin; we then compare the remainder to the covered length to assign it to the starting or next matrix.
- * This has O(1) runtime while being much more memory efficient for a minimum bin size >> 1.
- *
- * In practice, the bin size is set to the largest power of 2 that is no greater than the small matrix extent.
- * This allows for (i) some very fast division via bit shifting, and (ii) bitpacking to store both the matrix identity and the covered length in a single integer.
- */
-template<typename Index_>
-class CompressedMapping {
-public:
-    CompressedMapping() = default;
-
-    CompressedMapping(Index_ min_size, const std::vector<Index_>& cumulative) {
-        // Define bin size as the smallest power of 2 that is no greater than 'min_size'.
-        // This means that 'my_shift' must be less than the number of binary digits of 'Index_'.
-        while (min_size > 1) {
-            ++my_shift;
-            min_size /= 2;
-        }
-        assert(sanisizer::is_less_than(min_size, std::numeric_limits<Index_>::digits));
-        const auto bin_size = static_cast<Index_>(1) << my_shift;
-        my_mask = (bin_size - 1);
-
-        const auto total_dim = cumulative.back();
-        assert(min_size <= total_dim);
-        const auto total_bins = (total_dim >> my_shift) + ((total_dim & my_mask) > 0);
-        my_bins.reserve(total_bins);
-
-        Index_ pos = 1;
-        for (I<decltype(total_bins)> b = 0; b < total_bins; ++b) {
-            // Find the first cumulative boundary that exceeds the start of the bin.
-            // 'pos - 1' is the index of the matrix covering the start of the bin.
-            Index_ lower = b << my_shift;
-            while (cumulative[pos] <= lower) {
-                ++pos;
-            }
-
-            // We compute the gap between the start of the bin and the cumulative boundary immediately to its right.
-            // This is the number of elements in the bin that are assigned to the 'pos - 1'-th matrix.
-            const auto until_next = sanisizer::min(cumulative[pos] - lower, bin_size);
-
-            // Now we pack both of these values into a single integer to save some space.
-            // This is possible based on the following logic:
-            //
-            // - The total cumulative dimension is less than '2^X' where 'X' is the number of digits of 'Index_'.
-            // - The minimum size of each matrix is greater than or equal to '2^Y', where 'Y' is 'my_shift'.
-            //   We note that 'X > Y' as the minimum size cannot be greater than the total cumulative dimension.
-            // - Thus, the maximum possible value of the number of matrices must be less than '2^(X - Y)'.
-            //   This implies that the matrix index must fit into a '(X - Y)'-bit unsigned integer.
-            // - We know that 'until_next' must be less than or equal to '2^Y'.
-            //   We also know it must be positive as the cumulative boundary exceeds the bin start.
-            //   This implies that 'until_next - 1' must fit into a Y-bit unsigned integer.
-            //
-            // Thus, we can shift the matrix index by 'Y' and use the cleared bits to store 'until_next - 1'.
-            const Index_ encoding = (static_cast<Index_>(pos - 1) << my_shift) | static_cast<Index_>(until_next - 1);
-            my_bins.push_back(encoding);
-        }
-    }
-
-    Index_ operator[](const Index_ i) const {
-        const auto encoded = my_bins[i >> my_shift];
-        // 'encoded >> my_shift' recovers the matrix index.
-        // 'encoded & my_mask' recovers 'until_next - 1'.
-        // We want to know if 'i & my_mask >= until_next', which is the same as 'i & my_mask > until_next - 1', saving us an addition.
-        return sanisizer::sum_unsafe<Index_>(encoded >> my_shift, sanisizer::is_greater_than(i & my_mask, encoded & my_mask)); 
-    }
-
-public:
-    std::vector<Index_> my_bins;
-    Index_ my_shift = 0; 
-    Index_ my_mask;
-};
 
 /**********************
  *** Dense parallel ***
@@ -508,202 +428,6 @@ private:
  *** Oracular Perpendicular ***
  ******************************/
 
-template<typename Index_>
-class OffsetOracleWrapper : public Oracle<Index_> {
-public:
-    OffsetOracleWrapper(std::shared_ptr<const Oracle<Index_> > ptr, PredictionIndex start, PredictionIndex number, Index_ offset) :
-        my_ptr(std::move(ptr)),
-        my_start(start),
-        my_number(number),
-        my_offset(offset)
-    {}
-
-    PredictionIndex total() const {
-        return my_number;
-    }
-
-    Index_ get(PredictionIndex i) const {
-        return my_ptr->get(i + my_start) - my_offset;
-    }
-private:
-    std::shared_ptr<const Oracle<Index_> > my_ptr;
-    PredictionIndex my_start, my_number;
-    Index_ my_offset;
-};
-
-template<typename Index_>
-class OffsetOracleWrapperWithExtras : public Oracle<Index_> {
-public:
-    OffsetOracleWrapperWithExtras(std::shared_ptr<const Oracle<Index_> > ptr, PredictionIndex start, PredictionIndex number, Index_ offset, std::vector<Index_> extras) :
-        my_ptr(std::move(ptr)),
-        my_start(start),
-        my_number(number),
-        my_offset(offset),
-        my_extras(std::move(extras))
-    {
-        assert(sanisizer::sum<PredictionIndex>(my_number, my_extras.size()));
-    }
-
-    PredictionIndex total() const {
-        // This addition should be safe under the assumption that this is just a subset of predictions from the parent oracle.
-        return my_number + my_extras.size();
-    }
-
-    Index_ get(PredictionIndex i) const {
-        if (sanisizer::is_greater_than_or_equal(i, my_number)) {
-            return my_extras[i - my_number];
-        } else {
-            return my_ptr->get(i + my_start) - my_offset;
-        }
-    }
-private:
-    std::shared_ptr<const Oracle<Index_> > my_ptr;
-    PredictionIndex my_start, my_number;
-    Index_ my_offset;
-    std::vector<Index_> my_extras;
-};
-
-template<typename Index_>
-class ConsecutiveOracleWithExtras : public Oracle<Index_> {
-public:
-    ConsecutiveOracleWithExtras(Index_ start, Index_ number, std::vector<Index_> extras) :
-        my_start(start),
-        my_number(number),
-        my_extras(std::move(extras))
-    {
-        assert(sanisizer::sum<PredictionIndex>(my_number, my_extras.size()));
-    }
-
-    PredictionIndex total() const {
-        // This addition should be safe under the assumption that this is just a subset of predictions from the parent oracle.
-        return my_number + my_extras.size();
-    }
-
-    Index_ get(PredictionIndex i) const {
-        if (sanisizer::is_greater_than_or_equal(i, my_number)) {
-            return my_extras[i - my_number];
-        } else {
-            return my_start + i;
-        }
-    }
-private:
-    Index_ my_start, my_number;
-    std::vector<Index_> my_extras;
-};
-
-template<typename Index_>
-struct PredictionProperties {
-    bool consecutive_predictions = true;
-    Index_ start_prediction = 0;
-    Index_ number_of_predictions = 0;
-
-    bool consecutive_calls = true;
-    PredictionIndex start_call = 0;
-    PredictionIndex number_of_calls = 0;
-
-    std::vector<Index_> realized_predictions;
-};
-
-template<typename Index_>
-std::vector<PredictionProperties<Index_> > compute_prediction_properties(
-    const std::vector<Index_>& cumulative,
-    const CompressedMapping<Index_>& mapping, 
-    const Oracle<Index_>& oracle
-) {
-    const auto nmats = cumulative.size() - 1;
-    auto predictions = create_container_of_Index_size<std::vector<PredictionProperties<Index_> > >(nmats); // nmats should fit in an Index_, so this call is legal.
-
-    const auto ntotal = oracle.total();
-    for (I<decltype(ntotal)> i = 0; i < ntotal; ++i) {
-        const auto raw_prediction = oracle.get(i);
-        const Index_ choice = mapping[raw_prediction];
-        const auto pred = raw_prediction - cumulative[choice];
-
-        auto& current = predictions[choice];
-        if (current.consecutive_predictions) {
-            if (current.number_of_predictions == 0) {
-                current.start_prediction = pred;
-                current.number_of_predictions = 1;
-            } else if (current.number_of_predictions + current.start_prediction == pred) {
-                ++current.number_of_predictions;
-            } else {
-                current.consecutive_predictions = false;
-            }
-        }
-
-        if (current.consecutive_calls) {
-            if (current.number_of_calls == 0) {
-                current.start_call = i;
-                current.number_of_calls = 1;
-            } else if (current.number_of_calls + current.start_call == i) {
-                ++current.number_of_calls;
-            } else {
-                current.consecutive_calls = false;
-            }
-        }
-
-        // We only need to start recording the realized predictions when both runs have failed,
-        // as we will always use the longer run to initialize an Oracle.
-        if (!current.consecutive_predictions && !current.consecutive_calls) {
-            current.realized_predictions.push_back(pred);
-        }
-    }
-
-    return predictions;
-}
-
-// Check whether the predictions only touch a single component matrix.
-template<typename Index_>
-std::optional<Index_> uses_lone_component(const std::vector<PredictionProperties<Index_> >& properties) {
-    std::optional<Index_> out;
-    const auto nmats = properties.size();
-    for (I<decltype(nmats)> i = 0; i < nmats; ++i) {
-        if (properties[i].number_of_predictions) {
-            if (out.has_value()) {
-                out.reset();
-                break;
-            }
-            out = i;
-        }
-    }
-    return out;
-}
-
-template<typename Index_, class Initialize_>
-void initialize_perp_oracular(
-    const std::vector<Index_>& cumulative, 
-    const std::shared_ptr<const Oracle<Index_> >& ora, 
-    std::vector<PredictionProperties<Index_> > properties,
-    Initialize_ init
-) {
-    const auto nmats = cumulative.size() - 1;
-    assert(sanisizer::is_equal(nmats, properties.size()));
-
-    for (I<decltype(nmats)> x = 0; x < nmats; ++x) {
-        auto& prop = properties[x];
-        if (prop.consecutive_predictions) {
-            if (prop.number_of_predictions) {
-                init(x, std::make_shared<ConsecutiveOracle<Index_> >(prop.start_prediction, prop.number_of_predictions));
-            }
-        } else if (prop.consecutive_calls) {
-            if (prop.number_of_calls) {
-                init(x, std::make_shared<OffsetOracleWrapper<Index_> >(ora, prop.start_call, prop.number_of_calls, cumulative[x]));
-            }
-        } else if (sanisizer::is_greater_than(prop.number_of_predictions, prop.number_of_calls)) {
-            init(x, std::make_shared<ConsecutiveOracleWithExtras<Index_> >(prop.start_prediction, prop.number_of_predictions, std::move(prop.realized_predictions)));
-        } else if (sanisizer::is_less_than(prop.number_of_predictions, prop.number_of_calls)) {
-            init(x, std::make_shared<OffsetOracleWrapperWithExtras<Index_> >(ora, prop.start_call, prop.number_of_calls, cumulative[x], std::move(prop.realized_predictions)));
-        } else if (prop.number_of_predictions > 1) {
-            // i.e., if the runs are equal and are not of length 1, we prefer the ConsecutiveOracleWithExtras as that doesn't need to copy 'ora'.
-            init(x, std::make_shared<ConsecutiveOracleWithExtras<Index_> >(prop.start_prediction, prop.number_of_predictions, std::move(prop.realized_predictions)));
-        } else {
-            // Need to add back the first element from a length-1 run.
-            prop.realized_predictions.insert(prop.realized_predictions.begin(), 1, prop.start_prediction);
-            init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(prop.realized_predictions)));
-        }
-    }
-}
-
 template<typename Value_, typename Index_>
 class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
@@ -714,17 +438,17 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
-        std::vector<PredictionProperties<Index_> > ora_predictions,
+        std::vector<SplitPredictions<Index_> > split_pred,
         const Args_& ... args
     ) :
         my_mapping(mapping),
         my_oracle(std::move(ora))
     {
         resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is allowed.
-        initialize_perp_oracular(
+        split_oracles(
             cumulative,
             my_oracle,
-            std::move(ora_predictions),
+            std::move(split_pred),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
             }
@@ -754,17 +478,17 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
-        std::vector<PredictionProperties<Index_> > ora_predictions,
+        std::vector<SplitPredictions<Index_> > split_pred,
         const Args_& ... args
     ) :
         my_mapping(mapping),
         my_oracle(std::move(ora))
     {
         resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is legal.
-        initialize_perp_oracular(
+        split_oracles(
             cumulative,
             my_oracle,
-            std::move(ora_predictions),
+            std::move(split_pred),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
             }
@@ -848,10 +572,9 @@ public:
         my_matrices.resize(sofar);
         nmats = sofar;
 
-        if (nmats == 0) {
-            min_extent = 0;
+        if (nmats) {
+            my_mapping = DelayedBind_internal::CompressedMapping(min_extent, my_cumulative);
         }
-        my_mapping = DelayedBind_internal::CompressedMapping(min_extent, my_cumulative);
 
         double denom = 0;
         for (const auto& x : my_matrices) {
@@ -1130,34 +853,30 @@ private:
         std::shared_ptr<const Oracle<Index_> > oracle,
         Args_&&... args
     ) const {
-        auto ora_predictions = DelayedBind_internal::compute_prediction_properties(my_cumulative, my_mapping, *oracle);
-        const auto comp = DelayedBind_internal::uses_lone_component(ora_predictions);
+        auto split_pred = DelayedBind_internal::split_predictions(my_cumulative, my_mapping, *oracle);
+        const auto lone_comp = DelayedBind_internal::uses_lone_component(split_pred);
 
-        if (!comp.has_value()) {
+        if (!lone_comp.has_value()) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
                 my_cumulative,
                 my_mapping,
                 my_matrices,
                 row,
                 std::move(oracle),
-                std::move(ora_predictions),
+                std::move(split_pred),
                 std::forward<Args_>(args)...
             );
         } 
 
         // If there's only a single component matrix that's used in the predictions,
         // we return its extractor directly, possibly with a wrapper around the oracle.
-        if (*comp == 0) {
+        if (*lone_comp == 0) {
             return my_matrices[0]->dense(row, std::move(oracle), std::forward<Args_>(args)...);
         } else {
-            return my_matrices[*comp]->dense(
+            const auto num_preds = split_pred[*lone_comp].number_of_calls;
+            return my_matrices[*lone_comp]->dense(
                 row,
-                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(
-                    std::move(oracle),
-                    0, 
-                    ora_predictions[*comp].number_of_calls,
-                    my_cumulative[*comp]
-                ),
+                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(std::move(oracle), 0, num_preds, my_cumulative[*lone_comp]),
                 std::forward<Args_>(args)...
             );
         }
@@ -1267,31 +986,30 @@ private:
         std::shared_ptr<const Oracle<Index_> > oracle,
         Args_&&... args
     ) const {
-        auto ora_predictions = DelayedBind_internal::compute_prediction_properties(my_cumulative, my_mapping, *oracle);
-        const auto comp = DelayedBind_internal::uses_lone_component(ora_predictions);
+        auto split_pred = DelayedBind_internal::split_predictions(my_cumulative, my_mapping, *oracle);
+        const auto lone_comp = DelayedBind_internal::uses_lone_component(split_pred);
 
-        if (comp.has_value()) {
-            // If there's only a single component matrix that's used in the predictions,
-            // we return its extractor directly, with a wrapper around the oracle.
-            return my_matrices[*comp]->sparse(
-                row,
-                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(
-                    std::move(oracle),
-                    0, 
-                    ora_predictions[*comp].number_of_calls,
-                    my_cumulative[*comp]
-                ),
-                std::forward<Args_>(args)...
-            );
-
-        } else {
+        if (!lone_comp.has_value()) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
                 my_cumulative,
                 my_mapping,
                 my_matrices,
                 row,
                 std::move(oracle),
-                std::move(ora_predictions),
+                std::move(split_pred),
+                std::forward<Args_>(args)...
+            );
+        }
+
+        // If there's only a single component matrix that's used in the predictions,
+        // we return its extractor directly, possibly with a wrapper around the oracle.
+        if (*lone_comp == 0) {
+            return my_matrices[0]->sparse(row, std::move(oracle), std::forward<Args_>(args)...);
+        } else {
+            const auto num_preds = split_pred[*lone_comp].number_of_calls;
+            return my_matrices[*lone_comp]->sparse(
+                row,
+                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(std::move(oracle), 0, num_preds, my_cumulative[*lone_comp]),
                 std::forward<Args_>(args)...
             );
         }

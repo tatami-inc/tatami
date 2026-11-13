@@ -26,10 +26,11 @@
 #include "isometric/binary/compare_helpers.hpp"
 #include "isometric/binary/boolean_helpers.hpp"
 
-#include "other/DelayedBind.hpp"
 #include "other/DelayedCast.hpp"
 #include "other/DelayedTranspose.hpp"
 #include "other/ConstantMatrix.hpp"
+
+#include "bind/DelayedBind.hpp"
 
 #include "subset/DelayedSubsetBlock.hpp"
 #include "subset/make_DelayedSubset.hpp"

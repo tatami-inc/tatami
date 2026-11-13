@@ -42,8 +42,15 @@ add_executable(
 decorate_executable(dense_test)
 
 add_executable(
+    bind_test
+    src/bind/CompressedMapping.cpp
+    src/bind/split_oracles.cpp
+    src/bind/DelayedBind.cpp
+)
+decorate_executable(bind_test)
+
+add_executable(
     other_test
-    src/other/DelayedBind.cpp
     src/other/DelayedTranspose.cpp
     src/other/DelayedCast.cpp
     src/other/ConstantMatrix.cpp
