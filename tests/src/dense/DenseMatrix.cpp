@@ -279,7 +279,7 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        const int start = 59, len = 130;
+        const int start = 34, len = 60;
         auto rwrk = ref.dense_column(start, len);
         auto lwrk = limited.dense_column(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
         sanisizer::as_size_type<std::vector<double> >(len);
@@ -295,7 +295,7 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        const int start = 59, len = 20;
+        const int start = 59, len = 130;
         auto rwrk = ref.dense_row(start, len);
         auto lwrk = limited.dense_row(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
         sanisizer::as_size_type<std::vector<double> >(len);
@@ -311,7 +311,7 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        std::vector<int> indices{ 11, 33, 55, 99, 111, 122, 155, 177, 199 };
+        std::vector<int> indices{ 10, 20, 40, 60, 80, 99 };
         std::vector<unsigned char> uindices(indices.begin(), indices.end());
         const auto num_i = indices.size();
 
@@ -330,7 +330,7 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        std::vector<int> indices{ 10, 20, 40, 60, 80, 99 };
+        std::vector<int> indices{ 11, 33, 55, 99, 111, 122, 155, 177, 199 };
         std::vector<unsigned char> uindices(indices.begin(), indices.end());
         const auto num_i = indices.size();
 
