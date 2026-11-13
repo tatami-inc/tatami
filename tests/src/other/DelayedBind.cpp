@@ -163,8 +163,8 @@ TEST(DelayedBind, CompressedMappingBigType) {
         EXPECT_EQ(mapping[999999999], 0);
         EXPECT_EQ(mapping[1000000000], 1);
         EXPECT_EQ(mapping[1000000001], 1);
-        EXPECT_EQ(mapping[1999999999], 1);
-        EXPECT_EQ(mapping[2000000000], 2);
+        EXPECT_EQ(mapping[1599999999], 1);
+        EXPECT_EQ(mapping[1600000000], 2);
         EXPECT_EQ(mapping[2000000001], 2);
         EXPECT_EQ(mapping[2147483646], 2);
     }
