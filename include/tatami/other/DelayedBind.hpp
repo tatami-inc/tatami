@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <limits>
 #include <cassert>
+#include <optional>
 
 /**
  * @file DelayedBind.hpp
@@ -651,6 +652,23 @@ std::vector<PredictionProperties<Index_> > compute_prediction_properties(
     return predictions;
 }
 
+// Check whether the predictions only touch a single component matrix.
+template<typename Index_>
+std::optional<Index_> uses_lone_component(const std::vector<PredictionProperties<Index_> >& properties) {
+    std::optional<Index_> out;
+    const auto nmats = properties.size();
+    for (I<decltype(nmats)> i = 0; i < nmats; ++i) {
+        if (properties[i].number_of_predictions) {
+            if (out.has_value()) {
+                out.reset();
+                break;
+            }
+            out = i;
+        }
+    }
+    return out;
+}
+
 template<typename Index_, class Initialize_>
 void initialize_perp_oracular(
     const std::vector<Index_>& cumulative, 
@@ -696,6 +714,7 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
+        std::vector<PredictionProperties<Index_> > ora_predictions,
         const Args_& ... args
     ) :
         my_mapping(mapping),
@@ -705,7 +724,7 @@ public:
         initialize_perp_oracular(
             cumulative,
             my_oracle,
-            compute_prediction_properties(cumulative, mapping, *my_oracle),
+            std::move(ora_predictions),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
             }
@@ -735,6 +754,7 @@ public:
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& matrices, 
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
+        std::vector<PredictionProperties<Index_> > ora_predictions,
         const Args_& ... args
     ) :
         my_mapping(mapping),
@@ -744,7 +764,7 @@ public:
         initialize_perp_oracular(
             cumulative,
             my_oracle,
-            compute_prediction_properties(cumulative, mapping, *my_oracle),
+            std::move(ora_predictions),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
             }
@@ -1019,7 +1039,7 @@ private:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, opt);
-        } else  if (row == my_by_row) {
+        } else if (row == my_by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(
                 my_cumulative,
                 my_mapping,
@@ -1103,6 +1123,46 @@ private:
     /************************************
      ********** Oracular dense **********
      ************************************/
+private:
+    template<typename ... Args_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > create_oracular_perpendicular_dense(
+        bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        Args_&&... args
+    ) const {
+        auto ora_predictions = DelayedBind_internal::compute_prediction_properties(my_cumulative, my_mapping, *oracle);
+        const auto comp = DelayedBind_internal::uses_lone_component(ora_predictions);
+
+        if (!comp.has_value()) {
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(ora_predictions),
+                std::forward<Args_>(args)...
+            );
+        } 
+
+        // If there's only a single component matrix that's used in the predictions,
+        // we return its extractor directly, possibly with a wrapper around the oracle.
+        if (*comp == 0) {
+            return my_matrices[0]->dense(row, std::move(oracle), std::forward<Args_>(args)...);
+        } else {
+            return my_matrices[*comp]->dense(
+                row,
+                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(
+                    std::move(oracle),
+                    0, 
+                    ora_predictions[*comp].number_of_calls,
+                    my_cumulative[*comp]
+                ),
+                std::forward<Args_>(args)...
+            );
+        }
+    }
+
 public:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
@@ -1111,20 +1171,16 @@ public:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 dense(row, opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                opt
-            );
+            return create_oracular_perpendicular_dense(row, std::move(oracle), opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
                 my_cumulative,
@@ -1146,22 +1202,16 @@ public:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), block_start, block_length, opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 dense(row, block_start, block_length, opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                block_start,
-                block_length,
-                opt
-            );
+            return create_oracular_perpendicular_dense(row, std::move(oracle), block_start, block_length, opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
                 my_cumulative,
@@ -1184,21 +1234,16 @@ public:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->dense(row, std::move(oracle), std::move(indices_ptr), opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 dense(row, std::move(indices_ptr), opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                std::move(indices_ptr),
-                opt
-            );
+            return create_oracular_perpendicular_dense(row, std::move(oracle), std::move(indices_ptr), opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(
                 my_cumulative,
@@ -1216,6 +1261,43 @@ public:
      ********** Oracular sparse **********
      *************************************/
 private:
+    template<typename ... Args_>
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > create_oracular_perpendicular_sparse(
+        bool row,
+        std::shared_ptr<const Oracle<Index_> > oracle,
+        Args_&&... args
+    ) const {
+        auto ora_predictions = DelayedBind_internal::compute_prediction_properties(my_cumulative, my_mapping, *oracle);
+        const auto comp = DelayedBind_internal::uses_lone_component(ora_predictions);
+
+        if (comp.has_value()) {
+            // If there's only a single component matrix that's used in the predictions,
+            // we return its extractor directly, with a wrapper around the oracle.
+            return my_matrices[*comp]->sparse(
+                row,
+                std::make_shared<DelayedBind_internal::OffsetOracleWrapper<Index_> >(
+                    std::move(oracle),
+                    0, 
+                    ora_predictions[*comp].number_of_calls,
+                    my_cumulative[*comp]
+                ),
+                std::forward<Args_>(args)...
+            );
+
+        } else {
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
+                my_cumulative,
+                my_mapping,
+                my_matrices,
+                row,
+                std::move(oracle),
+                std::move(ora_predictions),
+                std::forward<Args_>(args)...
+            );
+        }
+    }
+
+public:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
@@ -1223,20 +1305,16 @@ private:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 sparse(row, opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                opt
-            );
+            return create_oracular_perpendicular_sparse(row, std::move(oracle), opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelFullSparse<true, Value_, Index_> >(
                 my_cumulative,
@@ -1258,22 +1336,16 @@ private:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), block_start, block_length, opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 sparse(row, block_start, block_length, opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                block_start,
-                block_length,
-                opt
-            );
+            return create_oracular_perpendicular_sparse(row, std::move(oracle), block_start, block_length, opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelBlockSparse<true, Value_, Index_> >(
                 my_cumulative,
@@ -1296,21 +1368,16 @@ private:
     ) const {
         if (my_matrices.size() == 1) {
             return my_matrices[0]->sparse(row, std::move(oracle), std::move(indices_ptr), opt);
+
         } else if (!my_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(
                 std::move(oracle),
                 sparse(row, std::move(indices_ptr), opt)
             );
+
         } else if (row == my_by_row) {
-            return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(
-                my_cumulative,
-                my_mapping,
-                my_matrices,
-                row,
-                std::move(oracle),
-                std::move(indices_ptr),
-                opt
-            );
+            return create_oracular_perpendicular_sparse(row, std::move(oracle), std::move(indices_ptr), opt);
+
         } else {
             return std::make_unique<DelayedBind_internal::ParallelIndexSparse<true, Value_, Index_> >(
                 my_cumulative,

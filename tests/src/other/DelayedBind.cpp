@@ -29,7 +29,6 @@ TEST_P(DelayedBindCompressedMappingTest, Basic) {
         const int chosen = min_size + (rng() % extra);
         auto actual = std::min(chosen, total_dim - last); 
         cumulative.push_back(last + actual);
-        std::cout <<cumulative.back() << std::endl;
     }
 
     // Merging the last interval with the second-last interval if it's too small.
@@ -656,5 +655,51 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(0.33, 0.3),
             std::make_pair(0.5, 0.5)
         )
+    )
+);
+
+/****************************
+ ****************************/
+
+// Check for correct use of a single matrix's extractor when the predictions only cover a single matrix.
+class DelayedBindLimitedPredictionsTest : 
+    public ::testing::TestWithParam<std::vector<int> >,
+    public DelayedBindUtils 
+{};
+
+TEST_P(DelayedBindLimitedPredictionsTest, Basic) {
+    auto predictions = GetParam();
+    assemble(std::make_tuple(std::vector<int>{ 10, 30, 20 }, true));
+
+    auto observed_d = forced_bound_dense->dense(true, std::make_shared<tatami::FixedVectorOracle<int> >(predictions), {});
+    auto observed_s = forced_bound_sparse->sparse(true, std::make_shared<tatami::FixedVectorOracle<int> >(predictions), {});
+    auto expected = manual->dense(true, std::make_shared<tatami::FixedVectorOracle<int> >(predictions), {});
+
+    std::vector<double> exp_buffer(otherdim), obs_buffer(otherdim), obs_buffer_d(otherdim);
+    std::vector<int> obs_buffer_i(otherdim);
+    for ([[maybe_unused]] auto p : predictions) {
+        auto optr = observed_d->fetch(obs_buffer.data());
+        tatami::copy_n(optr, otherdim, obs_buffer.data());
+
+        auto eptr = expected->fetch(exp_buffer.data());
+        tatami::copy_n(eptr, otherdim, exp_buffer.data());
+        EXPECT_EQ(exp_buffer, obs_buffer);
+
+        std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
+        auto range = observed_s->fetch(obs_buffer_d.data(), obs_buffer_i.data());
+        for (int i = 0; i < range.number; ++i) {
+            obs_buffer[range.index[i]] = range.value[i];
+        }
+        EXPECT_EQ(exp_buffer, obs_buffer);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindLimitedPredictionsTest,
+    ::testing::Values(
+        std::vector<int>{ 5, 2, 1, 0, 8, 2, 5, 4 }, // Only using the first matrix, so no need to wrap the oracle.
+        std::vector<int>{ 15, 21, 10, 10, 28, 17, 15, 24 }, // Using the second matrix, wrap the oracle.
+        std::vector<int>{} // Correct behavior with an empty input.
     )
 );
