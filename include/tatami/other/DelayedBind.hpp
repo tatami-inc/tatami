@@ -437,9 +437,9 @@ private:
     std::vector<Index_> my_which_matrix;
 };
 
-/*********************
- *** Perpendicular ***
- *********************/
+/****************************
+ *** Myopic Perpendicular ***
+ ****************************/
 
 template<typename Value_, typename Index_>
 class MyopicPerpendicularDense final : public MyopicDenseExtractor<Value_, Index_> {
@@ -503,62 +503,185 @@ private:
     std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > my_exts;
 };
 
+/******************************
+ *** Oracular Perpendicular ***
+ ******************************/
+
+template<typename Index_>
+class OffsetOracleWrapper : public Oracle<Index_> {
+public:
+    OffsetOracleWrapper(std::shared_ptr<const Oracle<Index_> > ptr, PredictionIndex start, PredictionIndex number, Index_ offset) :
+        my_ptr(std::move(ptr)),
+        my_start(start),
+        my_number(number),
+        my_offset(offset)
+    {}
+
+    PredictionIndex total() const {
+        return my_number;
+    }
+
+    Index_ get(PredictionIndex i) const {
+        return my_ptr->get(i + my_start) - my_offset;
+    }
+private:
+    std::shared_ptr<const Oracle<Index_> > my_ptr;
+    PredictionIndex my_start, my_number;
+    Index_ my_offset;
+};
+
+template<typename Index_>
+class OffsetOracleWrapperWithExtras : public Oracle<Index_> {
+public:
+    OffsetOracleWrapperWithExtras(std::shared_ptr<const Oracle<Index_> > ptr, PredictionIndex start, PredictionIndex number, Index_ offset, std::vector<Index_> extras) :
+        my_ptr(std::move(ptr)),
+        my_start(start),
+        my_number(number),
+        my_offset(offset),
+        my_extras(std::move(extras))
+    {
+        assert(sanisizer::sum<PredictionIndex>(my_number, my_extras.size()));
+    }
+
+    PredictionIndex total() const {
+        // This addition should be safe under the assumption that this is just a subset of predictions from the parent oracle.
+        return my_number + my_extras.size();
+    }
+
+    Index_ get(PredictionIndex i) const {
+        if (sanisizer::is_greater_than_or_equal(i, my_number)) {
+            return my_extras[i - my_number];
+        } else {
+            return my_ptr->get(i + my_start) - my_offset;
+        }
+    }
+private:
+    std::shared_ptr<const Oracle<Index_> > my_ptr;
+    PredictionIndex my_start, my_number;
+    Index_ my_offset;
+    std::vector<Index_> my_extras;
+};
+
+template<typename Index_>
+class ConsecutiveOracleWithExtras : public Oracle<Index_> {
+public:
+    ConsecutiveOracleWithExtras(Index_ start, Index_ number, std::vector<Index_> extras) :
+        my_start(start),
+        my_number(number),
+        my_extras(std::move(extras))
+    {
+        assert(sanisizer::sum<PredictionIndex>(my_number, my_extras.size()));
+    }
+
+    PredictionIndex total() const {
+        // This addition should be safe under the assumption that this is just a subset of predictions from the parent oracle.
+        return my_number + my_extras.size();
+    }
+
+    Index_ get(PredictionIndex i) const {
+        if (sanisizer::is_greater_than_or_equal(i, my_number)) {
+            return my_extras[i - my_number];
+        } else {
+            return my_start + i;
+        }
+    }
+private:
+    Index_ my_start, my_number;
+    std::vector<Index_> my_extras;
+};
+
+template<typename Index_>
+struct PredictionProperties {
+    bool consecutive_predictions = true;
+    Index_ start_prediction = 0;
+    Index_ number_of_predictions = 0;
+
+    bool consecutive_calls = true;
+    PredictionIndex start_call = 0;
+    PredictionIndex number_of_calls = 0;
+
+    std::vector<Index_> realized_predictions;
+};
+
+template<typename Index_>
+std::vector<PredictionProperties<Index_> > compute_prediction_properties(
+    const std::vector<Index_>& cumulative,
+    const CompressedMapping<Index_>& mapping, 
+    const Oracle<Index_>& oracle
+) {
+    const auto nmats = cumulative.size() - 1;
+    auto predictions = create_container_of_Index_size<std::vector<PredictionProperties<Index_> > >(nmats); // nmats should fit in an Index_, so this call is legal.
+
+    const auto ntotal = oracle.total();
+    for (I<decltype(ntotal)> i = 0; i < ntotal; ++i) {
+        const auto raw_prediction = oracle.get(i);
+        const Index_ choice = mapping[raw_prediction];
+        const auto pred = raw_prediction - cumulative[choice];
+
+        auto& current = predictions[choice];
+        if (current.consecutive_predictions) {
+            if (current.number_of_predictions == 0) {
+                current.start_prediction = pred;
+                current.number_of_predictions = 1;
+            } else if (current.number_of_predictions + current.start_prediction == pred) {
+                ++current.number_of_predictions;
+            } else {
+                current.consecutive_predictions = false;
+            }
+        }
+
+        if (current.consecutive_calls) {
+            if (current.number_of_calls == 0) {
+                current.start_call = i;
+                current.number_of_calls = 1;
+            } else if (current.number_of_calls + current.start_call == i) {
+                ++current.number_of_calls;
+            } else {
+                current.consecutive_calls = false;
+            }
+        }
+
+        // We only need to start recording the realized predictions when both runs have failed,
+        // as we will always use the longer run to initialize an Oracle.
+        if (!current.consecutive_predictions && !current.consecutive_calls) {
+            current.realized_predictions.push_back(pred);
+        }
+    }
+
+    return predictions;
+}
+
 template<typename Index_, class Initialize_>
 void initialize_perp_oracular(
     const std::vector<Index_>& cumulative, 
-    const CompressedMapping<Index_>& mapping, 
-    const Oracle<Index_>& oracle, 
-    std::vector<Index_>& chosen, 
+    const std::shared_ptr<const Oracle<Index_> >& ora, 
+    std::vector<PredictionProperties<Index_> > properties,
     Initialize_ init
 ) {
-    const auto ntotal = oracle.total();
-    chosen.reserve(ntotal);
-
-    struct Predictions {
-        bool consecutive = true;
-        Index_ start = 0;
-        Index_ number = 0;
-        std::vector<Index_> predictions;
-
-        void add(const Index_ p) {
-            if (consecutive) {
-                if (number == 0) {
-                    start = p;
-                    number = 1;
-                    return;
-                }
-                if (number + start == p) {
-                    ++number;
-                    return;
-                }
-                consecutive = false;
-                resize_container_to_Index_size(predictions, number);
-                std::iota(predictions.begin(), predictions.end(), start);
-            }
-
-            predictions.push_back(p);
-        }
-    };
-
     const auto nmats = cumulative.size() - 1;
-    auto predictions = create_container_of_Index_size<std::vector<Predictions> >(nmats); // nmats should fit in an Index_, so this call is legal.
-    for (I<decltype(ntotal)> i = 0; i < ntotal; ++i) {
-        const auto prediction = oracle.get(i);
-        const Index_ choice = mapping[prediction];
-        chosen.push_back(choice);
-        predictions[choice].add(prediction - cumulative[choice]);
-    }
+    assert(sanisizer::is_equal(nmats, properties.size()));
 
     for (I<decltype(nmats)> x = 0; x < nmats; ++x) {
-        auto& current = predictions[x];
-        if (current.consecutive) {
-            if (current.number) {
-                init(x, std::make_shared<ConsecutiveOracle<Index_> >(current.start, current.number));
+        auto& prop = properties[x];
+        if (prop.consecutive_predictions) {
+            if (prop.number_of_predictions) {
+                init(x, std::make_shared<ConsecutiveOracle<Index_> >(prop.start_prediction, prop.number_of_predictions));
             }
+        } else if (prop.consecutive_calls) {
+            if (prop.number_of_calls) {
+                init(x, std::make_shared<OffsetOracleWrapper<Index_> >(ora, prop.start_call, prop.number_of_calls, cumulative[x]));
+            }
+        } else if (sanisizer::is_greater_than(prop.number_of_predictions, prop.number_of_calls)) {
+            init(x, std::make_shared<ConsecutiveOracleWithExtras<Index_> >(prop.start_prediction, prop.number_of_predictions, std::move(prop.realized_predictions)));
+        } else if (sanisizer::is_less_than(prop.number_of_predictions, prop.number_of_calls)) {
+            init(x, std::make_shared<OffsetOracleWrapperWithExtras<Index_> >(ora, prop.start_call, prop.number_of_calls, cumulative[x], std::move(prop.realized_predictions)));
+        } else if (prop.number_of_predictions > 1) {
+            // i.e., if the runs are equal and are not of length 1, we prefer the ConsecutiveOracleWithExtras as that doesn't need to copy 'ora'.
+            init(x, std::make_shared<ConsecutiveOracleWithExtras<Index_> >(prop.start_prediction, prop.number_of_predictions, std::move(prop.realized_predictions)));
         } else {
-            if (!current.predictions.empty()) {
-                init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(current.predictions)));
-            }
+            // Need to add back the first element from a length-1 run.
+            prop.realized_predictions.insert(prop.realized_predictions.begin(), 1, prop.start_prediction);
+            init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(prop.realized_predictions)));
         }
     }
 }
@@ -574,13 +697,15 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args
-    ) {
-        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an I ndex_, so this call is allowed.
+    ) :
+        my_mapping(mapping),
+        my_oracle(std::move(ora))
+    {
+        resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is allowed.
         initialize_perp_oracular(
             cumulative,
-            mapping,
-            *ora,
-            my_segments,
+            my_oracle,
+            compute_prediction_properties(cumulative, mapping, *my_oracle),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
             }
@@ -588,16 +713,16 @@ public:
     }
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
-        const auto chosen = my_segments[my_used];
+        const auto chosen = my_mapping[my_oracle->get(my_used++)];
         const auto output = my_exts[chosen]->fetch(i, buffer);
-        ++my_used;
         return output;
     }
 
 private:
-    std::vector<Index_> my_segments;
-    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > my_exts;
+    const CompressedMapping<Index_>& my_mapping;
+    std::shared_ptr<const Oracle<Index_> > my_oracle;
     PredictionIndex my_used = 0;
+    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > my_exts;
 };
 
 template<typename Value_, typename Index_>
@@ -611,13 +736,15 @@ public:
         const bool row,
         std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args
-    ) {
+    ) :
+        my_mapping(mapping),
+        my_oracle(std::move(ora))
+    {
         resize_container_to_Index_size(my_exts, matrices.size()); // number of matrices should fit in an Index_, so this call is legal.
         initialize_perp_oracular(
             cumulative,
-            mapping,
-            *ora,
-            my_segments,
+            my_oracle,
+            compute_prediction_properties(cumulative, mapping, *my_oracle),
             [&](const Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
             }
@@ -625,16 +752,16 @@ public:
     }
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        const auto chosen = my_segments[my_used];
+        const auto chosen = my_mapping[my_oracle->get(my_used++)];
         const auto output = my_exts[chosen]->fetch(i, vbuffer, ibuffer);
-        ++my_used;
         return output;
     }
 
 private:
-    std::vector<Index_> my_segments;
-    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > my_exts;
+    const CompressedMapping<Index_>& my_mapping;
+    std::shared_ptr<const Oracle<Index_> > my_oracle;
     PredictionIndex my_used = 0;
+    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > my_exts;
 };
 
 }
