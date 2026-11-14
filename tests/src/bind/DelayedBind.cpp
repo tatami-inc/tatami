@@ -447,3 +447,158 @@ INSTANTIATE_TEST_SUITE_P(
         std::vector<int>{} // Correct behavior with an empty input.
     )
 );
+
+/****************************
+ ****************************/
+
+// Check for correct use of a single matrix's extractor when the block only covers a single matrix.
+class DelayedBindParallelSingleMatrixTest :
+    public ::testing::TestWithParam<std::tuple<bool, std::pair<int, int> > >,
+    public DelayedBindUtils
+{
+protected:
+    static tatami::VectorPtr<int> mock_indices(const int start, const int len) {
+        auto res = std::make_shared<std::vector<int> >();
+        int counter = start;
+        const int end = start + len;
+        const int jump = 3;
+        while (end - counter > jump) {
+            res->push_back(counter);
+            counter += jump;
+        }
+        return res;
+    }
+};
+
+TEST_P(DelayedBindParallelSingleMatrixTest, Dense) {
+    assemble(std::make_tuple(std::vector<int>{ 200, 100, 300 }, true));
+
+    auto params = GetParam();
+    const bool do_block = std::get<0>(params);
+    const auto block = std::get<1>(params);
+
+    std::unique_ptr<tatami::MyopicDenseExtractor<double, int> > myopic, expected;
+    std::unique_ptr<tatami::OracularDenseExtractor<double, int> > oracular;
+
+    int extract_len;
+    if (do_block) {
+        const int block_start = block.first, block_len = block.second;
+        myopic = forced_bound_dense->dense(false, block_start, block_len, {});
+        oracular = tatami::consecutive_extractor<false, double, int>(*forced_bound_dense, false, 0, otherdim, block_start, block_len, tatami::Options());
+        expected = manual->dense(false, block_start, block_len, {});
+        extract_len = block_len;
+    } else {
+        auto indices_ptr = mock_indices(block.first, block.second);
+        myopic = forced_bound_dense->dense(false, indices_ptr, {});
+        oracular = tatami::consecutive_extractor<false, double, int>(*forced_bound_dense, false, 0, otherdim, indices_ptr, tatami::Options());
+        expected = manual->dense(false, indices_ptr, {});
+        extract_len = indices_ptr->size();
+    }
+
+    std::vector<double> exp_buffer(extract_len), obs_buffer(extract_len);
+    for (int c = 0; c < otherdim; ++c) {
+        auto eptr = expected->fetch(c, exp_buffer.data());
+        tatami::copy_n(eptr, extract_len, exp_buffer.data());
+
+        auto mptr = myopic->fetch(c, obs_buffer.data());
+        tatami::copy_n(mptr, extract_len, obs_buffer.data());
+        EXPECT_EQ(exp_buffer, obs_buffer);
+
+        auto optr = oracular->fetch(obs_buffer.data());
+        tatami::copy_n(optr, extract_len, obs_buffer.data());
+        EXPECT_EQ(exp_buffer, obs_buffer);
+    }
+}
+
+TEST_P(DelayedBindParallelSingleMatrixTest, Sparse) {
+    assemble(std::make_tuple(std::vector<int>{ 200, 100, 300 }, true));
+
+    auto params = GetParam();
+    const bool do_block = std::get<0>(params);
+    const auto block = std::get<1>(params);
+
+    std::unique_ptr<tatami::MyopicDenseExtractor<double, int> > expected;
+    std::unique_ptr<tatami::MyopicSparseExtractor<double, int> > myopic;
+    std::unique_ptr<tatami::OracularSparseExtractor<double, int> > oracular;
+
+    if (do_block) {
+        const int block_start = block.first, block_len = block.second;
+        myopic = forced_bound_sparse->sparse(false, block_start, block_len, {});
+        oracular = tatami::consecutive_extractor<true, double, int>(*forced_bound_sparse, false, 0, otherdim, block_start, block_len, tatami::Options()); 
+        expected = manual->dense(false, block_start, block_len, {});
+
+        std::vector<double> exp_buffer(block_len), obs_buffer(block_len), obs_buffer_d(block_len);
+        std::vector<int> obs_buffer_i(block_len);
+
+        for (int c = 0; c < otherdim; ++c) {
+            auto eptr = expected->fetch(c, exp_buffer.data());
+            tatami::copy_n(eptr, block_len, exp_buffer.data());
+
+            auto mrange = myopic->fetch(c, obs_buffer_d.data(), obs_buffer_i.data());
+            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
+            for (int i = 0; i < mrange.number; ++i) {
+                obs_buffer[mrange.index[i] - block_start] = mrange.value[i];
+            }
+            EXPECT_EQ(exp_buffer, obs_buffer);
+
+            auto orange = oracular->fetch(obs_buffer_d.data(), obs_buffer_i.data());
+            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
+            for (int i = 0; i < orange.number; ++i) {
+                obs_buffer[orange.index[i] - block_start] = orange.value[i];
+            }
+            EXPECT_EQ(exp_buffer, obs_buffer);
+            EXPECT_EQ(mrange.number, orange.number);
+        }
+
+    } else {
+        auto indices_ptr = mock_indices(block.first, block.second);
+        myopic = forced_bound_sparse->sparse(false, indices_ptr, {});
+        oracular = tatami::consecutive_extractor<true, double, int>(*forced_bound_sparse, false, 0, otherdim, indices_ptr, tatami::Options());
+        expected = manual->dense(false, indices_ptr, {});
+
+        const int num_indices = indices_ptr->size();
+        std::vector<double> exp_buffer(num_indices), obs_buffer(num_indices), obs_buffer_d(num_indices);
+        std::vector<int> obs_buffer_i(num_indices);
+
+        constexpr std::size_t placeholder = -1;
+        std::vector<std::size_t> reposition(indices_ptr->back() + 1, placeholder);
+        for (int i = 0; i < num_indices; ++i) {
+            reposition[(*indices_ptr)[i]] = i;
+        }
+
+        for (int c = 0; c < otherdim; ++c) {
+            auto eptr = expected->fetch(c, exp_buffer.data());
+            tatami::copy_n(eptr, num_indices, exp_buffer.data());
+
+            auto mrange = myopic->fetch(c, obs_buffer_d.data(), obs_buffer_i.data());
+            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
+            for (int i = 0; i < mrange.number; ++i) {
+                obs_buffer[reposition[mrange.index[i]]] = mrange.value[i];
+            }
+            EXPECT_EQ(exp_buffer, obs_buffer);
+
+            auto orange = oracular->fetch(obs_buffer_d.data(), obs_buffer_i.data());
+            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
+            for (int i = 0; i < orange.number; ++i) {
+                obs_buffer[reposition[orange.index[i]]] = orange.value[i];
+            }
+            EXPECT_EQ(exp_buffer, obs_buffer);
+            EXPECT_EQ(mrange.number, orange.number);
+        }
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindParallelSingleMatrixTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // do block
+
+        // Matrix extents are (200, 100, 300).
+        ::testing::Values(
+            std::make_pair(2, 102), // covers first matrix only
+            std::make_pair(231, 40), // covers second matrix only
+            std::make_pair(399, 187) // covers third matrix only
+        )
+    )
+);
