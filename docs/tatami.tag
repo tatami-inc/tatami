@@ -8010,6 +8010,13 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
+      <type>typename std::conditional&lt; sparse_, SparseExtractor&lt; oracle_, Value_, Index_ &gt;, DenseExtractor&lt; oracle_, Value_, Index_ &gt; &gt;::type</type>
+      <name>Extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a61e307f87e00e2cae106359a1ec0c2ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
       <type>std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt;</type>
       <name>VectorPtr</name>
       <anchorfile>namespacetatami.html</anchorfile>
