@@ -39,7 +39,7 @@ public:
         return ::testing::Combine(
             ::testing::Values(true, false), // row or column subsetting, respectively.
             ::testing::Values( // the block dimensions.
-                std::make_pair(0.0, 0.5),
+                std::make_pair(0.0, 0.5), // subset block at the start ensures that we test some optimizations with extractor creation.
                 std::make_pair(0.25, 0.8),
                 std::make_pair(0.4, 1)
             )

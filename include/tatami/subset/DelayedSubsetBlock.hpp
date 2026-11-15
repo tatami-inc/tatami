@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <cassert>
 
 /**
  * @file DelayedSubsetBlock.hpp
@@ -23,6 +24,32 @@ namespace tatami {
  */
 namespace DelayedSubsetBlock_internal {
 
+template<bool oracle_, typename Value_, typename Index_>
+auto create_along_dense_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ subset_length,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    const Options& opt
+) {
+    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt);
+}
+
+template<bool oracle_, typename Value_, typename Index_>
+auto create_along_dense_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ /* for consistency */,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    const Index_ block_start,
+    const Index_ block_length,
+    const Options& opt
+) {
+    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), subset_start + block_start, block_length, opt);
+}
+
 template<typename Index_>
 void bump_indices(VectorPtr<Index_>& indices_ptr, const Index_ subset_start) {
     if (subset_start) {
@@ -35,112 +62,95 @@ void bump_indices(VectorPtr<Index_>& indices_ptr, const Index_ subset_start) {
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class AlongDense final : public DenseExtractor<oracle_, Value_, Index_> {
-public:
-    AlongDense(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ subset_length,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        const Options& opt
-    ) :
-        my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt))
-    {}
-
-    AlongDense(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ /* for consistency */,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        const Index_ block_start,
-        const Index_ block_length,
-        const Options& opt
-    ) :
-        my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), subset_start + block_start, block_length, opt))
-    {}
-
-    AlongDense(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ /* for consistency */,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        VectorPtr<Index_> indices_ptr,
-        const Options& opt
-    ) {
-        bump_indices(indices_ptr, subset_start); 
-        my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
-    }
-
-    const Value_* fetch(const Index_ i, Value_* const buffer) {
-        return my_ext->fetch(i, buffer);
-    }
-
-private:
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
-};
+auto create_along_dense_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ /* for consistency */,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    VectorPtr<Index_> indices_ptr,
+    const Options& opt
+) {
+    bump_indices(indices_ptr, subset_start); 
+    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
+}
 
 template<bool oracle_, typename Value_, typename Index_>
-class AlongSparse final : public SparseExtractor<oracle_, Value_, Index_> {
+class AdjustSparseIndices final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
-    AlongSparse(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ subset_length,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        const Options& opt
-    ) :
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt)),
-        my_shift(subset_start)
-    {}
-
-    AlongSparse(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ /* for consistency */,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        const Index_ block_start,
-        const Index_ block_length,
-        const Options& opt
-    ) :
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), subset_start + block_start, block_length, opt)),
-        my_shift(subset_start)
-    {}
-
-    AlongSparse(
-        const Matrix<Value_, Index_>& matrix,
-        const Index_ subset_start,
-        const Index_ /* for consistency */,
-        const bool row,
-        MaybeOracle<oracle_, Index_> oracle,
-        VectorPtr<Index_> indices_ptr, 
-        const Options& opt
-    ) : 
-        my_shift(subset_start) 
-    {
-        bump_indices(indices_ptr, subset_start); 
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
-    }
+    AdjustSparseIndices(std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > ext, Index_ subset_start) :
+        my_ext(std::move(ext)), my_subset_start(subset_start) {}
 
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto output = my_ext->fetch(i, value_buffer, index_buffer);
-        if (output.index && my_shift) {
-            for (Index_ i = 0; i < output.number; ++i) {
-                index_buffer[i] = output.index[i] - my_shift;
-            }
-            output.index = index_buffer;
+        assert(output.index);
+        for (Index_ i = 0; i < output.number; ++i) {
+            index_buffer[i] = output.index[i] - my_subset_start;
         }
+        output.index = index_buffer;
         return output;
     }
-
 private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
-    Index_ my_shift;
+    Index_ my_subset_start;
 };
+
+// For the along-sparse extractors, we wrap it in a AdjustSparseIndices if the indices are requested and the subset doesn't start at zero.
+// Otherwise we can directly return an extractor from the underlying matrix.
+template<bool oracle_, typename Value_, typename Index_>
+std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > create_along_sparse_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ subset_length,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    const Options& opt
+) {
+    auto ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt);
+    if (subset_start && opt.sparse_extract_index) {
+        return std::make_unique<AdjustSparseIndices<oracle_, Value_, Index_> >(std::move(ext), subset_start);
+    } else {
+        return ext;
+    }
+}
+
+template<bool oracle_, typename Value_, typename Index_>
+std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > create_along_sparse_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ /* for consistency */,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    const Index_ block_start,
+    const Index_ block_length,
+    const Options& opt
+) {
+    auto ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), subset_start + block_start, block_length, opt);
+    if (subset_start && opt.sparse_extract_index) {
+        return std::make_unique<AdjustSparseIndices<oracle_, Value_, Index_> >(std::move(ext), subset_start);
+    } else {
+        return ext;
+    }
+}
+
+template<bool oracle_, typename Value_, typename Index_>
+std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > create_along_sparse_extractor(
+    const Matrix<Value_, Index_>& matrix,
+    const Index_ subset_start,
+    const Index_ /* for consistency */,
+    const bool row,
+    MaybeOracle<oracle_, Index_> oracle,
+    VectorPtr<Index_> indices_ptr, 
+    const Options& opt
+) {
+    bump_indices(indices_ptr, subset_start); 
+    auto ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
+    if (subset_start && opt.sparse_extract_index) {
+        return std::make_unique<AdjustSparseIndices<oracle_, Value_, Index_> >(std::move(ext), subset_start);
+    } else {
+        return ext;
+    }
+}
 
 template<typename Index_>
 class SubsetOracle final : public Oracle<Index_> {
@@ -319,7 +329,7 @@ private:
         Args_&&... args
     ) const {
         if (row != my_by_row) {
-            return std::make_unique<DelayedSubsetBlock_internal::AlongDense<oracle_, Value_, Index_> >(
+            return DelayedSubsetBlock_internal::create_along_dense_extractor<oracle_>(
                 *my_matrix,
                 my_subset_start,
                 my_subset_length,
@@ -371,7 +381,7 @@ private:
         Args_&&... args
     ) const {
         if (row != my_by_row) {
-            return std::make_unique<DelayedSubsetBlock_internal::AlongSparse<oracle_, Value_, Index_> >(
+            return DelayedSubsetBlock_internal::create_along_sparse_extractor<oracle_>(
                 *my_matrix,
                 my_subset_start,
                 my_subset_length,
