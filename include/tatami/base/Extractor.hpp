@@ -312,6 +312,19 @@ using DenseExtractor = typename std::conditional<oracle_, OracularDenseExtractor
 template<bool oracle_, typename Value_, typename Index_>
 using SparseExtractor = typename std::conditional<oracle_, OracularSparseExtractor<Value_, Index_>, MyopicSparseExtractor<Value_, Index_> >::type;
 
+
+/**
+ * @tparam sparse_ Whether to use a sparse interface.
+ * @tparam oracle_ Whether to use an oracle-aware interface.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * Type alias that switches between `SparseExtractor` and `DenseExtractor` depending on `sparse_`.
+ * Intended for templated class definitions, where setting `sparse_` can define subclasses for both interfaces.
+ */
+template<bool sparse_, bool oracle_, typename Value_, typename Index_>
+using Extractor = typename std::conditional<sparse_, SparseExtractor<oracle_, Value_, Index_>, DenseExtractor<oracle_, Value_, Index_> >::type;
+
 }
 
 #endif
