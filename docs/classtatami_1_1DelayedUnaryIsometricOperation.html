@@ -660,8 +660,8 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <p>Create an extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
-    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
-    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -708,7 +708,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <p>Create an extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
-    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should be non-NULL. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -801,8 +801,8 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <p>Create an extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
-    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
-    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -849,7 +849,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
 <p>Create an extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
-    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should be non-NULL. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -954,8 +954,8 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
-    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -1008,7 +1008,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should not be NULL. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should not be NULL. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -1113,8 +1113,8 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
-    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
@@ -1167,7 +1167,7 @@ template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ , cla
   <table class="params">
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should not be NULL. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should not be NULL. </td></tr>
     <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
