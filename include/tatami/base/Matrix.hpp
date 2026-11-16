@@ -177,7 +177,10 @@ public:
      * Create an extractor that retrieves a contiguous block of the non-target dimension in dense form.
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
+     * This should be non-negative and less than the respective number of columns/rows.
+     * (For a matrix with zero columns/rows, `block_start` may also be zero.)
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
+     * This should be non-negative and `block_start + block_length` should be no greater than the number of columns/rows.
      * @param opt Options for extraction.
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
@@ -188,6 +191,7 @@ public:
      * Create an extractor that retrieves an indexed subset of the non-target dimension in dense form.
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
+     * Each entry should be non-negative and less than the respective number of columns/rows.
      * This should be non-NULL.
      * @param opt Options for extraction.
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in dense form.
@@ -386,7 +390,10 @@ public:
      * Create an extractor that retrieves a contiguous block of the non-target dimension in sparse form.
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
+     * This should be non-negative and less than the respective number of columns/rows.
+     * (For a matrix with zero columns/rows, `block_start` may also be zero.)
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
+     * This should be non-negative and `block_start + block_length` should be no greater than the number of columns/rows.
      * @param opt Options for extraction.
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
@@ -397,6 +404,7 @@ public:
      * Create an extractor that retrieves an indexed subset of the non-target dimension in sparse form.
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
+     * Each entry should be non-negative and less than the respective number of columns/rows.
      * This should be non-NULL.
      * @param opt Options for extraction.
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in sparse form.
@@ -597,7 +605,10 @@ public:
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
+     * This should be non-negative and less than the respective number of columns/rows.
+     * (For a matrix with zero columns/rows, `block_start` may also be zero.)
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
+     * This should be non-negative and `block_start + block_length` should be no greater than the number of columns/rows.
      * @param opt Options for extraction.
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
@@ -609,6 +620,7 @@ public:
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
+     * Each entry should be non-negative and less than the respective number of columns/rows.
      * This should not be NULL.
      * @param opt Options for extraction.
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in dense form.
@@ -825,7 +837,10 @@ public:
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
+     * This should be non-negative and less than the respective number of columns/rows.
+     * (For a matrix with zero columns/rows, `block_start` may also be zero.)
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
+     * This should be non-negative and `block_start + block_length` should be no greater than the number of columns/rows.
      * @param opt Options for extraction.
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
@@ -837,6 +852,7 @@ public:
      * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
+     * Each entry should be non-negative and less than the respective number of columns/rows.
      * This should not be NULL.
      * @param opt Options for extraction.
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in sparse form.
