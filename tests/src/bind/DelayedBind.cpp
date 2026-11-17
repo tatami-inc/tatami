@@ -11,20 +11,19 @@
 
 #include "tatami_test/tatami_test.hpp"
 
-class DelayedBindUtils {
+class DelayedBindCore {
 public:
     typedef std::tuple<std::vector<int>, bool> SimulationParameters;
 
     static auto spawn_bind_scenarios () {
         return ::testing::Combine(
             ::testing::Values(
-                std::vector<int>{ 10 },
-                std::vector<int>{ 10, 20 },
-                std::vector<int>{ 20, 10 },
-                std::vector<int>{ 5, 2, 5 },
-                std::vector<int>{ 5, 10, 20 },
-                std::vector<int>{ 20, 10, 5 },
-                std::vector<int>{ 5, 0, 5 }
+                std::vector<int>{ 89 },
+                std::vector<int>{ 78, 20 },
+                std::vector<int>{ 54, 37 },
+                std::vector<int>{ 52, 7, 23 },
+                std::vector<int>{ 15, 41, 92 },
+                std::vector<int>{ 25, 0, 77 }
             ),
             ::testing::Values(true, false) // bind by row or by column
         );
@@ -37,7 +36,7 @@ protected:
     inline static std::shared_ptr<tatami::NumericMatrix> uns_bound_dense, uns_bound_sparse;
     inline static SimulationParameters last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(const SimulationParameters& sim_params) {
         if (bound_dense && sim_params == last_params) {
             return;
         }
@@ -59,7 +58,7 @@ protected:
                 opt.density = 0.2;
                 opt.lower = -10;
                 opt.upper = 10;
-                opt.seed = i * 17 + 59 * lengths[i];
+                opt.seed = tatami_test::create_seed(i, sim_params);
                 return opt;
             }());
 
@@ -78,27 +77,28 @@ protected:
             uns_collected_sparse.emplace_back(std::make_shared<tatami_test::ReversedIndicesWrapper<double, int> >(collected_sparse.back()));
         }
 
+        bound_dense.reset(new tatami::DelayedBind(std::move(collected_dense), row));
+        bound_sparse.reset(new tatami::DelayedBind(std::move(collected_sparse), row));
+        forced_bound_dense.reset(new tatami::DelayedBind(std::move(forced_collected_dense), row));
+        forced_bound_sparse.reset(new tatami::DelayedBind(std::move(forced_collected_sparse), row));
+        uns_bound_sparse.reset(new tatami::DelayedBind(std::move(uns_collected_sparse), row));
+
+        // If there aren't any matrices to bind, DelayedBind defaults to a 0-by-0 matrix.
+        const int actual_otherdim = (lengths.empty() ? 0 : otherdim);
         if (row) {
-            bound_dense.reset(new tatami::DelayedBind(std::move(collected_dense), true));
-            bound_sparse.reset(new tatami::DelayedBind(std::move(collected_sparse), true));
-            manual.reset(new tatami::DenseRowMatrix<double, int>(n_total, otherdim, std::move(concat)));
-            forced_bound_dense.reset(new tatami::DelayedBind(std::move(forced_collected_dense), true));
-            forced_bound_sparse.reset(new tatami::DelayedBind(std::move(forced_collected_sparse), true));
-            uns_bound_sparse.reset(new tatami::DelayedBind(std::move(uns_collected_sparse), true));
+            manual.reset(new tatami::DenseRowMatrix<double, int>(n_total, actual_otherdim, std::move(concat)));
         } else {
-            bound_dense.reset(new tatami::DelayedBind(std::move(collected_dense), false));
-            bound_sparse.reset(new tatami::DelayedBind(std::move(collected_sparse), false));
-            manual.reset(new tatami::DenseColumnMatrix<double, int>(otherdim, n_total, std::move(concat)));
-            forced_bound_dense.reset(new tatami::DelayedBind(std::move(forced_collected_dense), false));
-            forced_bound_sparse.reset(new tatami::DelayedBind(std::move(forced_collected_sparse), false));
-            uns_bound_sparse.reset(new tatami::DelayedBind(std::move(uns_collected_sparse), false));
+            manual.reset(new tatami::DenseColumnMatrix<double, int>(actual_otherdim, n_total, std::move(concat)));
         }
     }
 };
 
-class DelayedBindUtilsTest : public ::testing::Test, public DelayedBindUtils {};
+/****************************
+ ****************************/
 
-TEST_F(DelayedBindUtilsTest, ByRow) {
+class DelayedBindBasicTest : public ::testing::Test, public DelayedBindCore {};
+
+TEST_F(DelayedBindBasicTest, ByRow) {
     assemble(SimulationParameters({ 10, 20, 5 }, true));
 
     EXPECT_EQ(bound_dense->nrow(), 35);
@@ -119,7 +119,7 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
     EXPECT_FALSE(bound_sparse->uses_oracle(true));
 }
 
-TEST_F(DelayedBindUtilsTest, ByColumn) {
+TEST_F(DelayedBindBasicTest, ByColumn) {
     assemble(SimulationParameters({ 10, 20, 5 }, false));
 
     EXPECT_EQ(bound_dense->nrow(), otherdim);
@@ -136,7 +136,7 @@ TEST_F(DelayedBindUtilsTest, ByColumn) {
     EXPECT_FALSE(bound_sparse->uses_oracle(false));
 }
 
-TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
+TEST_F(DelayedBindBasicTest, InconsistentBinds) {
     assemble(SimulationParameters({ 10, 20, 5 }, true));
 
     // Bound_sparse is CSC, bound_dense is row-major.
@@ -149,7 +149,7 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
     EXPECT_FALSE(combined.prefer_rows());
 }
 
-TEST_F(DelayedBindUtilsTest, ConstOverloads) {
+TEST_F(DelayedBindBasicTest, ConstOverloads) {
     assemble(SimulationParameters({ 10, 50 }, true));
 
     std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
@@ -160,7 +160,7 @@ TEST_F(DelayedBindUtilsTest, ConstOverloads) {
     EXPECT_EQ(const_combined.ncol(), otherdim);
 }
 
-TEST_F(DelayedBindUtilsTest, MakeHelpers) {
+TEST_F(DelayedBindBasicTest, MakeHelpers) {
     assemble(SimulationParameters({ 10, 50 }, true));
 
     std::vector<std::shared_ptr<tatami::NumericMatrix> > collected({ bound_dense, bound_sparse });
@@ -182,7 +182,7 @@ TEST_F(DelayedBindUtilsTest, MakeHelpers) {
     EXPECT_EQ(tdense2b->ncol(), otherdim * 2);
 }
 
-TEST(DelayedBindMisc, ErrorCheck) {
+TEST(DelayedBind, ErrorCheck) {
     std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
     collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
     collected.emplace_back(new tatami::DenseRowMatrix<double, int>(20, 10, std::vector<double>(200)));
@@ -190,215 +190,570 @@ TEST(DelayedBindMisc, ErrorCheck) {
     tatami_test::throws_error([&]() { tatami::DelayedBind(collected, false); }, "same number of rows");
 }
 
-TEST(DelayedBindMisc, PartialOracleUsage) {
-    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
-    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
-    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
+TEST(DelayedBind, PartialOracleUsage) {
+    auto p1 = std::make_shared<tatami::DenseRowMatrix<double, int> >(10, 20, std::vector<double>(200));
+    auto p2 = std::make_shared<tatami::DenseRowMatrix<double, int> >(10, 20, std::vector<double>(200));
 
     {
-        tatami::DelayedBind combined(collected, true); 
+        tatami::DelayedBind combined(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{ p1, p2 }, true); 
         EXPECT_FALSE(combined.uses_oracle(true));
         EXPECT_FALSE(combined.uses_oracle(false));
     }
 
+    // Only one component uses an oracle.
     {
-        auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.back()));
-        collected.back() = std::move(p);
-        tatami::DelayedBind combined(collected, true); 
+        tatami::DelayedBind combined(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{
+            std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(p1),
+            p2
+        }, true);
         EXPECT_TRUE(combined.uses_oracle(true));
         EXPECT_TRUE(combined.uses_oracle(false));
     }
 
+    // Both components use an oracle.
     {
-        auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.front()));
-        collected.front() = std::move(p);
-        tatami::DelayedBind combined(collected, true); 
+        tatami::DelayedBind combined(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{
+            std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(p1),
+            std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(p2)
+        }, true);
         EXPECT_TRUE(combined.uses_oracle(true));
         EXPECT_TRUE(combined.uses_oracle(false));
     }
-}
-
-TEST(DelayedBindMisc, AllEmpty) {
-    tatami::DelayedBind empty(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{}, true);
-    EXPECT_EQ(empty.nrow(), 0);
-    EXPECT_EQ(empty.ncol(), 0);
 }
 
 /****************************
  ****************************/
 
-class DelayedBindEmptyAccessTest : 
-    public ::testing::TestWithParam<std::tuple<bool, bool, bool> >,
-    public DelayedBindUtils {};
-
-TEST_P(DelayedBindEmptyAccessTest, Empty) {
-    auto tparam = GetParam();
-    auto bind_rows = std::get<0>(tparam);
-    assemble(SimulationParameters({0, 0}, bind_rows));
-
-    if (bind_rows) {
-        EXPECT_EQ(bound_dense->nrow(), 0);
-        EXPECT_EQ(bound_dense->ncol(), otherdim);
-    } else {
-        EXPECT_EQ(bound_dense->nrow(), otherdim);
-        EXPECT_EQ(bound_dense->ncol(), 0);
+class DelayedBindNoMatrixTest : 
+    public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble({ std::vector<int>{}, std::get<0>(GetParam()) });
     }
+};
 
-    tatami_test::TestAccessOptions options;
-    options.use_row = std::get<1>(tparam);
-    options.use_oracle = std::get<2>(tparam);
+TEST_P(DelayedBindNoMatrixTest, Full) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
 
-    // Check that we can perform all of the accesses.
-    tatami_test::test_full_access(*bound_dense, *manual, options);
-    tatami_test::test_block_access(*bound_dense, *manual, 0, 0, options);
-    tatami_test::test_indexed_access(*bound_dense, *manual, 0, 1, options);
-
-    tatami_test::test_full_access(*bound_sparse, *manual, options);
-    tatami_test::test_block_access(*bound_sparse, *manual, 0, 0, options);
-    tatami_test::test_indexed_access(*bound_sparse, *manual, 0, 1, options);
+    tatami_test::test_access(*bound_dense, *manual, use_row, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, options);
 
     if (options.use_oracle) {
-        tatami_test::test_full_access(*forced_bound_dense, *manual, options);
-        tatami_test::test_block_access(*forced_bound_dense, *manual, 0, 0, options);
-        tatami_test::test_indexed_access(*forced_bound_dense, *manual, 0, 1, options);
-
-        tatami_test::test_full_access(*forced_bound_sparse, *manual, options);
-        tatami_test::test_block_access(*forced_bound_sparse, *manual, 0, 0, options);
-        tatami_test::test_indexed_access(*forced_bound_sparse, *manual, 0, 1, options);
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, options);
     }
 
-    tatami_test::test_unsorted_full_access(*uns_bound_sparse, options);
-    tatami_test::test_unsorted_block_access(*uns_bound_sparse, 0, 0, options);
-    tatami_test::test_unsorted_indexed_access(*uns_bound_sparse, 0, 1, options);
+    // No need to test unsorted sparse extraction here.
+    // We don't even run any extractions so there's no chance to even consider whether the indices are unsorted or not.
+}
+
+TEST_P(DelayedBindNoMatrixTest, Block) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, 0, 0, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, 0, 0, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, 0, 0, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, 0, 0, options);
+    }
+}
+
+TEST_P(DelayedBindNoMatrixTest, Index) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    auto empty = std::make_shared<const std::vector<int> >();
+    tatami_test::test_access(*bound_dense, *manual, use_row, empty, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, empty, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, empty, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, empty, options);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
-    DelayedBindEmptyAccessTest,
+    DelayedBindNoMatrixTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // bind by row
+        ::testing::Values(true, false), // access by row
+        tatami_test::combine_test_access_options()
+    )
+);
+
+/****************************
+ ****************************/
+
+class DelayedBindZeroExtentTest : 
+    public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble({ std::vector<int>{ 0, 0 }, std::get<0>(GetParam()) });
+    }
+};
+
+TEST_P(DelayedBindZeroExtentTest, Full) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, options);
+}
+
+TEST_P(DelayedBindZeroExtentTest, Block) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, 0, 0, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, 0, 0, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, 0, 0, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, 0, 0, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, 0, 0, options);
+}
+
+TEST_P(DelayedBindZeroExtentTest, Index) {
+    auto tparam = GetParam();
+    const bool use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    auto empty = std::make_shared<const std::vector<int> >();
+    tatami_test::test_access(*bound_dense, *manual, use_row, empty, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, empty, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, empty, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, empty, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, empty, options);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindZeroExtentTest,
     ::testing::Combine(
         ::testing::Values(true, false), // bind by row or by column
         ::testing::Values(true, false), // access by row or column
-        ::testing::Values(true, false)  // whether to use an oracle
+        tatami_test::combine_test_access_options()
     )
 );
 
 /****************************
  ****************************/
 
-class DelayedBindFullAccessTest : 
-    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions> >,
-    public DelayedBindUtils {
+class DelayedBindFullTest : 
+    public ::testing::TestWithParam<std::tuple<typename DelayedBindCore::SimulationParameters, bool, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore 
+{
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(DelayedBindFullAccessTest, Basic) {
+TEST_P(DelayedBindFullTest, Basic) {
     auto tparam = GetParam();
-    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
+    auto use_row = std::get<1>(tparam);
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
 
-    tatami_test::test_full_access(*bound_dense, *manual, options);
-    tatami_test::test_full_access(*bound_sparse, *manual, options);
+    tatami_test::test_access(*bound_dense, *manual, use_row, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, options);
 
     if (options.use_oracle) {
-        tatami_test::test_full_access(*forced_bound_dense, *manual, options);
-        tatami_test::test_full_access(*forced_bound_sparse, *manual, options);
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, options);
     }
 
-    tatami_test::test_unsorted_full_access(*uns_bound_sparse, options);
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
-    DelayedBindFullAccessTest,
+    DelayedBindFullTest,
     ::testing::Combine(
-        DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_options_combinations()
+        DelayedBindCore::spawn_bind_scenarios(),
+        ::testing::Values(false, true),
+        tatami_test::combine_test_access_options()
     )
 );
 
 /****************************
  ****************************/
 
-class DelayedBindBlockAccessTest : 
-    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
-    public DelayedBindUtils {
+class DelayedBindBlockTest : 
+    public ::testing::TestWithParam<
+        std::tuple<
+            typename DelayedBindCore::SimulationParameters,
+            bool,
+            std::pair<double, double>,
+            tatami_test::TestAccessOptionsCombination
+        >
+    >,
+    public DelayedBindCore
+{
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(DelayedBindBlockAccessTest, Basic) {
+TEST_P(DelayedBindBlockTest, Basic) {
     auto tparam = GetParam();
-    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
-    auto interval_info = std::get<2>(tparam);
+    auto use_row = std::get<1>(tparam);
+    auto raw_block = std::get<2>(tparam);
+    auto block = tatami_test::define_non_target_block(*manual, use_row, raw_block.first, raw_block.second);
+    auto options = tatami_test::convert_to_test_access_options(std::get<3>(tparam)); 
 
-    tatami_test::test_block_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
-    tatami_test::test_block_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_access(*bound_dense, *manual, use_row, block.first, block.second, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, block.first, block.second, options);
 
     if (options.use_oracle) {
-        tatami_test::test_block_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
-        tatami_test::test_block_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, block.first, block.second, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, block.first, block.second, options);
     }
 
-    tatami_test::test_unsorted_block_access(*uns_bound_sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, block.first, block.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
-    DelayedBindBlockAccessTest,
+    DelayedBindBlockTest,
     ::testing::Combine(
-        DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_options_combinations(),
+        DelayedBindCore::spawn_bind_scenarios(),
+        ::testing::Values(false, true),
         ::testing::Values(
-            std::make_pair(0.0, 0.6), 
-            std::make_pair(0.25, 0.51), 
+            std::make_pair(0.0, 0.6),
+            std::make_pair(0.25, 0.51),
             std::make_pair(0.55, 0.45)
-        )
+        ),
+        tatami_test::combine_test_access_options()
     )
 );
 
 /****************************
  ****************************/
 
-class DelayedBindIndexedAccessTest : 
-    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
-    public DelayedBindUtils {
+class DelayedBindIndexTest :
+    public ::testing::TestWithParam<
+        std::tuple<
+            typename DelayedBindCore::SimulationParameters,
+            bool,
+            std::tuple<double, double, double>,
+            tatami_test::TestAccessOptionsCombination
+        >
+    >,
+    public DelayedBindCore
+{
 protected:
     void SetUp() {
-        assemble(std::get<0>(GetParam()));
+        assemble(SimulationParameters(std::get<0>(GetParam())));
     }
 };
 
-TEST_P(DelayedBindIndexedAccessTest, Basic) {
+TEST_P(DelayedBindIndexTest, Basic) {
     auto tparam = GetParam();
-    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
-    auto interval_info = std::get<2>(tparam);
+    bool use_row = std::get<1>(tparam);
+    auto raw_index = std::get<2>(tparam);
+    auto indices_ptr = tatami_test::define_non_target_indices(*manual, use_row, std::get<0>(raw_index), std::get<1>(raw_index), std::get<2>(raw_index), {});
+    auto options = tatami_test::convert_to_test_access_options(std::get<3>(tparam)); 
 
-    tatami_test::test_indexed_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
-    tatami_test::test_indexed_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_access(*bound_dense, *manual, use_row, indices_ptr, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, indices_ptr, options);
 
     if (options.use_oracle) {
-        tatami_test::test_indexed_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
-        tatami_test::test_indexed_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, indices_ptr, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, indices_ptr, options);
     }
 
-    tatami_test::test_unsorted_indexed_access(*uns_bound_sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, indices_ptr, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
-    DelayedBindIndexedAccessTest,
+    DelayedBindIndexTest,
     ::testing::Combine(
-        DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_options_combinations(),
+        DelayedBindCore::spawn_bind_scenarios(),
+        ::testing::Values(false, true),
         ::testing::Values(
-            std::make_pair(0.0, 0.2), 
-            std::make_pair(0.33, 0.3),
-            std::make_pair(0.5, 0.5)
-        )
+            std::make_tuple(0.0, 0.45, 0.25),
+            std::make_tuple(0.25, 0.55, 0.2),
+            std::make_tuple(0.6, 0.4, 0.3)
+        ),
+        tatami_test::combine_test_access_options()
+    )
+);
+
+/****************************
+ ****************************/
+
+struct ParallelBlockByComponent {
+    ParallelBlockByComponent(int start_mat_arg, double start_prop_arg, int end_mat_arg, double end_prop_arg) :
+        start_mat(start_mat_arg), start_prop(start_prop_arg), end_mat(end_mat_arg), end_prop(end_prop_arg)
+    {}
+    int start_mat;
+    double start_prop;
+    int end_mat;
+    double end_prop;
+};
+
+static std::pair<int, int> derive_parallel_block(const ParallelBlockByComponent& params, const std::vector<int>& sizes) {
+    const int start_offset = std::accumulate(sizes.begin(), sizes.begin() + params.start_mat, 0); 
+    const int end_offset = start_offset + std::accumulate(sizes.begin() + params.start_mat, sizes.begin() + params.end_mat, 0); 
+    const auto block_start = start_offset + std::round(sizes[params.start_mat] * params.start_prop);
+    const auto block_end = end_offset + std::round(sizes[params.end_mat] * params.end_prop);
+    return std::pair<int, int>(block_start, block_end - block_start);
+}
+
+struct ParallelIndicesByComponent {
+    ParallelIndicesByComponent(int start_mat_arg, double start_prop_arg, int end_mat_arg, double end_prop_arg, double probability_arg) :
+        range(start_mat_arg, start_prop_arg, end_mat_arg, end_prop_arg), probability(probability_arg)
+    {}
+    ParallelBlockByComponent range;
+    double probability;
+};
+
+static tatami::VectorPtr<int> derive_parallel_indices(const ParallelIndicesByComponent& params, const std::vector<int>& sizes) {
+    auto block = derive_parallel_block(params.range, sizes);
+    return tatami_test::define_non_target_indices(block.first, block.second, params.probability, {});
+}
+
+/****************************
+ ****************************/
+
+// Check parallel partial access in a DelayedBind with two component matrices.
+// This checks the optimizations when only one component is used.
+
+class DelayedBindTwoMatrixParallelBlockTest :
+    public ::testing::TestWithParam<std::tuple<bool, ParallelBlockByComponent, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble(SimulationParameters(std::vector<int>{ 61, 47 }, std::get<0>(GetParam())));
+    }
+};
+
+TEST_P(DelayedBindTwoMatrixParallelBlockTest, Basic) {
+    auto tparam = GetParam();
+    auto block = derive_parallel_block(std::get<1>(tparam), std::get<0>(last_params));
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam)); 
+
+    // Access needs to be parallel to the bind dimension.
+    auto use_row = !std::get<1>(last_params);
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, block.first, block.second, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, block.first, block.second, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, block.first, block.second, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, block.first, block.second, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, block.first, block.second, options);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindTwoMatrixParallelBlockTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(
+            // First matrix only.
+            ParallelBlockByComponent(0, 0.0, 0, 0.4),
+            ParallelBlockByComponent(0, 0.3, 0, 1.0),
+            // Second matrix only.
+            ParallelBlockByComponent(1, 0.0, 1, 0.5),
+            ParallelBlockByComponent(1, 0.4, 1, 1.0),
+            // Both matrices, as a control.
+            ParallelBlockByComponent(0, 0.2, 1, 0.3),
+            ParallelBlockByComponent(0, 0.7, 1, 0.8)
+        ),
+        tatami_test::combine_test_access_options()
+    )
+);
+
+class DelayedBindTwoMatrixParallelIndexTest :
+    public ::testing::TestWithParam<std::tuple<bool, ParallelIndicesByComponent, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble(SimulationParameters(std::vector<int>{ 38, 62 }, std::get<0>(GetParam())));
+    }
+};
+
+TEST_P(DelayedBindTwoMatrixParallelIndexTest, Basic) {
+    auto tparam = GetParam();
+    auto indices_ptr = derive_parallel_indices(std::get<1>(tparam), std::get<0>(last_params));
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    // Access needs to be parallel to the bind dimension.
+    auto use_row = !std::get<1>(last_params);
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, indices_ptr, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, indices_ptr, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, indices_ptr, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, indices_ptr, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, indices_ptr, options);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindTwoMatrixParallelIndexTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(
+            // First matrix only.
+            ParallelIndicesByComponent(0, 0.0, 0, 0.6, 0.3),
+            ParallelIndicesByComponent(0, 0.5, 0, 1.0, 0.3),
+            // Second matrix only.
+            ParallelIndicesByComponent(1, 0.0, 1, 0.4, 0.25),
+            ParallelIndicesByComponent(1, 0.6, 1, 1.0, 0.25),
+            // Both matrices, as a control.
+            ParallelIndicesByComponent(0, 0.2, 1, 0.8, 0.3),
+            ParallelIndicesByComponent(0, 0.4, 1, 0.4, 0.3)
+        ),
+        tatami_test::combine_test_access_options()
+    )
+);
+
+/****************************
+ ****************************/
+
+// Check parallel partial access in a DelayedBind with three component matrices.
+// This checks the optimizations when only one component is used.
+
+class DelayedBindThreeMatrixParallelBlockTest :
+    public ::testing::TestWithParam<std::tuple<bool, ParallelBlockByComponent, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble(SimulationParameters(std::vector<int>{ 22, 47, 131 }, std::get<0>(GetParam())));
+    }
+};
+
+TEST_P(DelayedBindThreeMatrixParallelBlockTest, Basic) {
+    auto tparam = GetParam();
+    auto block = derive_parallel_block(std::get<1>(tparam), std::get<0>(last_params));
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam)); 
+
+    // Access needs to be parallel to the bind dimension.
+    auto use_row = !std::get<1>(last_params);
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, block.first, block.second, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, block.first, block.second, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, block.first, block.second, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, block.first, block.second, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, block.first, block.second, options);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindThreeMatrixParallelBlockTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(
+            // First matrix only.
+            ParallelBlockByComponent(0, 0.0, 0, 0.7),
+            ParallelBlockByComponent(0, 0.7, 0, 1.0),
+            // Second matrix only.
+            ParallelBlockByComponent(1, 0.0, 1, 0.4),
+            ParallelBlockByComponent(1, 0.5, 1, 1.0),
+            // Third matrix only.
+            ParallelBlockByComponent(2, 0.0, 2, 0.3),
+            ParallelBlockByComponent(2, 0.5, 2, 1.0),
+            // Multiple matrices, as a control.
+            ParallelBlockByComponent(0, 0.5, 1, 0.4), // First two matrices.
+            ParallelBlockByComponent(1, 0.2, 2, 0.8), // Last two matrices.
+            ParallelBlockByComponent(0, 0.6, 2, 0.3) // All matrices.
+        ),
+        tatami_test::combine_test_access_options()
+    )
+);
+
+class DelayedBindThreeMatrixParallelIndexTest :
+    public ::testing::TestWithParam<std::tuple<bool, ParallelIndicesByComponent, tatami_test::TestAccessOptionsCombination> >,
+    public DelayedBindCore
+{
+protected:
+    void SetUp() {
+        assemble(SimulationParameters(std::vector<int>{ 120, 60, 20 }, std::get<0>(GetParam())));
+    }
+};
+
+TEST_P(DelayedBindThreeMatrixParallelIndexTest, Basic) {
+    auto tparam = GetParam();
+    auto indices_ptr = derive_parallel_indices(std::get<1>(tparam), std::get<0>(last_params));
+    auto options = tatami_test::convert_to_test_access_options(std::get<2>(tparam));
+
+    // Access needs to be parallel to the bind dimension.
+    auto use_row = !std::get<1>(last_params);
+
+    tatami_test::test_access(*bound_dense, *manual, use_row, indices_ptr, options);
+    tatami_test::test_access(*bound_sparse, *manual, use_row, indices_ptr, options);
+
+    if (options.use_oracle) {
+        tatami_test::test_access(*forced_bound_dense, *manual, use_row, indices_ptr, options);
+        tatami_test::test_access(*forced_bound_sparse, *manual, use_row, indices_ptr, options);
+    }
+
+    tatami_test::test_unsorted_access(*uns_bound_sparse, use_row, indices_ptr, options);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindThreeMatrixParallelIndexTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(
+            // First matrix only.
+            ParallelIndicesByComponent(0, 0.0, 0, 0.2, 0.5),
+            ParallelIndicesByComponent(0, 0.4, 0, 1.0, 0.3),
+            // Second matrix only.
+            ParallelIndicesByComponent(1, 0.0, 1, 0.8, 0.25),
+            ParallelIndicesByComponent(1, 0.7, 1, 1.0, 0.5),
+            // Third matrix only.
+            ParallelIndicesByComponent(2, 0.0, 2, 0.8, 0.3),
+            ParallelIndicesByComponent(2, 0.1, 2, 0.9, 0.3),
+            // Multiple matrices, as a control.
+            ParallelIndicesByComponent(0, 0.8, 1, 0.5, 0.3), // first two matrices
+            ParallelIndicesByComponent(1, 0.2, 2, 0.8, 0.3), // last two matrices
+            ParallelIndicesByComponent(0, 0.7, 2, 0.5, 0.3) // All matrices
+        ),
+        tatami_test::combine_test_access_options()
     )
 );
 
@@ -408,12 +763,12 @@ INSTANTIATE_TEST_SUITE_P(
 // Check for correct use of a single matrix's extractor when the predictions only cover a single matrix.
 class DelayedBindLimitedPredictionsTest : 
     public ::testing::TestWithParam<std::vector<int> >,
-    public DelayedBindUtils 
+    public DelayedBindCore
 {};
 
 TEST_P(DelayedBindLimitedPredictionsTest, Basic) {
     auto predictions = GetParam();
-    assemble(std::make_tuple(std::vector<int>{ 10, 30, 20 }, true));
+    assemble(std::make_tuple(std::vector<int>{ 100, 300, 200 }, true));
 
     auto observed_d = forced_bound_dense->dense(true, std::make_shared<tatami::FixedVectorOracle<int> >(predictions), {});
     auto observed_s = forced_bound_sparse->sparse(true, std::make_shared<tatami::FixedVectorOracle<int> >(predictions), {});
@@ -442,163 +797,8 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindLimitedPredictionsTest,
     ::testing::Values(
-        std::vector<int>{ 5, 2, 1, 0, 8, 2, 5, 4 }, // Only using the first matrix, so no need to wrap the oracle.
-        std::vector<int>{ 15, 21, 10, 10, 28, 17, 15, 24 }, // Using the second matrix, wrap the oracle.
+        std::vector<int>{ 56, 27, 11, 0, 88, 21, 5, 64 }, // Only using the first matrix, so no need to wrap the oracle.
+        std::vector<int>{ 115, 223, 210, 190, 381, 174, 165, 324 }, // Using the second matrix, wrap the oracle.
         std::vector<int>{} // Correct behavior with an empty input.
-    )
-);
-
-/****************************
- ****************************/
-
-// Check for correct use of a single matrix's extractor when the block only covers a single matrix.
-class DelayedBindParallelSingleMatrixTest :
-    public ::testing::TestWithParam<std::tuple<bool, std::pair<int, int> > >,
-    public DelayedBindUtils
-{
-protected:
-    static tatami::VectorPtr<int> mock_indices(const int start, const int len) {
-        auto res = std::make_shared<std::vector<int> >();
-        int counter = start;
-        const int end = start + len;
-        const int jump = 3;
-        while (end - counter > jump) {
-            res->push_back(counter);
-            counter += jump;
-        }
-        return res;
-    }
-};
-
-TEST_P(DelayedBindParallelSingleMatrixTest, Dense) {
-    assemble(std::make_tuple(std::vector<int>{ 200, 100, 300 }, true));
-
-    auto params = GetParam();
-    const bool do_block = std::get<0>(params);
-    const auto block = std::get<1>(params);
-
-    std::unique_ptr<tatami::MyopicDenseExtractor<double, int> > myopic, expected;
-    std::unique_ptr<tatami::OracularDenseExtractor<double, int> > oracular;
-
-    int extract_len;
-    if (do_block) {
-        const int block_start = block.first, block_len = block.second;
-        myopic = forced_bound_dense->dense(false, block_start, block_len, {});
-        oracular = tatami::consecutive_extractor<false, double, int>(*forced_bound_dense, false, 0, otherdim, block_start, block_len, tatami::Options());
-        expected = manual->dense(false, block_start, block_len, {});
-        extract_len = block_len;
-    } else {
-        auto indices_ptr = mock_indices(block.first, block.second);
-        myopic = forced_bound_dense->dense(false, indices_ptr, {});
-        oracular = tatami::consecutive_extractor<false, double, int>(*forced_bound_dense, false, 0, otherdim, indices_ptr, tatami::Options());
-        expected = manual->dense(false, indices_ptr, {});
-        extract_len = indices_ptr->size();
-    }
-
-    std::vector<double> exp_buffer(extract_len), obs_buffer(extract_len);
-    for (int c = 0; c < otherdim; ++c) {
-        auto eptr = expected->fetch(c, exp_buffer.data());
-        tatami::copy_n(eptr, extract_len, exp_buffer.data());
-
-        auto mptr = myopic->fetch(c, obs_buffer.data());
-        tatami::copy_n(mptr, extract_len, obs_buffer.data());
-        EXPECT_EQ(exp_buffer, obs_buffer);
-
-        auto optr = oracular->fetch(obs_buffer.data());
-        tatami::copy_n(optr, extract_len, obs_buffer.data());
-        EXPECT_EQ(exp_buffer, obs_buffer);
-    }
-}
-
-TEST_P(DelayedBindParallelSingleMatrixTest, Sparse) {
-    assemble(std::make_tuple(std::vector<int>{ 200, 100, 300 }, true));
-
-    auto params = GetParam();
-    const bool do_block = std::get<0>(params);
-    const auto block = std::get<1>(params);
-
-    std::unique_ptr<tatami::MyopicDenseExtractor<double, int> > expected;
-    std::unique_ptr<tatami::MyopicSparseExtractor<double, int> > myopic;
-    std::unique_ptr<tatami::OracularSparseExtractor<double, int> > oracular;
-
-    if (do_block) {
-        const int block_start = block.first, block_len = block.second;
-        myopic = forced_bound_sparse->sparse(false, block_start, block_len, {});
-        oracular = tatami::consecutive_extractor<true, double, int>(*forced_bound_sparse, false, 0, otherdim, block_start, block_len, tatami::Options()); 
-        expected = manual->dense(false, block_start, block_len, {});
-
-        std::vector<double> exp_buffer(block_len), obs_buffer(block_len), obs_buffer_d(block_len);
-        std::vector<int> obs_buffer_i(block_len);
-
-        for (int c = 0; c < otherdim; ++c) {
-            auto eptr = expected->fetch(c, exp_buffer.data());
-            tatami::copy_n(eptr, block_len, exp_buffer.data());
-
-            auto mrange = myopic->fetch(c, obs_buffer_d.data(), obs_buffer_i.data());
-            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
-            for (int i = 0; i < mrange.number; ++i) {
-                obs_buffer[mrange.index[i] - block_start] = mrange.value[i];
-            }
-            EXPECT_EQ(exp_buffer, obs_buffer);
-
-            auto orange = oracular->fetch(obs_buffer_d.data(), obs_buffer_i.data());
-            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
-            for (int i = 0; i < orange.number; ++i) {
-                obs_buffer[orange.index[i] - block_start] = orange.value[i];
-            }
-            EXPECT_EQ(exp_buffer, obs_buffer);
-            EXPECT_EQ(mrange.number, orange.number);
-        }
-
-    } else {
-        auto indices_ptr = mock_indices(block.first, block.second);
-        myopic = forced_bound_sparse->sparse(false, indices_ptr, {});
-        oracular = tatami::consecutive_extractor<true, double, int>(*forced_bound_sparse, false, 0, otherdim, indices_ptr, tatami::Options());
-        expected = manual->dense(false, indices_ptr, {});
-
-        const int num_indices = indices_ptr->size();
-        std::vector<double> exp_buffer(num_indices), obs_buffer(num_indices), obs_buffer_d(num_indices);
-        std::vector<int> obs_buffer_i(num_indices);
-
-        constexpr std::size_t placeholder = -1;
-        std::vector<std::size_t> reposition(indices_ptr->back() + 1, placeholder);
-        for (int i = 0; i < num_indices; ++i) {
-            reposition[(*indices_ptr)[i]] = i;
-        }
-
-        for (int c = 0; c < otherdim; ++c) {
-            auto eptr = expected->fetch(c, exp_buffer.data());
-            tatami::copy_n(eptr, num_indices, exp_buffer.data());
-
-            auto mrange = myopic->fetch(c, obs_buffer_d.data(), obs_buffer_i.data());
-            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
-            for (int i = 0; i < mrange.number; ++i) {
-                obs_buffer[reposition[mrange.index[i]]] = mrange.value[i];
-            }
-            EXPECT_EQ(exp_buffer, obs_buffer);
-
-            auto orange = oracular->fetch(obs_buffer_d.data(), obs_buffer_i.data());
-            std::fill(obs_buffer.begin(), obs_buffer.end(), 0);
-            for (int i = 0; i < orange.number; ++i) {
-                obs_buffer[reposition[orange.index[i]]] = orange.value[i];
-            }
-            EXPECT_EQ(exp_buffer, obs_buffer);
-            EXPECT_EQ(mrange.number, orange.number);
-        }
-    }
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    DelayedBind,
-    DelayedBindParallelSingleMatrixTest,
-    ::testing::Combine(
-        ::testing::Values(true, false), // do block
-
-        // Matrix extents are (200, 100, 300).
-        ::testing::Values(
-            std::make_pair(2, 102), // covers first matrix only
-            std::make_pair(231, 40), // covers second matrix only
-            std::make_pair(399, 187) // covers third matrix only
-        )
     )
 );
