@@ -763,16 +763,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span> </div>
 <div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(</div>
 <div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
 <div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>        <span class="keyword">const</span> Options&amp;</div>
 <div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
 <div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                my_values, my_indices, secondary(), std::move(indices_ptr)</div>
 <div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>            );</div>
 <div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>                my_values, my_indices, secondary(), std::move(subset_ptr)</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>                my_values, my_indices, secondary(), std::move(indices_ptr)</div>
 <div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            );</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>        }</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>    }</div>
@@ -815,16 +815,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
 <div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(</div>
 <div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        VectorPtr&lt;Index_&gt; subset_ptr,</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
 <div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        <span class="keywordflow">if</span> (my_row_sparse == row) {</div>
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                my_values, my_indices, secondary(), std::move(indices_ptr), opt</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>            );</div>
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                my_values, my_indices, secondary(), std::move(subset_ptr), opt</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                my_values, my_indices, secondary(), std::move(indices_ptr), opt</div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>            );</div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        }</div>
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>    }</div>
@@ -862,7 +862,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
 <div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, std::move(subset_ptr), opt));</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularDenseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), dense(row, std::move(indices_ptr), opt));</div>
 <div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    }</div>
 </div>
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
@@ -899,7 +899,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
 <div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    )<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, std::move(subset_ptr), opt));</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>        <span class="keywordflow">return</span> std::make_unique&lt;PseudoOracularSparseExtractor&lt;Value_, Index_&gt; &gt;(std::move(oracle), sparse(row, std::move(indices_ptr), opt));</div>
 <div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span>    }</div>
 </div>
 <div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>};</div>
