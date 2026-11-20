@@ -25,18 +25,22 @@ class MyopicDenseExtractor {
 public:
     /**
      * @param i Index of the target dimension element, i.e., the row or column index.
-     * @param[out] buffer Pointer to an array of length no less than `N`, where `N` is defined as:
+     * @param[out] buffer
+     * @parblock
+     * Pointer to an array of length no less than `N`, where `N` is defined as:
+     *
      * - the number of columns, when extracting each row.
      * - the number of rows, when extracting each column.
      * - the block length, when extracting a contiguous block from each row/column.
      * - the number of indices, when extracting an indexed subset of each row/column.
+     * @endparblock
      *
      * @return Pointer to an array containing the values from the `i`-th dimension element.
      * This is guaranteed to be filled with `N` values.
      *
-     * If the returned pointer is equal to `buffer`, this means that `buffer` has been filled with the contents of the `i`-th dimension element.
+     * @return If the returned pointer is equal to `buffer`, this means that `buffer` has been filled with the contents of the `i`-th dimension element.
      *
-     * If the returned pointer is not equal to `buffer`, it should refer to another array of length `N`.
+     * @return If the returned pointer is not equal to `buffer`, it should refer to another array of length `N`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `MyopicDenseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `buffer`.
@@ -86,9 +90,9 @@ public:
      * as predicted by the `Oracle` used to construct this instance.
      * This is guaranteed to be filled with `N` values.
      *
-     * If the returned pointer is equal to `buffer`, this means that `buffer` has been filled with the contents of the `i`-th dimension element.
+     * @return If the returned pointer is equal to `buffer`, this means that `buffer` has been filled with the contents of the `i`-th dimension element.
      *
-     * If the returned pointer is not equal to `buffer`, it should refer to another array of length `N`.
+     * @return If the returned pointer is not equal to `buffer`, it should refer to another array of length `N`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `OracularDenseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `buffer`.
@@ -157,24 +161,24 @@ public:
      *
      * @return A `SparseRange` object describing the contents of the `i`-th dimension element.
      *
-     * If `Options::sparse_extract_value = false` during construction of this instance,
+     * @return If `Options::sparse_extract_value = false` during construction of this instance,
      * `value_buffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
      *
-     * If `Options::sparse_extract_value = true` and `SparseRange::value` is the same as `value_buffer`,
+     * @return If `Options::sparse_extract_value = true` and `SparseRange::value` is the same as `value_buffer`,
      * this means that `value_buffer` has been filled with the values of the structural non-zero elements of the `i`-th dimension element.
      *
-     * If `Options::sparse_extract_value = true` and `SparseRange::value` is not the same as `value_buffer`, it should refer to another array of length `SparseRange::number`.
+     * @return If `Options::sparse_extract_value = true` and `SparseRange::value` is not the same as `value_buffer`, it should refer to another array of length `SparseRange::number`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `MyopicSparseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `value_buffer`.
      *
-     * If `Options::sparse_extract_index` was set to `false` during construction of this instance,
+     * @return If `Options::sparse_extract_index` was set to `false` during construction of this instance,
      * `index_buffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * If `Options::sparse_extract_index = true` and `SparseRange::index` is the same as `index_buffer`,
+     * @return If `Options::sparse_extract_index = true` and `SparseRange::index` is the same as `index_buffer`,
      * this means that `index_buffer` has been filled with the indices of the structural non-zero elements of the `i`-th dimension element.
      *
-     * If `Options::sparse_extract_index = true` and `SparseRange::index` is not the same as `index_buffer`, it should refer to another array of length `SparseRange::number`.
+     * @return If `Options::sparse_extract_index = true` and `SparseRange::index` is not the same as `index_buffer`, it should refer to another array of length `SparseRange::number`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `MyopicSparseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `index_buffer`.
@@ -219,24 +223,26 @@ public:
      * @param[out] index_buffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * If `Options::sparse_extract_value = false` during construction of this instance,
+     * @return A `SparseRange` object describing the contents of the `i`-th dimension element.
+     *
+     * @return If `Options::sparse_extract_value = false` during construction of this instance,
      * `value_buffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
      *
-     * If `Options::sparse_extract_value = true` and `SparseRange::value` is the same as `value_buffer`,
+     * @return If `Options::sparse_extract_value = true` and `SparseRange::value` is the same as `value_buffer`,
      * this means that `value_buffer` has been filled with the values of the structural non-zero elements of the `i`-th dimension element.
      *
-     * If `Options::sparse_extract_value = true` and `SparseRange::value` is not the same as `value_buffer`, it should refer to another array of length `SparseRange::number`.
+     * @return If `Options::sparse_extract_value = true` and `SparseRange::value` is not the same as `value_buffer`, it should refer to another array of length `SparseRange::number`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `MyopicSparseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `value_buffer`.
      *
-     * If `Options::sparse_extract_index` was set to `false` during construction of this instance,
+     * @return If `Options::sparse_extract_index` was set to `false` during construction of this instance,
      * `index_buffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * If `Options::sparse_extract_index = true` and `SparseRange::index` is the same as `index_buffer`,
+     * @return If `Options::sparse_extract_index = true` and `SparseRange::index` is the same as `index_buffer`,
      * this means that `index_buffer` has been filled with the indices of the structural non-zero elements of the `i`-th dimension element.
      *
-     * If `Options::sparse_extract_index = true` and `SparseRange::index` is not the same as `index_buffer`, it should refer to another array of length `SparseRange::number`.
+     * @return If `Options::sparse_extract_index = true` and `SparseRange::index` is not the same as `index_buffer`, it should refer to another array of length `SparseRange::number`.
      * This array should be valid for the lifetime of the `Matrix` object used to construct this `MyopicSparseExtractor`.
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `index_buffer`.

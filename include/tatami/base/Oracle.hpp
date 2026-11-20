@@ -22,7 +22,7 @@ typedef std::size_t PredictionIndex;
  *
  * @brief Predict future access requests on the target dimension.
  *
- * This allows `Matrix` implementations to pre-fetch data for future requests to `OracularDenseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+ * An oracle allows `Matrix` implementations to pre-fetch data for future requests to `OracularDenseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
  * Check out `ConsecutiveOracle` and `FixedVectorOracle` for some examples of concrete subclasses.
  */
 template<typename Index_>

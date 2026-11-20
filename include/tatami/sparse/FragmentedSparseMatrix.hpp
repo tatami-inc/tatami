@@ -661,18 +661,39 @@ private:
     bool my_row_sparse;
 
 public:
+    /**
+     * @inheritdoc
+     */
     Index_ nrow() const { return my_nrow; }
 
+    /**
+     * @inheritdoc
+     */
     Index_ ncol() const { return my_ncol; }
 
+    /**
+     * @inheritdoc
+     */
     bool is_sparse() const { return true; }
 
+    /**
+     * @inheritdoc
+     */
     double is_sparse_proportion() const { return 1; }
 
+    /**
+     * @inheritdoc
+     */
     bool prefer_rows() const { return my_row_sparse; }
 
+    /**
+     * @inheritdoc
+     */
     double prefer_rows_proportion() const { return static_cast<double>(my_row_sparse); }
 
+    /**
+     * @inheritdoc
+     */
     bool uses_oracle(const bool) const { return false; }
 
     using Matrix<Value_, Index_>::dense;
@@ -692,6 +713,9 @@ private:
      ******* Dense myopic ********
      *****************************/
 private:
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
         const Options&
@@ -707,6 +731,9 @@ private:
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
         const Index_ block_start,
@@ -724,18 +751,21 @@ private:
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(
         const bool row,
-        VectorPtr<Index_> subset_ptr,
+        VectorPtr<Index_> indices_ptr,
         const Options&
     ) const {
         if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
-                my_values, my_indices, secondary(), std::move(subset_ptr)
+                my_values, my_indices, secondary(), std::move(indices_ptr)
             );
         } else {
             return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
-                my_values, my_indices, secondary(), std::move(subset_ptr)
+                my_values, my_indices, secondary(), std::move(indices_ptr)
             );
         }
     }
@@ -744,6 +774,9 @@ private:
      ******* Sparse myopic ********
      ******************************/
 private:
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         const Options& opt
@@ -759,6 +792,9 @@ private:
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         const Index_ block_start,
@@ -776,18 +812,21 @@ private:
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(
         const bool row,
-        VectorPtr<Index_> subset_ptr,
+        VectorPtr<Index_> indices_ptr,
         const Options& opt
     ) const {
         if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
-                my_values, my_indices, secondary(), std::move(subset_ptr), opt
+                my_values, my_indices, secondary(), std::move(indices_ptr), opt
             );
         } else {
             return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
-                my_values, my_indices, secondary(), std::move(subset_ptr), opt
+                my_values, my_indices, secondary(), std::move(indices_ptr), opt
             );
         }
     }
@@ -796,6 +835,9 @@ private:
      ******* Dense oracular ********
      *******************************/
 public:
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
@@ -804,6 +846,9 @@ public:
         return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, opt));
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
@@ -814,19 +859,25 @@ public:
         return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, block_start, block_length, opt));
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        VectorPtr<Index_> subset_ptr,
+        VectorPtr<Index_> indices_ptr,
         const Options& opt
     ) const {
-        return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(subset_ptr), opt));
+        return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(indices_ptr), opt));
     }
 
     /********************************
      ******* Sparse oracular ********
      ********************************/
 public:
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
@@ -835,6 +886,9 @@ public:
         return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, opt));
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
@@ -845,13 +899,16 @@ public:
         return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, block_start, block_length, opt));
     }
 
+    /**
+     * @inheritdoc
+     */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(
         const bool row,
         std::shared_ptr<const Oracle<Index_> > oracle,
-        VectorPtr<Index_> subset_ptr,
+        VectorPtr<Index_> indices_ptr,
         const Options& opt
     ) const {
-        return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(subset_ptr), opt));
+        return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(indices_ptr), opt));
     }
 };
 

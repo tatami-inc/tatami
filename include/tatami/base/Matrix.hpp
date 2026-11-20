@@ -142,21 +142,21 @@ public:
     virtual bool prefer_rows() const = 0;
 
     /**
-     * @return Approximate proportion of the matrix that prefers row-level access.
-     *
-     * This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access.
+     * The return value of this method is the (approximate) proportion of matrix elements that lie within submatrices that prefer row-level access.
      * It is useful for determining the return value of `prefer_rows()` in combined matrices consisting of both row- and column-preferred submatrices.
      * In such cases, the net preference can be determined based on the combined size of the submatrices for each preference.
      * (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.)
+     *
+     * @return Approximate proportion of the matrix that prefers row-level access.
      */
     virtual double prefer_rows_proportion() const = 0;
 
     /**
+     * The return value of this method indicates whether callers should construct an oracle for use in `ExtractorBase::set_oracle()`.
+     * If `false`, callers should not bother to pass an oracle as it will be ignored.
+     *
      * @param row Row access if `true`, column access otherwise.
      * @return Whether this matrix's `tatami::Extractor` classes make use of oracle predictions for row (if `row = true`) or column access (otherwise).
-     *
-     * The output of this method indicates whether callers should construct an oracle for use in `ExtractorBase::set_oracle()`.
-     * If `false`, callers should not bother to pass an oracle as it will be ignored.
      */
     virtual bool uses_oracle(bool row) const = 0;
 
