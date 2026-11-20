@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 
 project(
     tatami
-    VERSION 4.1.2
+    VERSION 4.1.3
     DESCRIPTION "A C++ interface for assorted matrix representations"
     LANGUAGES CXX
 )
@@ -24,7 +24,7 @@ if(TATAMI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
     find_package(ltla_subpar 0.5.0 CONFIG REQUIRED)
-    find_package(ltla_sanisizer 0.2.0 CONFIG REQUIRED)
+    find_package(ltla_sanisizer 0.3.0 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(tatami INTERFACE ltla::subpar ltla::sanisizer)
