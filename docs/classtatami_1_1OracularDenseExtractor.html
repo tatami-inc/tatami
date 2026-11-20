@@ -161,9 +161,11 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next element of the target dimension, as predicted by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to be filled with <code>N</code> values.</dd></dl>
-<p>If the returned pointer is equal to <code>buffer</code>, this means that <code>buffer</code> has been filled with the contents of the <code>i</code>-th dimension element.</p>
-<p>If the returned pointer is not equal to <code>buffer</code>, it should refer to another array of length <code>N</code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>buffer</code>. </p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next element of the target dimension, as predicted by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to be filled with <code>N</code> values.</dd>
+<dd>
+If the returned pointer is equal to <code>buffer</code>, this means that <code>buffer</code> has been filled with the contents of the <code>i</code>-th dimension element.</dd>
+<dd>
+If the returned pointer is not equal to <code>buffer</code>, it should refer to another array of length <code>N</code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>buffer</code>. </dd></dl>
 
 </div>
 </div>

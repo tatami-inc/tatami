@@ -90,25 +90,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedBinaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arithmetic__helpers_8hpp.html</filename>
@@ -157,10 +138,10 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedUnaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
+    <name>DelayedBinaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -175,6 +156,25 @@
     <path>tatami/isometric/unary/</path>
     <filename>unary_2helper__interface_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOperationHelper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DelayedUnaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricOperation</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -669,8 +669,8 @@
       <type>std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
-      <anchor>a61a45fd05930998cbe955d0158f41e7e</anchor>
-      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; my_indices_ptr, const Options &amp;opt) const</arglist>
+      <anchor>a5cdd4a67e2890fc42bddd6da68b14231</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
@@ -690,8 +690,8 @@
       <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
-      <anchor>a1205fb73d187bcd1ae7b6a3606307806</anchor>
-      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; my_indices_ptr, const Options &amp;opt) const</arglist>
+      <anchor>a7b6083ff5cc0e83d9247202cb54a0f8e</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -6658,8 +6658,8 @@
       <type>std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
-      <anchor>a39c911d6d93fe5739a753a3141e6d12b</anchor>
-      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</arglist>
+      <anchor>a70e2edf4ecb13f02333663e8d76fd0d4</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
@@ -6679,8 +6679,8 @@
       <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
-      <anchor>a6c63dc6dda894c284385f7ea2d4d239a</anchor>
-      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</arglist>
+      <anchor>a03341e9951befcb70c8d6ec792d66451</anchor>
+      <arglist>(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
   </compound>
   <compound kind="struct">
