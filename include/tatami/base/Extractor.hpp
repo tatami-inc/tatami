@@ -98,7 +98,8 @@ public:
      * In this situation, no guarantees are provided for the contents of `buffer`.
      */
     const Value_* fetch(Value_* buffer) {
-        return fetch(0, buffer);
+        // Use -1 to hopefully trigger a segfault somewhere if an implementation accidentally uses `i`.
+        return fetch(static_cast<Index_>(-1), buffer);
     }
 
     /**
@@ -248,7 +249,8 @@ public:
      * In this situation, no guarantees are provided for the contents of `index_buffer`.
      */
     SparseRange<Value_, Index_> fetch(Value_* value_buffer, Index_* index_buffer) {
-        return fetch(0, value_buffer, index_buffer);
+        // Use -1 to hopefully trigger a segfault somewhere if an implementation accidentally uses `i`.
+        return fetch(static_cast<Index_>(-1), value_buffer, index_buffer);
     }
 
     /**
