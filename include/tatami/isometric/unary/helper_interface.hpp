@@ -18,6 +18,7 @@ namespace tatami {
  *
  * This class defines the interface for an operation helper in `DelayedUnaryIsometricOperation`,
  * Operations should generally inherit from this class, though it is possible for developers to define their own classes with the same signatures for compile-time polymorphism.
+ * Indeed, all methods are called without explicit template arguments so any method-specific templating can be used as long as type deduction works.
  *
  * @tparam OutputValue_ Type of the result of the operation.
  * @tparam InputValue_ Type of the matrix value used in the operation.
@@ -47,8 +48,9 @@ public:
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
-     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
-     * in which case an arbitrary placeholder may be supplied. 
+     * This argument should only be used if the operation depends on the row/column,
+     * i.e., `row && non_zero_depends_on_row()` or `!row && non_zero_depends_on_column()`.
+     * Otherwise, an arbitrary placeholder may be supplied. 
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
      * @param[in] input Pointer to an array containing a contiguous block of a row/column extracted from the matrix.
@@ -66,8 +68,9 @@ public:
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
-     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
-     * in which case an arbitrary placeholder may be supplied. 
+     * This argument should only be used if the operation depends on the row/column,
+     * i.e., `row && non_zero_depends_on_row()` or `!row && non_zero_depends_on_column()`.
+     * Otherwise, an arbitrary placeholder may be supplied. 
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in] input Pointer to an array containing an indexed subset of a row/column extracted from the matrix.
      * This has `length` addressable elements.
@@ -78,23 +81,29 @@ public:
     virtual void dense(bool row, Index_ i, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const = 0;
 
     /**
-     * This method is expected to iterate over `input_value`, apply the operation to each value, and store the result in `output_value`.
-     * We assume that the operation only needs to be applied to the structural non-zeros;
-     * structural zeros are either ignored for sparsity-preserving operations,
-     * or the result of the operation on zeros will be populated by `fill()`.
+     * If `is_sparse()` is true, the operation only needs to be applied to the structural non-zero elements.
+     * This method should iterate over `input_value`, apply the operation to each value, and store the result in `output_value`.
+     *
+     * If `is_sparse()` is false but all structural zeros in a row/column are converted to the same non-zero value 
+     * (i.e., `row && !zero_depends_on_column()` or `!row && !zero_depends_on_row()`),
+     * `fill()` will be used to apply the operation to all of the structural zeros in the `i`-th row/column.
+     * This method should iterate over `input_value`, apply the operation to the value for each structural non-zero element, and store the result in `output_value`.
+     *
+     * If `is_sparse()` is false and the conversion of structural zeros is variable within a row/column
+     * (i.e., `row && zero_depends_on_column()` or `!row && zero_depends_on_row()`),
+     * this method will never be called by `DelayedUnaryIsometricOperation`.
+     * In such cases, developers may provide a trivial implementation that throws an exception.
      *
      * If `non_zero_depends_on_row() && !row` or `non_zero_depends_on_column() && row`, `index` is guaranteed to be non-NULL.
      * Otherwise, it may be NULL and should be ignored.
-     * Even if non-NULL, indices are not guaranteed to be sorted.
-     *
-     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * Note that, even if `index` is non-NULL, the indices are not guaranteed to be sorted.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
-     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
-     * in which case an arbitrary placeholder may be supplied. 
+     * This argument should only be used if the result of the operation on structural non-zeros depends on the row/column,
+     * i.e., `row && non_zero_depends_on_row()` or `!row && non_zero_depends_on_column()`.
+     * Otherwise, an arbitrary placeholder may be supplied. 
      * @param num Number of non-zero elements for row/column `i`.
      * @param[in] input_value Pointer to an array of values of the structural non-zero elements from the row/column of the matrix.
      * This is guaranteed to have `num` addressable elements.
@@ -109,20 +118,20 @@ public:
     /**
      * @param row Whether `i` refers to the row or column index.
      * @param i The index of the row (if `row = true`) or column (otherwise) containing the zeros.
-     * This argument should be ignored if the operation does not depend on the row/column,
-     * i.e., when all of `zero_depends_on_row()` and friends return false.
+     * This argument should only be used if the sparsity-discarding operation depends on the row/column,
+     * i.e., `row && zero_depends_on_row()` or `!row && zero_depends_on_column()`.
      *
-     * @return The result of the operation being applied on zeros from the `i`-th row/column of the matrix.
+     * @return The result of a sparsity-discarding operation being applied on zeros from the `i`-th row/column of the matrix.
      *
-     * This function will never be called by `DelayedUnaryIsometricOperation` if the operation depends on the dimension that is not specified by `row`,
-     * i.e., when `row == true && zero_depends_on_column()` or `row == false && zero_depends_on_row()`.
-     * In such cases, no single fill value would exist.
+     * This function will only be called by `DelayedUnaryIsometricOperation` if `is_sparse()` is false and the conversion of structural zeros is constant within a row/column,
+     * i.e., when `row && !zero_depends_on_column()` or `!row && !zero_depends_on_row()`.
+     * If the conversion is not constant, no single fill value would exist for all zeros in a row/column.
+     * In such cases, developers may provide a trivial implementation that throws an exception.
      */
     virtual OutputValue_ fill(bool row, Index_ i) const = 0; 
 
     /**
-     * @return Whether the operation will convert a structural zero to a non-zero value,
-     * in a manner that depends on the identity of the column in which the structural zero occurs.
+     * @return Whether the result of a sparsity-discarding operation on a zero operand depends on the identity of the row containing the operand. 
      *
      * This method is only called when `is_sparse()` returns false.
      * It is not necessary to explicitly return `false` here for sparsity-preserving operations,
@@ -131,8 +140,7 @@ public:
     virtual bool zero_depends_on_row() const = 0;
 
     /**
-     * @return Whether the operation will convert a structural zero to a non-zero value,
-     * in a manner that depends on the identity of the column in which the structural zero occurs.
+     * @return Whether the result of a sparsity-discarding operation on a zero operand depends on the identity of the column containing the operand. 
      *
      * This method is only called when `is_sparse()` returns false.
      * It is not necessary to explicitly return `false` here for sparsity-preserving operations,
@@ -152,7 +160,6 @@ public:
 
     /** 
      * @return Does this operation preserve sparsity?
-     * This may return false.
      */
     virtual bool is_sparse() const = 0;
 
