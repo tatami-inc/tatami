@@ -105,14 +105,9 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                 const auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
                 auto& sv = store_v[p];
                 auto& si = store_i[p];
-                sv.reserve(range.number);
-                si.reserve(range.number);
-
                 // We don't filter out structural non-zeros that have values of zero, for consistency with convert_to_compressed_sparse().
-                for (InputIndex_ i = 0; i < range.number; ++i) {
-                    sv.push_back(range.value[i]);
-                    si.push_back(range.index[i]);
-                }
+                sv.insert(sv.end(), range.value, range.value + range.number);
+                si.insert(si.end(), range.index, range.index + range.number);
             }
         }, primary, options.num_threads);
 
