@@ -35,11 +35,16 @@ std::optional<CountNonZerosPerThread<Index_, Count_> > count_sparse_non_zeros_in
         all_partial_starts.emplace(sanisizer::cast<I<decltype(all_partial_starts->size())> >(threads));
         all_partial_lengths.emplace(sanisizer::cast<I<decltype(all_partial_lengths->size())> >(threads));
         all_partial_counts.emplace(sanisizer::cast<I<decltype(all_partial_counts->size())> >(threads));
+    } else {
+        for ([[maybe_unused]] Index_ i = 0; i < primary; ++i) {
+            assert(counts[i] == 0); // double-checking the zeroing.
+        }
     }
 
     const int num_used = parallelize([&](const int thread, const Index_ start, const Index_ length) -> void {
         // To minimize false sharing, we allocate each buffer as a per-thread vector before moving it into the nnz_workers for serial use.
-        // We skip the allocation for the first thread as this is allowed to use the (presumably zeroed) nnz array directly.
+        // We don't use 'counts' for the first thread in the parallel context as we need to return the per-thread counts in addition to the total counts,
+        // so we might as well allocate a separate buffer here. 
         Count_* cur_counts;
         std::optional<std::vector<Count_> > count_holder;
         if (!do_parallel) {
@@ -80,6 +85,9 @@ std::optional<CountNonZerosPerThread<Index_, Count_> > count_sparse_non_zeros_in
         }
     }, secondary, threads);
 
+    // As mentioned before, we report the number of non-zero elements in each thread. 
+    // This is useful for later multi-threaded operations to retrieve the non-zero values,
+    // where we can use the counts to compute per-thread offsets to figure out where the retrieved values should be stored. 
     std::optional<CountNonZerosPerThread<Index_, Count_> > output;
     if (do_parallel) {
         output.emplace();
