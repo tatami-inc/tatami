@@ -66,11 +66,14 @@ public:
     PrimaryMyopicFullSparse(
         const ValueVectorStorage_& values,
         const IndexVectorStorage_& indices,
-        [[maybe_unused]] const Index_ secondary /* for consistency only */,
+        [[maybe_unused]] const Index_ secondary,
         const Options& opt
     ) :
         my_values(values),
         my_indices(indices),
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        my_secondary(secondary),
+#endif
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
     {} 
@@ -88,12 +91,19 @@ public:
             const auto curnnz = curi.size();
             output.index = sparse_utils::extract_primary_vector(curi, static_cast<I<decltype(curnnz)> >(0), curnnz, index_buffer);
         }
+
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, my_secondary, value_buffer, index_buffer);
+#endif
         return output;
     }
 
 private:
     const ValueVectorStorage_& my_values;
     const IndexVectorStorage_& my_indices;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_secondary;
+#endif
     bool my_needs_value, my_needs_index;
 };
 
@@ -177,6 +187,10 @@ public:
         if (my_needs_index) {
             output.index = sparse_utils::extract_primary_vector(curi, offset, delta, index_buffer);
         }
+
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, my_block_length, value_buffer, index_buffer);
+#endif
         return output;
     }
 
@@ -241,6 +255,9 @@ public:
         my_values(values),
         my_indices(indices),
         my_retriever(*indices_ptr, secondary),
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        my_length(indices_ptr->size()),
+#endif
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
     {} 
@@ -268,13 +285,20 @@ public:
             }
         );
 
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+        SparseRange<Value_, Index_> output(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, my_length, value_buffer, index_buffer);
+#endif
+        return output;
     }
 
 private:
     const ValueVectorStorage_& my_values;
     const IndexVectorStorage_& my_indices;
     sparse_utils::RetrievePrimarySubsetSparse<Index_> my_retriever;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_length;
+#endif
     bool my_needs_value, my_needs_index;
 };
 
@@ -368,7 +392,12 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+
+        SparseRange<Value_, Index_> output(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, static_cast<Index_>(my_values.size()), value_buffer, index_buffer);
+#endif
+        return output;
     }
 
 private:
@@ -424,6 +453,9 @@ public:
     ) :
         my_values(values),
         my_cache(make_ServeIndices<Index_>(indices), secondary, block_start, block_length),
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        my_length(block_length),
+#endif
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
     {} 
@@ -442,12 +474,20 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+
+        SparseRange<Value_, Index_> output(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, my_length, value_buffer, index_buffer);
+#endif
+        return output;
     }
 
 private:
     const ValueVectorStorage_& my_values;
     sparse_utils::BlockSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexVectorStorage_> > my_cache;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_length;
+#endif
     bool my_needs_value, my_needs_index;
 };
 
@@ -495,6 +535,9 @@ public:
         const Options& opt
     ) :
         my_values(values),
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        my_length(indices_ptr->size()),
+#endif
         my_cache(make_ServeIndices<Index_>(indices), secondary, std::move(indices_ptr)),
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index)
@@ -514,11 +557,19 @@ public:
                 ++count;
             }
         );
-        return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+
+        SparseRange<Value_, Index_> output(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
+#ifdef TATAMI_DEBUG_FORCE_COPY
+        sparse_utils::forcibly_populate_buffers(output, my_length, value_buffer, index_buffer);
+#endif
+        return output;
     }
 
 private:
     const ValueVectorStorage_& my_values;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_length;
+#endif
     sparse_utils::IndexSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexVectorStorage_> > my_cache;
     bool my_needs_value, my_needs_index;
 };

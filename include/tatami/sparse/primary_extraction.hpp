@@ -12,17 +12,13 @@ namespace sparse_utils {
 
 template<class Storage_, typename Offset_, typename Data_>
 const Data_* extract_primary_vector(const Storage_& input, const Offset_ offset, const Offset_ delta, Data_* const buffer) {
-#ifndef TATAMI_DEBUG_FORCE_COPY
     if constexpr(has_data<Data_, Storage_>::value) {
         return input.data() + offset;
     } else {
-#endif
         const auto it = input.begin() + offset;
         std::copy_n(it, delta, buffer);
         return buffer;
-#ifndef TATAMI_DEBUG_FORCE_COPY
     }
-#endif
 }
 
 template<class IndexIt_, typename Index_>
@@ -131,6 +127,27 @@ public:
         }
     }
 };
+
+template<typename Value_, typename Index_>
+void forcibly_populate_buffers(SparseRange<Value_, Index_>& output, Index_ len, Value_* vbuffer, Index_* ibuffer) {
+    // When debugging with TATAMI_DEBUG_FORCE_COPY,
+    // we make sure that the full extent of the buffer is touched. 
+    if (output.value) {
+        if (output.value != vbuffer) {
+            std::copy_n(output.value, output.number, vbuffer);
+            output.value = vbuffer;
+        }
+        std::fill(vbuffer + output.number, vbuffer + len, 0);
+    }
+
+    if (output.index) {
+        if (output.index != ibuffer) {
+            std::copy_n(output.index, output.number, ibuffer);
+            output.index = ibuffer;
+        }
+        std::fill(ibuffer + output.number, ibuffer + len, 0);
+    }
+}
 
 }
 
