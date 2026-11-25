@@ -123,9 +123,10 @@ public:
     ) :
         my_values(values),
         my_indices(indices),
-        my_secondary(secondary),
         my_block_start(block_start),
-        my_block_length(block_length)
+        my_block_length(block_length),
+        my_block_end(block_start + block_length),
+        my_search_block_end(my_block_end < secondary)
     {} 
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -134,7 +135,7 @@ public:
 
         auto iStart = curi.begin();
         auto iEnd = curi.end();
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        sparse_utils::refine_primary_limits(iStart, iEnd, my_block_start, my_search_block_end, my_block_end);
         const auto start_pos = (iStart - curi.begin());
         const auto end_pos = (iEnd - curi.begin());
 
@@ -148,8 +149,8 @@ public:
 private:
     const ValueVectorStorage_& my_values;
     const IndexVectorStorage_& my_indices;
-    Index_ my_secondary;
-    Index_ my_block_start, my_block_length;
+    Index_ my_block_start, my_block_length, my_block_end;
+    bool my_search_block_end;
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
@@ -165,9 +166,12 @@ public:
     ) :
         my_values(values),
         my_indices(indices), 
-        my_secondary(secondary),
         my_block_start(block_start),
+        my_block_end(block_start + block_length),
+#ifdef TATAMI_DEBUG_FORCE_COPY
         my_block_length(block_length),
+#endif
+        my_search_block_end(my_block_end < secondary),
         my_needs_value(opt.sparse_extract_value), 
         my_needs_index(opt.sparse_extract_index)
     {} 
@@ -176,7 +180,7 @@ public:
         const auto& curi = my_indices[i];
         auto iStart = curi.begin();
         auto iEnd = curi.end();
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        sparse_utils::refine_primary_limits(iStart, iEnd, my_block_start, my_search_block_end, my_block_end);
         const auto offset = iStart - curi.begin();
         const auto delta = iEnd - iStart;
 
@@ -197,8 +201,11 @@ public:
 private:
     const ValueVectorStorage_& my_values;
     const IndexVectorStorage_& my_indices;
-    Index_ my_secondary;
-    Index_ my_block_start, my_block_length;
+    Index_ my_block_start, my_block_end;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_block_length;
+#endif
+    bool my_search_block_end;
     bool my_needs_value, my_needs_index;
 };
 

@@ -127,15 +127,16 @@ public:
         my_values(values), 
         my_indices(indices), 
         my_pointers(pointers), 
-        my_secondary(secondary), 
         my_block_start(block_start), 
-        my_block_length(block_length) 
+        my_block_length(block_length), 
+        my_block_end(block_start + block_length),
+        my_search_block_end(my_block_end < secondary)
     {} 
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        sparse_utils::refine_primary_limits(iStart, iEnd, my_block_start, my_search_block_end, my_block_end);
         const auto start_pos = (iStart - my_indices.begin());
         const auto end_pos = (iEnd - my_indices.begin());
 
@@ -150,8 +151,8 @@ private:
     const ValueStorage_& my_values;
     const IndexStorage_& my_indices;
     const PointerStorage_& my_pointers;
-    Index_ my_secondary;
-    Index_ my_block_start, my_block_length;
+    Index_ my_block_start, my_block_length, my_block_end;
+    bool my_search_block_end;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
@@ -169,9 +170,12 @@ public:
         my_values(values),
         my_indices(indices),
         my_pointers(pointers),
-        my_secondary(secondary),
         my_block_start(block_start),
+        my_block_end(block_start + block_length),
+#ifdef TATAMI_DEBUG_FORCE_COPY
         my_block_length(block_length),
+#endif
+        my_search_block_end(my_block_end < secondary),
         my_needs_value(opt.sparse_extract_value),
         my_needs_index(opt.sparse_extract_index) 
     {} 
@@ -179,7 +183,7 @@ public:
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        sparse_utils::refine_primary_limits(iStart, iEnd, my_block_start, my_search_block_end, my_block_end);
         const auto offset = iStart - my_indices.begin();
         const auto delta = iEnd - iStart;
 
@@ -201,8 +205,11 @@ private:
     const ValueStorage_& my_values;
     const IndexStorage_& my_indices;
     const PointerStorage_& my_pointers;
-    Index_ my_secondary;
-    Index_ my_block_start, my_block_length;
+    Index_ my_block_start, my_block_end;
+#ifdef TATAMI_DEBUG_FORCE_COPY
+    Index_ my_block_length;
+#endif
+    bool my_search_block_end;
     bool my_needs_value, my_needs_index;
 };
 
