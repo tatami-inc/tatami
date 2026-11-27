@@ -132,15 +132,17 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;<a class="code" href="wrap__shared__ptr_8hpp.html">utils/wrap_shared_ptr.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="ArrayView_8hpp.html">utils/ArrayView.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="SomeNumericArray_8hpp.html">utils/SomeNumericArray.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;<a class="code" href="parallelize_8hpp.html">utils/parallelize.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;<a class="code" href="process__consecutive__indices_8hpp.html">utils/process_consecutive_indices.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;<a class="code" href="parallelize_8hpp.html">utils/parallelize.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;utils/deprecated/ElementType.hpp&quot;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;utils/deprecated/SomeNumericArray.hpp&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;utils/deprecated/process_consecutive_indices.hpp&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aArrayView_8hpp_html"><div class="ttname"><a href="ArrayView_8hpp.html">ArrayView.hpp</a></div><div class="ttdoc">Defines a tatami-compatible array view.</div></div>
 <div class="ttc" id="aCompressedSparseMatrix_8hpp_html"><div class="ttname"><a href="CompressedSparseMatrix_8hpp.html">CompressedSparseMatrix.hpp</a></div><div class="ttdoc">Compressed sparse matrix representation.</div></div>
 <div class="ttc" id="aConsecutiveOracle_8hpp_html"><div class="ttname"><a href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a></div><div class="ttdoc">Iterate across consecutive elements of the target dimension.</div></div>
@@ -155,7 +157,6 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aFixedOracle_8hpp_html"><div class="ttname"><a href="FixedOracle_8hpp.html">FixedOracle.hpp</a></div><div class="ttdoc">Iterate across a fixed sequence of elements on the target dimension.</div></div>
 <div class="ttc" id="aForcedDense_8hpp_html"><div class="ttname"><a href="ForcedDense_8hpp.html">ForcedDense.hpp</a></div><div class="ttdoc">Forced dense representation.</div></div>
 <div class="ttc" id="aFragmentedSparseMatrix_8hpp_html"><div class="ttname"><a href="FragmentedSparseMatrix_8hpp.html">FragmentedSparseMatrix.hpp</a></div><div class="ttdoc">Fragmented sparse matrix representation.</div></div>
-<div class="ttc" id="aSomeNumericArray_8hpp_html"><div class="ttname"><a href="SomeNumericArray_8hpp.html">SomeNumericArray.hpp</a></div><div class="ttdoc">Defines an array class with run-time numeric type.</div></div>
 <div class="ttc" id="abinary_2arithmetic__helpers_8hpp_html"><div class="ttname"><a href="binary_2arithmetic__helpers_8hpp.html">arithmetic_helpers.hpp</a></div><div class="ttdoc">Helper class for binary arithmetic operations.</div></div>
 <div class="ttc" id="abinary_2boolean__helpers_8hpp_html"><div class="ttname"><a href="binary_2boolean__helpers_8hpp.html">boolean_helpers.hpp</a></div><div class="ttdoc">Helper class for binary boolean operations.</div></div>
 <div class="ttc" id="abinary_2compare__helpers_8hpp_html"><div class="ttname"><a href="binary_2compare__helpers_8hpp.html">compare_helpers.hpp</a></div><div class="ttdoc">Helper class for binary comparison operations.</div></div>
@@ -168,7 +169,6 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="amath__helpers_8hpp_html"><div class="ttname"><a href="math__helpers_8hpp.html">math_helpers.hpp</a></div><div class="ttdoc">Helpers for unary math operations.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="aparallelize_8hpp_html"><div class="ttname"><a href="parallelize_8hpp.html">parallelize.hpp</a></div><div class="ttdoc">Parallelized iteration over a tatami::Matrix.</div></div>
-<div class="ttc" id="aprocess__consecutive__indices_8hpp_html"><div class="ttname"><a href="process__consecutive__indices_8hpp.html">process_consecutive_indices.hpp</a></div><div class="ttdoc">Utility to process consecutive indices.</div></div>
 <div class="ttc" id="asubstitute__helpers_8hpp_html"><div class="ttname"><a href="substitute__helpers_8hpp.html">substitute_helpers.hpp</a></div><div class="ttdoc">Helper classes for delayed unary isometric substitution.</div></div>
 <div class="ttc" id="atranspose_8hpp_html"><div class="ttname"><a href="transpose_8hpp.html">transpose.hpp</a></div><div class="ttdoc">Transpose a dense array.</div></div>
 <div class="ttc" id="aunary_2arithmetic__helpers_8hpp_html"><div class="ttname"><a href="unary_2arithmetic__helpers_8hpp.html">arithmetic_helpers.hpp</a></div><div class="ttdoc">Helper classes for delayed unary isometric arithmetic.</div></div>

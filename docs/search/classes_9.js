@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['pseudooraculardenseextractor_0',['PseudoOracularDenseExtractor',['../structtatami_1_1PseudoOracularDenseExtractor.html',1,'tatami']]],
-  ['pseudooracularsparseextractor_1',['PseudoOracularSparseExtractor',['../structtatami_1_1PseudoOracularSparseExtractor.html',1,'tatami']]]
+  ['retrievecompressedsparsecontentsoptions_0',['RetrieveCompressedSparseContentsOptions',['../structtatami_1_1RetrieveCompressedSparseContentsOptions.html',1,'tatami']]],
+  ['retrievefragmentedsparsecontentsoptions_1',['RetrieveFragmentedSparseContentsOptions',['../structtatami_1_1RetrieveFragmentedSparseContentsOptions.html',1,'tatami']]]
 ];

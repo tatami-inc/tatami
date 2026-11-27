@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['matrix_0',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20outputvalue_5f_2c_20index_5f_20_3e_1',['Matrix&lt; OutputValue_, Index_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20valueout_5f_2c_20indexout_5f_20_3e_2',['Matrix&lt; ValueOut_, IndexOut_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['myopicdenseextractor_3',['MyopicDenseExtractor',['../classtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
-  ['myopicsparseextractor_4',['MyopicSparseExtractor',['../classtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
+  ['options_0',['Options',['../structtatami_1_1Options.html',1,'tatami']]],
+  ['oracle_1',['Oracle',['../classtatami_1_1Oracle.html',1,'tatami']]],
+  ['oraculardenseextractor_2',['OracularDenseExtractor',['../classtatami_1_1OracularDenseExtractor.html',1,'tatami']]],
+  ['oracularsparseextractor_3',['OracularSparseExtractor',['../classtatami_1_1OracularSparseExtractor.html',1,'tatami']]]
 ];

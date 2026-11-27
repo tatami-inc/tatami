@@ -72,6 +72,5 @@ var searchData=
   ['delayedunaryisometricsubstitutenotequalvectorhelper_69',['DelayedUnaryIsometricSubstituteNotEqualVectorHelper',['../namespacetatami.html#abf285b6e52c66ec11445d6a69a6bdd50',1,'tatami']]],
   ['delayedunaryisometricsubtractscalarhelper_70',['DelayedUnaryIsometricSubtractScalarHelper',['../namespacetatami.html#af4809abe02f2d2f90ee7404f42b7b777',1,'tatami']]],
   ['delayedunaryisometricsubtractvectorhelper_71',['DelayedUnaryIsometricSubtractVectorHelper',['../namespacetatami.html#a78329812c3ab5ada1be83f590a96c18a',1,'tatami']]],
-  ['denseextractor_72',['DenseExtractor',['../namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0',1,'tatami']]],
-  ['difference_5ftype_73',['difference_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aefb9a8cadab1f35ebe83a01e76c2520f',1,'tatami::SomeNumericArray::Iterator']]]
+  ['denseextractor_72',['DenseExtractor',['../namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0',1,'tatami']]]
 ];
