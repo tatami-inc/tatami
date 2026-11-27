@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['make_5fconsecutiveoracle_0',['make_ConsecutiveOracle',['../namespacetatami.html#a421a48c7533dacdf011a4277582c72c9',1,'tatami']]],
-  ['make_5fdelayedcast_1',['make_DelayedCast',['../namespacetatami.html#ab4c8b88eeaa5fcbb1e5d47d020eb98ea',1,'tatami']]],
-  ['make_5fdelayedsubset_2',['make_DelayedSubset',['../namespacetatami.html#af62b9d27c0c501e5b65e52ce37f0ee5d',1,'tatami']]],
-  ['make_5fextractor_3',['make_Extractor',['../namespacetatami.html#aafaa3018899e59eeb0172091a53cee87',1,'tatami::make_Extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, const tatami::Options &amp;opt)'],['../namespacetatami.html#a6448d6d49a0ecd620fc3f7a153534df9',1,'tatami::make_Extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Index_ block_start, Index_ block_length, const tatami::Options &amp;opt)'],['../namespacetatami.html#a954ab2a00530d9481ff994b9e1b2693b',1,'tatami::make_Extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const tatami::Options &amp;opt)']]]
+  ['parallelize_0',['parallelize',['../namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97',1,'tatami']]],
+  ['parallelize_5frange_1',['parallelize_range',['https://ltla.github.io/subpar/namespacesubpar.html#aa2ea2594f895ea5837bd3df8ad31af14',1,'subpar']]],
+  ['parallelize_5fsimple_2',['parallelize_simple',['https://ltla.github.io/subpar/namespacesubpar.html#ab039ee0d9f8d12394d4c59bb994c98ca',1,'subpar']]],
+  ['prefer_5frows_3',['prefer_rows',['../classtatami_1_1DenseMatrix.html#a47eade967a5c180ff4a8c8644e57947b',1,'tatami::DenseMatrix::prefer_rows()'],['../classtatami_1_1CompressedSparseMatrix.html#a45a108841635187e7428cbc6f1969a28',1,'tatami::CompressedSparseMatrix::prefer_rows()'],['../classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6',1,'tatami::FragmentedSparseMatrix::prefer_rows()']]],
+  ['prefer_5frows_5fproportion_4',['prefer_rows_proportion',['../classtatami_1_1DenseMatrix.html#a44486a7d66661eada08c22a64547e937',1,'tatami::DenseMatrix::prefer_rows_proportion()'],['../classtatami_1_1CompressedSparseMatrix.html#a51bc0d7358afec17953fca1d37eab439',1,'tatami::CompressedSparseMatrix::prefer_rows_proportion()'],['../classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0',1,'tatami::FragmentedSparseMatrix::prefer_rows_proportion()']]],
+  ['pseudooraculardenseextractor_5',['PseudoOracularDenseExtractor',['../structtatami_1_1PseudoOracularDenseExtractor.html#a099afedb958b1c9a7738508eb7cf387f',1,'tatami::PseudoOracularDenseExtractor']]],
+  ['pseudooracularsparseextractor_6',['PseudoOracularSparseExtractor',['../structtatami_1_1PseudoOracularSparseExtractor.html#a844c7b691709c23d0281b58d9eb50b04',1,'tatami::PseudoOracularSparseExtractor']]]
 ];

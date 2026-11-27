@@ -130,13 +130,13 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedSubsetBlock_8hpp.html">subset/DelayedSubsetBlock.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#include &quot;<a class="code" href="make__DelayedSubset_8hpp.html">subset/make_DelayedSubset.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;<a class="code" href="ArrayView_8hpp.html">utils/ArrayView.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="parallelize_8hpp.html">utils/parallelize.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;utils/make_Extractor.hpp&quot;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;<a class="code" href="wrap__shared__ptr_8hpp.html">utils/deprecated/wrap_shared_ptr.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="parallelize_8hpp.html">utils/parallelize.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;utils/make_Extractor.hpp&quot;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &quot;utils/deprecated/ArrayView.hpp&quot;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;utils/deprecated/wrap_shared_ptr.hpp&quot;</span></div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;utils/deprecated/ElementType.hpp&quot;</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;utils/deprecated/SomeNumericArray.hpp&quot;</span></div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &quot;utils/deprecated/process_consecutive_indices.hpp&quot;</span></div>
@@ -145,7 +145,6 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aArrayView_8hpp_html"><div class="ttname"><a href="ArrayView_8hpp.html">ArrayView.hpp</a></div><div class="ttdoc">Defines a tatami-compatible array view.</div></div>
 <div class="ttc" id="aCompressedSparseMatrix_8hpp_html"><div class="ttname"><a href="CompressedSparseMatrix_8hpp.html">CompressedSparseMatrix.hpp</a></div><div class="ttdoc">Compressed sparse matrix representation.</div></div>
 <div class="ttc" id="aConsecutiveOracle_8hpp_html"><div class="ttname"><a href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a></div><div class="ttdoc">Iterate across consecutive elements of the target dimension.</div></div>
 <div class="ttc" id="aConstantMatrix_8hpp_html"><div class="ttname"><a href="ConstantMatrix_8hpp.html">ConstantMatrix.hpp</a></div><div class="ttdoc">Matrix of constant values.</div></div>
@@ -177,7 +176,6 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aunary_2boolean__helpers_8hpp_html"><div class="ttname"><a href="unary_2boolean__helpers_8hpp.html">boolean_helpers.hpp</a></div><div class="ttdoc">Helper classes for delayed unary isometric boolean operations.</div></div>
 <div class="ttc" id="aunary_2compare__helpers_8hpp_html"><div class="ttname"><a href="unary_2compare__helpers_8hpp.html">compare_helpers.hpp</a></div><div class="ttdoc">Helper classes for delayed unary isometric comparison operations.</div></div>
 <div class="ttc" id="aunary_2helper__interface_8hpp_html"><div class="ttname"><a href="unary_2helper__interface_8hpp.html">helper_interface.hpp</a></div><div class="ttdoc">Interface for tatami::DelayedUnaryIsometricOperation helpers.</div></div>
-<div class="ttc" id="awrap__shared__ptr_8hpp_html"><div class="ttname"><a href="wrap__shared__ptr_8hpp.html">wrap_shared_ptr.hpp</a></div><div class="ttdoc">Wrap a raw tatami::Matrix pointer inside a mock shared pointer.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

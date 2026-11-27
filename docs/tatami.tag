@@ -329,13 +329,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>ArrayView.hpp</name>
-    <path>tatami/utils/</path>
-    <filename>ArrayView_8hpp.html</filename>
-    <class kind="class">tatami::ArrayView</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>ConsecutiveOracle.hpp</name>
     <path>tatami/utils/</path>
     <filename>ConsecutiveOracle_8hpp.html</filename>
@@ -346,12 +339,6 @@
     <name>copy.hpp</name>
     <path>tatami/utils/</path>
     <filename>copy_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>wrap_shared_ptr.hpp</name>
-    <path>tatami/utils/deprecated/</path>
-    <filename>wrap__shared__ptr_8hpp.html</filename>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -381,60 +368,6 @@
     <class kind="struct">tatami::PseudoOracularDenseExtractor</class>
     <class kind="struct">tatami::PseudoOracularSparseExtractor</class>
     <namespace>tatami</namespace>
-  </compound>
-  <compound kind="class">
-    <name>tatami::ArrayView</name>
-    <filename>classtatami_1_1ArrayView.html</filename>
-    <templarg>typename Type_</templarg>
-    <member kind="function">
-      <type></type>
-      <name>ArrayView</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a7561b5e7be6baf119fabee4d45ba392b</anchor>
-      <arglist>(const Type_ *const ptr, const std::size_t number)</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>ArrayView</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a9b6dea35449eda3a7465dc2c0d5ed277</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>std::size_t</type>
-      <name>size</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>aeff4b1aaf012ce0079ba859600c9652c</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Type_ *</type>
-      <name>data</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>ad23ad79ab7ed43ebb652aa172e26977a</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Type_ *</type>
-      <name>begin</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a85edd73e6a9346f158298847ddbe2342</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const Type_ *</type>
-      <name>end</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a15127c10722fd3483010f38231dd7ee9</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>Type_</type>
-      <name>operator[]</name>
-      <anchorfile>classtatami_1_1ArrayView.html</anchorfile>
-      <anchor>a27dfec4d2e5a800d3480fee6888a1e62</anchor>
-      <arglist>(std::size_t i) const</arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>tatami::BlockSparsifiedWrapper</name>
@@ -5352,7 +5285,6 @@
   <compound kind="namespace">
     <name>tatami</name>
     <filename>namespacetatami.html</filename>
-    <class kind="class">tatami::ArrayView</class>
     <class kind="class">tatami::BlockSparsifiedWrapper</class>
     <class kind="class">tatami::CompressedSparseColumnMatrix</class>
     <class kind="struct">tatami::CompressedSparseContents</class>
@@ -6128,13 +6060,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>aca84df9f6331751c29b0bcc0ca656af7</anchor>
       <arglist>(const Value_ *const input, const Size_ n, Value_ *const output)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>wrap_shared_ptr</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5a07f7937bfdbbe8e355cba20d7c0c3a</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *const ptr)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>

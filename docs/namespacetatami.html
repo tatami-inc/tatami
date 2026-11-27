@@ -100,9 +100,6 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1ArrayView.html">ArrayView</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">View into a pre-allocated array.  <a href="classtatami_1_1ArrayView.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockSparsifiedWrapper.html">BlockSparsifiedWrapper</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrap a block dense extractor in the sparse interface.  <a href="classtatami_1_1BlockSparsifiedWrapper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -684,13 +681,6 @@ Functions</h2></td></tr>
 <tr class="memitem:aca84df9f6331751c29b0bcc0ca656af7" id="r_aca84df9f6331751c29b0bcc0ca656af7"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Size_ &gt; </td></tr>
 <tr class="memitem:aca84df9f6331751c29b0bcc0ca656af7"><td class="memTemplItemLeft" align="right" valign="top">Value_ *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aca84df9f6331751c29b0bcc0ca656af7">copy_n</a> (const Value_ *const input, const Size_ n, Value_ *const output)</td></tr>
 <tr class="separator:aca84df9f6331751c29b0bcc0ca656af7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5cfcdf9fa34c6d0cd6b672472d407b3" id="r_ae5cfcdf9fa34c6d0cd6b672472d407b3"><td class="memTemplParams" colspan="2"><a id="ae5cfcdf9fa34c6d0cd6b672472d407b3" name="ae5cfcdf9fa34c6d0cd6b672472d407b3"></a>
-template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
-<tr class="memitem:ae5cfcdf9fa34c6d0cd6b672472d407b3"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>consecutive_extractor</b> (const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, const Index_ iter_start, const Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
-<tr class="separator:ae5cfcdf9fa34c6d0cd6b672472d407b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a" id="r_a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">wrap_shared_ptr</a> (const Matrix&lt; Value_, Index_ &gt; *const ptr)</td></tr>
-<tr class="separator:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32d5ae83f932e5ef00b12e7caf9a7cdc" id="r_a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a32d5ae83f932e5ef00b12e7caf9a7cdc">cast_Index_to_container_size</a> (const Index_ x)</td></tr>
 <tr class="separator:a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3433,40 +3423,6 @@ template&lt;typename Value_ , typename Size_ &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Values are copied from <code>input</code> to <code>output</code>, and <code>output</code> is returned. This is a no-op if <code>input == output</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a5a07f7937bfdbbe8e355cba20d7c0c3a" name="a5a07f7937bfdbbe8e355cba20d7c0c3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">&#9670;&#160;</a></span>wrap_shared_ptr()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; tatami::wrap_shared_ptr </td>
-          <td>(</td>
-          <td class="paramtype">const Matrix&lt; Value_, Index_ &gt; *const</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Wrap a raw pointer inside a <code>shared_ptr</code>, typically to enable use of a raw <code>tatami::Matrix</code> pointer with delayed operation wrappers. This enables use of delayed operations inside functions that accept a raw pointer to an externally owned <code>tatami::Matrix</code>.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Value_</td><td>Numeric type for the matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ptr</td><td>A pointer to a <code>tatami::Matrix</code> instance.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to the same object addressed by <code>ptr</code>. The assumption is that <code>ptr</code> will always outlive the returned pointer. </dd></dl>
 
 </div>
 </div>

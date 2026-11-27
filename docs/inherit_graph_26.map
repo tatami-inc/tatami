@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classtatami_1_1FragmentedSparseMatrix.html" title=" " alt="" coords="5,5,180,91"/>
+<area shape="rect" id="Node000000" href="$classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation." alt="" coords="5,53,179,124"/>
+<area shape="rect" id="Node000001" href="$classtatami_1_1FragmentedSparseColumnMatrix.html" title="Fragmented sparse column matrix." alt="" coords="227,5,412,76"/>
+<area shape="poly" id="edge46_Node000000_Node000001" title=" " alt="" coords="193,65,226,58,227,63,194,70"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1FragmentedSparseRowMatrix.html" title="Fragmented sparse row matrix." alt="" coords="233,100,406,171"/>
+<area shape="poly" id="edge47_Node000000_Node000002" title=" " alt="" coords="194,107,233,115,232,120,193,112"/>
 </map>

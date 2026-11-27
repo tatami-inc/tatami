@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['indexsparsifiedwrapper_0',['IndexSparsifiedWrapper',['../classtatami_1_1IndexSparsifiedWrapper.html',1,'tatami']]]
+  ['myopicdenseextractor_0',['MyopicDenseExtractor',['../classtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
+  ['myopicsparseextractor_1',['MyopicSparseExtractor',['../classtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
 ];
