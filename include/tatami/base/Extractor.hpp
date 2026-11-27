@@ -59,16 +59,6 @@ public:
     /**
      * @endcond
      */
-
-    /**
-     * @cond
-     */
-    // No-op for back-compatibility only.
-    template<class Oracle_>
-    void set_oracle(Oracle_) {}
-    /**
-     * @endcond
-     */
 };
 
 /**
@@ -133,16 +123,6 @@ public:
     /**
      * @endcond
      */
-
-    /**
-     * @cond
-     */
-    // No-op for back-compatibility only.
-    template<class Oracle_>
-    void set_oracle(Oracle_) {}
-    /**
-     * @endcond
-     */
 };
 
 /**
@@ -195,16 +175,6 @@ public:
     MyopicSparseExtractor(MyopicSparseExtractor&&) = default;
     MyopicSparseExtractor& operator=(MyopicSparseExtractor&&) = default;
     virtual ~MyopicSparseExtractor() = default;
-    /**
-     * @endcond
-     */
-
-    /**
-     * @cond
-     */
-    // No-op for back-compatibility only.
-    template<class Oracle_>
-    void set_oracle(Oracle_) {}
     /**
      * @endcond
      */
@@ -283,16 +253,6 @@ public:
     OracularSparseExtractor(OracularSparseExtractor&&) = default;
     OracularSparseExtractor& operator=(OracularSparseExtractor&&) = default;
     virtual ~OracularSparseExtractor() = default;
-    /**
-     * @endcond
-     */
-
-    /**
-     * @cond
-     */
-    // No-op for back-compatibility only.
-    template<class Oracle_>
-    void set_oracle(Oracle_) {}
     /**
      * @endcond
      */
