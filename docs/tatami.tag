@@ -349,6 +349,12 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>wrap_shared_ptr.hpp</name>
+    <path>tatami/utils/deprecated/</path>
+    <filename>wrap__shared__ptr_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>FixedOracle.hpp</name>
     <path>tatami/utils/</path>
     <filename>FixedOracle_8hpp.html</filename>
@@ -374,12 +380,6 @@
     <filename>PseudoOracularExtractor_8hpp.html</filename>
     <class kind="struct">tatami::PseudoOracularDenseExtractor</class>
     <class kind="struct">tatami::PseudoOracularSparseExtractor</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>wrap_shared_ptr.hpp</name>
-    <path>tatami/utils/</path>
-    <filename>wrap__shared__ptr_8hpp.html</filename>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="class">
@@ -6130,6 +6130,13 @@
       <arglist>(const Value_ *const input, const Size_ n, Value_ *const output)</arglist>
     </member>
     <member kind="function">
+      <type>std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>wrap_shared_ptr</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5a07f7937bfdbbe8e355cba20d7c0c3a</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *const ptr)</arglist>
+    </member>
+    <member kind="function">
       <type>auto</type>
       <name>cast_Index_to_container_size</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -6177,13 +6184,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a9c3979c60e3d7e066be533f7ee3a2f97</anchor>
       <arglist>(Function_ fun, const Index_ tasks, const int workers)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>wrap_shared_ptr</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5a07f7937bfdbbe8e355cba20d7c0c3a</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *const ptr)</arglist>
     </member>
   </compound>
   <compound kind="page">

@@ -688,6 +688,9 @@ Functions</h2></td></tr>
 template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:ae5cfcdf9fa34c6d0cd6b672472d407b3"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>consecutive_extractor</b> (const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, const Index_ iter_start, const Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:ae5cfcdf9fa34c6d0cd6b672472d407b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a" id="r_a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">wrap_shared_ptr</a> (const Matrix&lt; Value_, Index_ &gt; *const ptr)</td></tr>
+<tr class="separator:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32d5ae83f932e5ef00b12e7caf9a7cdc" id="r_a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memTemplParams" colspan="2">template&lt;typename Container_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a32d5ae83f932e5ef00b12e7caf9a7cdc">cast_Index_to_container_size</a> (const Index_ x)</td></tr>
 <tr class="separator:a32d5ae83f932e5ef00b12e7caf9a7cdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -709,9 +712,6 @@ template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_
 <tr class="memitem:a9c3979c60e3d7e066be533f7ee3a2f97" id="r_a9c3979c60e3d7e066be533f7ee3a2f97"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a9c3979c60e3d7e066be533f7ee3a2f97"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a9c3979c60e3d7e066be533f7ee3a2f97">parallelize</a> (Function_ fun, const Index_ tasks, const int workers)</td></tr>
 <tr class="separator:a9c3979c60e3d7e066be533f7ee3a2f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a" id="r_a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">wrap_shared_ptr</a> (const Matrix&lt; Value_, Index_ &gt; *const ptr)</td></tr>
-<tr class="separator:a5a07f7937bfdbbe8e355cba20d7c0c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Flexible representations for matrix data. </p>
@@ -3436,6 +3436,40 @@ template&lt;typename Value_ , typename Size_ &gt; </div>
 
 </div>
 </div>
+<a id="a5a07f7937bfdbbe8e355cba20d7c0c3a" name="a5a07f7937bfdbbe8e355cba20d7c0c3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">&#9670;&#160;</a></span>wrap_shared_ptr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; tatami::wrap_shared_ptr </td>
+          <td>(</td>
+          <td class="paramtype">const Matrix&lt; Value_, Index_ &gt; *const</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Wrap a raw pointer inside a <code>shared_ptr</code>, typically to enable use of a raw <code>tatami::Matrix</code> pointer with delayed operation wrappers. This enables use of delayed operations inside functions that accept a raw pointer to an externally owned <code>tatami::Matrix</code>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Value_</td><td>Numeric type for the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>A pointer to a <code>tatami::Matrix</code> instance.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to the same object addressed by <code>ptr</code>. The assumption is that <code>ptr</code> will always outlive the returned pointer. </dd></dl>
+
+</div>
+</div>
 <a id="a32d5ae83f932e5ef00b12e7caf9a7cdc" name="a32d5ae83f932e5ef00b12e7caf9a7cdc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a32d5ae83f932e5ef00b12e7caf9a7cdc">&#9670;&#160;</a></span>cast_Index_to_container_size()</h2>
 
@@ -3776,40 +3810,6 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of workers (<code>K</code>) that were actually used. <code>K</code> is guaranteed to be no greater than <code>workers</code>. <code>fun()</code> will have been called once for each of the worker IDs <code>[0, ..., K - 1]</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a5a07f7937bfdbbe8e355cba20d7c0c3a" name="a5a07f7937bfdbbe8e355cba20d7c0c3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a07f7937bfdbbe8e355cba20d7c0c3a">&#9670;&#160;</a></span>wrap_shared_ptr()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; tatami::wrap_shared_ptr </td>
-          <td>(</td>
-          <td class="paramtype">const Matrix&lt; Value_, Index_ &gt; *const</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Wrap a raw pointer inside a <code>shared_ptr</code>, typically to enable use of a raw <code>tatami::Matrix</code> pointer with delayed operation wrappers. This enables use of delayed operations inside functions that accept a raw pointer to an externally owned <code>tatami::Matrix</code>.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Value_</td><td>Numeric type for the matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ptr</td><td>A pointer to a <code>tatami::Matrix</code> instance.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to the same object addressed by <code>ptr</code>. The assumption is that <code>ptr</code> will always outlive the returned pointer. </dd></dl>
 
 </div>
 </div>
