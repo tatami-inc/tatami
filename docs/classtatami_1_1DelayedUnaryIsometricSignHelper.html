@@ -151,7 +151,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename OutputValue_, typename InputValue_, typename Index_&gt;<br />
 class tatami::DelayedUnaryIsometricSignHelper&lt; OutputValue_, InputValue_, Index_ &gt;</div><p>Helper for delayed calculation of the sign of each matrix entry. </p>
-<p>This class takes the sign of each element of a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>, returning -1, 0 or 1 for negative, zero or positive values, respectively. It should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
+<p>This class takes the sign of each element of a <code>Matrix</code>, returning -1, 0 or 1 for negative, zero or positive values, respectively. It should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
 <p>This operation will report NaNs in the input as NaNs in the output if supported by the <code>OutputValue_</code> type, otherwise they are set to 0.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">

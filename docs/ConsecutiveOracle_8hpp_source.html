@@ -132,9 +132,16 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>};</div>
 </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
+<div class="foldopen" id="foldopen00056" data-start="{" data-end="}">
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">   56</a></span>std::shared_ptr&lt;ConsecutiveOracle&lt;Index_&gt; &gt;  <a class="code hl_function" href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">make_ConsecutiveOracle</a>(Index_ start, Index_ length) {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> std::make_shared&lt;ConsecutiveOracle&lt;Index_&gt; &gt;(start, length);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aIndex__to__container_8hpp_html"><div class="ttname"><a href="Index__to__container_8hpp.html">Index_to_container.hpp</a></div><div class="ttdoc">Convert index type to container size.</div></div>
 <div class="ttc" id="aOracle_8hpp_html"><div class="ttname"><a href="Oracle_8hpp.html">Oracle.hpp</a></div><div class="ttdoc">Oracle for data access.</div></div>
 <div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html">tatami::ConsecutiveOracle</a></div><div class="ttdoc">Predict future accesses along a consecutive sequence.</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:23</div></div>
@@ -143,6 +150,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html_aa0c6695749972f318734a39352acf142"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html#aa0c6695749972f318734a39352acf142">tatami::ConsecutiveOracle::get</a></div><div class="ttdeci">Index_ get(PredictionIndex i) const</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:38</div></div>
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
+<div class="ttc" id="anamespacetatami_html_a421a48c7533dacdf011a4277582c72c9"><div class="ttname"><a href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">tatami::make_ConsecutiveOracle</a></div><div class="ttdeci">std::shared_ptr&lt; ConsecutiveOracle&lt; Index_ &gt; &gt; make_ConsecutiveOracle(Index_ start, Index_ length)</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:56</div></div>
 <div class="ttc" id="anamespacetatami_html_acdedcc902be98f3bd38f3507b906971c"><div class="ttname"><a href="namespacetatami.html#acdedcc902be98f3bd38f3507b906971c">tatami::PredictionIndex</a></div><div class="ttdeci">std::size_t PredictionIndex</div><div class="ttdef"><b>Definition</b> Oracle.hpp:18</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

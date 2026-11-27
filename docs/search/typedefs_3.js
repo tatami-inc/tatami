@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['maybeoracle_0',['MaybeOracle',['../namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee',1,'tatami']]]
+  ['predictionindex_0',['PredictionIndex',['../namespacetatami.html#acdedcc902be98f3bd38f3507b906971c',1,'tatami']]]
 ];

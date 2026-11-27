@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/utils/consecutive_extractor.hpp Source File</title>
+<title>tatami: tatami/utils/deprecated/consecutive_extractor.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_d053d230eec548c17a4551a02c6d5eb8.html">utils</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_d053d230eec548c17a4551a02c6d5eb8.html">utils</a></li><li class="navelem"><a class="el" href="dir_e5850cbba9efe5227584726d608500c6.html">deprecated</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -93,49 +93,33 @@ $(function(){ initResizable(false); });
   <div class="headertitle"><div class="title">consecutive_extractor.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="consecutive__extractor_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef TATAMI_CONSEUCTIVE_EXTRACTOR_HPP</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#ifndef TATAMI_CONSEUCTIVE_EXTRACTOR_HPP</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_CONSEUCTIVE_EXTRACTOR_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Matrix_8hpp.html">../base/Matrix.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="new__extractor_8hpp.html">new_extractor.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="foldopen" id="foldopen00035" data-start="{" data-end="}">
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">   35</a></span><span class="keyword">auto</span> <a class="code hl_function" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">consecutive_extractor</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;Value_, Index_&gt;</a>&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row, <span class="keyword">const</span> Index_ iter_start, <span class="keyword">const</span> Index_ iter_length, Args_&amp;&amp;... args) {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a0a638ee666d4ded2e1cb68c39bc14b32">new_extractor&lt;sparse_, true&gt;</a>(</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        matrix,</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        row,</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        std::make_shared&lt;<a class="code hl_class" href="classtatami_1_1ConsecutiveOracle.html">ConsecutiveOracle&lt;Index_&gt;</a> &gt;(iter_start, iter_length),</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        std::forward&lt;Args_&gt;(args)...</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    );</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
-</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment">// Provided for back-compatibility only.</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">auto</span> <a class="code hl_function" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">consecutive_extractor</a>(<span class="keyword">const</span> Matrix&lt;Value_, Index_&gt;* matrix, <span class="keywordtype">bool</span> row, Index_ iter_start, Index_ iter_length, Args_&amp;&amp;... args) {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">consecutive_extractor&lt;sparse_&gt;</a>(*matrix, row, iter_start, iter_length, std::forward&lt;Args_&gt;(args)...);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>}</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">auto</span> <a class="code hl_function" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">consecutive_extractor</a>(<span class="keyword">const</span> Matrix&lt;Value_, Index_&gt;* ptr, Args_&amp;&amp;... args) {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">consecutive_extractor&lt;sparse_, Value_, Index_&gt;</a>(ptr, row_, std::forward&lt;Args_&gt;(args)...);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;../make_Extractor.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">../ConsecutiveOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> ... Args_&gt;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>[[deprecated(<span class="stringliteral">&quot;use &#39;make_Extractor()&#39; and &#39;make_ConsecutiveOracle()&#39; instead&quot;</span>)]]</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">auto</span> consecutive_extractor(<span class="keyword">const</span> Matrix&lt;Value_, Index_&gt;&amp; matrix, <span class="keyword">const</span> <span class="keywordtype">bool</span> row, <span class="keyword">const</span> Index_ iter_start, <span class="keyword">const</span> Index_ iter_length, Args_&amp;&amp;... args) {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#aafaa3018899e59eeb0172091a53cee87">make_Extractor&lt;sparse_, true&gt;</a>(</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        matrix,</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        row,</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        <a class="code hl_function" href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">make_ConsecutiveOracle</a>(iter_start, iter_length),</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        std::forward&lt;Args_&gt;(args)...</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    );</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>}</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aConsecutiveOracle_8hpp_html"><div class="ttname"><a href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a></div><div class="ttdoc">Iterate across consecutive elements of the target dimension.</div></div>
-<div class="ttc" id="aMatrix_8hpp_html"><div class="ttname"><a href="Matrix_8hpp.html">Matrix.hpp</a></div><div class="ttdoc">Virtual class for a matrix of some numeric type.</div></div>
-<div class="ttc" id="aclasstatami_1_1ConsecutiveOracle_html"><div class="ttname"><a href="classtatami_1_1ConsecutiveOracle.html">tatami::ConsecutiveOracle</a></div><div class="ttdoc">Predict future accesses along a consecutive sequence.</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:23</div></div>
-<div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix.</div><div class="ttdef"><b>Definition</b> Matrix.hpp:59</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_a0a638ee666d4ded2e1cb68c39bc14b32"><div class="ttname"><a href="namespacetatami.html#a0a638ee666d4ded2e1cb68c39bc14b32">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
-<div class="ttc" id="anamespacetatami_html_ae5cfcdf9fa34c6d0cd6b672472d407b3"><div class="ttname"><a href="namespacetatami.html#ae5cfcdf9fa34c6d0cd6b672472d407b3">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, const Index_ iter_start, const Index_ iter_length, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> consecutive_extractor.hpp:35</div></div>
-<div class="ttc" id="anew__extractor_8hpp_html"><div class="ttname"><a href="new__extractor_8hpp.html">new_extractor.hpp</a></div><div class="ttdoc">Templated construction of a new extractor.</div></div>
+<div class="ttc" id="anamespacetatami_html_a421a48c7533dacdf011a4277582c72c9"><div class="ttname"><a href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">tatami::make_ConsecutiveOracle</a></div><div class="ttdeci">std::shared_ptr&lt; ConsecutiveOracle&lt; Index_ &gt; &gt; make_ConsecutiveOracle(Index_ start, Index_ length)</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:56</div></div>
+<div class="ttc" id="anamespacetatami_html_aafaa3018899e59eeb0172091a53cee87"><div class="ttname"><a href="namespacetatami.html#aafaa3018899e59eeb0172091a53cee87">tatami::make_Extractor</a></div><div class="ttdeci">std::unique_ptr&lt; Extractor&lt; sparse_, oracle_, Value_, Index_ &gt; &gt; make_Extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, const tatami::Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Extractor.hpp:69</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
