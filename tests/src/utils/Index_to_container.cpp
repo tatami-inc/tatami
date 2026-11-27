@@ -2,21 +2,6 @@
 #include "tatami/utils/Index_to_container.hpp"
 #include <cstdint>
 
-TEST(IndexToContainer, SafeNonNegativeEqual) {
-    EXPECT_TRUE(tatami::safe_non_negative_equal(0, 0));
-    EXPECT_FALSE(tatami::safe_non_negative_equal(-1, -1));
-    EXPECT_FALSE(tatami::safe_non_negative_equal(0, -1));
-    EXPECT_FALSE(tatami::safe_non_negative_equal(0, 1));
-    EXPECT_TRUE(tatami::safe_non_negative_equal(1, 1));
-
-    // Trying with a mix of signed and unsigned types.
-    EXPECT_TRUE(tatami::safe_non_negative_equal(1u, 1));
-    EXPECT_FALSE(tatami::safe_non_negative_equal(1u, -1));
-    EXPECT_TRUE(tatami::safe_non_negative_equal(1, 1u));
-    EXPECT_FALSE(tatami::safe_non_negative_equal(-1, 1u));
-    EXPECT_TRUE(tatami::safe_non_negative_equal(1u, 1u));
-}
-
 template<typename Size_>
 class MockVector {
 public:

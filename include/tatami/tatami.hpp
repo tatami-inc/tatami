@@ -37,11 +37,13 @@
 
 #include "utils/wrap_shared_ptr.hpp"
 #include "utils/ArrayView.hpp"
-#include "utils/SomeNumericArray.hpp"
 #include "utils/ConsecutiveOracle.hpp"
 #include "utils/parallelize.hpp"
 #include "utils/FixedOracle.hpp"
-#include "utils/process_consecutive_indices.hpp"
+
+#include "utils/deprecated/ElementType.hpp"
+#include "utils/deprecated/SomeNumericArray.hpp"
+#include "utils/deprecated/process_consecutive_indices.hpp"
 
 /**
  * @file tatami.hpp

@@ -19,11 +19,6 @@ namespace tatami {
 /**
  * @cond
  */
-template<typename Left_, typename Right_> // provided only for back-compatibility.
-bool safe_non_negative_equal(const Left_ l, const Right_ r) {
-    return l >= 0 && r >= 0 && sanisizer::is_equal(l, r);
-}
-
 // By the time we get any kind of Index_ in a tatami context, it should represent a dimension extent, so we can assume that 'x' is non-negative. 
 // We also know that all uses of Index_ must fit into a size_t in order for the Extractor::fetch calls to address the user-supplied arrays.
 // By casting away larger types, we allow sanisizer functions to eliminate the run-time overflow checks completely.
@@ -31,25 +26,16 @@ template<typename Index_>
 auto attest_for_Index(Index_ x) {
     return sanisizer::set_bound_by_type_unsafe<std::size_t>(x);
 }
-/**
- * @endcond
- */
 
-/**
- * @tparam Container_ Container with a `size()` method.
- * @tparam Index_ Integer type of the row/column indices.
- *
- * @param x Size of the container as an `Index_`, typically the dimension extents.
- * It is assumed that `x` can be represented by a `std::size_t`, even if `Index_` is a larger type.
- *
- * @return `x` as its input type.
- * An error is raised if casting to the type of `Container_::size()` would result in overflow.
- */
+// Back-compatibility only.
 template<typename Container_, typename Index_>
 Index_ can_cast_Index_to_container_size(const Index_ x) {
     sanisizer::cast<I<decltype(std::declval<Container_>().size())> >(attest_for_Index(x));
     return x;
 }
+/**
+ * @endcond
+ */
 
 /**
  * @tparam Container_ Container with a `size()` method.

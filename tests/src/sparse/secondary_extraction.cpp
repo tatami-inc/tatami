@@ -5,7 +5,6 @@
 #include <cstddef>
 
 #include "tatami/sparse/secondary_extraction.hpp"
-#include "tatami/utils/ElementType.hpp"
 
 class SparseSecondaryExtractionCacheTest : public ::testing::Test {
 protected:
@@ -16,7 +15,7 @@ protected:
         const PointerStorage_& indptr;
 
     public:
-        typedef tatami::ElementType<PointerStorage_> Pointer;
+        typedef tatami::I<decltype(std::declval<PointerStorage_>()[0])> Pointer;
 
         Pointer start_offset(Index_ primary) const {
             return indptr[primary];

@@ -280,7 +280,7 @@ public:
         my_by_row(by_row) 
     {
         const auto ncompared = my_compared.size();
-        if (!safe_non_negative_equal(ncompared, my_substitute.size())) {
+        if (!sanisizer::is_equal(ncompared, my_substitute.size())) {
             throw std::runtime_error("'compared' and 'substitute' should have the same length");
         }
         for (I<decltype(ncompared)> i = 0; i < ncompared; ++i) {

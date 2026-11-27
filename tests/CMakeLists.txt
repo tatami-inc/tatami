@@ -109,11 +109,11 @@ add_executable(
     utils_test
     src/utils/parallelize.cpp
     src/utils/wrap_shared_ptr.cpp
-    src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp
     src/utils/ConsecutiveOracle.cpp
     src/utils/FixedOracle.cpp
-    src/utils/process_consecutive_indices.cpp
+    src/utils/deprecated/process_consecutive_indices.cpp
+    src/utils/deprecated/SomeNumericArray.cpp
     src/utils/miscellaneous.cpp
     src/utils/Index_to_container.cpp
 )

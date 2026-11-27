@@ -11,7 +11,6 @@
 #include "sanisizer/sanisizer.hpp"
 
 #include "../base/Matrix.hpp"
-#include "../utils/ElementType.hpp"
 #include "../utils/copy.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 
@@ -321,6 +320,9 @@ private:
  *** Secondary full ***
  **********************/
 
+template<class PointerStorage_>
+using Element = I<decltype(std::declval<PointerStorage_>()[0])>;
+
 template<typename Index_, class IndexStorage_, class PointerStorage_>
 class ServeIndices {
 public:
@@ -331,7 +333,7 @@ private:
     const PointerStorage_& my_pointers;
 
 public:
-    typedef ElementType<PointerStorage_> Pointer;
+    typedef Element<PointerStorage_> Pointer;
 
     Pointer start_offset(const Index_ primary) const {
         return my_pointers[primary];
@@ -401,7 +403,7 @@ public:
 
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
         Index_ count = 0;
-        my_cache.search(i, [&](const Index_ primary, Index_, const ElementType<PointerStorage_> ptr) -> void {
+        my_cache.search(i, [&](const Index_ primary, Index_, const Element<PointerStorage_> ptr) -> void {
             if (my_needs_value) {
                 value_buffer[count] = my_values[ptr];
             }
@@ -536,7 +538,7 @@ public:
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
         my_cache.search(
             i, 
-            [&](const Index_, const Index_ index_primary, const ElementType<PointerStorage_> ptr) -> void {
+            [&](const Index_, const Index_ index_primary, const Element<PointerStorage_> ptr) -> void {
                 buffer[index_primary] = my_values[ptr];
             }
         );
@@ -572,7 +574,7 @@ public:
         Index_ count = 0;
         my_cache.search(
             i,
-            [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) -> void {
+            [&](Index_ primary, Index_, Element<PointerStorage_> ptr) -> void {
                 if (my_needs_value) {
                     value_buffer[count] = my_values[ptr];
                 }
@@ -669,14 +671,14 @@ public:
     {
         if (options.check) {
             const auto nnzero = my_values.size();
-            if (!safe_non_negative_equal(nnzero, my_indices.size())) {
+            if (!sanisizer::is_equal(nnzero, my_indices.size())) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
 
             const auto npointers = my_pointers.size(); 
             const auto check_pointers = [&](const auto dim) {
                 // subtracting 1 from npointers (once we know it's >= 1) instead of adding 1 to dim, as the latter might overflow.
-                return npointers >= 1 && safe_non_negative_equal(npointers - 1, dim);
+                return npointers >= 1 && sanisizer::is_equal(npointers - 1, dim);
             };
             if (my_csr) {
                 if (!check_pointers(my_nrow)) {
@@ -692,11 +694,11 @@ public:
                 throw std::runtime_error("first element of 'pointers' should be zero");
             }
             const auto last = my_pointers[npointers - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
-            if (!safe_non_negative_equal(nnzero, last)) {
+            if (!sanisizer::is_equal(nnzero, last)) {
                 throw std::runtime_error("last element of 'pointers' should be equal to length of 'indices'");
             }
 
-            const ElementType<IndexStorage_> max_index = (my_csr ? my_ncol : my_nrow);
+            const auto max_index = (my_csr ? my_ncol : my_nrow);
             for (I<decltype(npointers)> i = 1; i < npointers; ++i) {
                 const auto start = my_pointers[i - 1], end = my_pointers[i];
                 if (start == end) {
@@ -706,7 +708,7 @@ public:
                 }
 
                 for (auto x = start; x < end; ++x) {
-                    if (my_indices[x] < 0 || my_indices[x] >= max_index) {
+                    if (my_indices[x] < 0 || sanisizer::is_greater_than_or_equal(my_indices[x], max_index)) {
                         throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_csr ? std::string("columns") : std::string("rows")));
                     }
                 }

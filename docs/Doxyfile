@@ -1001,7 +1001,11 @@ EXCLUDE                = ../include/tatami/subset/utils.hpp \
                          ../include/tatami/isometric/binary/utils.hpp \
                          ../include/tatami/isometric/depends_utils.hpp \
                          ../include/tatami/bind/CompressedMapping.hpp \
-                         ../include/tatami/bind/split_oracles.hpp
+                         ../include/tatami/bind/split_oracles.hpp \
+                         ../include/tatami/utils/has_data.hpp \
+                         ../include/tatami/utils/deprecated/SomeNumericArray.hpp \
+                         ../include/tatami/utils/deprecated/ElementType.hpp \
+                         ../include/tatami/utils/deprecated/process_consecutive_indices.hpp
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

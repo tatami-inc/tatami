@@ -194,7 +194,7 @@ public:
             if (nvalues != 0) {
                 throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
             }
-        } else if (!safe_non_negative_equal(nvalues / my_nrow, my_ncol) || nvalues % my_nrow != 0) { // using division instead of 'my_nrow * my_ncol == nvalues' as the product might overflow.
+        } else if (!sanisizer::is_equal(nvalues / my_nrow, my_ncol) || nvalues % my_nrow != 0) { // using division instead of 'my_nrow * my_ncol == nvalues' as the product might overflow.
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
     }

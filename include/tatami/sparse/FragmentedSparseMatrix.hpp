@@ -3,7 +3,6 @@
 
 #include "../base/Matrix.hpp"
 #include "../utils/copy.hpp"
-#include "../utils/ElementType.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 #include "../utils/Index_to_container.hpp"
 
@@ -656,26 +655,26 @@ public:
             }
 
             if (my_row_sparse) {
-                if (!safe_non_negative_equal(my_indices.size(), my_nrow)) {
+                if (!sanisizer::is_equal(my_indices.size(), my_nrow)) {
                     throw std::runtime_error("length of 'indices' should be equal to number of rows'");
                 }
             } else {
-                if (!safe_non_negative_equal(my_indices.size(), my_ncol)) {
+                if (!sanisizer::is_equal(my_indices.size(), my_ncol)) {
                     throw std::runtime_error("length of 'indices' should be equal to number of columns");
                 }
             }
 
-            const ElementType<ElementType<IndexVectorStorage_> > max_index = (my_row_sparse ? my_ncol : my_nrow);
+            const auto max_index = (my_row_sparse ? my_ncol : my_nrow);
             const auto num_indices = my_indices.size();
             for (I<decltype(num_indices)> i = 0; i < num_indices; ++i) {
                 const auto& curv = my_values[i];
                 const auto& curi = my_indices[i];
-                if (!safe_non_negative_equal(curv.size(), curi.size())) {
+                if (!sanisizer::is_equal(curv.size(), curi.size())) {
                     throw std::runtime_error("corresponding elements of 'values' and 'indices' should have the same length");
                 }
 
                 for (const auto x : curi) {
-                    if (x < 0 || x >= max_index) {
+                    if (x < 0 || sanisizer::is_greater_than_or_equal(x, max_index)) {
                         throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row_sparse ? std::string("columns") : std::string("rows")));
                     }
                 }
