@@ -108,10 +108,10 @@ decorate_executable(sparse_test)
 add_executable(
     utils_test
     src/utils/parallelize.cpp
-    src/utils/wrap_shared_ptr.cpp
-    src/utils/ArrayView.cpp
     src/utils/ConsecutiveOracle.cpp
     src/utils/FixedOracle.cpp
+    src/utils/deprecated/ArrayView.cpp
+    src/utils/deprecated/wrap_shared_ptr.cpp
     src/utils/deprecated/process_consecutive_indices.cpp
     src/utils/deprecated/SomeNumericArray.cpp
     src/utils/miscellaneous.cpp

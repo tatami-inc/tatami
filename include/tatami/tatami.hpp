@@ -35,13 +35,13 @@
 #include "subset/DelayedSubsetBlock.hpp"
 #include "subset/make_DelayedSubset.hpp"
 
-#include "utils/wrap_shared_ptr.hpp"
-#include "utils/ArrayView.hpp"
 #include "utils/ConsecutiveOracle.hpp"
 #include "utils/parallelize.hpp"
 #include "utils/FixedOracle.hpp"
 #include "utils/make_Extractor.hpp"
 
+#include "utils/deprecated/ArrayView.hpp"
+#include "utils/deprecated/wrap_shared_ptr.hpp"
 #include "utils/deprecated/ElementType.hpp"
 #include "utils/deprecated/SomeNumericArray.hpp"
 #include "utils/deprecated/process_consecutive_indices.hpp"

@@ -2,7 +2,7 @@
 #define TATAMI_WRAP_SHARED_PTR_HPP
 
 #include <memory>
-#include "../base/Matrix.hpp"
+#include "../../base/Matrix.hpp"
 
 /**
  * @file wrap_shared_ptr.hpp

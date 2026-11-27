@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "tatami/utils/ArrayView.hpp"
+#include "tatami/utils/deprecated/ArrayView.hpp"
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/sparse/CompressedSparseMatrix.hpp"
 

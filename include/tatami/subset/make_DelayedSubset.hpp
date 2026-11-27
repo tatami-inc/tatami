@@ -6,7 +6,6 @@
 #include "DelayedSubsetUnique.hpp"
 #include "DelayedSubset.hpp"
 #include "DelayedSubsetBlock.hpp"
-#include "../utils/ArrayView.hpp"
 #include "../utils/copy.hpp"
 
 #include <algorithm>

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "tatami/utils/wrap_shared_ptr.hpp"
+#include "tatami/utils/deprecated/wrap_shared_ptr.hpp"
 #include "tatami/dense/DenseMatrix.hpp"
 
 #include "tatami_test/tatami_test.hpp"
