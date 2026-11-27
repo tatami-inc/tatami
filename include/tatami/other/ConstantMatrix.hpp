@@ -3,7 +3,7 @@
 
 #include "../base/Matrix.hpp"
 #include "../dense/SparsifiedWrapper.hpp"
-#include "../utils/new_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
 
 #include <algorithm>
 

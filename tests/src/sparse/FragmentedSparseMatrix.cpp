@@ -86,7 +86,7 @@ protected:
             std::vector<std::vector<int> > indices(nrow);
             std::vector<double> buffer(ncol);
 
-            auto wrk = dense->dense_row();
+            auto wrk = dense->dense(true, tatami::Options());
             for (int r = 0; r < nrow; ++r) {
                 auto content = wrk->fetch(r, buffer.data());
                 for (int c = 0; c < ncol; ++c) {
@@ -105,7 +105,7 @@ protected:
             std::vector<std::vector<int> > indices(ncol);
             std::vector<double> buffer(nrow);
 
-            auto wrk = dense->dense_column();
+            auto wrk = dense->dense(false, tatami::Options());
             for (int c = 0; c < ncol; ++c) {
                 auto content = wrk->fetch(c, buffer.data());
                 for (int r = 0; r < nrow; ++r) {

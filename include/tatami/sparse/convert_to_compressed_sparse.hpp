@@ -11,7 +11,8 @@
 #include "convert_to_sparse_utils.hpp"
 
 #include "../utils/parallelize.hpp"
-#include "../utils/consecutive_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/Index_to_container.hpp"
 #include "../utils/copy.hpp"
 
@@ -44,7 +45,7 @@ void count_compressed_sparse_non_zeros_consistent(
         opt.sparse_ordered_index = false;
 
         parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-            auto wrk = consecutive_extractor<true>(matrix, row, start, length, opt);
+            auto wrk = make_Extractor<true, true>(matrix, row, make_ConsecutiveOracle(start, length), opt);
             for (Index_ x = 0; x < length; ++x) {
                 const auto range = wrk->fetch(NULL, NULL);
                 output[start + x] = range.number;
@@ -54,7 +55,7 @@ void count_compressed_sparse_non_zeros_consistent(
     } else {
         parallelize([&](const int, const Index_ start, const Index_ length) -> void {
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(secondary);
-            auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
             for (Index_ p = start, pe = start + length; p < pe; ++p) {
                 const auto ptr = wrk->fetch(buffer_v.data());
                 Count_ count = 0;
@@ -111,7 +112,7 @@ void fill_compressed_sparse_matrix_consistent(
         opt.sparse_ordered_index = false;
 
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<true>(matrix, row, start, length, opt);
+            auto wrk = make_Extractor<true, true>(matrix, row, make_ConsecutiveOracle(start, length), opt);
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
             auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(secondary);
 
@@ -131,7 +132,7 @@ void fill_compressed_sparse_matrix_consistent(
     } else {
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
-            auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
 
             for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                 const auto ptr = wrk->fetch(buffer_v.data());
@@ -188,9 +189,10 @@ void fill_compressed_sparse_matrix_inconsistent(
                 if (is_sparse) {
                     Options opt;
                     opt.sparse_ordered_index = false;
-                    auto wrk = consecutive_extractor<true>(matrix, !row, actual_start, actual_length, opt);
+                    auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle(actual_start, actual_length), opt);
                     auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
                     auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
+
                     for (InputIndex_ x = 0; x < actual_length; ++x) {
                         const auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
                         for (InputIndex_ i = 0; i < range.number; ++i) {
@@ -202,7 +204,7 @@ void fill_compressed_sparse_matrix_inconsistent(
                     }
 
                 } else {
-                    auto wrk = consecutive_extractor<false>(matrix, !row, actual_start, actual_length);
+                    auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle(actual_start, actual_length), Options());
                     auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
                     for (InputIndex_ x = 0; x < actual_length; ++x) {
                         const auto ptr = wrk->fetch(buffer_v.data());
@@ -226,7 +228,7 @@ void fill_compressed_sparse_matrix_inconsistent(
         if (is_sparse){ 
             Options opt;
             opt.sparse_ordered_index = false;
-            auto wrk = consecutive_extractor<true>(matrix, !row, static_cast<InputIndex_>(0), secondary, opt);
+            auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle<InputIndex_>(0, secondary), opt);
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
             auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
             for (InputIndex_ s = 0; s < secondary; ++s) {
@@ -240,7 +242,7 @@ void fill_compressed_sparse_matrix_inconsistent(
             }
 
         } else {
-            auto wrk = consecutive_extractor<false>(matrix, !row, static_cast<InputIndex_>(0), secondary);
+            auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle<InputIndex_>(0, secondary), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
             for (InputIndex_ s = 0; s < secondary; ++s) {
                 const auto ptr = wrk->fetch(buffer_v.data());

@@ -3,7 +3,7 @@
 
 #include "../../base/Matrix.hpp"
 #include "../../utils/copy.hpp"
-#include "../../utils/new_extractor.hpp"
+#include "../../utils/make_Extractor.hpp"
 #include "../../utils/Index_to_container.hpp"
 #include "../depends_utils.hpp"
 #include "helper_interface.hpp"
@@ -50,7 +50,7 @@ public:
         my_row(row),
         my_oracle(oracle, my_helper, row),
         my_extent(row ? matrix.ncol() : matrix.nrow()),
-        my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), opt))
+        my_ext(make_Extractor<false, oracle_>(matrix, row, std::move(oracle), opt))
     {
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_holding_buffer, my_extent);
@@ -99,7 +99,7 @@ public:
         my_oracle(oracle, my_helper, row),
         my_block_start(block_start),
         my_block_length(block_length),
-        my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt))
+        my_ext(make_Extractor<false, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt))
     {
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_holding_buffer, my_block_length);
@@ -146,7 +146,7 @@ public:
         my_row(row),
         my_oracle(oracle, my_helper, row),
         my_indices_ptr(indices_ptr),
-        my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt))
+        my_ext(make_Extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt))
     {
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_holding_buffer, my_indices_ptr->size());
@@ -209,7 +209,7 @@ public:
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
-        my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, my_row, std::move(oracle), opt);
 
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_result_vbuffer, my_extent);
@@ -283,7 +283,7 @@ public:
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
 
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_result_vbuffer, my_block_length);
@@ -370,7 +370,7 @@ public:
         }
 
         // Construct my_ext here, because we need to get the size for my_extent before moving indices_ptr.
-        my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), std::move(indices_ptr), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, my_row, std::move(oracle), std::move(indices_ptr), opt);
 
         if constexpr(!same_value) {
             resize_container_to_Index_size(my_result_vbuffer, my_extent);
@@ -445,7 +445,7 @@ public:
         my_helper(helper),
         my_row(row),
         my_oracle(oracle, my_helper, row),
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), opt)) 
+        my_ext(make_Extractor<true, oracle_>(matrix, row, std::move(oracle), opt)) 
     {
         initialize(opt, row ? matrix.ncol() : matrix.nrow());
     }
@@ -461,7 +461,7 @@ public:
         my_helper(helper),
         my_row(row),
         my_oracle(oracle, my_helper, row),
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt)) 
+        my_ext(make_Extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt)) 
     {
         initialize(opt, block_length);
     }
@@ -480,7 +480,7 @@ public:
         initialize(opt, indices_ptr->size()); 
 
         // Need to construct this here so that indices_ptr isn't moved until after calling initialize().
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 private:
@@ -548,7 +548,7 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(opt, row ? matrix.ncol() : matrix.nrow());
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), opt);
     }
 
     SparseNeedsIndices(
@@ -564,7 +564,7 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(opt, block_length);
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
     }
 
     SparseNeedsIndices(
@@ -581,7 +581,7 @@ public:
         initialize(opt, indices_ptr->size());
 
         // Construct my_ext here, because we need to get the number of indices first before moving indices_ptr.
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 private:

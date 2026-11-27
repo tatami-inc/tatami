@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_BIND_HPP
 
 #include "../base/Matrix.hpp"
-#include "../utils/new_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"
 #include "../utils/copy.hpp"
 #include "../utils/Index_to_container.hpp"
@@ -111,7 +111,7 @@ public:
         my_count.reserve(matrices.size());
         for (const auto& m : matrices) {
             my_count.emplace_back(row ? m->ncol() : m->nrow());
-            my_exts.emplace_back(new_extractor<false, oracle_>(m.get(), row, oracle, opt));
+            my_exts.emplace_back(make_Extractor<false, oracle_>(*m, row, oracle, opt));
         }
     }
 
@@ -134,7 +134,7 @@ public:
             block_length,
             [&](const Index_ i, const Index_ sub_block_start, const Index_ sub_block_length) -> void {
                 my_count.emplace_back(sub_block_length);
-                my_exts.emplace_back(new_extractor<false, oracle_>(matrices[i].get(), row, oracle, sub_block_start, sub_block_length, opt));
+                my_exts.emplace_back(make_Extractor<false, oracle_>(*matrices[i], row, oracle, sub_block_start, sub_block_length, opt));
             }
         );
     }
@@ -156,7 +156,7 @@ public:
             *indices_ptr,
             [&](const Index_ i, VectorPtr<Index_> sub_indices_ptr) -> void {
                 my_count.emplace_back(sub_indices_ptr->size());
-                my_exts.emplace_back(new_extractor<false, oracle_>(matrices[i].get(), row, oracle, std::move(sub_indices_ptr), opt));
+                my_exts.emplace_back(make_Extractor<false, oracle_>(*matrices[i], row, oracle, std::move(sub_indices_ptr), opt));
             }
         );
     }
@@ -219,7 +219,7 @@ public:
     {
         my_exts.reserve(matrices.size());
         for (const auto& m : matrices) {
-            my_exts.emplace_back(new_extractor<true, oracle_>(m.get(), row, oracle, opt));
+            my_exts.emplace_back(make_Extractor<true, oracle_>(*m, row, oracle, opt));
         }
     }
 
@@ -279,7 +279,7 @@ public:
             block_start, 
             block_length,
             [&](const Index_ i, const Index_ sub_block_start, const Index_ sub_block_length) -> void {
-                my_exts.emplace_back(new_extractor<true, oracle_>(matrices[i].get(), row, oracle, sub_block_start, sub_block_length, opt));
+                my_exts.emplace_back(make_Extractor<true, oracle_>(*matrices[i], row, oracle, sub_block_start, sub_block_length, opt));
             }
         );
     }
@@ -340,7 +340,7 @@ public:
             *indices_ptr,
             [&](const Index_ i, VectorPtr<Index_> sub_indices_ptr) -> void {
                 my_which_matrix.emplace_back(i);
-                my_exts.emplace_back(new_extractor<true, oracle_>(matrices[i].get(), row, oracle, std::move(sub_indices_ptr), opt));
+                my_exts.emplace_back(make_Extractor<true, oracle_>(*matrices[i], row, oracle, std::move(sub_indices_ptr), opt));
             }
         );
     }
@@ -698,7 +698,7 @@ private:
             if (chosen == my_mapping[block_start + block_length - 1]) {
                 const auto offset = my_cumulative[chosen];
 
-                auto ext = new_extractor<sparse_, oracle_>(
+                auto ext = make_Extractor<sparse_, oracle_>(
                     *my_matrices[chosen],
                     row,
                     std::move(ora),
@@ -754,7 +754,7 @@ private:
                     }
                 }
 
-                auto ext = new_extractor<sparse_, oracle_>(
+                auto ext = make_Extractor<sparse_, oracle_>(
                     *my_matrices[chosen],
                     row,
                     std::move(ora),

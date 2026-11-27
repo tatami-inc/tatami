@@ -49,8 +49,8 @@ TEST_P(ConvertToCompressedSparseTest, FromDense) {
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto old = mat.dense_row();
-    auto conv = converted2->dense_row();
+    auto old = mat.dense(true, tatami::Options());
+    auto conv = converted2->dense(true, tatami::Options());
     std::vector<double> obuffer(NC);
     std::vector<int> obuffer_i(NC), cbuffer_i(NC);
     for (int i = 0; i < NR; ++i) {
@@ -100,8 +100,8 @@ TEST_P(ConvertToCompressedSparseTest, FromSparse) {
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto wrk = mat.dense_column();
-    auto wrk2 = converted2->dense_column();
+    auto wrk = mat.dense(false, tatami::Options());
+    auto wrk2 = converted2->dense(false, tatami::Options());
     std::vector<double> buffer(NR);
     std::vector<int> buffer_i(NR), buffer2_i(NR);
     for (int i = 0; i < NC; ++i) {
@@ -147,7 +147,7 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
     tatami::count_compressed_sparse_non_zeros(mat.get(), true, pointers.data() + 1, 1);
 
     {
-        auto wrk = mat->dense_row();
+        auto wrk = mat->dense(true, tatami::Options());
         std::vector<double> buffer(NC);
         for (int i = 0; i < NR; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());
@@ -183,8 +183,8 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
     );
 
     {
-        auto wrk = mat->dense_row();
-        auto spwrk = spmat.dense_row();
+        auto wrk = mat->dense(true, tatami::Options());
+        auto spwrk = spmat.dense(true, tatami::Options());
         std::vector<double> buffer(NC), spbuffer(NC);
         for (int i = 0; i < NR; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());
@@ -201,7 +201,7 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
     tatami::count_compressed_sparse_non_zeros(mat.get(), false, pointers.data() + 1, 1);
 
     {
-        auto wrk = mat->dense_column();
+        auto wrk = mat->dense(false, tatami::Options());
         std::vector<double> buffer(NR);
         for (int i = 0; i < NC; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());
@@ -237,8 +237,8 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
     );
 
     {
-        auto wrk = mat->dense_column();
-        auto spwrk = spmat.dense_column();
+        auto wrk = mat->dense(false, tatami::Options());
+        auto spwrk = spmat.dense(false, tatami::Options());
         std::vector<double> buffer(NR), spbuffer(NR);
         for (int i = 0; i < NC; ++i) {
             auto ptr = wrk->fetch(i, buffer.data());

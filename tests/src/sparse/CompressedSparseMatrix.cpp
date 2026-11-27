@@ -152,8 +152,8 @@ TEST_F(SparseTest, Basic) {
 TEST_F(SparseTest, QuickRow) {
     std::vector<double> rvbuffer(ncol), cvbuffer(ncol);
     std::vector<int> ribuffer(ncol), cibuffer(ncol);
-    auto rext = sparse_row->sparse_row();
-    auto cext = sparse_column->sparse_row();
+    auto rext = sparse_row->sparse(true, tatami::Options());
+    auto cext = sparse_column->sparse(true, tatami::Options());
 
     for (int r = 0; r < nrow; ++r) {
         auto rout = rext->fetch(r, rvbuffer.data(), ribuffer.data());
@@ -189,8 +189,8 @@ TEST_F(SparseTest, QuickRow) {
 TEST_F(SparseTest, QuickColumn) {
     std::vector<double> rvbuffer(nrow), cvbuffer(nrow);
     std::vector<int> ribuffer(nrow), cibuffer(nrow);
-    auto rext = sparse_row->sparse_column();
-    auto cext = sparse_column->sparse_column();
+    auto rext = sparse_row->sparse(false, tatami::Options());
+    auto cext = sparse_column->sparse(false, tatami::Options());
 
     for (int c = 0; c < ncol; ++c) {
         auto rout = rext->fetch(c, rvbuffer.data(), ribuffer.data());
@@ -345,7 +345,7 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     // Confirm that we injected the all-zero rows correctly!
     {
         int all_zero = 0;
-        auto wrk = dense.dense_row();
+        auto wrk = dense.dense(true, tatami::Options());
         std::vector<double> buffer(ncol);
         for (int r = 0; r < nrow; ++r) {
             auto ptr = wrk->fetch(r, buffer.data());

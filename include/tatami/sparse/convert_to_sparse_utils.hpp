@@ -4,7 +4,8 @@
 #include <vector>
 #include <optional>
 
-#include "../utils/consecutive_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/Index_to_container.hpp"
 
 namespace tatami {
@@ -58,7 +59,7 @@ std::optional<CountNonZerosPerThread<Index_, Count_> > count_sparse_non_zeros_in
             Options opt;
             opt.sparse_extract_value = false;
             opt.sparse_ordered_index = false;
-            auto wrk = consecutive_extractor<true>(matrix, !row, start, length, opt);
+            auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle(start, length), opt);
             auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(primary);
             for (Index_ x = 0; x < length; ++x) {
                 const auto range = wrk->fetch(NULL, buffer_i.data());
@@ -68,7 +69,7 @@ std::optional<CountNonZerosPerThread<Index_, Count_> > count_sparse_non_zeros_in
             }
 
         } else {
-            auto wrk = consecutive_extractor<false>(matrix, !row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle(start, length), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(primary);
             for (Index_ x = 0; x < length; ++x) {
                 const auto ptr = wrk->fetch(buffer_v.data());
@@ -129,7 +130,7 @@ std::vector<SparseRange<Value_, Index_> > extract_sparse_matrix(
 
     if (matrix.is_sparse()) {
         parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-            auto wrk = consecutive_extractor<true>(matrix, row, start, length);
+            auto wrk = make_Extractor<true, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(secondary);
             auto buffer_i = create_container_of_Index_size<std::vector<Index_> >(secondary);
 
@@ -152,7 +153,7 @@ std::vector<SparseRange<Value_, Index_> > extract_sparse_matrix(
 
     } else {
         parallelize([&](const int, const Index_ start, const Index_ length) -> void {
-            auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<Value_> >(secondary);
 
             for (Index_ p = start, pend = start + length; p < pend; ++p) {

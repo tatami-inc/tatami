@@ -47,8 +47,8 @@ TEST_P(ConvertToDenseTest, FromDense) {
     auto buffer = sanisizer::create<std::vector<double> >(NC);
     sanisizer::as_size_type<std::vector<int> >(NC);
     std::vector<int> expected(NC), observed(NC);
-    auto old = mat.dense_row();
-    auto wrk2 = converted2->dense_row();
+    auto old = mat.dense(true, tatami::Options());
+    auto wrk2 = converted2->dense(true, tatami::Options());
 
     for (int r = 0; r < NR; ++r) {
         auto ptr = old->fetch(r, buffer.data());

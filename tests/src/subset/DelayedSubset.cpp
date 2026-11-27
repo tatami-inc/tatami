@@ -62,7 +62,7 @@ protected:
     static std::shared_ptr<tatami::NumericMatrix> reference_on_rows(const tatami::NumericMatrix* src, const V& sub) {
         std::vector<double> reference(sub.size() * NC);
         auto ptr = reference.data();
-        auto wrk = src->dense_row();
+        auto wrk = src->dense(true, tatami::Options());
 
         for (auto r : sub) {
             auto eptr = wrk->fetch(r, ptr);
@@ -78,7 +78,7 @@ protected:
         std::vector<double> reference(sub.size() * NR);
         auto ptr = reference.data();
         std::vector<double> buffer(NC);
-        auto wrk = src->dense_row();
+        auto wrk = src->dense(true, tatami::Options());
 
         for (int r = 0; r < NR; ++r) {
             auto full = wrk->fetch(r, buffer.data());

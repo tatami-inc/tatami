@@ -6,6 +6,7 @@
 
 #include "../base/Matrix.hpp"
 #include "../utils/copy.hpp"
+#include "../utils/make_Extractor.hpp"
 #include "utils.hpp"
 
 /**
@@ -55,7 +56,7 @@ std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
     MaybeOracle<oracle_, Index_> oracle, 
     const Options& opt
 ) {
-    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset), opt);
+    return make_Extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset), opt);
 }
 
 template<bool oracle_, typename Value_, typename Index_, class SubsetStorage_>
@@ -68,7 +69,7 @@ std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
     const Index_ block_length,
     const Options& opt)
 {
-    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, block_start, block_length), opt);
+    return make_Extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, block_start, block_length), opt);
 }
 
 template<bool oracle_, typename Value_, typename Index_, class SubsetStorage_>
@@ -80,7 +81,7 @@ std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
     VectorPtr<Index_> indices_ptr,
     const Options& opt) 
 {
-    return new_extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt);
+    return make_Extractor<false, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt);
 }
 
 template<bool oracle_, typename Value_, typename Index_>
@@ -95,7 +96,7 @@ public:
         MaybeOracle<oracle_, Index_> oracle, 
         const Options& opt
     ) : 
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset), opt)),
+        my_ext(make_Extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset), opt)),
         my_remapping(remap)
     {}
 
@@ -110,7 +111,7 @@ public:
         const Index_ block_length, 
         const Options& opt
     ) : 
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, block_start, block_length), opt)),
+        my_ext(make_Extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, block_start, block_length), opt)),
         my_remapping(remap)
     {}
 
@@ -124,7 +125,7 @@ public:
         VectorPtr<Index_> indices_ptr,
         const Options& opt
     ) : 
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt)),
+        my_ext(make_Extractor<true, oracle_>(matrix, row, std::move(oracle), create<Index_>(subset, indices_ptr), opt)),
         my_remapping(remap)
     {}
 

@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <cstddef>
 
-#include "../utils/new_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
 
 namespace tatami {
 

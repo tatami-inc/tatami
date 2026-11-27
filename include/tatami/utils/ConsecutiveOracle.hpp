@@ -44,6 +44,19 @@ private:
     PredictionIndex my_length;
 };
 
+/**
+ * Convenience function for template deduction.
+ *
+ * @tparam Index_ Integer type of the row/column indices.
+ * @param start,length Arguments passed to the `ConsecutiveOracle` constructor.
+ *
+ * @return Pointer to a newly created `ConsecutiveOracle`.
+ */
+template<typename Index_>
+std::shared_ptr<ConsecutiveOracle<Index_> >  make_ConsecutiveOracle(Index_ start, Index_ length) {
+    return std::make_shared<ConsecutiveOracle<Index_> >(start, length);
+}
+
 }
 
 #endif

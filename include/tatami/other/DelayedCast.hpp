@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_CAST_HPP
 
 #include "../base/Matrix.hpp"
-#include "../utils/new_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
 #include "../utils/Index_to_container.hpp"
 
 #include <memory>
@@ -69,7 +69,12 @@ public:
         const Options& opt
     ) {
         allocate(row ? matrix.ncol() : matrix.nrow());
-        my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
+        my_ext = make_Extractor<false, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            opt
+        );
     }
 
     Dense(
@@ -81,7 +86,14 @@ public:
         const Options& opt
     ) {
         allocate(block_length);
-        my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
+        my_ext = make_Extractor<false, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            static_cast<IndexIn_>(block_start),
+            static_cast<IndexIn_>(block_length),
+            opt
+        );
     }
 
     Dense(
@@ -92,7 +104,13 @@ public:
         const Options& opt
     ) {
         allocate(indices_ptr->size());
-        my_ext = new_extractor<false, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
+        my_ext = make_Extractor<false, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            convert<IndexIn_>(std::move(indices_ptr)),
+            opt
+        );
     }
 
 private:
@@ -129,7 +147,12 @@ public:
         const Options& opt
     ) {
         allocate(row ? matrix.ncol() : matrix.nrow(), opt);
-        my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), opt);
+        my_ext = make_Extractor<true, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            opt
+        );
     }
 
     Sparse(
@@ -141,7 +164,14 @@ public:
         const Options& opt
     ) {
         allocate(block_length, opt);
-        my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), block_start, block_length, opt);
+        my_ext = make_Extractor<true, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            static_cast<IndexIn_>(block_start),
+            static_cast<IndexIn_>(block_length),
+            opt
+        );
     }
 
     Sparse(
@@ -152,7 +182,13 @@ public:
         const Options& opt
     ) {
         allocate(indices_ptr->size(), opt);
-        my_ext = new_extractor<true, oracle_>(matrix, row, convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)), convert<IndexIn_>(std::move(indices_ptr)), opt);
+        my_ext = make_Extractor<true, oracle_>(
+            matrix,
+            row,
+            convert<oracle_, IndexIn_, IndexOut_>(std::move(oracle)),
+            convert<IndexIn_>(std::move(indices_ptr)),
+            opt
+        );
     }
 
 private:

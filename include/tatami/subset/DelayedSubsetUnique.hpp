@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include "../base/Matrix.hpp"
 #include "../utils/copy.hpp"
+#include "../utils/make_Extractor.hpp"
 
 #include <algorithm>
 #include <numeric>
@@ -100,7 +101,7 @@ private:
         const Options& opt
     ) {
         resize_container_to_Index_size(my_holding_vbuffer, processed.sorted.size()); // processed.sorted.size() should fit in an Index_, hence the cast is safe.
-        my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.sorted), opt);
+        my_ext = make_Extractor<false, oracle_>(matrix, row, std::move(oracle), subset_utils::as_VectorPtr(std::move(processed.sorted)), opt);
         my_permutation = std::move(processed.permutation);
     }
 
@@ -215,7 +216,7 @@ private:
             ; // no 'my_holding_ibuffer' required as a user-provided 'index_buffer' should be available.
         }
 
-        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(sorted), opt);
+        my_ext = make_Extractor<true, oracle_>(matrix, row, std::move(oracle), subset_utils::as_VectorPtr(std::move(sorted)), opt);
     }
 
 public:

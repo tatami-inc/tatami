@@ -26,7 +26,7 @@ TEST(DenseMatrix, Basic) {
     EXPECT_EQ(NC, 20);
 
     {
-        auto wrk = mat.dense_column();
+        auto wrk = mat.dense(false, {});
         std::vector<double> expected;
         auto buffer = sanisizer::create<std::vector<double> >(NR);
 
@@ -48,7 +48,7 @@ TEST(DenseMatrix, Basic) {
     }
 
     {
-        auto wrk = mat.dense_row();
+        auto wrk = mat.dense(true, {});
         sanisizer::as_size_type<std::vector<double> >(NC);
         std::vector<double> expected(NC), buffer(NC);
 
@@ -249,8 +249,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     EXPECT_EQ(limited.ncol(), NC);
 
     {
-        auto rwrk = ref.dense_column();
-        auto lwrk = limited.dense_column();
+        auto rwrk = ref.dense(false, {});
+        auto lwrk = limited.dense(false, {});
         sanisizer::as_size_type<std::vector<double> >(NR);
         std::vector<double> expected(NR), observed(NR);
 
@@ -264,8 +264,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        auto rwrk = ref.dense_row();
-        auto lwrk = limited.dense_row();
+        auto rwrk = ref.dense(true, {});
+        auto lwrk = limited.dense(true, {});
         sanisizer::as_size_type<std::vector<double> >(NC);
         std::vector<double> expected(NC), observed(NC);
 
@@ -280,8 +280,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
 
     {
         const int start = 34, len = 60;
-        auto rwrk = ref.dense_column(start, len);
-        auto lwrk = limited.dense_column(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
+        auto rwrk = ref.dense(false, start, len, {});
+        auto lwrk = limited.dense(false, static_cast<unsigned char>(start), static_cast<unsigned char>(len), {});
         sanisizer::as_size_type<std::vector<double> >(len);
         std::vector<double> expected(len), observed(len);
 
@@ -296,8 +296,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
 
     {
         const int start = 59, len = 130;
-        auto rwrk = ref.dense_row(start, len);
-        auto lwrk = limited.dense_row(static_cast<unsigned char>(start), static_cast<unsigned char>(len));
+        auto rwrk = ref.dense(true, start, len, {});
+        auto lwrk = limited.dense(true, static_cast<unsigned char>(start), static_cast<unsigned char>(len), {});
         sanisizer::as_size_type<std::vector<double> >(len);
         std::vector<double> expected(len), observed(len);
 
@@ -311,12 +311,12 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        std::vector<int> indices{ 10, 20, 40, 60, 80, 99 };
-        std::vector<unsigned char> uindices(indices.begin(), indices.end());
-        const auto num_i = indices.size();
+        auto indices = std::make_shared<std::vector<int> >(std::vector<int>{ 10, 20, 40, 60, 80, 99 });
+        auto uindices = std::make_shared<std::vector<unsigned char> >(indices->begin(), indices->end());
+        const auto num_i = indices->size();
 
-        auto rwrk = ref.dense_column(std::move(indices));
-        auto lwrk = limited.dense_column(std::move(uindices));
+        auto rwrk = ref.dense(false, std::move(indices), {});
+        auto lwrk = limited.dense(false, std::move(uindices), {});
         sanisizer::as_size_type<std::vector<double> >(num_i);
         std::vector<double> expected(num_i), observed(num_i);
 
@@ -330,12 +330,12 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     }
 
     {
-        std::vector<int> indices{ 11, 33, 55, 99, 111, 122, 155, 177, 199 };
-        std::vector<unsigned char> uindices(indices.begin(), indices.end());
-        const auto num_i = indices.size();
+        auto indices = std::make_shared<std::vector<int> >(std::vector<int>{ 11, 33, 55, 99, 111, 122, 155, 177, 199 });
+        auto uindices = std::make_shared<std::vector<unsigned char> >(indices->begin(), indices->end());
+        const auto num_i = indices->size();
 
-        auto rwrk = ref.dense_row(std::move(indices));
-        auto lwrk = limited.dense_row(std::move(uindices));
+        auto rwrk = ref.dense(true, std::move(indices), {});
+        auto lwrk = limited.dense(true, std::move(uindices), {});
         sanisizer::as_size_type<std::vector<double> >(num_i);
         std::vector<double> expected(num_i), observed(num_i);
 
@@ -363,8 +363,8 @@ TEST(DenseMatrix, DifferentValueType) {
     EXPECT_EQ(vstore.ncol(), NC);
 
     {
-        auto rwrk = ref.dense_column();
-        auto lwrk = vstore.dense_column();
+        auto rwrk = ref.dense(false, {});
+        auto lwrk = vstore.dense(false, {});
         sanisizer::as_size_type<std::vector<double> >(NR);
         std::vector<double> expected(NR), observed(NR);
 
@@ -378,8 +378,8 @@ TEST(DenseMatrix, DifferentValueType) {
     }
 
     {
-        auto rwrk = ref.dense_row();
-        auto lwrk = vstore.dense_row();
+        auto rwrk = ref.dense(true, {});
+        auto lwrk = vstore.dense(true, {});
         sanisizer::as_size_type<std::vector<double> >(NC);
         std::vector<double> expected(NC), observed(NC);
 
@@ -395,8 +395,8 @@ TEST(DenseMatrix, DifferentValueType) {
     // Same for blocks, just to get some coverage.
     {
         const int start = 55, len = 45;
-        auto rwrk = ref.dense_column(start, len);
-        auto lwrk = vstore.dense_column(start, len);
+        auto rwrk = ref.dense(false, start, len, {});
+        auto lwrk = vstore.dense(false, start, len, {});
         sanisizer::as_size_type<std::vector<double> >(len);
         std::vector<double> expected(len), observed(len);
 
@@ -411,8 +411,8 @@ TEST(DenseMatrix, DifferentValueType) {
 
     {
         const int start = 10, len = 70;
-        auto rwrk = ref.dense_row(start, len);
-        auto lwrk = vstore.dense_row(start, len);
+        auto rwrk = ref.dense(true, start, len, {});
+        auto lwrk = vstore.dense(true, start, len, {});
         sanisizer::as_size_type<std::vector<double> >(len);
         std::vector<double> expected(len), observed(len);
 
@@ -427,11 +427,11 @@ TEST(DenseMatrix, DifferentValueType) {
 
     // Same for indices, just to get some coverage.
     {
-        std::vector<int> indices{ 12, 24, 25, 48, 50, 75, 96 };
-        const auto num_i = indices.size();
+        auto indices = std::make_shared<std::vector<int> >(std::vector<int>{ 12, 24, 25, 48, 50, 75, 96 });
+        const auto num_i = indices->size();
 
-        auto rwrk = ref.dense_column(indices);
-        auto lwrk = vstore.dense_column(std::move(indices));
+        auto rwrk = ref.dense(false, indices, {});
+        auto lwrk = vstore.dense(false, std::move(indices), {});
         sanisizer::as_size_type<std::vector<double> >(num_i);
         std::vector<double> expected(num_i), observed(num_i);
 
@@ -445,11 +445,11 @@ TEST(DenseMatrix, DifferentValueType) {
     }
 
     {
-        std::vector<int> indices{ 10, 15, 20, 25, 30, 35, 40, 45, 50, 96, 97, 98, 99 };
-        const auto num_i = indices.size();
+        auto indices = std::make_shared<std::vector<int> >(std::vector<int>{ 10, 15, 20, 25, 30, 35, 40, 45, 50, 96, 97, 98, 99 });
+        const auto num_i = indices->size();
 
-        auto rwrk = ref.dense_row(indices);
-        auto lwrk = vstore.dense_row(std::move(indices));
+        auto rwrk = ref.dense(true, indices, {});
+        auto lwrk = vstore.dense(true, std::move(indices), {});
         sanisizer::as_size_type<std::vector<double> >(num_i);
         std::vector<double> expected(num_i), observed(num_i);
 

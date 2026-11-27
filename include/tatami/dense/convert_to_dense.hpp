@@ -4,7 +4,8 @@
 #include "./DenseMatrix.hpp"
 #include "./transpose.hpp"
 
-#include "../utils/consecutive_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/parallelize.hpp"
 #include "../utils/copy.hpp"
 #include "../utils/Index_to_container.hpp"
@@ -47,7 +48,7 @@ void convert_to_dense_direct(const Matrix<InputValue_, InputIndex_>& matrix, con
     can_cast_Index_to_container_size<std::vector<InputValue_> >(secondary);
 
     parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-        auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, row, start, length);
+        auto wrk = make_Extractor<false, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
         auto temp = [&]{
             if constexpr(same_type) {
                 return false;
@@ -88,7 +89,7 @@ void convert_to_dense_running(const Matrix<InputValue_, InputIndex_>& matrix, co
         std::fill_n(store, sanisizer::product_unsafe<std::size_t>(primary, secondary), 0);
 
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, !row, start, length);
+            auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle(start, length), Options());
             auto vtemp = create_container_of_Index_size<std::vector<InputValue_> >(primary);
             auto itemp = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
             for (InputIndex_ x = 0; x < length; ++x) {
@@ -101,7 +102,7 @@ void convert_to_dense_running(const Matrix<InputValue_, InputIndex_>& matrix, co
 
     } else {
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, !row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle(start, length), Options());
 
             // Performing a blocked transposition to be more cache-friendly.
             // This involves collecting several consecutive primary dimension elements so that we can transpose by blocks along the secondary dimension.

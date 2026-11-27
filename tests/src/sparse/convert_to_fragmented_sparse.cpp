@@ -49,8 +49,8 @@ TEST_P(ConvertToFragmentedSparseTest, FromDense) {
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto old = mat.dense_row();
-    auto conv = converted2->dense_row();
+    auto old = mat.dense(true, tatami::Options());
+    auto conv = converted2->dense(true, tatami::Options());
     std::vector<double> obuffer(NC);
     std::vector<int> obuffer_i(NC), cbuffer_i(NC);
     for (int i = 0; i < NR; ++i) {
@@ -100,8 +100,8 @@ TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto wrk = spmat.dense_column();
-    auto wrk2 = converted2->dense_column();
+    auto wrk = spmat.dense(false, tatami::Options());
+    auto wrk2 = converted2->dense(false, tatami::Options());
     std::vector<double> buffer(NR);
     std::vector<int> buffer_i(NR), buffer2_i(NR);
     for (int i = 0; i < NC; ++i) {

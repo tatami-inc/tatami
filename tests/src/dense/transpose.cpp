@@ -27,8 +27,8 @@ TEST_P(TransposeDenseTest, Basic) {
     tatami::DenseRowMatrix<double, int> original(NR, NC, std::move(values));
     tatami::DenseColumnMatrix<double, int> flipped(NR, NC, std::move(buffer));
 
-    auto oext = original.dense_row();
-    auto fext = flipped.dense_row();
+    auto oext = original.dense(true, tatami::Options());
+    auto fext = flipped.dense(true, tatami::Options());
     sanisizer::as_size_type<std::vector<double> >(NC);
     std::vector<double> observed(NC), expected(NC);
 
@@ -71,8 +71,8 @@ TEST_P(TransposeDenseTest, Strided) {
     tatami::DenseRowMatrix<double, int> original(NR, input_stride, std::move(values));
     tatami::DenseColumnMatrix<double, int> flipped(output_stride, NC, std::move(buffer));
 
-    auto oext = original.dense_row(0, NC);
-    auto fext = flipped.dense_row();
+    auto oext = original.dense(true, 0, NC, tatami::Options());
+    auto fext = flipped.dense(true, tatami::Options());
     sanisizer::as_size_type<std::vector<double> >(input_stride);
     std::vector<double> observed(input_stride), expected(input_stride);
 

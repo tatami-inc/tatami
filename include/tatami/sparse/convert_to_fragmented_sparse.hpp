@@ -12,7 +12,7 @@
 
 #include "../utils/parallelize.hpp"
 #include "../utils/copy.hpp"
-#include "../utils/consecutive_extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/Index_to_container.hpp"
 
 /**
@@ -97,7 +97,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
     if (matrix.is_sparse()) {
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<true>(matrix, row, start, length);
+            auto wrk = make_Extractor<true, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
             auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(secondary);
 
@@ -113,7 +113,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
     } else {
         parallelize([&](const int, const InputIndex_ start, const InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<false>(matrix, row, start, length);
+            auto wrk = make_Extractor<false, true>(matrix, row, make_ConsecutiveOracle(start, length), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(secondary);
 
             for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
@@ -231,7 +231,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                 if (is_sparse) {
                     Options opt;
                     opt.sparse_ordered_index = false;
-                    auto wrk = consecutive_extractor<true>(matrix, !row, actual_start, actual_length, opt);
+                    auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle(actual_start, actual_length), opt);
                     auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
                     auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
                     for (InputIndex_ x = 0; x < actual_length; ++x) {
@@ -246,7 +246,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                     }
 
                 } else {
-                    auto wrk = consecutive_extractor<false>(matrix, !row, actual_start, actual_length);
+                    auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle(actual_start, actual_length), Options());
                     auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
                     for (InputIndex_ x = 0; x < actual_length; ++x) {
                         const auto ptr = wrk->fetch(buffer_v.data());
@@ -270,7 +270,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
         if (is_sparse){ 
             Options opt;
             opt.sparse_ordered_index = false;
-            auto wrk = consecutive_extractor<true>(matrix, !row, static_cast<InputIndex_>(0), secondary, opt);
+            auto wrk = make_Extractor<true, true>(matrix, !row, make_ConsecutiveOracle<InputIndex_>(0, secondary), opt);
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
             auto buffer_i = create_container_of_Index_size<std::vector<InputIndex_> >(primary);
             for (InputIndex_ s = 0; s < secondary; ++s) {
@@ -285,7 +285,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
             }
 
         } else {
-            auto wrk = consecutive_extractor<false>(matrix, !row, static_cast<InputIndex_>(0), secondary);
+            auto wrk = make_Extractor<false, true>(matrix, !row, make_ConsecutiveOracle<InputIndex_>(0, secondary), Options());
             auto buffer_v = create_container_of_Index_size<std::vector<InputValue_> >(primary);
             for (InputIndex_ s = 0; s < secondary; ++s) {
                 const auto ptr = wrk->fetch(buffer_v.data());

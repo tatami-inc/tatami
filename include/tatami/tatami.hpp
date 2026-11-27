@@ -40,10 +40,12 @@
 #include "utils/ConsecutiveOracle.hpp"
 #include "utils/parallelize.hpp"
 #include "utils/FixedOracle.hpp"
+#include "utils/make_Extractor.hpp"
 
 #include "utils/deprecated/ElementType.hpp"
 #include "utils/deprecated/SomeNumericArray.hpp"
 #include "utils/deprecated/process_consecutive_indices.hpp"
+#include "utils/deprecated/consecutive_extractor.hpp"
 
 /**
  * @file tatami.hpp

@@ -3,6 +3,7 @@
 
 #include "utils.hpp"
 #include "../utils/Index_to_container.hpp"
+#include "../utils/make_Extractor.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -115,7 +116,7 @@ private:
         const Options& opt
     ) {
         resize_container_to_Index_size(my_holding_vbuffer, processed.collapsed.size()); // processed.collapsed.size() should fit in an Index_, so this cast is safe.
-        my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);
+        my_ext = make_Extractor<false, oracle_>(matrix, row, std::move(oracle), subset_utils::as_VectorPtr(std::move(processed.collapsed)), opt);
         my_reindex.swap(processed.reindex);
     }
 
@@ -283,7 +284,7 @@ private:
             resize_container_to_Index_size(my_holding_ibuffer, num_collapsed);
         }
 
-        my_ext = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
+        my_ext = make_Extractor<true, oracle_>(mat, row, std::move(oracle), subset_utils::as_VectorPtr(std::move(processed.collapsed)), opt);
         my_reindex = std::move(processed.reindex);
     }
 

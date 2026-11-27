@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_H
 
 #include "../../base/Matrix.hpp"
-#include "../../utils/new_extractor.hpp"
+#include "../../utils/make_Extractor.hpp"
 #include "../../utils/copy.hpp"
 #include "../../utils/Index_to_container.hpp"
 #include "../../dense/SparsifiedWrapper.hpp"
@@ -45,8 +45,8 @@ public:
         my_row(row),
         my_oracle(oracle, my_helper, row)
     {
-        my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, opt);
-        my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), opt);
+        my_left_ext = make_Extractor<false, oracle_>(left, my_row, oracle, opt);
+        my_right_ext = make_Extractor<false, oracle_>(right, my_row, std::move(oracle), opt);
         my_extent = my_row ? left.ncol() : left.nrow();
 
         resize_container_to_Index_size(my_right_holding_buffer, my_extent);
@@ -101,8 +101,8 @@ public:
         my_block_start(block_start),
         my_block_length(block_length)
     {
-        my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
-        my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
+        my_left_ext = make_Extractor<false, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
+        my_right_ext = make_Extractor<false, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
 
         resize_container_to_Index_size(my_right_holding_buffer, my_block_length);
         if constexpr(!same_value) {
@@ -154,8 +154,8 @@ public:
         my_oracle(oracle, my_helper, row),
         my_indices_ptr(std::move(indices_ptr))
     {
-        my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, my_indices_ptr, opt);
-        my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), my_indices_ptr, opt);
+        my_left_ext = make_Extractor<false, oracle_>(left, my_row, oracle, my_indices_ptr, opt);
+        my_right_ext = make_Extractor<false, oracle_>(right, my_row, std::move(oracle), my_indices_ptr, opt);
 
         resize_container_to_Index_size(my_right_holding_buffer, my_indices_ptr->size());
         if constexpr(!same_value) {
@@ -213,8 +213,8 @@ public:
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         opt.sparse_ordered_index = true;
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
         my_extent = my_row ? left.ncol() : left.nrow();
 
         resize_container_to_Index_size(my_left_vbuffer, my_extent);
@@ -280,8 +280,8 @@ public:
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         opt.sparse_ordered_index = true;
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, my_block_start, my_block_length, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), my_block_start, my_block_length, opt);
 
         resize_container_to_Index_size(my_left_vbuffer, my_block_length);
         my_right_vbuffer.resize(my_left_vbuffer.size());
@@ -356,8 +356,8 @@ public:
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         opt.sparse_ordered_index = true;
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), std::move(indices_ptr), opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), std::move(indices_ptr), opt);
 
         resize_container_to_Index_size(my_left_vbuffer, my_extent);
         my_right_vbuffer.resize(my_left_vbuffer.size());
@@ -423,8 +423,8 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(my_row ? left.ncol() : left.nrow(), opt);
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
     }
 
     Sparse(
@@ -441,8 +441,8 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(block_length, opt);
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, block_start, block_length, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), block_start, block_length, opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, block_start, block_length, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), block_start, block_length, opt);
     }
 
     Sparse(
@@ -458,8 +458,8 @@ public:
         my_oracle(oracle, my_helper, row)
     {
         initialize(indices_ptr->size(), opt); // do this before the move.
-        my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
-        my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), std::move(indices_ptr), opt);
+        my_left_ext = make_Extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
+        my_right_ext = make_Extractor<true, oracle_>(right, my_row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 private:

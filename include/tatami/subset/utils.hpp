@@ -2,11 +2,12 @@
 #define TATAMI_DELAYED_SUBSET_UTILS_HPP
 
 #include "../base/Matrix.hpp"
-#include "../utils/new_extractor.hpp"
+#include "../utils/make_Extractor.hpp"
 
 #include <vector>
 #include <algorithm>
 #include <type_traits>
+#include <memory>
 
 namespace tatami {
 
@@ -41,7 +42,7 @@ public:
         Args_&& ... args
     ) : 
         my_subset(subset),
-        my_ext(new_extractor<false, false>(matrix, row, false, std::forward<Args_>(args)...))
+        my_ext(make_Extractor<false, false>(matrix, row, false, std::forward<Args_>(args)...))
     {}
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -64,7 +65,7 @@ public:
         Args_&& ... args
     ) : 
         my_subset(subset),
-        my_ext(new_extractor<true, false>(matrix, row, false, std::forward<Args_>(args)...))
+        my_ext(make_Extractor<true, false>(matrix, row, false, std::forward<Args_>(args)...))
     {}
 
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -87,7 +88,14 @@ public:
         std::shared_ptr<const Oracle<Index_> > oracle,
         Args_&& ... args
     ) :
-        my_ext(new_extractor<false, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...))
+        my_ext(
+            make_Extractor<false, true>(
+                matrix,
+                row,
+                std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset),
+                std::forward<Args_>(args)...
+            )
+        )
     {}
 
     const Value_* fetch(const Index_ i, Value_* const buffer) {
@@ -109,7 +117,14 @@ public:
         std::shared_ptr<const Oracle<Index_> > oracle,
         Args_&& ... args
     ) :
-        my_ext(new_extractor<true, true>(matrix, row, std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset), std::forward<Args_>(args)...))
+        my_ext(
+            make_Extractor<true, true>(
+                matrix,
+                row,
+                std::make_shared<SubsetOracle<Index_, SubsetStorage_> >(std::move(oracle), subset),
+                std::forward<Args_>(args)...
+            )
+        )
     {}
 
     SparseRange<Value_, Index_> fetch(const Index_ i, Value_* const value_buffer, Index_* const index_buffer) {
@@ -119,6 +134,11 @@ public:
 protected:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > my_ext;
 };
+
+template<typename Index_>
+VectorPtr<Index_> as_VectorPtr(std::vector<Index_> x) {
+    return std::make_shared<const std::vector<Index_> >(std::move(x));
+}
 
 }
 
