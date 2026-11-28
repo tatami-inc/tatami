@@ -134,17 +134,18 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &quot;<a class="code" href="parallelize_8hpp.html">utils/parallelize.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &quot;utils/make_Extractor.hpp&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &quot;utils/deprecated/ArrayView.hpp&quot;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;utils/deprecated/wrap_shared_ptr.hpp&quot;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;utils/deprecated/ElementType.hpp&quot;</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;utils/deprecated/SomeNumericArray.hpp&quot;</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &quot;utils/deprecated/process_consecutive_indices.hpp&quot;</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#include &quot;utils/deprecated/consecutive_extractor.hpp&quot;</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &quot;<a class="code" href="make__Wrapper_8hpp.html">utils/make_Wrapper.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &quot;utils/deprecated/ArrayView.hpp&quot;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;utils/deprecated/wrap_shared_ptr.hpp&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;utils/deprecated/ElementType.hpp&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#include &quot;utils/deprecated/SomeNumericArray.hpp&quot;</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#include &quot;utils/deprecated/process_consecutive_indices.hpp&quot;</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">#include &quot;utils/deprecated/consecutive_extractor.hpp&quot;</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aCompressedSparseMatrix_8hpp_html"><div class="ttname"><a href="CompressedSparseMatrix_8hpp.html">CompressedSparseMatrix.hpp</a></div><div class="ttdoc">Compressed sparse matrix representation.</div></div>
 <div class="ttc" id="aConsecutiveOracle_8hpp_html"><div class="ttname"><a href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a></div><div class="ttdoc">Iterate across consecutive elements of the target dimension.</div></div>
 <div class="ttc" id="aConstantMatrix_8hpp_html"><div class="ttname"><a href="ConstantMatrix_8hpp.html">ConstantMatrix.hpp</a></div><div class="ttdoc">Matrix of constant values.</div></div>
@@ -167,6 +168,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aconvert__to__dense_8hpp_html"><div class="ttname"><a href="convert__to__dense_8hpp.html">convert_to_dense.hpp</a></div><div class="ttdoc">Convert a matrix into a dense format.</div></div>
 <div class="ttc" id="aconvert__to__fragmented__sparse_8hpp_html"><div class="ttname"><a href="convert__to__fragmented__sparse_8hpp.html">convert_to_fragmented_sparse.hpp</a></div><div class="ttdoc">Convert a matrix into a fragmented sparse format.</div></div>
 <div class="ttc" id="amake__DelayedSubset_8hpp_html"><div class="ttname"><a href="make__DelayedSubset_8hpp.html">make_DelayedSubset.hpp</a></div><div class="ttdoc">Make a delayed subset wrapper based on row/column indices.</div></div>
+<div class="ttc" id="amake__Wrapper_8hpp_html"><div class="ttname"><a href="make__Wrapper_8hpp.html">make_Wrapper.hpp</a></div><div class="ttdoc">User-friendly wrappers around Extractor instances.</div></div>
 <div class="ttc" id="amath__helpers_8hpp_html"><div class="ttname"><a href="math__helpers_8hpp.html">math_helpers.hpp</a></div><div class="ttdoc">Helpers for unary math operations.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="aparallelize_8hpp_html"><div class="ttname"><a href="parallelize_8hpp.html">parallelize.hpp</a></div><div class="ttdoc">Parallelized iteration over a tatami::Matrix.</div></div>

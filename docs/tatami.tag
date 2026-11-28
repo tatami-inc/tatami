@@ -356,6 +356,16 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>make_Wrapper.hpp</name>
+    <path>tatami/utils/</path>
+    <filename>make__Wrapper_8hpp.html</filename>
+    <class kind="class">tatami::MyopicDenseWrapper</class>
+    <class kind="class">tatami::OracularDenseWrapper</class>
+    <class kind="class">tatami::MyopicSparseWrapper</class>
+    <class kind="class">tatami::OracularSparseWrapper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>parallelize.hpp</name>
     <path>tatami/utils/</path>
     <filename>parallelize_8hpp.html</filename>
@@ -5067,6 +5077,26 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>tatami::MyopicDenseWrapper</name>
+    <filename>classtatami_1_1MyopicDenseWrapper.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function">
+      <type>Index_</type>
+      <name>length</name>
+      <anchorfile>classtatami_1_1MyopicDenseWrapper.html</anchorfile>
+      <anchor>a2636499424995567cc11cbc20ff0e75e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const Value_ *</type>
+      <name>fetch</name>
+      <anchorfile>classtatami_1_1MyopicDenseWrapper.html</anchorfile>
+      <anchor>a220671747ed9810d9ce28d9274a8d5ed</anchor>
+      <arglist>(Index_ i)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>tatami::MyopicSparseExtractor</name>
     <filename>classtatami_1_1MyopicSparseExtractor.html</filename>
     <templarg>typename Value_</templarg>
@@ -5077,6 +5107,26 @@
       <anchorfile>classtatami_1_1MyopicSparseExtractor.html</anchorfile>
       <anchor>ae545d22bfe3e3d90bc0ce50410fcfb9c</anchor>
       <arglist>(Index_ i, Value_ *value_buffer, Index_ *index_buffer)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::MyopicSparseWrapper</name>
+    <filename>classtatami_1_1MyopicSparseWrapper.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function">
+      <type>Index_</type>
+      <name>length</name>
+      <anchorfile>classtatami_1_1MyopicSparseWrapper.html</anchorfile>
+      <anchor>a4d9aea921443abfb3f551424971d9488</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>SparseRange&lt; Value_, Index_ &gt;</type>
+      <name>fetch</name>
+      <anchorfile>classtatami_1_1MyopicSparseWrapper.html</anchorfile>
+      <anchor>a83188f46e232da3e9c7bbfdefe62a86d</anchor>
+      <arglist>(Index_ i)</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -5144,6 +5194,26 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>tatami::OracularDenseWrapper</name>
+    <filename>classtatami_1_1OracularDenseWrapper.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function">
+      <type>Index_</type>
+      <name>length</name>
+      <anchorfile>classtatami_1_1OracularDenseWrapper.html</anchorfile>
+      <anchor>a33a9d912dac2585cabe153bd3d31aaed</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const Value_ *</type>
+      <name>next</name>
+      <anchorfile>classtatami_1_1OracularDenseWrapper.html</anchorfile>
+      <anchor>af8d22d74201ce1b772ebfc2be1e2437e</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>tatami::OracularSparseExtractor</name>
     <filename>classtatami_1_1OracularSparseExtractor.html</filename>
     <templarg>typename Value_</templarg>
@@ -5161,6 +5231,26 @@
       <anchorfile>classtatami_1_1OracularSparseExtractor.html</anchorfile>
       <anchor>a689800b97bfbd68261f27e911c2a2499</anchor>
       <arglist>(Index_ i, Value_ *value_buffer, Index_ *index_buffer)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::OracularSparseWrapper</name>
+    <filename>classtatami_1_1OracularSparseWrapper.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="function">
+      <type>Index_</type>
+      <name>length</name>
+      <anchorfile>classtatami_1_1OracularSparseWrapper.html</anchorfile>
+      <anchor>a9b9450db2730ab9bd18183705b4a3c9c</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>SparseRange&lt; Value_, Index_ &gt;</type>
+      <name>next</name>
+      <anchorfile>classtatami_1_1OracularSparseWrapper.html</anchorfile>
+      <anchor>a6e9df7479073ed4940d15cc270f78fb4</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -5363,11 +5453,15 @@
     <class kind="class">tatami::FullSparsifiedWrapper</class>
     <class kind="class">tatami::IndexSparsifiedWrapper</class>
     <class kind="class">tatami::MyopicDenseExtractor</class>
+    <class kind="class">tatami::MyopicDenseWrapper</class>
     <class kind="class">tatami::MyopicSparseExtractor</class>
+    <class kind="class">tatami::MyopicSparseWrapper</class>
     <class kind="struct">tatami::Options</class>
     <class kind="class">tatami::Oracle</class>
     <class kind="class">tatami::OracularDenseExtractor</class>
+    <class kind="class">tatami::OracularDenseWrapper</class>
     <class kind="class">tatami::OracularSparseExtractor</class>
+    <class kind="class">tatami::OracularSparseWrapper</class>
     <class kind="struct">tatami::PseudoOracularDenseExtractor</class>
     <class kind="struct">tatami::PseudoOracularSparseExtractor</class>
     <class kind="struct">tatami::RetrieveCompressedSparseContentsOptions</class>
@@ -6102,6 +6196,90 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a954ab2a00530d9481ff994b9e1b2693b</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const tatami::Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab9e7fdfd4739ec2d8deb39642e70575c</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a3502039e4faa1a9f121d384d180d9be5</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, Index_ block_start, Index_ block_length, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7a778fa947a46f88084c89fe70b189de</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8042bb977b1e94482089547ffa0d8fb2</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a42162766c08ec3802dc9df052ad67fb3</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularDenseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_DenseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a760e42fec47f7f7508627c56d9e87b71</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a42cdafaef15942370581e654e793d697</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a17aa54107c2233a8f9e2409affdcff10</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, Index_ block_start, Index_ block_length, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>MyopicSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a27fd0e6d129cfd4fd4842d90ae31a442</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a1f0e94960e6271226fa1d6c7f0f8a5ac</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51227b59c5a47bc42d13779ea3cf8f7c</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const Options &amp;opt)</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularSparseWrapper&lt; Value_, Index_ &gt;</type>
+      <name>make_SparseWrapper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8e7e486269f7a496c951b21396308a76</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
