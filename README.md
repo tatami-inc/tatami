@@ -38,22 +38,26 @@ std::shared_ptr<tatami::Matrix<double, int> > mat(
 int NR = mat->nrow(), NC = mat->ncol();
 
 // Extract the 'i'-th column.
-auto extractor = mat->dense_column();
-std::vector<double> buffer(NR);
-auto ptr = extractor->fetch(i, buffer.data());
-ptr[0]; 
+auto extractor = tatami::make_DenseWrapper(*mat, /* row = */ false, {});
+auto ptr = extractor.fetch(i);
+ptr[0]; // 1st element of the 'i'-th column.
 
-// Extract the [5, 12) rows of the 'i'-th column.
-auto sliced_extractor = mat->dense_column(5, 7)
-auto sliced_ptr = sliced_extractor->fetch(i, buffer.data());
+// Extract a block of rows of the 'i'-th column.
+auto sliced_extractor = tatami::make_DenseWrapper(*mat, /* row = */ false, 5, 7, {})
+auto sliced_ptr = sliced_extractor->fetch(i);
+sliced_ptr[0]; // 6th element of the 'i'-th column.
+
+// Extract the first few odd elements of the 'i'-th column.
+tatami::VectorPtr<int> indices(new std::vector<int>{ 1, 3, 5, 7, 9 });
+auto indexed_extractor = tatami::make_DenseWrapper(*mat, /* row = */ false, indices, {})
+auto indexed_ptr = indexed_extractor->fetch(i);
+indixed_ptr[0]; // 2nd element of the 'i'-th column.
 ```
 
 The key idea here is that, once `mat` is created, the application does not need to worry about the exact format of the matrix referenced by the pointer.
 Application developers can write code that works interchangeably with a variety of different matrix representations.
 
-## Instructions
-
-### Creating a `tatami::Matrix`
+## Creating a `tatami::Matrix`
 
 Users can create an instance of a concrete `tatami::Matrix` subclass by using one of the constructors or the equivalent `make_*` utility:
 
@@ -82,6 +86,7 @@ std::vector<int> i; // row indices of length equal to 'x'.
 std::vector<int> j; // column indices of length equal to 'x'.
 
 auto indptrs = tatami::compress_sparse_triplets(NROW, NCOL, x, i, j, /* csr = */ false);
+
 std::shared_ptr<tatami::Matrix<double, int> > smat(
     new tatami::CompressedSparseMatrix<
         double, // data type
@@ -137,42 +142,34 @@ std::shared_ptr<tatami::Matrix<double, int> > mat2(
 Some libraries in the [**@tatami-inc**](https://github.com/tatami-inc) organization implement further extensions of **tatami**'s interface, 
 e.g., for [HDF5-backed matrices](https://github.com/tatami-inc/tatami_hdf5) and [R-based matrices](https://github.com/tatami-inc/tatami_r).
 
-### Extracting matrix contents
+## Extracting matrix contents
 
-Given an abstract `tatami::Matrix`, we create an `Extractor` instance to actually extract the matrix data.
-Each `Extractor` object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access.
-For example, to perform extract dense rows from our `mat`:
+Given an abstract `tatami::Matrix`, we create an `Wrapper` instance to actually extract the matrix data.
+Each `Wrapper` object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access.
+The `MyopicDenseWrapper::fetch()` method returns a pointer to the row's contents, valid until the next `fetch()` call on the same instance.
+For example, to extract dense rows from our `mat`:
 
 ```cpp
-int NR = mat->nrow();
-int NC = mat->ncol();
+const int NR = mat->nrow();
+const int NC = mat->ncol();
 
-auto ext = mat->dense_row();
-std::vector<double> buffer(NC);
-
+auto wrp = tatami::make_DenseWrapper(*mat, true, {});
 for (int r = 0; r < NR; ++r) {
-    auto current = ext->fetch(r, buffer.data());
+    auto current = wrp.fetch(r);
     // Do something with the 'current' pointer.
 }
 ```
 
-The `tatami::MyopicDenseExtractor::fetch()` method returns a pointer to the row's contents.
-In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store for maximum efficiency.
-However, this is not the case in general, so we provide a buffer of appropriate length (`buffer`) in which the row contents may be stored upon extraction from the matrix.
-If this buffer is used, the returned pointer will refer to the start of the buffer.
-
-Alternatively, we could extract sparse columns via `tatami::MyopicSparseExtractor::fetch()`, 
-which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
-This provides some opportunities for optimization in algorithms that only need to operate on non-zero values.
-The `fetch()` call requires buffers for both arrays - again, this may not be used for matrix subclasses with contiguous internal storage of the values/indices.
+Alternatively, we could extract sparse columns via `MyopicSparseWrapper::fetch()`.
+This returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices,
+which provides some opportunities for optimization in algorithms that only need to operate on non-zero values.
+For example, to extract sparse columns from our `mat`:
 
 ```cpp
-auto sext = mat->sparse_column();
-std::vector<double> vbuffer(NR);
-std::vector<int> ibuffer(NR);
-
+auto swrp = tatami::make_SparseWrapper(*mat, /* row = */ false, {});
 for (int c = 0; c < NC; ++c) {
-    auto current = sext->fetch(c, vbuffer.data(), ibuffer.data());
+    auto current = swrp.fetch(c);
+    // 'current' is valid until the next 'swrp.fetch()' call.
     current.number; // Number of structural non-zeros
     current.value; // Pointer to the value array
     current.index; // Pointer to the index array
@@ -185,19 +182,32 @@ To do so, we specify the start and length of a contiguous block of interest, or 
 
 ```cpp
 // Get rows [5, 17) from each column.
-auto bext = mat->dense_column(5, 12); 
+auto bwrp = tatami::make_SparseWrapper(*mat, false, 5, 12, {}); 
 
-// Get these columns from each row.
-auto iext = mat->sparse_row(std::vector<int>{ 1, 3, 5, 7 });
+// Get the first few odd-indexed columns from each row.
+auto iwrp = tatami::make_DenseWrapper(
+    *mat,
+    true,
+    tatami::VectorPtr<int>(new std::vector<int>{ 1, 3, 5, 7 }),
+    {}
+);
 ```
 
-When developing **tatami**-based applications, we suggest compiling the test suite with and without the `TATAMI_DEBUG_FORCE_COPY` macro.
-When set, this macro forces **tatami** to copy data into `buffer`, even if it could omit the copy by directly returning pointers to the internal data structures.
-This gives our tests an opportunity to check that a valid buffer is actually supplied to `fetch()`.
-Conversely, when the macro is unset and a representation like `DenseMatrix` is used in the test suite,
-we can check that our application correctly handles scenarios where `fetch()` does not populate the buffers.
+For sparse extraction, an application might not need the values and/or indices of the structural non-zero elements.
+We can disable their extraction for greater efficiency:
 
-### Handling different access patterns
+```cpp
+tatami::Options opt;
+opt.sparse_extract_value = false;
+opt.sparse_extract_index = false;
+auto swrp = tatami::make_SparseWrapper(*mat, false, opt);
+auto res = set.fetch(0);
+res.number; // only the number of structural non-zeros is returned.
+res.value == NULL;
+res.index == NULL;
+```
+
+## Handling different access patterns
 
 In performance-critical sections, it may be desirable to customize the extraction based on properties of the matrix.
 This is supported with the following methods:
@@ -215,18 +225,18 @@ In the most complex cases, this leads to code like:
 ```cpp
 if (mat->is_sparse()) {
     if (mat->prefer_rows()) {
-        auto sext = mat->sparse_row();
+        auto swrp = tatami::make_SparseWrapper(*mat, true, {});
         // Do compute along sparse rows.
     } else {
-        auto sext = mat->sparse_column();
+        auto swrp = tatami::make_SparseWrapper(*mat, false, {});
         // Do compute along sparse columns.
     }
 } else {
     if (mat->prefer_rows()) {
-        auto sext = mat->dense_row();
+        auto dwrp = tatami::make_DenseWrapper(*mat, true, {});
         // Do compute along dense rows.
     } else {
-        auto sext = mat->dense_column();
+        auto dwrp = tatami::make_DenseWrapper(*mat, false, {});
         // Do compute along dense columns.
     }
 }
@@ -235,22 +245,21 @@ if (mat->is_sparse()) {
 Of course, this assumes that it is possible to provide sparse-specific optimizations as well as running calculations for the statistic of interest.
 In most cases, only a subset of the extraction patterns are actually feasible so special code paths would not be beneficial.
 
-### Supporting parallelization
+## Supporting parallelization
 
-The mutable nature of an `Extractor` instance means that the `fetch()` calls themselves are not `const`.
-This means that the same extractor cannot be safely re-used across different threads as each call to `fetch()` will modify the extractor's contents.
-Fortunately, the solution is simple - just create a separate `Extractor` (and the associated buffers) for each thread.
+The mutable nature of an `Wrapper` instance means that the `fetch()` calls themselves are not `const`.
+This means that the same instance cannot be safely re-used across different threads as each call to `fetch()` will modify the instance's contents.
+Fortunately, the solution is simple - just create a separate `Wrapper` (and the associated buffers) for each thread.
 With OpenMP, this looks like:
 
 ```cpp
 #pragma omp parallel num_threads(nthreads);
 {
-    auto wrk = mat->dense_row();
-    std::vector<double> buffer(NC);
+    auto wrk = tatami::make_DenseWrapper(*mat, true, {});
 
     #pragma omp for
     for (int r = 0; r < NR; ++r) {
-        auto ptr = wrk->fetch(r, buffer.data());
+        auto ptr = wrk->fetch(r);
         // Do something in each thread.
     }
 }
@@ -262,42 +271,92 @@ Applications can also set the `TATAMI_CUSTOM_PARALLEL` macro to override the par
 
 ```cpp
 tatami::parallelize([&](int thread, int start, int length) -> void {
-    auto wrk = mat->dense_row();
-    std::vector<double> buffer(NC);
+    auto wrk = tatami::make_DenseWrapper(*mat, true, {});
     for (int r = 0; r < length; ++r) {
-        auto ptr = wrk->fetch(r + start, buffer.data());
+        auto ptr = wrk.fetch(r + start);
         // Do something in each thread.
     }
 }, NR, nthreads);
 ```
 
-### Defining an oracle
+## Defining an oracle
 
-When constructing an `Extractor`, users can supply an `Oracle` that specifies the sequence of rows/columns to be accessed.
+When constructing a `Wrapper`, users can supply an `Oracle` that specifies the sequence of rows/columns to be accessed.
 Knowledge of the future access pattern enables optimizations in some `Matrix` implementations, 
 e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses.
 The most obvious use case involves accessing consecutive rows/columns:
 
 ```cpp
-auto o = std::make_shared<tatami::ConsecutiveOracle<int> >(0, NR));
-auto wrk = mat->dense_row(o);
+auto wrk = tatami::make_DenseWrapper(*mat, true, tatami::make_ConsecutiveOracle(0, NR), {});
 for (int r = 0; r < NR; ++r) {
-    // No need to specify the index to fetch, as 'wrk' already knows the
+    // No need to specify the index, as 'wrk' already knows the
     // sequence of indices as prediced by the oracle.
-    auto ptr = wrk->fetch(buffer.data());
+    auto ptr = wrk.next();
 }
 ```
 
-In fact, this use case is so common that we can just use the `tatami::consecutive_extractor()` wrapper to construct the oracle and pass it to `tatami::Matrix`.
-This will return a `tatami::OracularDenseExtractor` instance that contains the oracle's predictions.
+Alternatively, we can use the `FixedVectorOracle` class with an array of row/column indices to be extracted:
 
 ```cpp
-// Same as 'wrk' above.
-auto cwrk = tatami::consecutive_extractor<false>(mat.get(), row, 0, NR);
+// Extracting columns in an arbitrary predefined order:
+std::vector<int> predictions{ 9, 1, 2, 3, 13, 9, 1 };
+auto foracle = std::make_shared<tatami::FixedVectorOracle<int> >(std::move(predictions));
+auto swrk = tatami::make_DenseWrapper(*mat, false, std::move(foracle), {});
+for (std::size_t p = 0; p < predictions.size(); ++p) {
+    // No need to specify the index to 'next()', as 'swrk' already knows the
+    // sequence of indices as prediced by the oracle.
+    auto current = swrk.next();
+}
 ```
 
-Alternatively, we can use the `FixedOracle` class with an array of row/column indices that are known ahead of time.
 Advanced users can also define their own `Oracle` subclasses to generate predictions on the fly.
+
+## Using custom buffers
+
+The `Wrapper` class is just a user-friendly wrapper around an virtual `Extractor` class.
+The former allocates the temporary buffers that might be used in each `fetch()` operation,
+while subclasses of the latter are responsible for the heavy lifting of pulling data out of each matrix representation.
+For users who want more control over memory management, the latter can be used directly, e.g., to extract matrix contents directly into a user-specified array:
+
+```cpp
+int NR = mat->nrow();
+int NC = mat->ncol();
+
+// Equivalent to 'make_DenseWrapper(*mat, true, {})'
+auto ext = mat->dense(true, {});
+std::vector<double> buffer(NC);
+for (int r = 0; r < NR; ++r) {
+    auto current = ext->fetch(r, buffer.data());
+
+    // Note that the contents of 'buffer' is not guaranteed to be the same as 'current'.
+    // If we want them to be the same, we need to do some extra work:
+    tatami::copy_n(current, NC, buffer.data());
+
+    // Now we can do something with 'buffer', which now contains the r-th row.
+}
+
+// Equivalent to 'make_SparseWrapper(*mat, false, 8, 20, {})'
+auto sext = mat->sparse(false, 8, 20, {});
+std::vector<double> vbuffer(20);
+std::vector<int> ibuffer(20);
+for (int c = 0; c < NC; ++r) {
+    auto current = sext->fetch(c, vbuffer.data(), ibuffer.data());
+
+    // Note that contents of 'vbuffer' and 'ibuffer' might not be the same as 'current'.
+    // If we want them to be the same, we need to do some extra work:
+    tatami::copy_n(current.value, current.number, vbuffer.data());
+    tatami::copy_n(current.index, current.number, ibuffer.data());
+
+    // Now we can do something with 'vbuffer' and 'ibuffer',
+    // which now contains the structural non-zeros in this block of the c-th column.
+}
+```
+
+When developing **tatami**-based applications, we suggest compiling the test suite with and without the `TATAMI_DEBUG_FORCE_COPY` macro.
+When set, this macro forces **tatami** to copy data into `buffer`, even if it could omit the copy by directly returning pointers to the internal data structures.
+This gives our tests an opportunity to check that a valid buffer is actually supplied to `fetch()`.
+Conversely, when the macro is unset and a representation like `DenseMatrix` is used in the test suite,
+we can check that our application correctly handles scenarios where `fetch()` does not populate the buffers.
 
 ## Comments on other operations
 
@@ -313,7 +372,7 @@ For example, we often use **tatami** to represent the large input datasets in a 
 process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
 and then copy the data into a `Eigen::MatrixXd` or `Eigen::SparseMatrix` for the desired operations.
 In practice, many standard decompositions do not scale well for large matrices,
-so our applications end up using approximate methods like [**ILRBA**](https://github.com/LTLA/CppIrlba) that only require a multiplication operator.
+so our applications end up using approximate methods like [**ILRBA**](https://github.com/libscran/irlba) that only require a multiplication operator.
 
 <!---
 (At this point, it is worth noting that **Eigen** also supports delayed operations via its expression templates.

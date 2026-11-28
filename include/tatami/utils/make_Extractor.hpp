@@ -7,7 +7,7 @@
 #include "../base/Matrix.hpp"
 
 /**
- * @file new_extractor.hpp
+ * @file make_Extractor.hpp
  * @brief Templated construction of a new extractor.
  */
 
@@ -50,8 +50,8 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor_bas
  */
 
 /**
- * Wrapper to create a new `Extractor` based on the template parameters.
- * This retrieves the entire extent of the non-target dimension. 
+ * Create a new `Extractor` that fetches the entire extent of each element of the target dimension. 
+ * This is intended to be used in templated code that switches between dense/sparse and myopic/oracular extraction.
  *
  * @tparam sparse_ Whether to perform sparse retrieval.
  * @tparam oracle_ Whether an oracle should be supplied.
@@ -63,7 +63,7 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor_bas
  * @param oracle Pointer to an oracle if `oracle_ = true`, otherwise a placeholder boolean that is ignored.
  * @param opt Additional arguments to pass to the relevant `Matrix::dense()` or `Matrix::sparse()` overload.
  *
- * @return An `Extractor` to access elements of the requested dimension of `matrix`.
+ * @return Pointer to an `Extractor` to access elements of the target dimension of `matrix`.
  */
 template<bool sparse_, bool oracle_, typename Value_, typename Index_>
 std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
@@ -76,8 +76,8 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
 }
 
 /**
- * Wrapper to create a new `Extractor` based on the template parameters.
- * This retrieves a block of the non-target dimension. 
+ * Create a new `Extractor` that fetches a contiguous block of each element of the target dimension. 
+ * This is intended to be used in templated code that switches between dense/sparse and myopic/oracular extraction.
  *
  * @tparam sparse_ Whether to perform sparse retrieval.
  * @tparam oracle_ Whether an oracle should be supplied.
@@ -89,7 +89,7 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
  * @param oracle Pointer to an oracle if `oracle_ = true`, otherwise a placeholder boolean that is ignored.
  * @param block_start,block_length,opt Additional arguments to pass to the relevant `Matrix::dense()` or `Matrix::sparse()` overload.
  *
- * @return An `Extractor` to access elements of the requested dimension of `matrix`.
+ * @return Pointer to an `Extractor` to access a block of each element of the target dimension of `matrix`.
  */
 template<bool sparse_, bool oracle_, typename Value_, typename Index_>
 std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
@@ -104,8 +104,8 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
 }
 
 /**
- * Wrapper to create a new `Extractor` based on the template parameters.
- * This retrieves an indexed subset of the non-target dimension. 
+ * Create a new `Extractor` that fetches an indexed subset of each element of the target dimension. 
+ * This is intended to be used in templated code that switches between dense/sparse and myopic/oracular extraction.
  *
  * @tparam sparse_ Whether to perform sparse retrieval.
  * @tparam oracle_ Whether an oracle should be supplied.
@@ -117,7 +117,7 @@ std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(
  * @param oracle Pointer to an oracle if `oracle_ = true`, otherwise a placeholder boolean that is ignored.
  * @param indices_ptr,opt Additional arguments to pass to the relevant `Matrix::dense()` or `Matrix::sparse()` overload.
  *
- * @return An `Extractor` to access elements of the requested dimension of `matrix`.
+ * @return Pointer to an `Extractor` to access an indexed subset of each element of the target dimension of `matrix`.
  */
 template<bool sparse_, bool oracle_, typename Value_, typename Index_>
 std::unique_ptr<Extractor<sparse_, oracle_, Value_, Index_> > make_Extractor(

@@ -581,7 +581,7 @@ public:
         return dense_column(std::move(oracle), std::move(indices), Options()); 
     }
     /**
-     * @cond
+     * @endcond
      */
 
     /*********************************

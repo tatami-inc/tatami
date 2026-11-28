@@ -51,6 +51,7 @@ public:
     /**
      * @param i Index of the row/column of interest.
      * @return Pointer to an array of length `length()`, containing the values of the `i`-th row/column.
+     * This is only guaranteed to be valid until the next call to this method.
      */
     const Value_* fetch(Index_ i) {
         return my_ext->fetch(i, my_buffer.data());
@@ -163,7 +164,7 @@ public:
 
     /**
      * @return Pointer to an array of length `length()`, containing the values of the next predicted row/column.
-     * Rows/columns are returned in the order specified by the `Oracle` used to construct this instance. 
+     * This is only guaranteed to be valid until the next call to this method.
      */
     const Value_* next() {
         return my_ext->fetch(my_buffer.data());
@@ -291,6 +292,7 @@ public:
     /**
      * @param i Index of the row/column of interest.
      * @return `SparseRange` containing the number, values and/or indices of the structural non-zeros of the `i`-th row/column.
+     * Pointers within this object are only guaranteed to be valid until the next call to this method.
      */
     SparseRange<Value_, Index_> fetch(Index_ i) {
         return my_ext->fetch(i, my_vbuffer.data(), my_ibuffer.data());
@@ -428,6 +430,7 @@ public:
 
     /**
      * @return `SparseRange` containing the number, values and/or indices of the structural non-zeros of the next predicted row/column.
+     * Pointers within this object are only guaranteed to be valid until the next call to this method.
      */
     SparseRange<Value_, Index_> next() {
         return my_ext->fetch(my_vbuffer.data(), my_ibuffer.data());
