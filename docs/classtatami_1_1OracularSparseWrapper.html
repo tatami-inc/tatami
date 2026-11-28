@@ -119,7 +119,7 @@ class tatami::OracularSparseWrapper&lt; Value_, Index_ &gt;</div><p>User-friendl
   </table>
   </dd>
 </dl>
-<p>Each instance of this class automatically allocates the buffer(s) to be used in <code><a class="el" href="classtatami_1_1OracularSparseExtractor.html#ab934cfb30f9169a125fd746e15578975">OracularSparseExtractor::fetch()</a></code>. </p>
+<p>Each instance of this class automatically allocates the buffer(s) to be used in <code><a class="el" href="classtatami_1_1OracularSparseExtractor.html#a689800b97bfbd68261f27e911c2a2499">OracularSparseExtractor::fetch()</a></code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9b9450db2730ab9bd18183705b4a3c9c" name="a9b9450db2730ab9bd18183705b4a3c9c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9b9450db2730ab9bd18183705b4a3c9c">&#9670;&#160;</a></span>length()</h2>
@@ -173,7 +173,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd><code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> containing the number, values and/or indices of the structural non-zeros of the next predicted row/column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> containing the number, values and/or indices of the structural non-zeros of the next predicted row/column. Pointers within this object are only guaranteed to be valid until the next call to this method. </dd></dl>
 
 </div>
 </div>

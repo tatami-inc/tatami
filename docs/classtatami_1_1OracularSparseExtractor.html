@@ -114,8 +114,8 @@ Inheritance diagram for tatami::OracularSparseExtractor&lt; Value_, Index_ &gt;:
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab934cfb30f9169a125fd746e15578975" id="r_ab934cfb30f9169a125fd746e15578975"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab934cfb30f9169a125fd746e15578975">fetch</a> (Value_ *value_buffer, Index_ *index_buffer)</td></tr>
-<tr class="separator:ab934cfb30f9169a125fd746e15578975"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31f4e3806ef6f7c1a0644bfd79313988" id="r_a31f4e3806ef6f7c1a0644bfd79313988"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31f4e3806ef6f7c1a0644bfd79313988">next</a> (Value_ *value_buffer, Index_ *index_buffer)</td></tr>
+<tr class="separator:a31f4e3806ef6f7c1a0644bfd79313988"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a689800b97bfbd68261f27e911c2a2499" id="r_a689800b97bfbd68261f27e911c2a2499"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a689800b97bfbd68261f27e911c2a2499">fetch</a> (Index_ i, Value_ *value_buffer, Index_ *index_buffer)=0</td></tr>
 <tr class="separator:a689800b97bfbd68261f27e911c2a2499"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -130,8 +130,8 @@ class tatami::OracularSparseExtractor&lt; Value_, Index_ &gt;</div><p>Extract an
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab934cfb30f9169a125fd746e15578975" name="ab934cfb30f9169a125fd746e15578975"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab934cfb30f9169a125fd746e15578975">&#9670;&#160;</a></span>fetch() <span class="overload">[1/2]</span></h2>
+<a id="a31f4e3806ef6f7c1a0644bfd79313988" name="a31f4e3806ef6f7c1a0644bfd79313988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31f4e3806ef6f7c1a0644bfd79313988">&#9670;&#160;</a></span>next()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,7 +142,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt;::fetch </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt;::next </td>
           <td>(</td>
           <td class="paramtype">Value_ *</td>          <td class="paramname"><span class="paramname"><em>value_buffer</em></span>, </td>
         </tr>
@@ -171,18 +171,18 @@ If <code><a class="el" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca
 <dd>
 If <code><a class="el" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">Options::sparse_extract_value</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#a79079e1a7c41b0528542ad9f3ffa3fbd">SparseRange::value</a></code> is the same as <code>value_buffer</code>, this means that <code>value_buffer</code> has been filled with the values of the structural non-zero elements of the <code>i</code>-th dimension element.</dd>
 <dd>
-If <code><a class="el" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">Options::sparse_extract_value</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#a79079e1a7c41b0528542ad9f3ffa3fbd">SparseRange::value</a></code> is not the same as <code>value_buffer</code>, it should refer to another array of length <code><a class="el" href="structtatami_1_1SparseRange.html#a8b959e01323bdbe112a6432b3c51a038">SparseRange::number</a></code>. This array should be valid for the lifetime of the <code>Matrix</code> object used to construct this <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code>Matrix</code>. In this situation, no guarantees are provided for the contents of <code>value_buffer</code>.</dd>
+If <code><a class="el" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">Options::sparse_extract_value</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#a79079e1a7c41b0528542ad9f3ffa3fbd">SparseRange::value</a></code> is not the same as <code>value_buffer</code>, it should refer to another array of length <code><a class="el" href="structtatami_1_1SparseRange.html#a8b959e01323bdbe112a6432b3c51a038">SparseRange::number</a></code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>value_buffer</code>.</dd>
 <dd>
 If <code><a class="el" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">Options::sparse_extract_index</a></code> was set to <code>false</code> during construction of this instance, <code>index_buffer</code> is ignored and <code><a class="el" href="structtatami_1_1SparseRange.html#af61bafe43fadb90cee6162ac79bfdd3d">SparseRange::index</a></code> is set to <code>NULL</code> in the output.</dd>
 <dd>
 If <code><a class="el" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">Options::sparse_extract_index</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#af61bafe43fadb90cee6162ac79bfdd3d">SparseRange::index</a></code> is the same as <code>index_buffer</code>, this means that <code>index_buffer</code> has been filled with the indices of the structural non-zero elements of the <code>i</code>-th dimension element.</dd>
 <dd>
-If <code><a class="el" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">Options::sparse_extract_index</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#af61bafe43fadb90cee6162ac79bfdd3d">SparseRange::index</a></code> is not the same as <code>index_buffer</code>, it should refer to another array of length <code><a class="el" href="structtatami_1_1SparseRange.html#a8b959e01323bdbe112a6432b3c51a038">SparseRange::number</a></code>. This array should be valid for the lifetime of the <code>Matrix</code> object used to construct this <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code>Matrix</code>. In this situation, no guarantees are provided for the contents of <code>index_buffer</code>. </dd></dl>
+If <code><a class="el" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">Options::sparse_extract_index</a> = true</code> and <code><a class="el" href="structtatami_1_1SparseRange.html#af61bafe43fadb90cee6162ac79bfdd3d">SparseRange::index</a></code> is not the same as <code>index_buffer</code>, it should refer to another array of length <code><a class="el" href="structtatami_1_1SparseRange.html#a8b959e01323bdbe112a6432b3c51a038">SparseRange::number</a></code>. This array should be valid for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object used to construct this <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. Similarly, the contents should not change for the lifetime of the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. In this situation, no guarantees are provided for the contents of <code>index_buffer</code>. </dd></dl>
 
 </div>
 </div>
 <a id="a689800b97bfbd68261f27e911c2a2499" name="a689800b97bfbd68261f27e911c2a2499"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a689800b97bfbd68261f27e911c2a2499">&#9670;&#160;</a></span>fetch() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a689800b97bfbd68261f27e911c2a2499">&#9670;&#160;</a></span>fetch()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,8 +214,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">MyopicSparseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code> and <code><a class="el" href="classtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
-<p>Other than the extra <code>i</code> argument, all other behaviors of the two overloads are the same. To avoid confusion, most users should just use the <code><a class="el" href="#ab934cfb30f9169a125fd746e15578975">fetch()</a></code> overload that does not accept <code>i</code>, given that the value of <code>i</code> is never actually used.</p>
+<p>This method is intended for subclass developers only. It has the same signature as <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">MyopicSparseExtractor::fetch()</a></code>, which makes it easier to define <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code> and <code><a class="el" href="classtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> subclasses from a single template class. Implementations of this method are expected to ignore <code>i</code>. Most users should just use <code><a class="el" href="#a31f4e3806ef6f7c1a0644bfd79313988">next()</a></code> instead.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Ignored, only provided for consistency with <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">MyopicSparseExtractor::fetch()</a></code>. </td></tr>
@@ -224,7 +223,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of the next dimension element, see the other <code><a class="el" href="#ab934cfb30f9169a125fd746e15578975">fetch()</a></code> overload for details. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of the next dimension element, see <code><a class="el" href="#a31f4e3806ef6f7c1a0644bfd79313988">next()</a></code> for details. </dd></dl>
 
 <p>Implemented in <a class="el" href="structtatami_1_1PseudoOracularSparseExtractor.html#a928900a07df3e7fe7c9bd6c23104f024">tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;</a>.</p>
 

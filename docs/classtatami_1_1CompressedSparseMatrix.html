@@ -106,11 +106,23 @@ Inheritance diagram for tatami::CompressedSparseMatrix&lt; Value_, Index_, Value
 <div class="dyncontent">
 <div class="center"><img src="classtatami_1_1CompressedSparseMatrix__inherit__graph.png" border="0" usemap="#atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_inherit__map" id="atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_inherit__map">
-<area shape="rect" title="Compressed sparse matrix representation." alt="" coords="5,53,209,124"/>
-<area shape="rect" href="classtatami_1_1CompressedSparseColumnMatrix.html" title="Compressed sparse column matrix." alt="" coords="257,5,475,76"/>
-<area shape="poly" title=" " alt="" coords="224,64,256,58,257,64,225,70"/>
-<area shape="rect" href="classtatami_1_1CompressedSparseRowMatrix.html" title="Compressed sparse row matrix." alt="" coords="264,100,468,171"/>
-<area shape="poly" title=" " alt="" coords="225,107,264,114,263,120,224,112"/>
+<area shape="rect" title="Compressed sparse matrix representation." alt="" coords="196,53,399,124"/>
+<area shape="rect" href="classtatami_1_1CompressedSparseColumnMatrix.html" title="Compressed sparse column matrix." alt="" coords="447,5,665,76"/>
+<area shape="poly" title=" " alt="" coords="414,64,446,58,447,64,415,70"/>
+<area shape="rect" href="classtatami_1_1CompressedSparseRowMatrix.html" title="Compressed sparse row matrix." alt="" coords="454,100,658,171"/>
+<area shape="poly" title=" " alt="" coords="415,107,455,114,454,120,414,112"/>
+<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="5,68,148,109"/>
+<area shape="poly" title=" " alt="" coords="163,86,195,86,195,91,163,91"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classtatami_1_1CompressedSparseMatrix__coll__graph.png" border="0" usemap="#atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_coll__map" id="atatami_1_1CompressedSparseMatrix_3_01Value___00_01Index___00_01ValueStorage___00_01IndexStorage___00_01PointerStorage___01_4_coll__map">
+<area shape="rect" title="Compressed sparse matrix representation." alt="" coords="5,94,209,165"/>
+<area shape="rect" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="36,5,178,46"/>
+<area shape="poly" title=" " alt="" coords="110,62,110,93,104,93,104,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -136,26 +148,35 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af87178f5c8b51c47d106a6e1e76bece6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9733cce95fbeff4164e58bdc5e6b270" id="r_af9733cce95fbeff4164e58bdc5e6b270"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9733cce95fbeff4164e58bdc5e6b270">dense</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;) const</td></tr>
 <tr class="separator:af9733cce95fbeff4164e58bdc5e6b270"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa30bd5da194307e73b6a541788a49c3b" id="r_aa30bd5da194307e73b6a541788a49c3b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa30bd5da194307e73b6a541788a49c3b">dense</a> (const bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;) const</td></tr>
+<tr class="memitem:aa30bd5da194307e73b6a541788a49c3b" id="r_aa30bd5da194307e73b6a541788a49c3b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa30bd5da194307e73b6a541788a49c3b">dense</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;) const</td></tr>
 <tr class="separator:aa30bd5da194307e73b6a541788a49c3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fd9ff6d1468c07246cf062c8e9d0c50" id="r_a6fd9ff6d1468c07246cf062c8e9d0c50"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fd9ff6d1468c07246cf062c8e9d0c50">sparse</a> (const bool row, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a6fd9ff6d1468c07246cf062c8e9d0c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a90a3fac283f8d2240ba1a3f486d9fa" id="r_a3a90a3fac283f8d2240ba1a3f486d9fa"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a90a3fac283f8d2240ba1a3f486d9fa">sparse</a> (const bool row, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a3a90a3fac283f8d2240ba1a3f486d9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96938d40042c82ea564d4d2b1b8bac6d" id="r_a96938d40042c82ea564d4d2b1b8bac6d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96938d40042c82ea564d4d2b1b8bac6d">sparse</a> (const bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="memitem:a96938d40042c82ea564d4d2b1b8bac6d" id="r_a96938d40042c82ea564d4d2b1b8bac6d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96938d40042c82ea564d4d2b1b8bac6d">sparse</a> (const bool row, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a96938d40042c82ea564d4d2b1b8bac6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4012f0a18d6901373885988e53de0fd" id="r_ac4012f0a18d6901373885988e53de0fd"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4012f0a18d6901373885988e53de0fd">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:ac4012f0a18d6901373885988e53de0fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a576f1ca185646807b21e327cb11b9802" id="r_a576f1ca185646807b21e327cb11b9802"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a576f1ca185646807b21e327cb11b9802">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a576f1ca185646807b21e327cb11b9802"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5cdd4a67e2890fc42bddd6da68b14231" id="r_a5cdd4a67e2890fc42bddd6da68b14231"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cdd4a67e2890fc42bddd6da68b14231">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="memitem:a5cdd4a67e2890fc42bddd6da68b14231" id="r_a5cdd4a67e2890fc42bddd6da68b14231"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5cdd4a67e2890fc42bddd6da68b14231">dense</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a5cdd4a67e2890fc42bddd6da68b14231"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e93f3c596fcab8807b20b8818c9ee05" id="r_a1e93f3c596fcab8807b20b8818c9ee05"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e93f3c596fcab8807b20b8818c9ee05">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a1e93f3c596fcab8807b20b8818c9ee05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a777b0c9055bfe87e5cbcf842b07762e5" id="r_a777b0c9055bfe87e5cbcf842b07762e5"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a777b0c9055bfe87e5cbcf842b07762e5">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a777b0c9055bfe87e5cbcf842b07762e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b6083ff5cc0e83d9247202cb54a0f8e" id="r_a7b6083ff5cc0e83d9247202cb54a0f8e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6083ff5cc0e83d9247202cb54a0f8e">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
+<tr class="memitem:a7b6083ff5cc0e83d9247202cb54a0f8e" id="r_a7b6083ff5cc0e83d9247202cb54a0f8e"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b6083ff5cc0e83d9247202cb54a0f8e">sparse</a> (const bool row, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Oracle.html">Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
 <tr class="separator:a7b6083ff5cc0e83d9247202cb54a0f8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix&lt; Value_, Index_ &gt;</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_types_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_types_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix&lt; Value_, Index_ &gt;</a></td></tr>
+<tr class="memitem:a3154ad89a70ee70e4f12784f2461fa2d inherit pub_types_classtatami_1_1Matrix" id="r_a3154ad89a70ee70e4f12784f2461fa2d"><td class="memItemLeft" align="right" valign="top">typedef Value_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a3154ad89a70ee70e4f12784f2461fa2d">value_type</a></td></tr>
+<tr class="separator:a3154ad89a70ee70e4f12784f2461fa2d inherit pub_types_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7575110444f4b58efcf0fb1a1060541c inherit pub_types_classtatami_1_1Matrix" id="r_a7575110444f4b58efcf0fb1a1060541c"><td class="memItemLeft" align="right" valign="top">typedef Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7575110444f4b58efcf0fb1a1060541c">index_type</a></td></tr>
+<tr class="separator:a7575110444f4b58efcf0fb1a1060541c inherit pub_types_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_&gt;<br />
@@ -260,10 +281,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><dl class="section return"><dt>Returns</dt><dd>Number of rows.</dd></dl>
+<p>It is expected that the number of rows can be represented by a <code>std::size_t</code> without overflow, even if <code>Index_</code> is of a larger size. This is implied by the fact that <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code> and friends accept a pointer for their buffer arguments; the length of the array referenced by these pointers (possibly equal to the number of rows) must fit in a <code>std::size_t</code>. </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -287,10 +312,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><dl class="section return"><dt>Returns</dt><dd>Number of columns.</dd></dl>
+<p>It is expected that the number of columns can be represented by a <code>std::size_t</code> without overflow, even if <code>Index_</code> is of a larger size. This is implied by the fact that <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code> and friends accept a pointer for their buffer arguments; the length of the array referenced by these pointers (possibly equal to the number of rows) must fit in a <code>std::size_t</code>. </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -314,10 +343,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether this matrix is sparse.</dd></dl>
+<p>This can be used to choose between dense and sparse outputs. </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -341,10 +374,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
+<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">is_sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa72c81add2701b7e484a7855b0e62b12">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -368,10 +405,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><dl class="section return"><dt>Returns</dt><dd>The preferred dimension for extracting values. If <code>true</code>, row-wise extraction is preferred; if <code>false</code>, column-wise extraction is preferred.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -395,10 +436,14 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>The return value of this method is the (approximate) proportion of matrix elements that lie within submatrices that prefer row-level access. It is useful for determining the return value of <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference. (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.)<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that prefers row-level access.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2ddcc730155ca894df1c58b0a963d5e7">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -422,10 +467,20 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>The return value of this method indicates whether callers should construct an oracle for use in <code>ExtractorBase::set_oracle()</code>. If <code>false</code>, callers should not bother to pass an oracle as it will be ignored.<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Row access if <code>true</code>, column access otherwise. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether this matrix's <code><a class="el" href="namespacetatami.html#a61e307f87e00e2cae106359a1ec0c2ef">tatami::Extractor</a></code> classes make use of oracle predictions for row (if <code>row = true</code>) or column access (otherwise).</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a68da21245203cf9349648c5452cdb2ca">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -453,10 +508,21 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves the full extent of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a0b6b1ae7819fad55cf7bf5587b7e5a4b">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -494,10 +560,23 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a51bb7a480d2fd0cc0337577ca98840dc">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -520,7 +599,7 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">VectorPtr&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -530,10 +609,22 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should be non-NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a06803687627cc35e5ef41a887f5e5fad">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -561,10 +652,21 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves the full extent of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -602,10 +704,23 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#af802c74c510eff3316ce0eea99c08810">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -628,7 +743,7 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">VectorPtr&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -638,10 +753,22 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should be non-NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a59d055aed809a2036c10c1fce92bd036">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -674,10 +801,22 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves the full extent of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6502fdebcaeea40490c1780ab6e92b19">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -720,10 +859,24 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a48b24fe319289ca76f2b366a2ffe798d">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -751,7 +904,7 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">VectorPtr&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -761,10 +914,23 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should not be NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a4aecaa5038554d2c92c2ab7083497cb6">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -797,10 +963,22 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves the full extent of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a5605c18620abdab0f82015b959e9813a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -843,10 +1021,24 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. This should be non-negative and less than the respective number of columns/rows. (For a matrix with zero columns/rows, <code>block_start</code> may also be zero.) </td></tr>
+    <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. This should be non-negative and <code>block_start + block_length</code> should be no greater than the number of columns/rows. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aacfcf54358970874051e5cc700730707">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -874,7 +1066,7 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">VectorPtr&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr</a>&lt; Index_ &gt;</td>          <td class="paramname"><span class="paramname"><em>indices_ptr</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -884,10 +1076,23 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_ , class Inde
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Create an oracle-aware extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). Each entry should be non-negative and less than the respective number of columns/rows. This should not be NULL. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created.</dd></dl>
+ </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#abe7557a27bbb09f8453a3e6848ad910e">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>

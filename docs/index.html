@@ -115,20 +115,27 @@ $(function(){ initResizable(false); });
 <div class="line"><span class="keywordtype">int</span> NR = mat-&gt;nrow(), NC = mat-&gt;ncol();</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Extract the &#39;i&#39;-th column.</span></div>
-<div class="line"><span class="keyword">auto</span> extractor = mat-&gt;dense_column();</div>
-<div class="line">std::vector&lt;double&gt; buffer(NR);</div>
-<div class="line"><span class="keyword">auto</span> ptr = extractor-&gt;fetch(i, buffer.data());</div>
-<div class="line">ptr[0]; </div>
+<div class="line"><span class="keyword">auto</span> extractor = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="comment">/* row = */</span> <span class="keyword">false</span>, {});</div>
+<div class="line"><span class="keyword">auto</span> ptr = extractor.fetch(i);</div>
+<div class="line">ptr[0]; <span class="comment">// 1st element of the &#39;i&#39;-th column.</span></div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// Extract the [5, 12) rows of the &#39;i&#39;-th column.</span></div>
-<div class="line"><span class="keyword">auto</span> sliced_extractor = mat-&gt;dense_column(5, 7)</div>
-<div class="line"><span class="keyword">auto</span> sliced_ptr = sliced_extractor-&gt;fetch(i, buffer.data());</div>
+<div class="line"><span class="comment">// Extract a block of rows of the &#39;i&#39;-th column.</span></div>
+<div class="line"><span class="keyword">auto</span> sliced_extractor = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="comment">/* row = */</span> <span class="keyword">false</span>, 5, 7, {})</div>
+<div class="line"><span class="keyword">auto</span> sliced_ptr = sliced_extractor-&gt;fetch(i);</div>
+<div class="line">sliced_ptr[0]; <span class="comment">// 6th element of the &#39;i&#39;-th column.</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Extract the first few odd elements of the &#39;i&#39;-th column.</span></div>
+<div class="line"><a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr&lt;int&gt;</a> indices(<span class="keyword">new</span> std::vector&lt;int&gt;{ 1, 3, 5, 7, 9 });</div>
+<div class="line"><span class="keyword">auto</span> indexed_extractor = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="comment">/* row = */</span> <span class="keyword">false</span>, indices, {})</div>
+<div class="line"><span class="keyword">auto</span> indexed_ptr = indexed_extractor-&gt;fetch(i);</div>
+<div class="line">indixed_ptr[0]; <span class="comment">// 2nd element of the &#39;i&#39;-th column.</span></div>
 <div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:180</div></div>
+<div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
+<div class="ttc" id="anamespacetatami_html_ab9e7fdfd4739ec2d8deb39642e70575c"><div class="ttname"><a href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a></div><div class="ttdeci">MyopicDenseWrapper&lt; Value_, Index_ &gt; make_DenseWrapper(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Wrapper.hpp:76</div></div>
 <div class="ttc" id="atatami_8hpp_html"><div class="ttname"><a href="tatami_8hpp.html">tatami.hpp</a></div><div class="ttdoc">Flexible representations of matrix data.</div></div>
 </div><!-- fragment --><p>The key idea here is that, once <code>mat</code> is created, the application does not need to worry about the exact format of the matrix referenced by the pointer. Application developers can write code that works interchangeably with a variety of different matrix representations.</p>
-<h1>Instructions</h1>
-<h2>Creating a <code>tatami::Matrix</code></h2>
-<p>Users can create an instance of a concrete <code>tatami::Matrix</code> subclass by using one of the constructors or the equivalent <code>make_*</code> utility:</p>
+<h1>Creating a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code></h1>
+<p>Users can create an instance of a concrete <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> subclass by using one of the constructors or the equivalent <code>make_*</code> utility:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Description   </th><th class="markdownTableHeadNone">Class    </th></tr>
@@ -164,6 +171,7 @@ $(function(){ initResizable(false); });
 <div class="line">std::vector&lt;int&gt; j; <span class="comment">// column indices of length equal to &#39;x&#39;.</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">auto</span> indptrs = <a class="code hl_function" href="namespacetatami.html#ab0d27353312d3a07a4415c7438398526">tatami::compress_sparse_triplets</a>(NROW, NCOL, x, i, j, <span class="comment">/* csr = */</span> <span class="keyword">false</span>);</div>
+<div class="line"> </div>
 <div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; smat(</div>
 <div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a>&lt;</div>
 <div class="line">        <span class="keywordtype">double</span>, <span class="comment">// data type</span></div>
@@ -182,7 +190,7 @@ $(function(){ initResizable(false); });
 <div class="line">);</div>
 <div class="ttc" id="aclasstatami_1_1CompressedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a></div><div class="ttdoc">Compressed sparse matrix representation.</div><div class="ttdef"><b>Definition</b> CompressedSparseMatrix.hpp:645</div></div>
 <div class="ttc" id="anamespacetatami_html_ab0d27353312d3a07a4415c7438398526"><div class="ttname"><a href="namespacetatami.html#ab0d27353312d3a07a4415c7438398526">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; Pointer_ &gt; compress_sparse_triplets(const Extent_ num_primary, Values_ &amp;values, const PrimaryIndices_ &amp;primary_indices, SecondaryIndices_ &amp;secondary_indices)</div><div class="ttdef"><b>Definition</b> compress_sparse_triplets.hpp:52</div></div>
-</div><!-- fragment --><p>We typically create a <code>shared_ptr</code> to a <code>tatami::Matrix</code> to leverage run-time polymorphism. This enables downstream applications to accept many different matrix representations by compiling against the <code>tatami::Matrix</code> interface. Alternatively, applications may use templating to achieve compile-time polymorphism on the different <b>tatami</b> subclasses, but this is rather restrictive without providing obvious performance benefits.</p>
+</div><!-- fragment --><p>We typically create a <code>shared_ptr</code> to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> to leverage run-time polymorphism. This enables downstream applications to accept many different matrix representations by compiling against the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> interface. Alternatively, applications may use templating to achieve compile-time polymorphism on the different <b>tatami</b> subclasses, but this is rather restrictive without providing obvious performance benefits.</p>
 <p>We use templating to define the type of values returned by the interface. This includes the type of the data (most typically <code>double</code>) as well as the type of row/column indices (default <code>int</code>, but one could imagine using, e.g., <code>size_t</code>). It is worth noting that the storage type does not need to be the same as the interface type. For example, developers could store a matrix of small counts as <code>uint16_t</code> while returning <code>double</code>s for compatibility with downstream mathematical code.</p>
 <p>The delayed operations are ~stolen from~ inspired by those in the <a href="https://github.com/Bioconductor/DelayedArray"><b>DelayedArray</b></a> package. Isometric operations are particularly useful as they accommodate matrix-scalar/vector arithmetic and various mathematical operations. For example, we could apply a sparsity-breaking delayed operation to our sparse matrix <code>smat</code> without actually creating a dense matrix:</p>
 <div class="fragment"><div class="line">std::shared_ptr&lt;tatami::Matrix&lt;double, int&gt; &gt; mat2(</div>
@@ -205,101 +213,153 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricArithmeticScalarHelper_html"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricArithmeticScalarHelper.html">tatami::DelayedUnaryIsometricArithmeticScalarHelper</a></div><div class="ttdoc">Helper for delayed unary isometric scalar arithmetic.</div><div class="ttdef"><b>Definition</b> arithmetic_helpers.hpp:93</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html">tatami::DelayedUnaryIsometricOperation</a></div><div class="ttdoc">Delayed isometric operation on a single matrix.</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:674</div></div>
 </div><!-- fragment --><p>Some libraries in the <a href="https://github.com/tatami-inc"><b>@tatami-inc</b></a> organization implement further extensions of <b>tatami</b>'s interface, e.g., for <a href="https://github.com/tatami-inc/tatami_hdf5">HDF5-backed matrices</a> and <a href="https://github.com/tatami-inc/tatami_r">R-based matrices</a>.</p>
-<h2>Extracting matrix contents</h2>
-<p>Given an abstract <code>tatami::Matrix</code>, we create an <code>Extractor</code> instance to actually extract the matrix data. Each <code>Extractor</code> object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access. For example, to perform extract dense rows from our <code>mat</code>:</p>
-<div class="fragment"><div class="line"><span class="keywordtype">int</span> NR = mat-&gt;nrow();</div>
-<div class="line"><span class="keywordtype">int</span> NC = mat-&gt;ncol();</div>
+<h1>Extracting matrix contents</h1>
+<p>Given an abstract <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>, we create an <code>Wrapper</code> instance to actually extract the matrix data. Each <code>Wrapper</code> object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access. The <code>MyopicDenseWrapper::fetch()</code> method returns a pointer to the row's contents, valid until the next <code>fetch()</code> call on the same instance. For example, to extract dense rows from our <code>mat</code>:</p>
+<div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> NR = mat-&gt;nrow();</div>
+<div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> NC = mat-&gt;ncol();</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">auto</span> ext = mat-&gt;dense_row();</div>
-<div class="line">std::vector&lt;double&gt; buffer(NC);</div>
-<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> wrp = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">true</span>, {});</div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; NR; ++r) {</div>
-<div class="line">    <span class="keyword">auto</span> current = ext-&gt;fetch(r, buffer.data());</div>
+<div class="line">    <span class="keyword">auto</span> current = wrp.fetch(r);</div>
 <div class="line">    <span class="comment">// Do something with the &#39;current&#39; pointer.</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">tatami::MyopicDenseExtractor::fetch()</a></code> method returns a pointer to the row's contents. In some matrix representations (e.g., <code>DenseMatrix</code>), the returned pointer directly refers to the matrix's internal data store for maximum efficiency. However, this is not the case in general, so we provide a buffer of appropriate length (<code>buffer</code>) in which the row contents may be stored upon extraction from the matrix. If this buffer is used, the returned pointer will refer to the start of the buffer.</p>
-<p>Alternatively, we could extract sparse columns via <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">tatami::MyopicSparseExtractor::fetch()</a></code>, which returns a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">tatami::SparseRange</a></code> containing pointers to arrays of (structurally non-zero) values and their row indices. This provides some opportunities for optimization in algorithms that only need to operate on non-zero values. The <code>fetch()</code> call requires buffers for both arrays - again, this may not be used for matrix subclasses with contiguous internal storage of the values/indices.</p>
-<div class="fragment"><div class="line"><span class="keyword">auto</span> sext = mat-&gt;sparse_column();</div>
-<div class="line">std::vector&lt;double&gt; vbuffer(NR);</div>
-<div class="line">std::vector&lt;int&gt; ibuffer(NR);</div>
-<div class="line"> </div>
+</div><!-- fragment --><p>Alternatively, we could extract sparse columns via <code>MyopicSparseWrapper::fetch()</code>. This returns a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">tatami::SparseRange</a></code> containing pointers to arrays of (structurally non-zero) values and their row indices, which provides some opportunities for optimization in algorithms that only need to operate on non-zero values. For example, to extract sparse columns from our <code>mat</code>:</p>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> swrp = <a class="code hl_function" href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a>(*mat, <span class="comment">/* row = */</span> <span class="keyword">false</span>, {});</div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> c = 0; c &lt; NC; ++c) {</div>
-<div class="line">    <span class="keyword">auto</span> current = sext-&gt;fetch(c, vbuffer.data(), ibuffer.data());</div>
+<div class="line">    <span class="keyword">auto</span> current = swrp.fetch(c);</div>
+<div class="line">    <span class="comment">// &#39;current&#39; is valid until the next &#39;swrp.fetch()&#39; call.</span></div>
 <div class="line">    current.number; <span class="comment">// Number of structural non-zeros</span></div>
 <div class="line">    current.value; <span class="comment">// Pointer to the value array</span></div>
 <div class="line">    current.index; <span class="comment">// Pointer to the index array</span></div>
 <div class="line">}</div>
+<div class="ttc" id="anamespacetatami_html_a42cdafaef15942370581e654e793d697"><div class="ttname"><a href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a></div><div class="ttdeci">MyopicSparseWrapper&lt; Value_, Index_ &gt; make_SparseWrapper(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Wrapper.hpp:326</div></div>
 </div><!-- fragment --><p>In both the dense and sparse cases, we can restrict the values that are extracted by <code>fetch()</code>. This provides some opportunities for optimization by avoiding the unnecessary extraction of uninteresting data. To do so, we specify the start and length of a contiguous block of interest, or we supply a vector containing the indices of the elements of interest:</p>
 <div class="fragment"><div class="line"><span class="comment">// Get rows [5, 17) from each column.</span></div>
-<div class="line"><span class="keyword">auto</span> bext = mat-&gt;dense_column(5, 12); </div>
+<div class="line"><span class="keyword">auto</span> bwrp = <a class="code hl_function" href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a>(*mat, <span class="keyword">false</span>, 5, 12, {}); </div>
 <div class="line"> </div>
-<div class="line"><span class="comment">// Get these columns from each row.</span></div>
-<div class="line"><span class="keyword">auto</span> iext = mat-&gt;sparse_row(std::vector&lt;int&gt;{ 1, 3, 5, 7 });</div>
-</div><!-- fragment --><p>When developing <b>tatami</b>-based applications, we suggest compiling the test suite with and without the <code>TATAMI_DEBUG_FORCE_COPY</code> macro. When set, this macro forces <b>tatami</b> to copy data into <code>buffer</code>, even if it could omit the copy by directly returning pointers to the internal data structures. This gives our tests an opportunity to check that a valid buffer is actually supplied to <code>fetch()</code>. Conversely, when the macro is unset and a representation like <code>DenseMatrix</code> is used in the test suite, we can check that our application correctly handles scenarios where <code>fetch()</code> does not populate the buffers.</p>
-<h2>Handling different access patterns</h2>
+<div class="line"><span class="comment">// Get the first few odd-indexed columns from each row.</span></div>
+<div class="line"><span class="keyword">auto</span> iwrp = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(</div>
+<div class="line">    *mat,</div>
+<div class="line">    <span class="keyword">true</span>,</div>
+<div class="line">    <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr&lt;int&gt;</a>(<span class="keyword">new</span> std::vector&lt;int&gt;{ 1, 3, 5, 7 }),</div>
+<div class="line">    {}</div>
+<div class="line">);</div>
+</div><!-- fragment --><p>For sparse extraction, an application might not need the values and/or indices of the structural non-zero elements. We can disable their extraction for greater efficiency:</p>
+<div class="fragment"><div class="line"><a class="code hl_struct" href="structtatami_1_1Options.html">tatami::Options</a> opt;</div>
+<div class="line">opt.<a class="code hl_variable" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">sparse_extract_value</a> = <span class="keyword">false</span>;</div>
+<div class="line">opt.<a class="code hl_variable" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">sparse_extract_index</a> = <span class="keyword">false</span>;</div>
+<div class="line"><span class="keyword">auto</span> swrp = <a class="code hl_function" href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a>(*mat, <span class="keyword">false</span>, opt);</div>
+<div class="line"><span class="keyword">auto</span> res = set.fetch(0);</div>
+<div class="line">res.number; <span class="comment">// only the number of structural non-zeros is returned.</span></div>
+<div class="line">res.value == NULL;</div>
+<div class="line">res.index == NULL;</div>
+<div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
+<div class="ttc" id="astructtatami_1_1Options_html_a192a47606233c7f5c76bb1e7a62867a5"><div class="ttname"><a href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">tatami::Options::sparse_extract_index</a></div><div class="ttdeci">bool sparse_extract_index</div><div class="ttdef"><b>Definition</b> Options.hpp:40</div></div>
+<div class="ttc" id="astructtatami_1_1Options_html_abe1ec7b8bfc82728742ca4a496e59548"><div class="ttname"><a href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">tatami::Options::sparse_extract_value</a></div><div class="ttdeci">bool sparse_extract_value</div><div class="ttdef"><b>Definition</b> Options.hpp:52</div></div>
+</div><!-- fragment --><h1>Handling different access patterns</h1>
 <p>In performance-critical sections, it may be desirable to customize the extraction based on properties of the matrix. This is supported with the following methods:</p>
 <ul>
-<li><code>tatami::Matrix::is_sparse()</code> indicates whether a matrix is sparse.</li>
-<li><code>tatami::Matrix::prefer_rows()</code> indicates whether a matrix is more efficiently accessed along its rows (e.g., row-major dense matrices).</li>
+<li><code><a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">tatami::Matrix::is_sparse()</a></code> indicates whether a matrix is sparse.</li>
+<li><code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code> indicates whether a matrix is more efficiently accessed along its rows (e.g., row-major dense matrices).</li>
 </ul>
 <p>Users can then write dedicated code paths to take advantage of these properties. For example, we might use different algorithms for dense data, where we don't have to look up indices; and for sparse data, if we can avoid the uninteresting zero values. Similarly, if we want to compute a row-wise statistic, but the matrix is more efficiently accessed by column according to <code>prefer_rows()</code>, we could iterate on the columns and attempt to compute the statistic in a "running" manner (see <a href="https://github.com/tatami-inc/gallery/tree/master/src/colsums.cpp"><code>colsums.cpp</code></a> for an example). In the most complex cases, this leads to code like:</p>
 <div class="fragment"><div class="line"><span class="keywordflow">if</span> (mat-&gt;is_sparse()) {</div>
 <div class="line">    <span class="keywordflow">if</span> (mat-&gt;prefer_rows()) {</div>
-<div class="line">        <span class="keyword">auto</span> sext = mat-&gt;sparse_row();</div>
+<div class="line">        <span class="keyword">auto</span> swrp = <a class="code hl_function" href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a>(*mat, <span class="keyword">true</span>, {});</div>
 <div class="line">        <span class="comment">// Do compute along sparse rows.</span></div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
-<div class="line">        <span class="keyword">auto</span> sext = mat-&gt;sparse_column();</div>
+<div class="line">        <span class="keyword">auto</span> swrp = <a class="code hl_function" href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a>(*mat, <span class="keyword">false</span>, {});</div>
 <div class="line">        <span class="comment">// Do compute along sparse columns.</span></div>
 <div class="line">    }</div>
 <div class="line">} <span class="keywordflow">else</span> {</div>
 <div class="line">    <span class="keywordflow">if</span> (mat-&gt;prefer_rows()) {</div>
-<div class="line">        <span class="keyword">auto</span> sext = mat-&gt;dense_row();</div>
+<div class="line">        <span class="keyword">auto</span> dwrp = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">true</span>, {});</div>
 <div class="line">        <span class="comment">// Do compute along dense rows.</span></div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
-<div class="line">        <span class="keyword">auto</span> sext = mat-&gt;dense_column();</div>
+<div class="line">        <span class="keyword">auto</span> dwrp = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">false</span>, {});</div>
 <div class="line">        <span class="comment">// Do compute along dense columns.</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Of course, this assumes that it is possible to provide sparse-specific optimizations as well as running calculations for the statistic of interest. In most cases, only a subset of the extraction patterns are actually feasible so special code paths would not be beneficial.</p>
-<h2>Supporting parallelization</h2>
-<p>The mutable nature of an <code>Extractor</code> instance means that the <code>fetch()</code> calls themselves are not <code>const</code>. This means that the same extractor cannot be safely re-used across different threads as each call to <code>fetch()</code> will modify the extractor's contents. Fortunately, the solution is simple - just create a separate <code>Extractor</code> (and the associated buffers) for each thread. With OpenMP, this looks like:</p>
+<h1>Supporting parallelization</h1>
+<p>The mutable nature of an <code>Wrapper</code> instance means that the <code>fetch()</code> calls themselves are not <code>const</code>. This means that the same instance cannot be safely re-used across different threads as each call to <code>fetch()</code> will modify the instance's contents. Fortunately, the solution is simple - just create a separate <code>Wrapper</code> (and the associated buffers) for each thread. With OpenMP, this looks like:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#pragma omp parallel num_threads(nthreads);</span></div>
 <div class="line">{</div>
-<div class="line">    <span class="keyword">auto</span> wrk = mat-&gt;dense_row();</div>
-<div class="line">    std::vector&lt;double&gt; buffer(NC);</div>
+<div class="line">    <span class="keyword">auto</span> wrk = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">true</span>, {});</div>
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">    #pragma omp for</span></div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; NR; ++r) {</div>
-<div class="line">        <span class="keyword">auto</span> ptr = wrk-&gt;fetch(r, buffer.data());</div>
+<div class="line">        <span class="keyword">auto</span> ptr = wrk-&gt;fetch(r);</div>
 <div class="line">        <span class="comment">// Do something in each thread.</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Users may also consider using the <code><a class="el" href="namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize()</a></code> function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread. This automatically falls back to the standard <code>&lt;thread&gt;</code> library if OpenMP is not available. Applications can also set the <code>TATAMI_CUSTOM_PARALLEL</code> macro to override the parallelization scheme in all <code><a class="el" href="namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize()</a></code> calls.</p>
 <div class="fragment"><div class="line"><a class="code hl_function" href="namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize</a>([&amp;](<span class="keywordtype">int</span> thread, <span class="keywordtype">int</span> start, <span class="keywordtype">int</span> length) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line">    <span class="keyword">auto</span> wrk = mat-&gt;dense_row();</div>
-<div class="line">    std::vector&lt;double&gt; buffer(NC);</div>
+<div class="line">    <span class="keyword">auto</span> wrk = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">true</span>, {});</div>
 <div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; length; ++r) {</div>
-<div class="line">        <span class="keyword">auto</span> ptr = wrk-&gt;fetch(r + start, buffer.data());</div>
+<div class="line">        <span class="keyword">auto</span> ptr = wrk.fetch(r + start);</div>
 <div class="line">        <span class="comment">// Do something in each thread.</span></div>
 <div class="line">    }</div>
 <div class="line">}, NR, nthreads);</div>
 <div class="ttc" id="anamespacetatami_html_a9c3979c60e3d7e066be533f7ee3a2f97"><div class="ttname"><a href="namespacetatami.html#a9c3979c60e3d7e066be533f7ee3a2f97">tatami::parallelize</a></div><div class="ttdeci">int parallelize(Function_ fun, const Index_ tasks, const int workers)</div><div class="ttdef"><b>Definition</b> parallelize.hpp:58</div></div>
-</div><!-- fragment --><h2>Defining an oracle</h2>
-<p>When constructing an <code>Extractor</code>, users can supply an <code>Oracle</code> that specifies the sequence of rows/columns to be accessed. Knowledge of the future access pattern enables optimizations in some <code>Matrix</code> implementations, e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses. The most obvious use case involves accessing consecutive rows/columns:</p>
-<div class="fragment"><div class="line"><span class="keyword">auto</span> o = std::make_shared&lt;tatami::ConsecutiveOracle&lt;int&gt; &gt;(0, NR));</div>
-<div class="line"><span class="keyword">auto</span> wrk = mat-&gt;dense_row(o);</div>
+</div><!-- fragment --><h1>Defining an oracle</h1>
+<p>When constructing a <code>Wrapper</code>, users can supply an <code>Oracle</code> that specifies the sequence of rows/columns to be accessed. Knowledge of the future access pattern enables optimizations in some <code>Matrix</code> implementations, e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses. The most obvious use case involves accessing consecutive rows/columns:</p>
+<div class="fragment"><div class="line"><span class="keyword">auto</span> wrk = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">true</span>, <a class="code hl_function" href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">tatami::make_ConsecutiveOracle</a>(0, NR), {});</div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; NR; ++r) {</div>
-<div class="line">    <span class="comment">// No need to specify the index to fetch, as &#39;wrk&#39; already knows the</span></div>
+<div class="line">    <span class="comment">// No need to specify the index, as &#39;wrk&#39; already knows the</span></div>
 <div class="line">    <span class="comment">// sequence of indices as prediced by the oracle.</span></div>
-<div class="line">    <span class="keyword">auto</span> ptr = wrk-&gt;fetch(buffer.data());</div>
+<div class="line">    <span class="keyword">auto</span> ptr = wrk.next();</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>In fact, this use case is so common that we can just use the <code>tatami::consecutive_extractor()</code> wrapper to construct the oracle and pass it to <code>tatami::Matrix</code>. This will return a <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">tatami::OracularDenseExtractor</a></code> instance that contains the oracle's predictions.</p>
-<div class="fragment"><div class="line"><span class="comment">// Same as &#39;wrk&#39; above.</span></div>
-<div class="line"><span class="keyword">auto</span> cwrk = tatami::consecutive_extractor&lt;false&gt;(mat.get(), row, 0, NR);</div>
-</div><!-- fragment --><p>Alternatively, we can use the <code>FixedOracle</code> class with an array of row/column indices that are known ahead of time. Advanced users can also define their own <code>Oracle</code> subclasses to generate predictions on the fly.</p>
+<div class="ttc" id="anamespacetatami_html_a421a48c7533dacdf011a4277582c72c9"><div class="ttname"><a href="namespacetatami.html#a421a48c7533dacdf011a4277582c72c9">tatami::make_ConsecutiveOracle</a></div><div class="ttdeci">std::shared_ptr&lt; ConsecutiveOracle&lt; Index_ &gt; &gt; make_ConsecutiveOracle(Index_ start, Index_ length)</div><div class="ttdef"><b>Definition</b> ConsecutiveOracle.hpp:56</div></div>
+</div><!-- fragment --><p>Alternatively, we can use the <code>FixedVectorOracle</code> class with an array of row/column indices to be extracted:</p>
+<div class="fragment"><div class="line"><span class="comment">// Extracting columns in an arbitrary predefined order:</span></div>
+<div class="line">std::vector&lt;int&gt; predictions{ 9, 1, 2, 3, 13, 9, 1 };</div>
+<div class="line"><span class="keyword">auto</span> foracle = std::make_shared&lt;tatami::FixedVectorOracle&lt;int&gt; &gt;(std::move(predictions));</div>
+<div class="line"><span class="keyword">auto</span> swrk = <a class="code hl_function" href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a>(*mat, <span class="keyword">false</span>, std::move(foracle), {});</div>
+<div class="line"><span class="keywordflow">for</span> (std::size_t p = 0; p &lt; predictions.size(); ++p) {</div>
+<div class="line">    <span class="comment">// No need to specify the index to &#39;next()&#39;, as &#39;swrk&#39; already knows the</span></div>
+<div class="line">    <span class="comment">// sequence of indices as prediced by the oracle.</span></div>
+<div class="line">    <span class="keyword">auto</span> current = swrk.next();</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Advanced users can also define their own <code>Oracle</code> subclasses to generate predictions on the fly.</p>
+<h1>Using custom buffers</h1>
+<p>The <code>Wrapper</code> class is just a user-friendly wrapper around an virtual <code>Extractor</code> class. The former allocates the temporary buffers that might be used in each <code>fetch()</code> operation, while subclasses of the latter are responsible for the heavy lifting of pulling data out of each matrix representation. For users who want more control over memory management, the latter can be used directly, e.g., to extract matrix contents directly into a user-specified array:</p>
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> NR = mat-&gt;nrow();</div>
+<div class="line"><span class="keywordtype">int</span> NC = mat-&gt;ncol();</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Equivalent to &#39;make_DenseWrapper(*mat, true, {})&#39;</span></div>
+<div class="line"><span class="keyword">auto</span> ext = mat-&gt;dense(<span class="keyword">true</span>, {});</div>
+<div class="line">std::vector&lt;double&gt; buffer(NC);</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; NR; ++r) {</div>
+<div class="line">    <span class="keyword">auto</span> current = ext-&gt;fetch(r, buffer.data());</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Note that the contents of &#39;buffer&#39; is not guaranteed to be the same as &#39;current&#39;.</span></div>
+<div class="line">    <span class="comment">// If we want them to be the same, we need to do some extra work:</span></div>
+<div class="line">    <a class="code hl_function" href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a>(current, NC, buffer.data());</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Now we can do something with &#39;buffer&#39;, which now contains the r-th row.</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Equivalent to &#39;make_SparseWrapper(*mat, false, 8, 20, {})&#39;</span></div>
+<div class="line"><span class="keyword">auto</span> sext = mat-&gt;sparse(<span class="keyword">false</span>, 8, 20, {});</div>
+<div class="line">std::vector&lt;double&gt; vbuffer(20);</div>
+<div class="line">std::vector&lt;int&gt; ibuffer(20);</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> c = 0; c &lt; NC; ++r) {</div>
+<div class="line">    <span class="keyword">auto</span> current = sext-&gt;fetch(c, vbuffer.data(), ibuffer.data());</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Note that contents of &#39;vbuffer&#39; and &#39;ibuffer&#39; might not be the same as &#39;current&#39;.</span></div>
+<div class="line">    <span class="comment">// If we want them to be the same, we need to do some extra work:</span></div>
+<div class="line">    <a class="code hl_function" href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a>(current.value, current.number, vbuffer.data());</div>
+<div class="line">    <a class="code hl_function" href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a>(current.index, current.number, ibuffer.data());</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Now we can do something with &#39;vbuffer&#39; and &#39;ibuffer&#39;,</span></div>
+<div class="line">    <span class="comment">// which now contains the structural non-zeros in this block of the c-th column.</span></div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacetatami_html_aca84df9f6331751c29b0bcc0ca656af7"><div class="ttname"><a href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *const input, const Size_ n, Value_ *const output)</div><div class="ttdef"><b>Definition</b> copy.hpp:37</div></div>
+</div><!-- fragment --><p>When developing <b>tatami</b>-based applications, we suggest compiling the test suite with and without the <code>TATAMI_DEBUG_FORCE_COPY</code> macro. When set, this macro forces <b>tatami</b> to copy data into <code>buffer</code>, even if it could omit the copy by directly returning pointers to the internal data structures. This gives our tests an opportunity to check that a valid buffer is actually supplied to <code>fetch()</code>. Conversely, when the macro is unset and a representation like <code>DenseMatrix</code> is used in the test suite, we can check that our application correctly handles scenarios where <code>fetch()</code> does not populate the buffers.</p>
 <h1>Comments on other operations</h1>
 <p>As previously mentioned, <b>tatami</b> is primarily designed to pull out rows or columns of a matrix. Some support is provided for computing basic statistics via the <a href="https://github.com/tatami-inc/tatami_stats"><b>tatami_stats</b></a> library, in the same vein as the <a href="https://github.com/HenrikBengtsson/matrixStats"><b>matrixStats</b></a> R package. Matrix multiplication is similarly implemented via the <a href="https://github.com/tatami-inc/tatami_mult"><b>tatami_mult</b></a> library.</p>
-<p><b>tatami</b> does not currently support more sophisticated matrix operations like decompositions. If these are required, we suggest copying data from <b>tatami</b> into other frameworks like <a href="https://eigen.tuxfamily.org/"><b>Eigen</b></a>, effectively trading the diversity of representations for a more comprehensive suite of operations. For example, we often use <b>tatami</b> to represent the large input datasets in a custom memory-efficient format; process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis; and then copy the data into a <code>Eigen::MatrixXd</code> or <code>Eigen::SparseMatrix</code> for the desired operations. In practice, many standard decompositions do not scale well for large matrices, so our applications end up using approximate methods like <a href="https://github.com/LTLA/CppIrlba"><b>ILRBA</b></a> that only require a multiplication operator.</p>
+<p><b>tatami</b> does not currently support more sophisticated matrix operations like decompositions. If these are required, we suggest copying data from <b>tatami</b> into other frameworks like <a href="https://eigen.tuxfamily.org/"><b>Eigen</b></a>, effectively trading the diversity of representations for a more comprehensive suite of operations. For example, we often use <b>tatami</b> to represent the large input datasets in a custom memory-efficient format; process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis; and then copy the data into a <code>Eigen::MatrixXd</code> or <code>Eigen::SparseMatrix</code> for the desired operations. In practice, many standard decompositions do not scale well for large matrices, so our applications end up using approximate methods like <a href="https://github.com/libscran/irlba"><b>ILRBA</b></a> that only require a multiplication operator.</p>
 <p><b>tatami</b> does not directly support modification of the matrix contents. Instead, "modifications" are performed by adding delayed operations on top of an immutable matrix. This avoids difficult bugs where the hypothetical modification of matrix contents via one <code>shared_ptr</code> affects all references to the same matrix across the application. Delayed operations are also more appropriate for matrices referring to read-only data sources, e.g., remote stores or files. That said, if delayed operations are undesirable, we can use functions like <code><a class="el" href="namespacetatami.html#ac5f5ff476ecb172e59c3535cedb966cd">tatami::convert_to_dense()</a></code> to realize our modifications into a new matrix instance.</p>
 <h1>Building projects</h1>
 <h2>CMake with <code>FetchContent</code></h2>

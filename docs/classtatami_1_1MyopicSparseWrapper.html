@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::MyopicSparseWrapper&lt; Value_, Index_ &gt; Class Template Reference</title>
+<title>tatami: tatami::MyopicSparseWrapper&lt; Value_, Index_, Oracle_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,7 +93,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami_1_1MyopicSparseWrapper-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::MyopicSparseWrapper&lt; Value_, Index_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami::MyopicSparseWrapper&lt; Value_, Index_, Oracle_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -104,14 +104,14 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4d9aea921443abfb3f551424971d9488" id="r_a4d9aea921443abfb3f551424971d9488"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d9aea921443abfb3f551424971d9488">length</a> () const</td></tr>
-<tr class="separator:a4d9aea921443abfb3f551424971d9488"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83188f46e232da3e9c7bbfdefe62a86d" id="r_a83188f46e232da3e9c7bbfdefe62a86d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83188f46e232da3e9c7bbfdefe62a86d">fetch</a> (Index_ i)</td></tr>
-<tr class="separator:a83188f46e232da3e9c7bbfdefe62a86d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85913bac94c2c219d23fbddba5e9e1d0" id="r_a85913bac94c2c219d23fbddba5e9e1d0"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85913bac94c2c219d23fbddba5e9e1d0">length</a> () const</td></tr>
+<tr class="separator:a85913bac94c2c219d23fbddba5e9e1d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634756a6fb00ac6440f1f5940f2d1d0c" id="r_a634756a6fb00ac6440f1f5940f2d1d0c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a634756a6fb00ac6440f1f5940f2d1d0c">fetch</a> (Index_ i)</td></tr>
+<tr class="separator:a634756a6fb00ac6440f1f5940f2d1d0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_&gt;<br />
-class tatami::MyopicSparseWrapper&lt; Value_, Index_ &gt;</div><p>User-friendly wrapper around a <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, class Oracle_ = Oracle&lt;Index_&gt;&gt;<br />
+class tatami::MyopicSparseWrapper&lt; Value_, Index_, Oracle_ &gt;</div><p>User-friendly wrapper around a <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Numeric type of the matrix value. </td></tr>
@@ -121,19 +121,19 @@ class tatami::MyopicSparseWrapper&lt; Value_, Index_ &gt;</div><p>User-friendly 
 </dl>
 <p>Each instance of this class automatically allocates the buffer(s) to be used in <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">MyopicSparseExtractor::fetch()</a></code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4d9aea921443abfb3f551424971d9488" name="a4d9aea921443abfb3f551424971d9488"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d9aea921443abfb3f551424971d9488">&#9670;&#160;</a></span>length()</h2>
+<a id="a85913bac94c2c219d23fbddba5e9e1d0" name="a85913bac94c2c219d23fbddba5e9e1d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85913bac94c2c219d23fbddba5e9e1d0">&#9670;&#160;</a></span>length()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , class Oracle_  = Oracle&lt;Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="classtatami_1_1MyopicSparseWrapper.html">tatami::MyopicSparseWrapper</a>&lt; Value_, Index_ &gt;::length </td>
+          <td class="memname">Index_ <a class="el" href="classtatami_1_1MyopicSparseWrapper.html">tatami::MyopicSparseWrapper</a>&lt; Value_, Index_, Oracle_ &gt;::length </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -145,23 +145,23 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Length of the arrays in the <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> returned by <code><a class="el" href="#a83188f46e232da3e9c7bbfdefe62a86d">fetch()</a></code>. This is constant for a given instance of this class. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Length of the arrays in the <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> returned by <code><a class="el" href="#a634756a6fb00ac6440f1f5940f2d1d0c">fetch()</a></code>. This is constant for a given instance of this class. </dd></dl>
 
 </div>
 </div>
-<a id="a83188f46e232da3e9c7bbfdefe62a86d" name="a83188f46e232da3e9c7bbfdefe62a86d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83188f46e232da3e9c7bbfdefe62a86d">&#9670;&#160;</a></span>fetch()</h2>
+<a id="a634756a6fb00ac6440f1f5940f2d1d0c" name="a634756a6fb00ac6440f1f5940f2d1d0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a634756a6fb00ac6440f1f5940f2d1d0c">&#9670;&#160;</a></span>fetch()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , class Oracle_  = Oracle&lt;Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1MyopicSparseWrapper.html">tatami::MyopicSparseWrapper</a>&lt; Value_, Index_ &gt;::fetch </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; Value_, Index_ &gt; <a class="el" href="classtatami_1_1MyopicSparseWrapper.html">tatami::MyopicSparseWrapper</a>&lt; Value_, Index_, Oracle_ &gt;::fetch </td>
           <td>(</td>
           <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
           <td></td>
@@ -179,7 +179,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> containing the number, values and/or indices of the structural non-zeros of the <code>i</code>-th row/column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> containing the number, values and/or indices of the structural non-zeros of the <code>i</code>-th row/column. Pointers within this object are only guaranteed to be valid until the next call to this method. </dd></dl>
 
 </div>
 </div>

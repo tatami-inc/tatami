@@ -119,7 +119,7 @@ class tatami::OracularDenseWrapper&lt; Value_, Index_ &gt;</div><p>User-friendly
   </table>
   </dd>
 </dl>
-<p>Each instance of this class automatically allocates the buffer to be used in <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html#ae0376a4c48d7f4d55632ed42fd166fa1">OracularDenseExtractor::fetch()</a></code>. </p>
+<p>Each instance of this class automatically allocates the buffer to be used in <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html#a1cb8d80d4ae4f4e2e29fb68a903ff686">OracularDenseExtractor::fetch()</a></code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a33a9d912dac2585cabe153bd3d31aaed" name="a33a9d912dac2585cabe153bd3d31aaed"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a33a9d912dac2585cabe153bd3d31aaed">&#9670;&#160;</a></span>length()</h2>
@@ -173,7 +173,7 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array of length <code><a class="el" href="#a33a9d912dac2585cabe153bd3d31aaed">length()</a></code>, containing the values of the next predicted row/column. Rows/columns are returned in the order specified by the <code><a class="el" href="classtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array of length <code><a class="el" href="#a33a9d912dac2585cabe153bd3d31aaed">length()</a></code>, containing the values of the next predicted row/column. This is only guaranteed to be valid until the next call to this method. </dd></dl>
 
 </div>
 </div>

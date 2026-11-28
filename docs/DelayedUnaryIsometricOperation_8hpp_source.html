@@ -98,7 +98,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Matrix_8hpp.html">../../base/Matrix.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="copy_8hpp.html">../../utils/copy.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;../../utils/make_Extractor.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="make__Extractor_8hpp.html">../../utils/make_Extractor.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="Index__to__container_8hpp.html">../../utils/Index_to_container.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;../depends_utils.hpp&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="unary_2helper__interface_8hpp.html">helper_interface.hpp</a>&quot;</span></div>
@@ -705,11 +705,11 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>}</div>
 <div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> OutputValue_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> Helper_ = DelayedUnaryIsometricOperationHelper&lt;OutputValue_, InputValue_, Index_&gt; &gt;</div>
 <div class="foldopen" id="foldopen00674" data-start="{" data-end="};">
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html">  674</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1DelayedUnaryIsometricOperation.html">DelayedUnaryIsometricOperation</a> final : <span class="keyword">public</span> Matrix&lt;OutputValue_, Index_&gt; {</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html">  674</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1DelayedUnaryIsometricOperation.html">DelayedUnaryIsometricOperation</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span><span class="keyword">public</span>:</div>
 <div class="foldopen" id="foldopen00680" data-start="{" data-end="}">
 <div class="line"><a id="l00680" name="l00680"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8ad6c1bb48f5b926c8d81ba1ba67c688">  680</a></span>    <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8ad6c1bb48f5b926c8d81ba1ba67c688">DelayedUnaryIsometricOperation</a>(</div>
-<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>        std::shared_ptr&lt;<span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt; &gt; matrix,</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, Index_&gt;</a> &gt; matrix,</div>
 <div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>        std::shared_ptr&lt;const Helper_&gt; helper</div>
 <div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>    ) : </div>
 <div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>        my_matrix(std::move(matrix)),</div>
@@ -731,43 +731,57 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    std::shared_ptr&lt;const Helper_&gt; my_helper;</div>
 <div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span> </div>
 <div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    Index_ nrow()<span class="keyword"> const </span>{</div>
+<div class="foldopen" id="foldopen00702" data-start="{" data-end="}">
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#af2d9ab7126cf46752976525c656f01fd">  702</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#af2d9ab7126cf46752976525c656f01fd">nrow</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <span class="keywordflow">return</span> my_matrix-&gt;nrow();</div>
 <div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    }</div>
+</div>
 <div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>    </div>
-<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    Index_ ncol()<span class="keyword"> const </span>{</div>
+<div class="foldopen" id="foldopen00706" data-start="{" data-end="}">
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a4d24d218fc51e88f366339e9af150a5a">  706</a></span>    Index_ <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a4d24d218fc51e88f366339e9af150a5a">ncol</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>        <span class="keywordflow">return</span> my_matrix-&gt;ncol();</div>
 <div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    }</div>
+</div>
 <div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span> </div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>    <span class="keywordtype">bool</span> is_sparse()<span class="keyword"> const </span>{</div>
+<div class="foldopen" id="foldopen00710" data-start="{" data-end="}">
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8d45e81797aeb963601baf3f32a02240">  710</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8d45e81797aeb963601baf3f32a02240">is_sparse</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        <span class="keywordflow">if</span> (my_helper-&gt;is_sparse()) {</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>            <span class="keywordflow">return</span> my_matrix-&gt;is_sparse();</div>
 <div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>        }</div>
 <div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>    }</div>
+</div>
 <div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span> </div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>    <span class="keywordtype">double</span> is_sparse_proportion()<span class="keyword"> const </span>{</div>
+<div class="foldopen" id="foldopen00717" data-start="{" data-end="}">
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a231921372cd48daeeb8497d815f5388e">  717</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a231921372cd48daeeb8497d815f5388e">is_sparse_proportion</a>()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>        <span class="keywordflow">if</span> (my_helper-&gt;is_sparse()) {</div>
 <div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>            <span class="keywordflow">return</span> my_matrix-&gt;is_sparse_proportion();</div>
 <div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>        }</div>
 <div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>    }</div>
+</div>
 <div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="keywordtype">bool</span> prefer_rows()<span class="keyword"> const </span>{ </div>
+<div class="foldopen" id="foldopen00724" data-start="{" data-end="}">
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a0c50d1aa36b78024625c7b4ad1e40251">  724</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a0c50d1aa36b78024625c7b4ad1e40251">prefer_rows</a>()<span class="keyword"> const </span>{ </div>
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>        <span class="keywordflow">return</span> my_matrix-&gt;prefer_rows();</div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    }</div>
+</div>
 <div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span> </div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    <span class="keywordtype">double</span> prefer_rows_proportion()<span class="keyword"> const </span>{ </div>
+<div class="foldopen" id="foldopen00728" data-start="{" data-end="}">
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d92bc07c3ee9f09e45567d7b6fe39f3">  728</a></span>    <span class="keywordtype">double</span> <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d92bc07c3ee9f09e45567d7b6fe39f3">prefer_rows_proportion</a>()<span class="keyword"> const </span>{ </div>
 <div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>        <span class="keywordflow">return</span> my_matrix-&gt;prefer_rows_proportion();</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    }</div>
+</div>
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span> </div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    <span class="keywordtype">bool</span> uses_oracle(<span class="keyword">const</span> <span class="keywordtype">bool</span> row)<span class="keyword"> const </span>{</div>
+<div class="foldopen" id="foldopen00732" data-start="{" data-end="}">
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a32b9bddadf8d65dc1c79477c6be20873">  732</a></span>    <span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a32b9bddadf8d65dc1c79477c6be20873">uses_oracle</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> row)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>        <span class="keywordflow">return</span> my_matrix-&gt;uses_oracle(row);</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>    }</div>
+</div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span> </div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    <span class="keyword">using </span>Matrix&lt;OutputValue_, Index_&gt;::dense;</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;OutputValue_, Index_&gt;<a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a92d607748dcd0cf6dcb9abe57f40ca53">::dense</a>;</div>
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span> </div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    <span class="keyword">using </span>Matrix&lt;OutputValue_, Index_&gt;::sparse;</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>    <span class="keyword">using </span><a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;OutputValue_, Index_&gt;<a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#ae3e8d818aad7e6e656e1b5e04b402b94">::sparse</a>;</div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
 <div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="comment">    /********************</span></div>
 <div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span><span class="comment">     *** Myopic dense ***</span></div>
@@ -777,7 +791,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_basic_internal(</div>
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>        <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle,</div>
-<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseBasicFull&lt;oracle_, OutputValue_, InputValue_, Index_, Helper_&gt; &gt;(</div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>            *my_matrix,</div>
@@ -811,7 +825,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_basic_internal(</div>
 <div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle,</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseBasicIndex&lt;oracle_, OutputValue_, InputValue_, Index_, Helper_&gt; &gt;(</div>
@@ -862,7 +876,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_expanded_internal(</div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle,</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
 <div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseExpandedIndex&lt;oracle_, OutputValue_, InputValue_, Index_, Helper_&gt; &gt;(</div>
@@ -889,29 +903,35 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    }</div>
 <div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span> </div>
 <div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen00860" data-start="{" data-end="}">
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a92d607748dcd0cf6dcb9abe57f40ca53">  860</a></span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a92d607748dcd0cf6dcb9abe57f40ca53">dense</a>(</div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>        <span class="keywordflow">return</span> dense_internal&lt;false&gt;(row, <span class="keyword">false</span>, opt);</div>
 <div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>    }</div>
+</div>
 <div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span> </div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen00867" data-start="{" data-end="}">
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeefaafa28739efba01dcaf30ad4193a8">  867</a></span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeefaafa28739efba01dcaf30ad4193a8">dense</a>(</div>
 <div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>        <span class="keyword">const</span> Index_ block_start,</div>
 <div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>        <span class="keywordflow">return</span> dense_internal&lt;false&gt;(row, <span class="keyword">false</span>, block_start, block_length, opt);</div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>    }</div>
+</div>
 <div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>    </div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen00876" data-start="{" data-end="}">
+<div class="line"><a id="l00876" name="l00876"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a69b3ffb8caf5f4d05ca8b348c94cc2fe">  876</a></span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a69b3ffb8caf5f4d05ca8b348c94cc2fe">dense</a>(</div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>        <span class="keywordflow">return</span> dense_internal&lt;false&gt;(row, <span class="keyword">false</span>, std::move(indices_ptr), opt);</div>
 <div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>    }</div>
+</div>
 <div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span> </div>
 <div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span><span class="comment">    /*********************</span></div>
 <div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span><span class="comment">     *** Myopic sparse ***</span></div>
@@ -921,7 +941,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; sparse_to_dense_internal(</div>
 <div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>        <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle,</div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>        <span class="keywordflow">return</span> std::make_unique&lt;FullSparsifiedWrapper&lt;oracle_, OutputValue_, Index_&gt; &gt;(</div>
 <div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>            dense_internal&lt;oracle_&gt;(row, std::move(oracle), opt),</div>
@@ -950,7 +970,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00918" name="l00918"></a><span class="lineno">  918</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; sparse_to_dense_internal(</div>
 <div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span>        <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle,</div>
-<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
+<div class="line"><a id="l00921" name="l00921"></a><span class="lineno">  921</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
 <div class="line"><a id="l00922" name="l00922"></a><span class="lineno">  922</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00923" name="l00923"></a><span class="lineno">  923</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span>        <span class="keywordflow">return</span> std::make_unique&lt;IndexSparsifiedWrapper&lt;oracle_, OutputValue_, Index_&gt; &gt;(</div>
@@ -990,91 +1010,109 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span>    }</div>
 <div class="line"><a id="l00959" name="l00959"></a><span class="lineno">  959</span> </div>
 <div class="line"><a id="l00960" name="l00960"></a><span class="lineno">  960</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00961" name="l00961"></a><span class="lineno">  961</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen00961" data-start="{" data-end="}">
+<div class="line"><a id="l00961" name="l00961"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#ae3e8d818aad7e6e656e1b5e04b402b94">  961</a></span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#ae3e8d818aad7e6e656e1b5e04b402b94">sparse</a>(</div>
 <div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00964" name="l00964"></a><span class="lineno">  964</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00965" name="l00965"></a><span class="lineno">  965</span>        <span class="keywordflow">return</span> sparse_internal&lt;false&gt;(row, <span class="keyword">false</span>, opt);</div>
 <div class="line"><a id="l00966" name="l00966"></a><span class="lineno">  966</span>    }</div>
+</div>
 <div class="line"><a id="l00967" name="l00967"></a><span class="lineno">  967</span> </div>
-<div class="line"><a id="l00968" name="l00968"></a><span class="lineno">  968</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen00968" data-start="{" data-end="}">
+<div class="line"><a id="l00968" name="l00968"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a3446248df0cd6be60fbd22425b41adce">  968</a></span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a3446248df0cd6be60fbd22425b41adce">sparse</a>(</div>
 <div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span>        <span class="keyword">const</span> Index_ block_start,</div>
 <div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00973" name="l00973"></a><span class="lineno">  973</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span>        <span class="keywordflow">return</span> sparse_internal&lt;false&gt;(row, <span class="keyword">false</span>, block_start, block_length, opt);</div>
 <div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span>    }</div>
+</div>
 <div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span>    </div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen00977" data-start="{" data-end="}">
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a035758287b15a36991b06d4ae08b1a21">  977</a></span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a035758287b15a36991b06d4ae08b1a21">sparse</a>(</div>
 <div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>        <span class="keywordflow">return</span> sparse_internal&lt;false&gt;(row, <span class="keyword">false</span>, std::move(indices_ptr), opt);</div>
 <div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>    }</div>
+</div>
 <div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span> </div>
 <div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span><span class="comment">    /**********************</span></div>
 <div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span><span class="comment">     *** Oracular dense ***</span></div>
 <div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span><span class="comment">     **********************/</span></div>
 <div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen00989" data-start="{" data-end="}">
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a2f9380bab038b422d68fde0633954e1d">  989</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a2f9380bab038b422d68fde0633954e1d">dense</a>(</div>
 <div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>        <span class="keywordflow">return</span> dense_internal&lt;true&gt;(row, std::move(oracle), opt);</div>
 <div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>    }</div>
+</div>
 <div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span> </div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen00997" data-start="{" data-end="}">
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#ad3a73ccdc14cfffec841b6b298fca9b1">  997</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#ad3a73ccdc14cfffec841b6b298fca9b1">dense</a>(</div>
 <div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
 <div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>        <span class="keyword">const</span> Index_ block_start,</div>
 <div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>        <span class="keywordflow">return</span> dense_internal&lt;true&gt;(row, std::move(oracle), block_start, block_length, opt);</div>
 <div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>    }</div>
+</div>
 <div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span> </div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; dense(</div>
+<div class="foldopen" id="foldopen01007" data-start="{" data-end="}">
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aad12817b9ad1bec205baf50263b633e6"> 1007</a></span>    std::unique_ptr&lt;OracularDenseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aad12817b9ad1bec205baf50263b633e6">dense</a>(</div>
 <div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>        <span class="keywordflow">return</span> dense_internal&lt;true&gt;(row, std::move(oracle), std::move(indices_ptr), opt);</div>
 <div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>    }</div>
+</div>
 <div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span> </div>
 <div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span><span class="comment">    /***********************</span></div>
 <div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span><span class="comment">     *** Oracular sparse ***</span></div>
 <div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span><span class="comment">     ***********************/</span></div>
 <div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen01020" data-start="{" data-end="}">
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d33ffe98441e4d04d70f52e49f115fc"> 1020</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d33ffe98441e4d04d70f52e49f115fc">sparse</a>(</div>
 <div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
-<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>        <span class="keywordflow">return</span> sparse_internal&lt;true&gt;(row, std::move(oracle), opt);</div>
 <div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>    }</div>
+</div>
 <div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span> </div>
-<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen01028" data-start="{" data-end="}">
+<div class="line"><a id="l01028" name="l01028"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeb8e6a2b8e69ea8ca9fd1c05730dcccd"> 1028</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeb8e6a2b8e69ea8ca9fd1c05730dcccd">sparse</a>(</div>
 <div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
 <div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span>        <span class="keyword">const</span> Index_ block_start,</div>
 <div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span>        <span class="keyword">const</span> Index_ block_length,</div>
-<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l01034" name="l01034"></a><span class="lineno"> 1034</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l01035" name="l01035"></a><span class="lineno"> 1035</span>        <span class="keywordflow">return</span> sparse_internal&lt;true&gt;(row, std::move(oracle), block_start, block_length, opt);</div>
 <div class="line"><a id="l01036" name="l01036"></a><span class="lineno"> 1036</span>    }</div>
+</div>
 <div class="line"><a id="l01037" name="l01037"></a><span class="lineno"> 1037</span> </div>
-<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"> 1038</span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; sparse(</div>
+<div class="foldopen" id="foldopen01038" data-start="{" data-end="}">
+<div class="line"><a id="l01038" name="l01038"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6b963da0f01ef7515e7d2a8836ad464a"> 1038</a></span>    std::unique_ptr&lt;OracularSparseExtractor&lt;OutputValue_, Index_&gt; &gt; <a class="code hl_function" href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6b963da0f01ef7515e7d2a8836ad464a">sparse</a>(</div>
 <div class="line"><a id="l01039" name="l01039"></a><span class="lineno"> 1039</span>        <span class="keyword">const</span> <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>        std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;Index_&gt; &gt; oracle,</div>
-<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
-<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>        <span class="keyword">const</span> Options&amp; opt</div>
+<div class="line"><a id="l01040" name="l01040"></a><span class="lineno"> 1040</span>        std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Oracle.html">Oracle&lt;Index_&gt;</a> &gt; oracle,</div>
+<div class="line"><a id="l01041" name="l01041"></a><span class="lineno"> 1041</span>        <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr,</div>
+<div class="line"><a id="l01042" name="l01042"></a><span class="lineno"> 1042</span>        <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt</div>
 <div class="line"><a id="l01043" name="l01043"></a><span class="lineno"> 1043</span>    )<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l01044" name="l01044"></a><span class="lineno"> 1044</span>        <span class="keywordflow">return</span> sparse_internal&lt;true&gt;(row, std::move(oracle), std::move(indices_ptr), opt);</div>
 <div class="line"><a id="l01045" name="l01045"></a><span class="lineno"> 1045</span>    }</div>
+</div>
 <div class="line"><a id="l01046" name="l01046"></a><span class="lineno"> 1046</span>};</div>
 </div>
 <div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span> </div>
@@ -1102,15 +1140,39 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aIndex__to__container_8hpp_html"><div class="ttname"><a href="Index__to__container_8hpp.html">Index_to_container.hpp</a></div><div class="ttdoc">Convert index type to container size.</div></div>
 <div class="ttc" id="aMatrix_8hpp_html"><div class="ttname"><a href="Matrix_8hpp.html">Matrix.hpp</a></div><div class="ttdoc">Virtual class for a matrix of some numeric type.</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html">tatami::DelayedUnaryIsometricOperation</a></div><div class="ttdoc">Delayed isometric operation on a single matrix.</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:674</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a035758287b15a36991b06d4ae08b1a21"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a035758287b15a36991b06d4ae08b1a21">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:977</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a0c50d1aa36b78024625c7b4ad1e40251"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a0c50d1aa36b78024625c7b4ad1e40251">tatami::DelayedUnaryIsometricOperation::prefer_rows</a></div><div class="ttdeci">bool prefer_rows() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:724</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a231921372cd48daeeb8497d815f5388e"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a231921372cd48daeeb8497d815f5388e">tatami::DelayedUnaryIsometricOperation::is_sparse_proportion</a></div><div class="ttdeci">double is_sparse_proportion() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:717</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a2f9380bab038b422d68fde0633954e1d"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a2f9380bab038b422d68fde0633954e1d">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:989</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a32b9bddadf8d65dc1c79477c6be20873"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a32b9bddadf8d65dc1c79477c6be20873">tatami::DelayedUnaryIsometricOperation::uses_oracle</a></div><div class="ttdeci">bool uses_oracle(const bool row) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:732</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a3446248df0cd6be60fbd22425b41adce"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a3446248df0cd6be60fbd22425b41adce">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:968</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a4d24d218fc51e88f366339e9af150a5a"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a4d24d218fc51e88f366339e9af150a5a">tatami::DelayedUnaryIsometricOperation::ncol</a></div><div class="ttdeci">Index_ ncol() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:706</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a69b3ffb8caf5f4d05ca8b348c94cc2fe"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a69b3ffb8caf5f4d05ca8b348c94cc2fe">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:876</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a6b963da0f01ef7515e7d2a8836ad464a"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6b963da0f01ef7515e7d2a8836ad464a">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:1038</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a6d33ffe98441e4d04d70f52e49f115fc"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d33ffe98441e4d04d70f52e49f115fc">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:1020</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a6d92bc07c3ee9f09e45567d7b6fe39f3"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a6d92bc07c3ee9f09e45567d7b6fe39f3">tatami::DelayedUnaryIsometricOperation::prefer_rows_proportion</a></div><div class="ttdeci">double prefer_rows_proportion() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:728</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a8ad6c1bb48f5b926c8d81ba1ba67c688"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8ad6c1bb48f5b926c8d81ba1ba67c688">tatami::DelayedUnaryIsometricOperation::DelayedUnaryIsometricOperation</a></div><div class="ttdeci">DelayedUnaryIsometricOperation(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; matrix, std::shared_ptr&lt; const Helper_ &gt; helper)</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:680</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a8d45e81797aeb963601baf3f32a02240"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a8d45e81797aeb963601baf3f32a02240">tatami::DelayedUnaryIsometricOperation::is_sparse</a></div><div class="ttdeci">bool is_sparse() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:710</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_a92d607748dcd0cf6dcb9abe57f40ca53"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#a92d607748dcd0cf6dcb9abe57f40ca53">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:860</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_aad12817b9ad1bec205baf50263b633e6"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#aad12817b9ad1bec205baf50263b633e6">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:1007</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_ad3a73ccdc14cfffec841b6b298fca9b1"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#ad3a73ccdc14cfffec841b6b298fca9b1">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:997</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_ae3e8d818aad7e6e656e1b5e04b402b94"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#ae3e8d818aad7e6e656e1b5e04b402b94">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:961</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_aeb8e6a2b8e69ea8ca9fd1c05730dcccd"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeb8e6a2b8e69ea8ca9fd1c05730dcccd">tatami::DelayedUnaryIsometricOperation::sparse</a></div><div class="ttdeci">std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt; sparse(const bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:1028</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_aeefaafa28739efba01dcaf30ad4193a8"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#aeefaafa28739efba01dcaf30ad4193a8">tatami::DelayedUnaryIsometricOperation::dense</a></div><div class="ttdeci">std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt; dense(const bool row, const Index_ block_start, const Index_ block_length, const Options &amp;opt) const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:867</div></div>
+<div class="ttc" id="aclasstatami_1_1DelayedUnaryIsometricOperation_html_af2d9ab7126cf46752976525c656f01fd"><div class="ttname"><a href="classtatami_1_1DelayedUnaryIsometricOperation.html#af2d9ab7126cf46752976525c656f01fd">tatami::DelayedUnaryIsometricOperation::nrow</a></div><div class="ttdeci">Index_ nrow() const</div><div class="ttdef"><b>Definition</b> DelayedUnaryIsometricOperation.hpp:702</div></div>
+<div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix.</div><div class="ttdef"><b>Definition</b> Matrix.hpp:59</div></div>
+<div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:29</div></div>
 <div class="ttc" id="acopy_8hpp_html"><div class="ttname"><a href="copy_8hpp.html">copy.hpp</a></div><div class="ttdoc">Copy data from one buffer to another.</div></div>
+<div class="ttc" id="amake__Extractor_8hpp_html"><div class="ttname"><a href="make__Extractor_8hpp.html">make_Extractor.hpp</a></div><div class="ttdoc">Templated construction of a new extractor.</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
+<div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
 <div class="ttc" id="anamespacetatami_html_a32d5ae83f932e5ef00b12e7caf9a7cdc"><div class="ttname"><a href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">auto cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:51</div></div>
 <div class="ttc" id="anamespacetatami_html_a61b43d2b751c7fcca6815f3be929d4d3"><div class="ttname"><a href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, const Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:85</div></div>
 <div class="ttc" id="anamespacetatami_html_a812af1bfb04773bf28da8549c3e6e5ee"><div class="ttname"><a href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">tatami::MaybeOracle</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt;, bool &gt;::type MaybeOracle</div><div class="ttdef"><b>Definition</b> make_Extractor.hpp:23</div></div>
-<div class="ttc" id="anamespacetatami_html_a92f2deb44e0a3cb1c569a379c6facbf0"><div class="ttname"><a href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:270</div></div>
+<div class="ttc" id="anamespacetatami_html_a92f2deb44e0a3cb1c569a379c6facbf0"><div class="ttname"><a href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:284</div></div>
 <div class="ttc" id="anamespacetatami_html_aafaa3018899e59eeb0172091a53cee87"><div class="ttname"><a href="namespacetatami.html#aafaa3018899e59eeb0172091a53cee87">tatami::make_Extractor</a></div><div class="ttdeci">std::unique_ptr&lt; Extractor&lt; sparse_, oracle_, Value_, Index_ &gt; &gt; make_Extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, const bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, const tatami::Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Extractor.hpp:69</div></div>
 <div class="ttc" id="anamespacetatami_html_aca84df9f6331751c29b0bcc0ca656af7"><div class="ttname"><a href="namespacetatami.html#aca84df9f6331751c29b0bcc0ca656af7">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *const input, const Size_ n, Value_ *const output)</div><div class="ttdef"><b>Definition</b> copy.hpp:37</div></div>
+<div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
 <div class="ttc" id="aunary_2helper__interface_8hpp_html"><div class="ttname"><a href="unary_2helper__interface_8hpp.html">helper_interface.hpp</a></div><div class="ttdoc">Interface for tatami::DelayedUnaryIsometricOperation helpers.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
