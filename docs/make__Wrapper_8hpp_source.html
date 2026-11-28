@@ -253,10 +253,10 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        my_length(<a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a4d9aea921443abfb3f551424971d9488">length</a>)</div>
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    {</div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        <span class="keywordflow">if</span> (needs_value) {</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            my_vbuffer.emplace(<a class="code hl_function" href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a>&lt;<span class="keyword">decltype</span>(*my_vbuffer)&gt;(<a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a4d9aea921443abfb3f551424971d9488">length</a>));</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            <a class="code hl_function" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a>(my_vbuffer, <a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a4d9aea921443abfb3f551424971d9488">length</a>);</div>
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        }</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordflow">if</span> (needs_index) {</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            my_ibuffer.emplace(<a class="code hl_function" href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a>&lt;<span class="keyword">decltype</span>(*my_ibuffer)&gt;(<a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a4d9aea921443abfb3f551424971d9488">length</a>));</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            <a class="code hl_function" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a>(my_ibuffer, <a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a4d9aea921443abfb3f551424971d9488">length</a>);</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        }</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    }</div>
 <div class="foldopen" id="foldopen00287" data-start="{" data-end="}">
@@ -267,15 +267,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
 <div class="foldopen" id="foldopen00295" data-start="{" data-end="}">
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno"><a class="line" href="classtatami_1_1MyopicSparseWrapper.html#a83188f46e232da3e9c7bbfdefe62a86d">  295</a></span>    <a class="code hl_struct" href="structtatami_1_1SparseRange.html">SparseRange&lt;Value_, Index_&gt;</a> <a class="code hl_function" href="classtatami_1_1MyopicSparseWrapper.html#a83188f46e232da3e9c7bbfdefe62a86d">fetch</a>(Index_ i) {</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="keywordflow">return</span> my_ext-&gt;fetch(i, my_vbuffer-&gt;data(), my_ibuffer-&gt;data());</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="keywordflow">return</span> my_ext-&gt;fetch(i, my_vbuffer.data(), my_ibuffer.data());</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    }</div>
 </div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    Index_ my_length;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    std::optional&lt;std::vector&lt;Value_&gt; &gt; my_vbuffer;</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    std::optional&lt;std::vector&lt;Index_&gt; &gt; my_ibuffer;</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    std::vector&lt;Value_&gt; my_vbuffer;</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    std::vector&lt;Index_&gt; my_ibuffer;</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>};</div>
 </div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
@@ -344,10 +344,10 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        my_length(<a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a9b9450db2730ab9bd18183705b4a3c9c">length</a>)</div>
 <div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>    {</div>
 <div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        <span class="keywordflow">if</span> (needs_value) {</div>
-<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>            my_vbuffer.emplace(<a class="code hl_function" href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a>&lt;<span class="keyword">decltype</span>(*my_vbuffer)&gt;(<a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a9b9450db2730ab9bd18183705b4a3c9c">length</a>));</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>            <a class="code hl_function" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a>(my_vbuffer, <a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a9b9450db2730ab9bd18183705b4a3c9c">length</a>);</div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>        }</div>
 <div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        <span class="keywordflow">if</span> (needs_index) {</div>
-<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>            my_ibuffer.emplace(<a class="code hl_function" href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a>&lt;<span class="keyword">decltype</span>(*my_ibuffer)&gt;(<a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a9b9450db2730ab9bd18183705b4a3c9c">length</a>));</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>            <a class="code hl_function" href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a>(my_ibuffer, <a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a9b9450db2730ab9bd18183705b4a3c9c">length</a>);</div>
 <div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>        }</div>
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>    }</div>
 <div class="foldopen" id="foldopen00425" data-start="{" data-end="}">
@@ -358,15 +358,15 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span> </div>
 <div class="foldopen" id="foldopen00432" data-start="{" data-end="}">
 <div class="line"><a id="l00432" name="l00432"></a><span class="lineno"><a class="line" href="classtatami_1_1OracularSparseWrapper.html#a6e9df7479073ed4940d15cc270f78fb4">  432</a></span>    <a class="code hl_struct" href="structtatami_1_1SparseRange.html">SparseRange&lt;Value_, Index_&gt;</a> <a class="code hl_function" href="classtatami_1_1OracularSparseWrapper.html#a6e9df7479073ed4940d15cc270f78fb4">next</a>() {</div>
-<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>        <span class="keywordflow">return</span> my_ext-&gt;fetch(my_vbuffer-&gt;data(), my_ibuffer-&gt;data());</div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>        <span class="keywordflow">return</span> my_ext-&gt;fetch(my_vbuffer.data(), my_ibuffer.data());</div>
 <div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>    }</div>
 </div>
 <div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span> </div>
 <div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>    std::unique_ptr&lt;OracularSparseExtractor&lt;Value_, Index_&gt; &gt; my_ext;</div>
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>    Index_ my_length;</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    std::optional&lt;std::vector&lt;Value_&gt; &gt; my_vbuffer;</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    std::optional&lt;std::vector&lt;Index_&gt; &gt; my_ibuffer;</div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    std::vector&lt;Value_&gt; my_vbuffer;</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    std::vector&lt;Index_&gt; my_ibuffer;</div>
 <div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>};</div>
 </div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span> </div>
@@ -450,6 +450,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a32d5ae83f932e5ef00b12e7caf9a7cdc"><div class="ttname"><a href="namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc">tatami::cast_Index_to_container_size</a></div><div class="ttdeci">auto cast_Index_to_container_size(const Index_ x)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:51</div></div>
 <div class="ttc" id="anamespacetatami_html_a42cdafaef15942370581e654e793d697"><div class="ttname"><a href="namespacetatami.html#a42cdafaef15942370581e654e793d697">tatami::make_SparseWrapper</a></div><div class="ttdeci">MyopicSparseWrapper&lt; Value_, Index_ &gt; make_SparseWrapper(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Wrapper.hpp:318</div></div>
+<div class="ttc" id="anamespacetatami_html_a61b43d2b751c7fcca6815f3be929d4d3"><div class="ttname"><a href="namespacetatami.html#a61b43d2b751c7fcca6815f3be929d4d3">tatami::resize_container_to_Index_size</a></div><div class="ttdeci">void resize_container_to_Index_size(Container_ &amp;container, const Index_ x, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> Index_to_container.hpp:85</div></div>
 <div class="ttc" id="anamespacetatami_html_ab9e7fdfd4739ec2d8deb39642e70575c"><div class="ttname"><a href="namespacetatami.html#ab9e7fdfd4739ec2d8deb39642e70575c">tatami::make_DenseWrapper</a></div><div class="ttdeci">MyopicDenseWrapper&lt; Value_, Index_ &gt; make_DenseWrapper(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, const Options &amp;opt)</div><div class="ttdef"><b>Definition</b> make_Wrapper.hpp:75</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html_a192a47606233c7f5c76bb1e7a62867a5"><div class="ttname"><a href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">tatami::Options::sparse_extract_index</a></div><div class="ttdeci">bool sparse_extract_index</div><div class="ttdef"><b>Definition</b> Options.hpp:40</div></div>
