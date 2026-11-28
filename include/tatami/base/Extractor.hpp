@@ -87,27 +87,34 @@ public:
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `buffer`.
      */
-    const Value_* fetch(Value_* buffer) {
+    const Value_* next(Value_* buffer) {
         // Use -1 to hopefully trigger a segfault somewhere if an implementation accidentally uses `i`.
         return fetch(static_cast<Index_>(-1), buffer);
     }
 
     /**
-     * This overload is intended for developers only.
-     * It introduces the `i` argument so that the signature is the same as that of `MyopicDenseExtractor::fetch()`.
-     * This makes it easier to define `MyopicDenseExtractor` and `OracularDenseExtractor` subclasses from a single template,
-     * avoiding code duplication that would otherwise occur when defining methods with and without `i`.
-     * Of course, implementations are expected to ignore `i` in oracle-aware extraction.
-     *
-     * Other than the extra `i` argument, all other behaviors of the two overloads are the same.
-     * To avoid confusion, most users should just use the `fetch()` overload that does not accept `i`,
-     * given that the value of `i` is never actually used.
+     * @cond
+     */
+    // For back-compatibility.
+    const Value_* fetch(Value_* buffer) {
+        return next(buffer);
+    }
+    /**
+     * @endcond
+     */
+
+    /**
+     * This method is intended for subclass developers only.
+     * It has the same signature as `MyopicDenseExtractor::fetch()`, 
+     * which makes it easier to define `MyopicDenseExtractor` and `OracularDenseExtractor` subclasses from a single template class.
+     * Implementations of this method are expected to ignore `i`. 
+     * Most users should just use `next()` instead.
      *
      * @param i Ignored, only provided for consistency with `MyopicDenseExtractor::fetch()`,
      * @param[out] buffer Pointer to an array of length no less than `N`,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * @return Pointer to an array containing the contents of the next dimension element, see the other `fetch()` overload for more details.
+     * @return Pointer to an array containing the contents of the next dimension element, see `next()` for more details.
      */
     virtual const Value_* fetch(Index_ i, Value_* buffer) = 0;
 
@@ -218,21 +225,28 @@ public:
      * Similarly, the contents should not change for the lifetime of the `Matrix`.
      * In this situation, no guarantees are provided for the contents of `index_buffer`.
      */
-    SparseRange<Value_, Index_> fetch(Value_* value_buffer, Index_* index_buffer) {
+    SparseRange<Value_, Index_> next(Value_* value_buffer, Index_* index_buffer) {
         // Use -1 to hopefully trigger a segfault somewhere if an implementation accidentally uses `i`.
         return fetch(static_cast<Index_>(-1), value_buffer, index_buffer);
     }
 
     /**
-     * This overload is intended for developers only.
-     * It introduces the `i` argument so that the signature is the same as that of `MyopicSparseExtractor::fetch()`.
-     * This makes it easier to define `MyopicSparseExtractor` and `OracularSparseExtractor` subclasses from a single template,
-     * avoiding code duplication that would otherwise occur when defining methods with and without `i`.
-     * Of course, implementations are expected to ignore `i` in oracle-aware extraction.
-     *
-     * Other than the extra `i` argument, all other behaviors of the two overloads are the same.
-     * To avoid confusion, most users should just use the `fetch()` overload that does not accept `i`,
-     * given that the value of `i` is never actually used.
+     * @cond
+     */
+    // For back-compatibility.
+    SparseRange<Value_, Index_> fetch(Value_* value_buffer, Index_* index_buffer) {
+        return next(value_buffer, index_buffer);
+    }
+    /**
+     * @endcond
+     */
+
+    /**
+     * This method is intended for subclass developers only.
+     * It has the same signature as `MyopicSparseExtractor::fetch()`, 
+     * which makes it easier to define `MyopicSparseExtractor` and `OracularSparseExtractor` subclasses from a single template class.
+     * Implementations of this method are expected to ignore `i`. 
+     * Most users should just use `next()` instead.
      *
      * @param i Ignored, only provided for consistency with `MyopicSparseExtractor::fetch()`.
      * @param[out] value_buffer Pointer to an array with enough space for at least `N` values,
@@ -240,7 +254,7 @@ public:
      * @param[out] index_buffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * @return A `SparseRange` object describing the contents of the next dimension element, see the other `fetch()` overload for details.
+     * @return A `SparseRange` object describing the contents of the next dimension element, see `next()` for details.
      */
     virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) = 0;
 
