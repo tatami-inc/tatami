@@ -116,6 +116,7 @@ add_executable(
     src/utils/deprecated/SomeNumericArray.cpp
     src/utils/miscellaneous.cpp
     src/utils/Index_to_container.cpp
+    src/utils/make_Wrapper.cpp
 )
 decorate_executable(utils_test)
 

@@ -39,6 +39,7 @@
 #include "utils/parallelize.hpp"
 #include "utils/FixedOracle.hpp"
 #include "utils/make_Extractor.hpp"
+#include "utils/make_Wrapper.hpp"
 
 #include "utils/deprecated/ArrayView.hpp"
 #include "utils/deprecated/wrap_shared_ptr.hpp"
