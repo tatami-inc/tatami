@@ -178,6 +178,8 @@ private:
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -187,11 +189,11 @@ private:
  *
  * @return Wrapper to extract the full extent of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularDenseWrapper<Value_, Index_> make_DenseWrapper( 
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     const Options& opt
 ) {
     return OracularDenseWrapper<Value_, Index_>(matrix.dense(row, std::move(oracle), opt), (row ? matrix.ncol() : matrix.nrow()));
@@ -200,6 +202,8 @@ OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -211,11 +215,11 @@ OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
  *
  * @return Wrapper to extract a contiguous block of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     Index_ block_start,
     Index_ block_length,
     const Options& opt
@@ -226,6 +230,8 @@ OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -236,11 +242,11 @@ OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
  *
  * @return Wrapper to extract an indexed subset of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     VectorPtr<Index_> indices_ptr,
     const Options& opt
 ) {
@@ -260,7 +266,7 @@ OracularDenseWrapper<Value_, Index_> make_DenseWrapper(
  *
  * Each instance of this class automatically allocates the buffer(s) to be used in `MyopicSparseExtractor::fetch()`.
  */ 
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 class MyopicSparseWrapper {
 public:
     /**
@@ -446,6 +452,8 @@ private:
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -455,11 +463,11 @@ private:
  *
  * @return Wrapper to extract the full extent of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularSparseWrapper<Value_, Index_> make_SparseWrapper( 
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     const Options& opt
 ) {
     return OracularSparseWrapper<Value_, Index_>(
@@ -473,6 +481,8 @@ OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -484,11 +494,11 @@ OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
  *
  * @return Wrapper to extract a contiguous block of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     Index_ block_start,
     Index_ block_length,
     const Options& opt
@@ -504,6 +514,8 @@ OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
 /**
  * @tparam Value_ Numeric type of the matrix value.
  * @tparam Index_ Integer type of the row/column indices.
+ * @tparam Oracle_ Class of the oracle.
+ * This should be `Oracle<Index_>` or one of its subclasses.
  *
  * @param matrix Matrix of interest.
  * @param row Whether the rows are the target dimension.
@@ -514,11 +526,11 @@ OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
  *
  * @return Wrapper to extract an indexed subset of each predicted element of the target dimension.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, class Oracle_ = Oracle<Index_> >
 OracularSparseWrapper<Value_, Index_> make_SparseWrapper(
     const Matrix<Value_, Index_>& matrix,
     bool row,
-    std::shared_ptr<const Oracle<Index_> > oracle,
+    std::shared_ptr<Oracle_> oracle,
     VectorPtr<Index_> indices_ptr,
     const Options& opt
 ) {

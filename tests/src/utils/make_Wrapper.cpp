@@ -69,7 +69,7 @@ TEST_P(MakeDenseWrapperTest, Oracular) {
     auto oracle = tatami::make_ConsecutiveOracle<int>(target / 3, target / 3);
 
     {
-        auto wrapped = tatami::make_DenseWrapper<double, int>(mat, row, oracle, tatami::Options());
+        auto wrapped = tatami::make_DenseWrapper(mat, row, oracle, tatami::Options());
         EXPECT_EQ(wrapped.length(), nontarget);
 
         auto res = wrapped.next();
@@ -81,7 +81,7 @@ TEST_P(MakeDenseWrapperTest, Oracular) {
 
     {
         const int bstart = nontarget / 4, blength = (nontarget * 3) / 4;
-        auto wrapped = tatami::make_DenseWrapper<double, int>(mat, row, oracle, bstart, blength, tatami::Options());
+        auto wrapped = tatami::make_DenseWrapper(mat, row, oracle, bstart, blength, tatami::Options());
         EXPECT_EQ(wrapped.length(), blength);
 
         wrapped.next();
@@ -94,7 +94,7 @@ TEST_P(MakeDenseWrapperTest, Oracular) {
 
     {
         auto indices = tatami_test::define_non_target_indices(nontarget, 0.1, 0.8, 0.2, 12345);
-        auto wrapped = tatami::make_DenseWrapper<double, int>(mat, row, oracle, indices, tatami::Options());
+        auto wrapped = tatami::make_DenseWrapper(mat, row, oracle, indices, tatami::Options());
         EXPECT_EQ(wrapped.length(), indices->size());
 
         wrapped.next();
@@ -238,7 +238,7 @@ TEST_P(MakeSparseWrapperTest, Oracular) {
     auto oracle = tatami::make_ConsecutiveOracle<int>(target / 4, target / 2);
 
     {
-        auto wrapped = tatami::make_SparseWrapper<double, int>(mat, row, oracle, tatami::Options());
+        auto wrapped = tatami::make_SparseWrapper(mat, row, oracle, tatami::Options());
         EXPECT_EQ(wrapped.length(), nontarget);
 
         wrapped.next();
@@ -253,7 +253,7 @@ TEST_P(MakeSparseWrapperTest, Oracular) {
         tatami::Options opt;
         opt.sparse_extract_index = false;
         opt.sparse_extract_value = false;
-        auto wrapped2 = tatami::make_SparseWrapper<double, int>(mat, row, oracle, opt);
+        auto wrapped2 = tatami::make_SparseWrapper(mat, row, oracle, opt);
         wrapped2.next();
         auto res2 = wrapped2.next();
         EXPECT_EQ(res.number, res2.number);
@@ -263,7 +263,7 @@ TEST_P(MakeSparseWrapperTest, Oracular) {
 
     {
         const int bstart = nontarget / 5, blength = (nontarget * 3) / 5;
-        auto wrapped = tatami::make_SparseWrapper<double, int>(mat, row, oracle, bstart, blength, tatami::Options());
+        auto wrapped = tatami::make_SparseWrapper(mat, row, oracle, bstart, blength, tatami::Options());
         EXPECT_EQ(wrapped.length(), blength);
 
         auto res = wrapped.next();
@@ -277,7 +277,7 @@ TEST_P(MakeSparseWrapperTest, Oracular) {
 
     {
         auto indices = tatami_test::define_non_target_indices(nontarget, 0.2, 0.6, 0.3, 98765);
-        auto wrapped = tatami::make_SparseWrapper<double, int>(mat, row, oracle, indices, tatami::Options());
+        auto wrapped = tatami::make_SparseWrapper(mat, row, oracle, indices, tatami::Options());
         EXPECT_EQ(wrapped.length(), indices->size());
 
         wrapped.next(); wrapped.next();
